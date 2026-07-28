@@ -6,7 +6,7 @@ import * as xlsx from 'xlsx';
 import pptxgen from 'pptxgenjs';
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build',
 });
 
 export async function POST(req: Request) {

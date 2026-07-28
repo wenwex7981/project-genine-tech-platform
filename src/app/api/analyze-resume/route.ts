@@ -4,7 +4,7 @@ import mammoth from 'mammoth';
 import PDFParser from 'pdf2json';
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build',
 });
 
 const ATS_PROMPT = `You are an elite AI ATS (Applicant Tracking System) and expert resume reviewer. 
