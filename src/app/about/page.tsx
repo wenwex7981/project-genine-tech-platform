@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Target, Zap, Shield, GraduationCap, Award } from "lucide-react";
+import { ArrowRight, Target, Users, Zap, Shield, GraduationCap, Award } from "lucide-react";
 
 export default function AboutPage() {
   return (
