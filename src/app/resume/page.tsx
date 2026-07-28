@@ -415,7 +415,7 @@ export default function ResumeHub() {
             <div className="grid grid-cols-3 md:grid-cols-6 gap-4 text-center">
               {Object.entries(result.matchBreakdown || {}).map(([key, val]) => (
                 <div key={key} className="bg-gray-50 dark:bg-zinc-800 p-3 rounded-xl border">
-                  <span className={`text-xl font-bold block ${Number(val) > 75 ? 'text-green-600' : 'text-amber-600'}`}>{val}%</span>
+                  <span className={`text-xl font-bold block ${Number(val) > 75 ? 'text-green-600' : 'text-amber-600'}`}>{String(val)}%</span>
                   <span className="text-xs text-gray-500 uppercase font-semibold capitalize">{key}</span>
                 </div>
               ))}

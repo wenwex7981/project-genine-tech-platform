@@ -210,7 +210,7 @@ Just return the markdown block containing the diagram.`;
 
       const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
       const buffer = await Packer.toBuffer(doc);
-      return new NextResponse(buffer, {
+      return new NextResponse(new Uint8Array(buffer), {
         headers: {
           'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
           'Content-Disposition': 'attachment; filename="AI_Document.docx"',
@@ -272,7 +272,7 @@ Just return the markdown block containing the diagram.`;
       }
 
       const buffer = await pres.write({ outputType: 'nodebuffer' });
-      return new NextResponse(buffer as Buffer, {
+      return new NextResponse(new Uint8Array(buffer as Buffer), {
         headers: {
           'Content-Type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
           'Content-Disposition': 'attachment; filename="AI_Presentation.pptx"',
