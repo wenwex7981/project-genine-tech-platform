@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Lock, X, ShoppingCart, Menu, UserCircle } from "lucide-react";
+import { Lock, X, ShoppingCart, Menu, UserCircle, Sparkles } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
@@ -68,6 +68,9 @@ export default function Navbar() {
       </Link>
       <Link href="/hackathons" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Hackathons
+      </Link>
+      <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-bold text-amber-500 transition-colors hover:text-amber-600 flex items-center gap-1">
+        <Sparkles className="w-4 h-4" /> Pricing
       </Link>
       <Link href="/study" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Study Hub
