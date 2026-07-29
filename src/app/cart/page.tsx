@@ -60,8 +60,6 @@ export default function CartPage() {
           } catch (err) {
             console.error(err);
             alert("Error verifying payment");
-          } finally {
-            setIsCheckingOut(false);
           }
         },
         theme: { color: "#f97316" }
@@ -72,7 +70,6 @@ export default function CartPage() {
     } catch (err) {
       console.error(err);
       alert("Checkout failed. Please try again.");
-      setIsCheckingOut(false);
     }
   };
 

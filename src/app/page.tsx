@@ -91,7 +91,7 @@ const TESTIMONIALS = [
     name: "Sai Kiran Reddy",
     college: "JNTUH, Hyderabad",
     branch: "B.Tech CSE, 2024",
-    text: "I was panicking two months before submission. Project Genie delivered a complete ML-based crop prediction system with IEEE paper, SRS, and PPT. Got 98/100 from my guide. Absolutely life-saving!",
+    text: "I was panicking two months before submission. GraduateNex delivered a complete ML-based crop prediction system with IEEE paper, SRS, and PPT. Got 98/100 from my guide. Absolutely life-saving!",
     rating: 5,
   },
   {
@@ -160,7 +160,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-xl text-zinc-400 leading-relaxed max-w-xl">
-                From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — Project Genie is the complete ecosystem that helps over <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
+                From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — GraduateNex is the complete ecosystem that helps over <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -441,7 +441,7 @@ export default function LandingPage() {
             </div>
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Real Results from Real Students</h2>
             <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
-              Over 2,500 students across India have used Project Genie to score top grades and land their dream jobs.
+              Over 2,500 students across India have used GraduateNex to score top grades and land their dream jobs.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
@@ -541,7 +541,7 @@ export default function LandingPage() {
             Your Final Year Project is<br />One Click Away.
           </h2>
           <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Join 2,500+ students who have already secured top grades, beaten plagiarism detectors, and landed their dream jobs using Project Genie.
+            Join 2,500+ students who have already secured top grades, beaten plagiarism detectors, and landed their dream jobs using GraduateNex.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/login">
