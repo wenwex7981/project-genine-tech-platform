@@ -15,7 +15,7 @@ export default function AIServicesPage() {
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">AI Services <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Hub</span></h1>
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Generate complex academic documents instantly and seamlessly bypass aggressive AI detection using our proprietary stealth engines.
+            Generate complex academic documents instantly and enhance AI-generated content into natural, human-quality writing using our advanced rewriting engines.
           </p>
         </div>
       </div>

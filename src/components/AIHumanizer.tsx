@@ -64,7 +64,7 @@ export default function AIHumanizer() {
           </div>
           <div>
             <h2 className="text-2xl font-bold">AI Plagiarism Checker & Humanizer</h2>
-            <p className="text-muted-foreground text-sm">Bypass AI detectors by rewriting your text with human-like burstiness and perplexity.</p>
+            <p className="text-muted-foreground text-sm">Enhance your text by rewriting it with natural, human-like flow and academic tone.</p>
           </div>
         </div>
 

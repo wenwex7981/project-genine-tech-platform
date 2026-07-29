@@ -94,7 +94,7 @@ export default function Home() {
                 <h3 className="text-lg font-bold mb-2 flex items-center justify-between">
                   Stealth Humanizer <ArrowRight className="h-5 w-5 text-primary opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">Aggressive AI detection bypass protocol. Scores 99%+ Human on strict detectors.</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">Advanced AI content refinement tool. Enhances writing to natural, polished academic quality.</p>
               </div>
             </Link>
 

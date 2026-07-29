@@ -59,7 +59,7 @@ export default function ProjectsHub() {
     },
     {
       title: "Plagiarism Removal",
-      description: "Advanced paraphrasing to ensure your documentation and papers pass Turnitin with 0% similarity.",
+      description: "Advanced paraphrasing and editing to ensure your documentation and papers are original and properly cited.",
       icon: <ShieldAlert className="h-8 w-8 text-rose-500" />,
       href: "/projects/plagiarism-removal",
       color: "bg-rose-50 dark:bg-rose-900/20 border-rose-100"
