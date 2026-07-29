@@ -47,7 +47,7 @@ export default function DashboardPage() {
       if (userProfile) {
         setProfile(userProfile);
       } else {
-        setProfile(prev => ({ ...prev, full_name: session.user.user_metadata?.full_name || "" }));
+        setProfile((prev: any) => ({ ...prev, full_name: session.user.user_metadata?.full_name || "" }));
       }
       
       setIsLoading(false);
