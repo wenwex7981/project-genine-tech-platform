@@ -1,16 +1,71 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Lock, Zap } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function AIGeneratorPage() {
+  const router = useRouter();
   const [topic, setTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [hasPremium, setHasPremium] = useState(false);
+  const [usageCount, setUsageCount] = useState(0);
+  const [isCheckoutLoaded, setIsCheckoutLoaded] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => setIsCheckoutLoaded(true);
+    document.body.appendChild(script);
+
+    // Get usage from localStorage for fast client check
+    const savedUsage = localStorage.getItem("abstract_generator_usage");
+    if (savedUsage) setUsageCount(parseInt(savedUsage));
+
+    // Check auth and premium status
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const email = session?.user?.email;
+      if (email) {
+        setUserEmail(email);
+        
+        // Admins bypass
+        if (email === 'projectgenie16@gmail.com' || email === 'nithinpatel2025@gmail.com') {
+          setHasPremium(true);
+          return;
+        }
+
+        const { data } = await supabase
+          .from('user_subscriptions')
+          .select('*')
+          .eq('user_email', email)
+          .eq('plan_id', 'ai_premium')
+          .eq('status', 'active')
+          .single();
+        
+        if (data) {
+          // Check expiration
+          if (!data.expires_at || new Date(data.expires_at) > new Date()) {
+            setHasPremium(true);
+          }
+        }
+      }
+    });
+  }, []);
 
   const handleGenerate = async () => {
     if (!topic) return;
+
+    // Check Limits
+    if (!hasPremium && usageCount >= 1) {
+      setShowPaywall(true);
+      return;
+    }
     
     setIsGenerating(true);
     setResult(null);
@@ -18,19 +73,22 @@ export default function AIGeneratorPage() {
     try {
       const response = await fetch('/api/generate-abstract', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic }),
       });
 
       const data = await response.json();
       
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate abstract');
-      }
+      if (!response.ok) throw new Error(data.error || 'Failed to generate abstract');
 
       setResult(data.result);
+      
+      // Increment usage
+      if (!hasPremium) {
+        const newCount = usageCount + 1;
+        setUsageCount(newCount);
+        localStorage.setItem("abstract_generator_usage", newCount.toString());
+      }
     } catch (error: any) {
       console.error('Error generating abstract:', error);
       alert(error.message);
@@ -39,12 +97,49 @@ export default function AIGeneratorPage() {
     }
   };
 
+  const handlePayPerUse = async () => {
+    if (!userEmail) return router.push("/login");
+    if (!isCheckoutLoaded) return alert("Payment loading...");
+
+    try {
+      const res = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: 20 })
+      });
+      const order = await res.json();
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "GraduateNex",
+        description: "Abstract Generator (1 Use)",
+        order_id: order.id,
+        prefill: { email: userEmail },
+        handler: function () {
+          setShowPaywall(false);
+          // Give them 1 more free use locally
+          localStorage.setItem("abstract_generator_usage", "0");
+          setUsageCount(0);
+          alert("Payment successful! You can now generate your abstract.");
+        },
+        theme: { color: "#4f46e5" }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Payment failed");
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 md:px-6 py-12 max-w-4xl">
+    <div className="container mx-auto px-4 md:px-6 py-12 max-w-4xl relative">
       <div className="mb-12 text-center">
         <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold">
-          <Sparkles className="h-4 w-4" />
-          Powered by AI
+          <Sparkles className="h-4 w-4" /> Powered by AI
         </div>
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Abstract <span className="text-primary">Generator</span></h1>
         <p className="text-muted-foreground mt-4 text-lg">
@@ -71,15 +166,9 @@ export default function AIGeneratorPage() {
             className="w-full md:w-auto md:self-end h-12 px-8 text-lg"
           >
             {isGenerating ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Generating...
-              </>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Generating...</>
             ) : (
-              <>
-                <Sparkles className="mr-2 h-5 w-5" />
-                Generate Abstract
-              </>
+              <><Sparkles className="mr-2 h-5 w-5" /> Generate Abstract</>
             )}
           </Button>
         </div>
@@ -87,8 +176,7 @@ export default function AIGeneratorPage() {
         {result && (
           <div className="mt-8 pt-8 border-t animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              Generated Result
+              <Sparkles className="h-5 w-5 text-primary" /> Generated Result
             </h3>
             <div className="p-6 rounded-xl bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30 whitespace-pre-wrap leading-relaxed">
               {result}
@@ -99,6 +187,39 @@ export default function AIGeneratorPage() {
           </div>
         )}
       </div>
+
+      {/* Paywall Modal */}
+      {showPaywall && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in-95">
+            <button onClick={() => setShowPaywall(false)} className="absolute top-4 right-4 p-2 hover:bg-muted rounded-full">
+              ✕
+            </button>
+            <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+              <Lock className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-black text-center mb-2">Free Trial Ended</h2>
+            <p className="text-center text-muted-foreground mb-8">
+              You've used your 1 free abstract generation. Choose how you want to continue.
+            </p>
+            
+            <div className="space-y-4">
+              <Button onClick={handlePayPerUse} className="w-full h-14 text-lg font-bold bg-blue-600 hover:bg-blue-700 text-white">
+                Pay ₹20 for 1 Use
+              </Button>
+              <div className="relative flex items-center py-2">
+                <div className="flex-grow border-t border-muted"></div>
+                <span className="flex-shrink-0 mx-4 text-muted-foreground text-sm font-medium">OR</span>
+                <div className="flex-grow border-t border-muted"></div>
+              </div>
+              <Button onClick={() => router.push('/pricing')} variant="outline" className="w-full h-14 text-lg font-bold border-2 flex items-center justify-center gap-2">
+                <Zap className="w-5 h-5 text-amber-500 fill-amber-500" />
+                View Unlimited Plans
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

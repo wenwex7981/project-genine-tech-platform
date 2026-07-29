@@ -11,10 +11,20 @@ import { Document, Packer, Paragraph, TextRun } from "docx";
 import { supabase } from "@/lib/supabase";
 import { useCart } from "@/context/CartContext";
 
+import { useRouter } from "next/navigation";
+
 export default function ResumeHub() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community">("ats");
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const { addToCart } = useCart();
+  
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [hasResumePro, setHasResumePro] = useState(false);
+  const [unlockedAts, setUnlockedAts] = useState(false);
+  const [unlockedJd, setUnlockedJd] = useState(false);
+  const [showPaywall, setShowPaywall] = useState<"ats" | "jd" | null>(null);
+  const [isCheckoutLoaded, setIsCheckoutLoaded] = useState(false);
 
   // --- ANALYZER STATE ---
   const [jd, setJd] = useState("");
@@ -43,6 +53,77 @@ export default function ResumeHub() {
     if (activeTab === "community") fetchResumes();
     else setResult(null); // clear result when switching between ATS and JD
   }, [activeTab]);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => setIsCheckoutLoaded(true);
+    document.body.appendChild(script);
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const email = session?.user?.email;
+      if (email) {
+        setUserEmail(email);
+        const adminEmails = ["projectgenie16@gmail.com", "proejctgenie16@gmail.com", "nithinpatel2025@gmail.com"];
+        if (adminEmails.includes(email)) {
+          setHasResumePro(true);
+          return;
+        }
+
+        const { data } = await supabase
+          .from('user_subscriptions')
+          .select('*')
+          .eq('user_email', email)
+          .eq('plan_id', 'resume_hub_pro')
+          .eq('status', 'active')
+          .single();
+        
+        if (data && (!data.expires_at || new Date(data.expires_at) > new Date())) {
+          setHasResumePro(true);
+        }
+      }
+    });
+  }, []);
+
+  const handlePayPerUse = async (type: "ats" | "jd") => {
+    if (!userEmail) return router.push("/login");
+    if (!isCheckoutLoaded) return alert("Payment loading...");
+
+    const amount = type === "ats" ? 50 : 100;
+    const desc = type === "ats" ? "Detailed ATS Breakdown (1 Use)" : "JD Matching Analysis (1 Use)";
+
+    try {
+      const res = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount })
+      });
+      const order = await res.json();
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "GraduateNex",
+        description: desc,
+        order_id: order.id,
+        prefill: { email: userEmail },
+        handler: function () {
+          setShowPaywall(null);
+          if (type === "ats") setUnlockedAts(true);
+          if (type === "jd") setUnlockedJd(true);
+          alert(`Payment successful! You now have access to your ${type.toUpperCase()} report.`);
+        },
+        theme: { color: "#4f46e5" }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Payment failed");
+    }
+  };
 
   const fetchResumes = async () => {
     setLoadingCommunity(true);
@@ -256,8 +337,37 @@ export default function ResumeHub() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* 2. Contact Info */}
+          {!hasResumePro && !unlockedAts ? (
+            <div className="relative border rounded-2xl p-8 bg-gray-50 dark:bg-zinc-800/50 text-center overflow-hidden">
+              <div className="absolute inset-0 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md z-10 flex flex-col items-center justify-center p-6">
+                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4">
+                  <Lock className="h-8 w-8" />
+                </div>
+                <h3 className="text-2xl font-black mb-2">Detailed Report Locked</h3>
+                <p className="text-muted-foreground mb-6 max-w-md">Unlock the full 17-point detailed breakdown, keyword analysis, and exact copy-paste improvements.</p>
+                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                  <Button onClick={() => handlePayPerUse("ats")} className="flex-1 h-12 font-bold bg-indigo-600 hover:bg-indigo-700">
+                    Pay ₹50 Once
+                  </Button>
+                  <Button onClick={() => router.push('/pricing')} variant="outline" className="flex-1 h-12 font-bold border-2 flex items-center justify-center gap-2">
+                    <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    Get Monthly Pro
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Blurred background mockup */}
+              <div className="opacity-30 blur-sm select-none pointer-events-none">
+                <div className="grid grid-cols-2 gap-8 text-left mb-8">
+                  <div><div className="h-6 w-32 bg-gray-300 rounded mb-4"></div><div className="space-y-2"><div className="h-8 w-full bg-gray-200 rounded"></div><div className="h-8 w-full bg-gray-200 rounded"></div></div></div>
+                  <div><div className="h-6 w-32 bg-gray-300 rounded mb-4"></div><div className="space-y-2"><div className="h-8 w-full bg-gray-200 rounded"></div><div className="h-8 w-full bg-gray-200 rounded"></div></div></div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* 2. Contact Info */}
             <div>
               <h3 className="text-lg font-bold mb-4 border-b pb-2">2. Contact Information</h3>
               <ul className="space-y-2 text-sm">
@@ -375,14 +485,19 @@ export default function ResumeHub() {
           <div className="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-2xl border border-indigo-200">
             <h3 className="text-lg font-bold mb-4 text-indigo-900 dark:text-indigo-100 flex items-center gap-2"><CheckCircle className="h-5 w-5" /> 17. Improvement Checklist</h3>
             <div className="grid sm:grid-cols-2 gap-3 text-sm font-semibold text-indigo-800 dark:text-indigo-200">
-              {result.improvementChecklist?.map((item: string, i: number) => (
-                <label key={i} className="flex items-center gap-2 bg-white dark:bg-zinc-800 p-3 rounded-lg border">
-                  <input type="checkbox" className="w-4 h-4 rounded text-indigo-600" />
-                  {item}
-                </label>
-              ))}
+            <div className="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-2xl border border-indigo-200">
+              <h3 className="text-lg font-bold mb-4 text-indigo-900 dark:text-indigo-100 flex items-center gap-2"><CheckCircle className="h-5 w-5" /> 17. Improvement Checklist</h3>
+              <div className="grid sm:grid-cols-2 gap-3 text-sm font-semibold text-indigo-800 dark:text-indigo-200">
+                {result.improvementChecklist?.map((item: string, i: number) => (
+                  <label key={i} className="flex items-center gap-2 bg-white dark:bg-zinc-800 p-3 rounded-lg border">
+                    <input type="checkbox" className="w-4 h-4 rounded text-indigo-600" />
+                    {item}
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
+            </>
+          )}
 
         </div>
       )}
@@ -426,7 +541,36 @@ export default function ResumeHub() {
             </div>
           </div>
 
-          {/* 16. Match Breakdown */}
+          {!hasResumePro && !unlockedJd ? (
+            <div className="relative border rounded-2xl p-8 bg-indigo-50/30 dark:bg-indigo-900/10 text-center overflow-hidden">
+              <div className="absolute inset-0 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md z-10 flex flex-col items-center justify-center p-6">
+                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4">
+                  <Lock className="h-8 w-8" />
+                </div>
+                <h3 className="text-2xl font-black mb-2">JD Match Details Locked</h3>
+                <p className="text-muted-foreground mb-6 max-w-md">Unlock missing skills, missing keywords, optimized bullet points, and the AI-generated summary rewrite.</p>
+                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                  <Button onClick={() => handlePayPerUse("jd")} className="flex-1 h-12 font-bold bg-indigo-600 hover:bg-indigo-700">
+                    Pay ₹100 Once
+                  </Button>
+                  <Button onClick={() => router.push('/pricing')} variant="outline" className="flex-1 h-12 font-bold border-2 flex items-center justify-center gap-2">
+                    <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    Get Monthly Pro
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Blurred background mockup */}
+              <div className="opacity-30 blur-sm select-none pointer-events-none text-left">
+                <div className="h-6 w-48 bg-gray-300 rounded mb-4"></div>
+                <div className="grid grid-cols-6 gap-4 mb-8">
+                  {[1,2,3,4,5,6].map(i => <div key={i} className="h-20 bg-gray-200 rounded-xl"></div>)}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* 16. Match Breakdown */}
           <div>
             <h3 className="text-lg font-bold mb-4 border-b pb-2">16. Match Breakdown</h3>
             <div className="grid grid-cols-3 md:grid-cols-6 gap-4 text-center">
@@ -622,6 +766,8 @@ export default function ResumeHub() {
               ))}
             </div>
           </div>
+          </>
+          )}
         </div>
       )}
 

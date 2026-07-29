@@ -2,30 +2,50 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, ShieldCheck, ShieldAlert, Sparkles, Wand2, Upload, Printer, Lock, Zap, X, CreditCard } from "lucide-react";
+import { Loader2, ShieldCheck, ShieldAlert, Sparkles, Wand2, Upload, Printer, Lock, Zap, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 const ADMIN_EMAILS = ["projectgenie16@gmail.com", "proejctgenie16@gmail.com", "nithinpatel2025@gmail.com"];
 const USAGE_KEY = "ai_humanizer_used";
-const PRO_PRICE = 230;
 
 export default function AIHumanizer() {
+  const router = useRouter();
   const [text, setText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<{ originalAiScore: number, newAiScore: number, humanizedText: string } | null>(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
+  const [hasPro, setHasPro] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserEmail(session?.user?.email || null);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const email = session?.user?.email;
+      if (email) {
+        setUserEmail(email);
+        if (ADMIN_EMAILS.includes(email)) {
+          setHasPro(true);
+        } else {
+          // Check for AI Tools Pro subscription
+          const { data } = await supabase
+            .from('user_subscriptions')
+            .select('*')
+            .eq('user_email', email)
+            .eq('plan_id', 'plagiarism_pro')
+            .eq('status', 'active')
+            .single();
+          
+          if (data && (!data.expires_at || new Date(data.expires_at) > new Date())) {
+            setHasPro(true);
+          }
+        }
+      }
       setIsCheckingSession(false);
     });
   }, []);
 
-  const isAdmin = ADMIN_EMAILS.includes(userEmail || "");
   const hasUsedFree = typeof window !== "undefined" && localStorage.getItem(USAGE_KEY) === "true";
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,8 +59,7 @@ export default function AIHumanizer() {
   const handleHumanize = async () => {
     if (!text) return;
 
-    // Check free usage limit (skip for admins)
-    if (!isAdmin && hasUsedFree) {
+    if (!hasPro && hasUsedFree) {
       setShowUpgradeModal(true);
       return;
     }
@@ -63,8 +82,7 @@ export default function AIHumanizer() {
       const data = await response.json();
       setResult(data);
 
-      // Mark free usage used (only for non-admins)
-      if (!isAdmin) {
+      if (!hasPro) {
         localStorage.setItem(USAGE_KEY, "true");
       }
     } catch (error: any) {
@@ -72,42 +90,6 @@ export default function AIHumanizer() {
       alert(error.message);
     } finally {
       setIsProcessing(false);
-    }
-  };
-
-  const handleUpgradePayment = async () => {
-    try {
-      const res = await fetch('/api/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: PRO_PRICE }),
-      });
-      if (!res.ok) throw new Error("Could not create order");
-      const order = await res.json();
-
-      const rzp = new (window as any).Razorpay({
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: order.currency,
-        name: "GraduateNex",
-        description: "AI Humanizer Pro - Unlimited Access",
-        order_id: order.id,
-        modal: {
-          ondismiss: () => { document.body.style.overflow = ""; }
-        },
-        handler: function () {
-          document.body.style.overflow = "";
-          localStorage.removeItem(USAGE_KEY);
-          setShowUpgradeModal(false);
-          alert("🎉 Pro unlocked! You now have unlimited AI Humanizer access.");
-        },
-        prefill: { email: userEmail || "" },
-        theme: { color: "#4f46e5" }
-      });
-      rzp.open();
-    } catch (err) {
-      document.body.style.overflow = "";
-      alert("Could not initiate payment. Please try again.");
     }
   };
 
@@ -128,7 +110,7 @@ export default function AIHumanizer() {
             <h2 className="text-2xl font-bold">AI Plagiarism Checker & Humanizer</h2>
             <p className="text-muted-foreground text-sm">Rewrite AI text with natural, human-like flow and academic tone.</p>
           </div>
-          {!isAdmin && (
+          {!hasPro && (
             <div className={`ml-auto px-3 py-1 rounded-full text-xs font-bold ${hasUsedFree ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
               {hasUsedFree ? "Free used · Upgrade for more" : "1 Free use remaining"}
             </div>
@@ -140,8 +122,7 @@ export default function AIHumanizer() {
             <div className="flex justify-between items-center mb-2">
               <label htmlFor="ai-text" className="block text-sm font-semibold">Paste your AI-generated text here</label>
               <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Document
+                <Upload className="h-4 w-4 mr-2" /> Upload Document
               </Button>
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".txt,.md" className="hidden" />
             </div>
@@ -162,8 +143,8 @@ export default function AIHumanizer() {
           >
             {isProcessing ? (
               <><Loader2 className="mr-2 h-5 w-5 animate-spin" />Analyzing & Humanizing...</>
-            ) : !isAdmin && hasUsedFree ? (
-              <><Lock className="mr-2 h-5 w-5" />Upgrade to Pro — ₹{PRO_PRICE}</>
+            ) : !hasPro && hasUsedFree ? (
+              <><Lock className="mr-2 h-5 w-5" />Unlock AI Tools Pro</>
             ) : (
               <><ShieldCheck className="mr-2 h-5 w-5" />Analyze & Humanize Text</>
             )}
@@ -191,8 +172,7 @@ export default function AIHumanizer() {
               </div>
               <div className="md:col-span-2 flex flex-col">
                 <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-blue-500" />
-                  Humanized Result
+                  <Sparkles className="h-5 w-5 text-blue-500" /> Humanized Result
                 </h3>
                 <div className="flex-grow p-5 rounded-xl bg-muted/30 border border-border whitespace-pre-wrap leading-relaxed text-sm">
                   {result.humanizedText}
@@ -209,7 +189,6 @@ export default function AIHumanizer() {
         )}
       </div>
 
-      {/* Upgrade Modal */}
       {showUpgradeModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-md w-full shadow-2xl border overflow-hidden">
@@ -221,26 +200,19 @@ export default function AIHumanizer() {
                 <Zap className="w-8 h-8 text-yellow-300" />
               </div>
               <h2 className="text-2xl font-black mb-2">Upgrade to Pro</h2>
-              <p className="text-indigo-200 text-sm">You've used your 1 free AI humanizer check. Upgrade for unlimited access.</p>
+              <p className="text-indigo-200 text-sm">You've used your 1 free AI humanizer check.</p>
             </div>
-            <div className="p-8">
-              <div className="text-center mb-6">
-                <div className="text-5xl font-black text-indigo-600">₹{PRO_PRICE}</div>
-                <div className="text-muted-foreground text-sm mt-1">One-time payment · Lifetime access</div>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {["Unlimited AI plagiarism checks", "Unlimited humanizer usage", "Priority processing", "Download PDF reports"].map(f => (
+            <div className="p-8 space-y-6">
+              <ul className="space-y-3 mb-4">
+                {["Unlimited AI plagiarism checks", "Unlimited humanizer usage", "Access to full AI Tools Tab", "Download PDF reports"].map(f => (
                   <li key={f} className="flex items-center gap-3 text-sm font-medium">
-                    <ShieldCheck className="w-5 h-5 text-green-500 shrink-0" />
-                    {f}
+                    <ShieldCheck className="w-5 h-5 text-green-500 shrink-0" /> {f}
                   </li>
                 ))}
               </ul>
-              <Button onClick={handleUpgradePayment} className="w-full h-14 text-lg font-black bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl">
-                <CreditCard className="mr-2 w-5 h-5" />
-                Pay ₹{PRO_PRICE} & Unlock Pro
+              <Button onClick={() => router.push('/pricing')} className="w-full h-14 text-lg font-black bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl">
+                View Pricing Plans
               </Button>
-              <p className="text-center text-xs text-muted-foreground mt-4">Secured by Razorpay · One-time payment</p>
             </div>
           </div>
         </div>
