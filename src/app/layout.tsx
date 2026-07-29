@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     images: ["https://graduatenex.online/logo.png"],
   },
   verification: {
-    google: "YOUR_GOOGLE_SEARCH_CONSOLE_TAG_HERE", // User will replace this in Vercel or here
+    google: "6_tHEFyTHMeA_lWml1WH05XPgbSpiXIP6cJouAd5-OQ",
   }
 };
 
