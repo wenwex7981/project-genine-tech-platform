@@ -129,6 +129,9 @@ export default function Navbar() {
               <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
             ) : (
               <>
+                <button onClick={() => setShowLoginModal(true)} className="p-2 hover:bg-muted rounded-full transition-colors" title="Admin Login">
+                  <Lock className="h-5 w-5 text-muted-foreground hover:text-primary" />
+                </button>
                 <Link href="/login"><Button variant="outline">Sign In</Button></Link>
                 <Link href="/login"><Button className="font-bold">Get Started Free</Button></Link>
               </>
