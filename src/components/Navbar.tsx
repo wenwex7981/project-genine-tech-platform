@@ -57,22 +57,22 @@ export default function Navbar() {
 
   const NavLinks = () => (
     <>
-      <Link href="/projects" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/projects" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Projects
       </Link>
-      <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Services
       </Link>
-      <Link href="/resume" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
+      <Link href="/resume" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Resume Hub
       </Link>
-      <Link href="/hackathons" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
+      <Link href="/hackathons" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Hackathons
       </Link>
-      <Link href="/study" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
+      <Link href="/study" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Study Hub
       </Link>
-      <Link href="/ai-services" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
+      <Link href="/ai-services" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         AI Tools
       </Link>
       {user && (
@@ -90,7 +90,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center px-4 md:px-6 justify-between">
+      <div className="container mx-auto flex h-16 items-center px-4 md:px-6 justify-between gap-4">
         
         {/* Left: Logo */}
         <Link href={user ? "/home" : "/"} className="flex items-center gap-3 transition-transform hover:scale-105 z-50">
@@ -103,7 +103,7 @@ export default function Navbar() {
         </Link>
         
         {/* Center/Desktop Nav */}
-        <nav className="hidden md:flex gap-4 lg:gap-6 items-center absolute left-1/2 -translate-x-1/2">
+        <nav className="hidden lg:flex gap-3 xl:gap-5 items-center">
           {user ? <NavLinks /> : (
             <>
               <Link href="/about" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">About</Link>
