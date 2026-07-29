@@ -27,6 +27,12 @@ export default function CartPage() {
       const { data: { session } } = await supabase.auth.getSession();
       const userEmail = session?.user?.email || null;
 
+      if (!userEmail) {
+        alert("Please sign in to complete your purchase so we can add the project to your dashboard.");
+        window.location.href = "/login";
+        return;
+      }
+
       const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
