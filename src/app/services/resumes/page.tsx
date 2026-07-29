@@ -5,10 +5,13 @@ import { supabase } from "@/lib/supabase";
 import { Loader2, FileText, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useCart } from "@/context/CartContext";
 
 export default function ResumeTemplatesPage() {
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { addToCart } = useCart();
 
   useEffect(() => {
     async function fetchData() {
@@ -25,9 +28,15 @@ export default function ResumeTemplatesPage() {
     fetchData();
   }, []);
 
-  const handleRequest = (templateTitle: string) => {
-    // Redirect to the custom requirements page, but we can pass the template name via URL params
-    window.location.href = `/?service=Resume&template=${encodeURIComponent(templateTitle)}#custom-form`;
+  const handleAddToCart = (template: any) => {
+    addToCart({
+      id: template.id,
+      title: template.title,
+      price: template.price,
+      image_url: template.image_url,
+      file_url: template.file_url
+    });
+    alert(`${template.title} added to cart!`);
   };
 
   if (isLoading) {
@@ -69,22 +78,17 @@ export default function ResumeTemplatesPage() {
                 </div>
               </div>
               <div className="p-6 flex-1 flex flex-col">
-                <h3 className="font-bold text-xl mb-3">{template.title}</h3>
-                <p className="text-sm text-muted-foreground mb-6 leading-relaxed flex-1">
-                  {template.description}
-                </p>
-                
-                <ul className="space-y-2 mb-8 text-sm font-medium text-muted-foreground">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> ATS Friendly Layout</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> Professional Formatting</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> Project Highlighting</li>
-                </ul>
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-bold text-xl">{template.title}</h3>
+                  <p className="font-black text-emerald-600 text-xl">₹{template.price}</p>
+                </div>
+                <p className="text-muted-foreground text-sm mb-6 flex-grow">{template.description}</p>
                 
                 <Button 
-                  onClick={() => handleRequest(template.title)}
-                  className="w-full py-6 text-base shadow-md hover:shadow-lg transition-all"
+                  onClick={() => handleAddToCart(template)}
+                  className="w-full font-bold h-12 text-lg rounded-xl transition-transform hover:scale-[1.02]"
                 >
-                  Order This Template
+                  Add to Cart
                 </Button>
               </div>
             </div>

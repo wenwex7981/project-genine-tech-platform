@@ -198,9 +198,21 @@ export default function DashboardPage() {
                   
                   <div className="flex justify-between items-center pt-4 border-t">
                     <p className="font-bold text-lg">Total: <span className="text-emerald-600">₹{order.total_amount}</span></p>
-                    <a href={`mailto:support@graduatenex.online?subject=Support for Order ${order.razorpay_order_id}`} className="text-sm text-primary hover:underline font-semibold flex items-center gap-1">
-                      Get Support <ExternalLink className="h-3 w-3" />
-                    </a>
+                    <div className="flex items-center gap-3">
+                      {order.items && order.items.some((item: any) => item.file_url) && (
+                        <a 
+                          href={order.items.find((item: any) => item.file_url)?.file_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-lg shadow-sm transition-colors"
+                        >
+                          Download Files
+                        </a>
+                      )}
+                      <a href={`mailto:support@graduatenex.online?subject=Support for Order ${order.razorpay_order_id}`} className="text-sm text-primary hover:underline font-semibold flex items-center gap-1">
+                        Get Support <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))}
