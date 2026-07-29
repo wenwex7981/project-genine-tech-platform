@@ -216,13 +216,9 @@ export default function CartPage() {
                 <span>Subtotal ({cart.reduce((a, b) => a + b.quantity, 0)} items)</span>
                 <span>₹{totalPrice}</span>
               </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>GST (18%)</span>
-                <span>₹{Math.round(totalPrice * 0.18)}</span>
-              </div>
               <div className="border-t pt-4 flex justify-between font-black text-2xl">
                 <span>Total</span>
-                <span>₹{totalPrice + Math.round(totalPrice * 0.18)}</span>
+                <span>₹{totalPrice}</span>
               </div>
             </div>
 
