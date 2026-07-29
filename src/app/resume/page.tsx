@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Loader2, FileText, Upload, Briefcase, CheckCircle, AlertCircle,
   AlertTriangle, Lightbulb, FileDown, Percent, Users,
-  Search, Eye, Download, PlusCircle, Building, X, Trophy, FileCheck, Copy, Check, ShoppingCart, Star
+  Search, Eye, Download, PlusCircle, Building, X, Trophy, FileCheck, Copy, Check, ShoppingCart, Star, Lock, Zap
 } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { supabase } from "@/lib/supabase";
@@ -485,18 +485,15 @@ export default function ResumeHub() {
           <div className="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-2xl border border-indigo-200">
             <h3 className="text-lg font-bold mb-4 text-indigo-900 dark:text-indigo-100 flex items-center gap-2"><CheckCircle className="h-5 w-5" /> 17. Improvement Checklist</h3>
             <div className="grid sm:grid-cols-2 gap-3 text-sm font-semibold text-indigo-800 dark:text-indigo-200">
-            <div className="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-2xl border border-indigo-200">
-              <h3 className="text-lg font-bold mb-4 text-indigo-900 dark:text-indigo-100 flex items-center gap-2"><CheckCircle className="h-5 w-5" /> 17. Improvement Checklist</h3>
-              <div className="grid sm:grid-cols-2 gap-3 text-sm font-semibold text-indigo-800 dark:text-indigo-200">
-                {result.improvementChecklist?.map((item: string, i: number) => (
-                  <label key={i} className="flex items-center gap-2 bg-white dark:bg-zinc-800 p-3 rounded-lg border">
-                    <input type="checkbox" className="w-4 h-4 rounded text-indigo-600" />
-                    {item}
-                  </label>
-                ))}
-              </div>
+              {result.improvementChecklist?.map((item: string, i: number) => (
+                <label key={i} className="flex items-center gap-2 bg-white dark:bg-zinc-800 p-3 rounded-lg border">
+                  <input type="checkbox" className="w-4 h-4 rounded text-indigo-600" />
+                  {item}
+                </label>
+              ))}
             </div>
-            </>
+          </div>
+          </>
           )}
 
         </div>
