@@ -173,49 +173,55 @@ export default function DashboardPage() {
                 <div key={index} className="bg-background border rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-4 border-b pb-4">
                     <div>
-                      <p className="text-sm text-muted-foreground font-mono">Order #{order.razorpay_order_id?.substring(0, 12)}...</p>
-                      <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString()}</p>
+                      <p className="text-sm font-bold text-muted-foreground">Order #{order.razorpay_order_id?.substring(0, 16)}...</p>
+                      <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' })}</p>
                     </div>
-                    <div className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                      {order.status}
+                    <div className="flex items-center gap-2">
+                      <div className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                        ✓ {order.status}
+                      </div>
+                      <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold">
+                        ₹{order.total_amount}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="space-y-3 mb-4">
+
+                  <div className="space-y-3">
                     {order.items && Array.isArray(order.items) && order.items.map((item: any, i: number) => (
-                      <div key={i} className="flex items-center gap-4">
+                      <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-muted/30 border">
                         <div className="h-12 w-12 rounded-lg bg-muted overflow-hidden relative flex-shrink-0 border">
-                          <Image src={item.image_url || "/feature_resume.png"} alt="Project" fill className="object-cover" />
+                          <Image src={item.image_url || "/feature_resume.png"} alt="Item" fill className="object-cover" />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <p className="font-bold text-sm line-clamp-1">{item.title}</p>
-                          <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
+                          <p className="text-xs text-muted-foreground">Qty: {item.quantity} · ₹{item.price}</p>
                         </div>
-                        <p className="font-bold text-sm text-emerald-600">₹{item.price}</p>
+                        {item.file_url ? (
+                          <a
+                            href={item.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition-colors flex items-center gap-1"
+                          >
+                            <ExternalLink className="h-3 w-3" /> Open
+                          </a>
+                        ) : (
+                          <span className="shrink-0 px-3 py-2 bg-muted text-muted-foreground text-xs font-bold rounded-lg">
+                            No file
+                          </span>
+                        )}
                       </div>
                     ))}
                   </div>
-                  
-                  <div className="flex justify-between items-center pt-4 border-t">
-                    <p className="font-bold text-lg">Total: <span className="text-emerald-600">₹{order.total_amount}</span></p>
-                    <div className="flex items-center gap-3">
-                      {order.items && order.items.some((item: any) => item.file_url) && (
-                        <a 
-                          href={order.items.find((item: any) => item.file_url)?.file_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-lg shadow-sm transition-colors"
-                        >
-                          Download Files
-                        </a>
-                      )}
-                      <a href={`mailto:support@graduatenex.online?subject=Support for Order ${order.razorpay_order_id}`} className="text-sm text-primary hover:underline font-semibold flex items-center gap-1">
-                        Get Support <ExternalLink className="h-3 w-3" />
-                      </a>
-                    </div>
+
+                  <div className="flex justify-end mt-4 pt-3 border-t">
+                    <a href={`mailto:support@graduatenex.online?subject=Support for Order ${order.razorpay_order_id}`} className="text-sm text-primary hover:underline font-semibold flex items-center gap-1">
+                      Need help? Contact Support <ExternalLink className="h-3 w-3" />
+                    </a>
                   </div>
                 </div>
               ))}
+
             </div>
           )}
         </div>

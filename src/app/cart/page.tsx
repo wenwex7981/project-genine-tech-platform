@@ -26,6 +26,7 @@ export default function CartPage() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userEmail = session?.user?.email || null;
+      const userName = session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || "Customer";
 
       if (!userEmail) {
         alert("Please sign in to complete your purchase so we can add the project to your dashboard.");
@@ -52,15 +53,26 @@ export default function CartPage() {
         return;
       }
 
+      const itemNames = cart.map(i => `${i.title} (x${i.quantity})`).join(", ");
+
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
         name: "GraduateNex",
-        description: "Premium Purchase",
+        description: itemNames.length > 100 ? itemNames.substring(0, 97) + "..." : itemNames,
         order_id: order.id,
+        prefill: {
+          name: userName,
+          email: userEmail,
+          contact: "",
+        },
+        notes: {
+          items: itemNames,
+          user_email: userEmail,
+          platform: "GraduateNex",
+        },
         modal: {
-          // Fix scroll lock — restore body scroll when modal is dismissed
           ondismiss: function () {
             document.body.style.overflow = "";
             document.body.style.paddingRight = "";
