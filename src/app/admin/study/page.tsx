@@ -73,7 +73,7 @@ export default function AdminStudyPage() {
               <h3 className="font-bold mb-2 line-clamp-1">{doc.title}</h3>
               <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{doc.description}</p>
               <div className="mt-auto flex gap-2">
-                <Button variant="destructive" size="sm" className="flex-1" onClick={() => handleDelete(doc.id)}>
+                <Button variant="outline" size="sm" className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => handleDelete(doc.id)}>
                   <Trash2 className="w-4 h-4 mr-1" /> Delete
                 </Button>
               </div>
