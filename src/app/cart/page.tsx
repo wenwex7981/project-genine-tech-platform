@@ -38,16 +38,38 @@ export default function CartPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalPrice })
       });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        alert("Payment setup failed: " + (errData.error || "Please contact support."));
+        return;
+      }
+
       const order = await res.json();
-      
+
+      if (!order.id) {
+        alert("Could not create payment order. Please try again.");
+        return;
+      }
+
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_mockkey",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
         name: "GraduateNex",
-        description: "Premium Project Purchase",
+        description: "Premium Purchase",
         order_id: order.id,
+        modal: {
+          // Fix scroll lock — restore body scroll when modal is dismissed
+          ondismiss: function () {
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
+          }
+        },
         handler: async function (response: any) {
+          // Restore scroll immediately when payment completes
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
           try {
             const verifyRes = await fetch('/api/verify-payment', {
               method: 'POST',
@@ -62,7 +84,7 @@ export default function CartPage() {
               })
             });
             const verifyData = await verifyRes.json();
-            
+
             if (verifyData.success) {
               setPaymentSuccess(response.razorpay_payment_id);
               clearCart();
@@ -80,10 +102,14 @@ export default function CartPage() {
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
     } catch (err) {
+      // Always restore scroll on any error
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
       console.error(err);
       alert("Error initiating checkout.");
     }
   };
+
 
   if (paymentSuccess) {
     return (
