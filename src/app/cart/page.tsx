@@ -2,7 +2,7 @@
 
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Minus, Plus, ShoppingCart, Trash2, ArrowLeft } from "lucide-react";
+import { CreditCard, Minus, Plus, ShoppingCart, Trash2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import Image from "next/image";
 export default function CartPage() {
   const { cart, updateQuantity, totalPrice, clearCart } = useCart();
   const [isCheckoutLoaded, setIsCheckoutLoaded] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     // Load Razorpay Script
@@ -52,7 +53,7 @@ export default function CartPage() {
             const verifyData = await verifyRes.json();
             
             if (verifyData.success) {
-              alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+              setPaymentSuccess(response.razorpay_payment_id);
               clearCart();
             } else {
               alert("Payment verification failed!");
@@ -72,6 +73,39 @@ export default function CartPage() {
       alert("Checkout failed. Please try again.");
     }
   };
+
+  if (paymentSuccess) {
+    return (
+      <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-6 text-center px-4">
+        <div className="w-32 h-32 bg-emerald-100 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mb-4">
+          <CheckCircle2 className="h-16 w-16 text-emerald-500" />
+        </div>
+        <h1 className="text-4xl font-extrabold tracking-tight">Payment Successful!</h1>
+        <div className="max-w-md bg-muted/50 p-6 rounded-2xl border space-y-2 text-left w-full mt-4">
+          <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Transaction Details</p>
+          <div className="flex justify-between items-center py-2 border-b">
+            <span className="text-zinc-500">Payment ID</span>
+            <span className="font-mono font-medium">{paymentSuccess}</span>
+          </div>
+          <div className="flex justify-between items-center py-2">
+            <span className="text-zinc-500">Status</span>
+            <span className="text-emerald-500 font-bold flex items-center gap-1"><CheckCircle2 className="h-4 w-4"/> Verified</span>
+          </div>
+        </div>
+        <p className="text-muted-foreground max-w-lg mt-6">
+          Your order has been confirmed. A receipt and download links have been sent to your registered email address.
+        </p>
+        <div className="flex gap-4 mt-8">
+          <Link href="/projects">
+            <Button size="lg" variant="outline" className="px-8 font-bold">Continue Shopping</Button>
+          </Link>
+          <Link href="/">
+            <Button size="lg" className="px-8 font-bold">Return Home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (
