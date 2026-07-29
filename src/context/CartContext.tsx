@@ -44,7 +44,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart(prev => {
       const existing = prev.find(p => p.id === item.id);
       if (existing) {
-        return prev.map(p => p.id === item.id ? { ...p, quantity: p.quantity + 1 } : p);
+        // Already in cart — do NOT double-add, just return unchanged
+        return prev;
       }
       return [...prev, { ...item, quantity: 1 }];
     });
