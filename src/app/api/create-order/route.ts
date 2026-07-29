@@ -20,10 +20,15 @@ export async function POST(req: NextRequest) {
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
+    // Parse amount to ensure it is a clean number, handle string inputs correctly
+    const safeAmount = typeof amount === 'string' 
+      ? parseFloat(amount.replace(/,/g, '').replace(/[^\d.-]/g, '')) 
+      : Number(amount);
+      
     const options = {
-      amount: amount * 100, // amount in smallest currency unit (paise)
+      amount: Math.round(safeAmount * 100), // amount in smallest currency unit (paise) safely rounded
       currency,
-      receipt: `receipt_order_${Date.now()}`,
+      receipt: `receipt_${Date.now().toString().slice(-8)}`,
     };
 
     const order = await razorpay.orders.create(options);

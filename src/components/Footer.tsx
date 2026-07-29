@@ -12,9 +12,9 @@ export default function Footer() {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-white p-1">
-                <Image src="/logo.jpg" alt="Logo" fill className="object-cover rounded-lg" />
+                <Image src="/logo.png" alt="Logo" fill className="object-cover rounded-lg" />
               </div>
-              <span className="text-2xl font-bold text-white tracking-tight">Project Genie</span>
+              <span className="text-2xl font-bold text-white tracking-tight">GraduateNex</span>
             </div>
             <p className="text-sm leading-relaxed text-zinc-400">
               Empowering students with production-ready projects, zero-plagiarism documentation, and AI-driven career tools to secure their dream jobs.
@@ -31,9 +31,8 @@ export default function Footer() {
             <h3 className="text-lg font-bold text-white">Company</h3>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-sm hover:text-primary transition-colors">Who Are We</Link></li>
-              <li><Link href="/careers" className="text-sm hover:text-primary transition-colors">Careers</Link></li>
-              <li><Link href="/help" className="text-sm hover:text-primary transition-colors">Help & Contact</Link></li>
-              <li><Link href="/pricing" className="text-sm hover:text-primary transition-colors">Pricing</Link></li>
+              <li><Link href="/contact" className="text-sm hover:text-primary transition-colors">Contact Us</Link></li>
+              <li><Link href="/services" className="text-sm hover:text-primary transition-colors">Services & Pricing</Link></li>
             </ul>
           </div>
 
@@ -43,8 +42,8 @@ export default function Footer() {
             <ul className="space-y-4">
               <li><Link href="/terms" className="text-sm hover:text-primary transition-colors">Terms and Conditions</Link></li>
               <li><Link href="/privacy" className="text-sm hover:text-primary transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/refunds" className="text-sm hover:text-primary transition-colors">Refund Policy</Link></li>
-              <li><Link href="/disclaimer" className="text-sm hover:text-primary transition-colors">Academic Disclaimer</Link></li>
+              <li><Link href="/refunds" className="text-sm hover:text-primary transition-colors">Refund & Cancellation Policy</Link></li>
+              <li><Link href="/delivery" className="text-sm hover:text-primary transition-colors">Delivery Policy</Link></li>
             </ul>
           </div>
 
@@ -63,7 +62,7 @@ export default function Footer() {
 
         <div className="mt-16 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-zinc-500">
-            &copy; {new Date().getFullYear()} Project Genie Tech Solutions. A subsidiary of Takevolet ecosystem. All rights reserved.
+            &copy; {new Date().getFullYear()} GraduateNex. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             {/* Social Icons Mock */}

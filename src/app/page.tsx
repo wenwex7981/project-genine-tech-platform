@@ -395,6 +395,43 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── TRANSPARENT PRICING ── */}
+      <section className="w-full py-24 bg-zinc-50 border-y dark:bg-zinc-900/50">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-16 space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+              Transparent & Upfront <span className="text-primary">Pricing</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              No hidden fees. No "Contact us for price". Get immediate access to what you need.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {[
+              { name: "ATS Resume Builder", price: "₹199", desc: "AI-generated ATS-friendly resume." },
+              { name: "JD Match Analyzer", price: "₹299", desc: "Match your resume to specific job roles." },
+              { name: "Project Documentation", price: "₹149", desc: "Instant IEEE/SRS documentation templates." },
+              { name: "Final Year Projects", price: "From ₹6,000", desc: "Complete source code, setup, and support." },
+            ].map((plan) => (
+              <div key={plan.name} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
+                <div>
+                  <h3 className="font-bold text-xl mb-2">{plan.name}</h3>
+                  <p className="text-muted-foreground text-sm mb-6 h-10">{plan.desc}</p>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-primary mb-6">{plan.price}</div>
+                  <Link href="/services">
+                    <Button variant="outline" className="w-full h-12 font-bold rounded-xl hover:bg-primary hover:text-white transition-colors">
+                      View Details
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── TESTIMONIALS ── */}
       <section className="w-full py-24 bg-zinc-950 text-white">
         <div className="container mx-auto px-4 md:px-6">
@@ -477,10 +514,10 @@ export default function LandingPage() {
               <h3 className="text-4xl md:text-5xl font-black tracking-tight">Appala Nithin</h3>
               <div className="space-y-3 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  <strong className="text-foreground">Appala Nithin</strong> is the visionary founder behind <strong className="text-primary">Project Genie Tech Solutions</strong> and <strong className="text-orange-500">Takevolet</strong> — two platforms built from the ground up to solve the real academic struggles that millions of Indian students face every year.
+                  <strong className="text-foreground">Appala Nithin</strong> is the visionary founder behind <strong className="text-primary">GraduateNex</strong> — a platform built from the ground up to solve the real academic struggles that millions of Indian students face every year.
                 </p>
                 <p>
-                  Having seen firsthand how talented students were failing not because of intelligence, but because of a broken system of plagiarism-check barriers, outdated project repositories, and zero career support, Nithin built Project Genie to be the definitive solution — combining a production-quality project marketplace, AI-powered document tools, and an intelligent career launch engine.
+                  Having seen firsthand how talented students were failing not because of intelligence, but because of a broken system of plagiarism-check barriers, outdated project repositories, and zero career support, Nithin built GraduateNex to be the definitive solution — combining a production-quality project marketplace, AI-powered document tools, and an intelligent career launch engine.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 pt-2">

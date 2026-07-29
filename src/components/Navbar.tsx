@@ -62,10 +62,10 @@ export default function Navbar() {
       <div className="container mx-auto flex h-16 items-center px-4 md:px-6">
         <Link href={user ? "/home" : "/"} className="flex items-center gap-3 transition-transform hover:scale-105">
           <div className="relative h-10 w-10 overflow-hidden rounded-md">
-            <Image src="/logo.jpg" alt="Project Genie Tech Solutions Logo" fill className="object-cover" />
+            <Image src="/logo.png" alt="GraduateNex Logo" fill className="object-cover" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-foreground hidden sm:inline-block">
-            Project Genie <span className="text-primary">Tech Solutions</span>
+          <span className="font-extrabold text-xl tracking-tight text-foreground hidden sm:inline-block">
+            GraduateNex
           </span>
         </Link>
         {user && (

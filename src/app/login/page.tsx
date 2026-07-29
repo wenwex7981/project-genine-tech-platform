@@ -33,12 +33,12 @@ export default function LoginPage() {
       
       <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-950 border rounded-[2rem] shadow-2xl relative z-10 flex flex-col items-center">
         <div className="w-16 h-16 rounded-xl overflow-hidden mb-6 relative shadow-lg">
-          <Image src="/logo.jpg" alt="Logo" fill className="object-cover" />
+          <Image src="/logo.png" alt="Logo" fill className="object-cover" />
         </div>
         
         <h1 className="text-2xl font-extrabold tracking-tight mb-2">Welcome Back</h1>
         <p className="text-muted-foreground text-center mb-8">
-          Sign in to Project Genie Tech Solutions to access your premium academic dashboard.
+          Sign in to GraduateNex to access your premium academic dashboard.
         </p>
 
         <Button 

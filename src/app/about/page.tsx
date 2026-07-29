@@ -15,7 +15,7 @@ export default function AboutPage() {
         <div className="container relative z-10 mx-auto px-4 md:px-6 text-center max-w-4xl">
           <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6">Empowering the Next Generation of <span className="text-primary">Innovators</span></h1>
           <p className="text-xl md:text-2xl text-zinc-400 mb-8 font-light">
-            Project Genie Tech Solutions (Takevolet) is revolutionizing academic success by providing premium, end-to-end project solutions for students across India.
+            GraduateNex is revolutionizing academic success by providing premium, end-to-end project solutions for students across India.
           </p>
           <Link href="/projects">
             <Button size="lg" className="h-14 px-8 text-lg font-bold">Explore Our Work</Button>
@@ -30,7 +30,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                At Project Genie Tech Solutions, we believe that academic projects shouldn't be a source of stress, but a stepping stone to a successful career. Our mission is to bridge the gap between academic requirements and industry standards.
+                At GraduateNex, we believe that academic projects shouldn't be a source of stress, but a stepping stone to a successful career. Our mission is to bridge the gap between academic requirements and industry standards.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 We provide meticulously crafted source code, zero-plagiarism documentation, and premium AI services to ensure B.Tech, M.Tech, BCA, MCA, and MBA students score top grades while actually understanding the technology they deploy.
@@ -79,7 +79,7 @@ export default function AboutPage() {
                 <h3 className="text-3xl font-black mb-2">Appala Nithin</h3>
                 <p className="text-primary font-bold tracking-widest uppercase text-sm mb-6">Founder & CEO</p>
                 <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  "I started Takevolet (Project Genie Tech Solutions) with a simple goal: to democratize access to high-quality academic software. Too many talented students struggle with complex setups, outdated documentation, and plagiarism flags. We are here to change that narrative."
+                  "I started GraduateNex with a simple goal: to democratize access to high-quality academic software. Too many talented students struggle with complex setups, outdated documentation, and plagiarism flags. We are here to change that narrative."
                 </p>
                 <div className="flex gap-4">
                   <span className="flex items-center text-sm font-semibold text-muted-foreground"><GraduationCap className="h-5 w-5 mr-2 text-primary" /> Visionary</span>

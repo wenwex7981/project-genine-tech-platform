@@ -16,8 +16,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Project Genie Tech Solutions",
-  description: "Final year projects, research papers, and academic services.",
+  title: "GraduateNex | Premium Academic Projects & AI Tools",
+  description: "GraduateNex provides premium, zero-plagiarism source code, research papers, and AI-powered document generation for Indian students. Secure your dream job today.",
+  keywords: ["Final year projects", "BTech projects", "MTech projects", "Source code", "Plagiarism removal", "AI Resume Builder", "GraduateNex"],
+  authors: [{ name: "Appala Nithin" }],
+  openGraph: {
+    title: "GraduateNex | Academic Success Platform",
+    description: "Production-ready projects, zero-plagiarism documentation, and AI-driven career tools to secure your dream job.",
+    url: "https://graduatenex.online",
+    siteName: "GraduateNex",
+    images: [{ url: "https://graduatenex.online/logo.png", width: 800, height: 800 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GraduateNex | Academic Success Platform",
+    description: "Production-ready projects, zero-plagiarism documentation, and AI-driven career tools.",
+    images: ["https://graduatenex.online/logo.png"],
+  },
+  verification: {
+    google: "YOUR_GOOGLE_SEARCH_CONSOLE_TAG_HERE", // User will replace this in Vercel or here
+  }
 };
 
 export default function RootLayout({
@@ -38,6 +57,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </CartProvider>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX"} />
       </body>
     </html>
   );

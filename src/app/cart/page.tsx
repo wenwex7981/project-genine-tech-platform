@@ -33,12 +33,36 @@ export default function CartPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_mockkey",
         amount: order.amount,
         currency: order.currency,
-        name: "Project Genie Tech Solutions",
+        name: "GraduateNex",
         description: "Premium Project Purchase",
         order_id: order.id,
-        handler: function (response: any) {
-          alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
-          clearCart();
+        handler: async function (response: any) {
+          try {
+            const verifyRes = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                items: cart,
+                total_amount: order.amount / 100
+              })
+            });
+            const verifyData = await verifyRes.json();
+            
+            if (verifyData.success) {
+              alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+              clearCart();
+            } else {
+              alert("Payment verification failed!");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Error verifying payment");
+          } finally {
+            setIsCheckingOut(false);
+          }
         },
         theme: { color: "#f97316" }
       };
@@ -48,6 +72,7 @@ export default function CartPage() {
     } catch (err) {
       console.error(err);
       alert("Checkout failed. Please try again.");
+      setIsCheckingOut(false);
     }
   };
 
