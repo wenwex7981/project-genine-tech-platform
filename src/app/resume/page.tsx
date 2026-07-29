@@ -5,14 +5,16 @@ import { Button } from "@/components/ui/button";
 import { 
   Loader2, FileText, Upload, Briefcase, CheckCircle, AlertCircle,
   AlertTriangle, Lightbulb, FileDown, Percent, Users,
-  Search, Eye, Download, PlusCircle, Building, X, Trophy, FileCheck, Copy, Check
+  Search, Eye, Download, PlusCircle, Building, X, Trophy, FileCheck, Copy, Check, ShoppingCart, Star
 } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { supabase } from "@/lib/supabase";
+import { useCart } from "@/context/CartContext";
 
 export default function ResumeHub() {
   const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community">("ats");
   const [copiedText, setCopiedText] = useState<string | null>(null);
+  const { addToCart } = useCart();
 
   // --- ANALYZER STATE ---
   const [jd, setJd] = useState("");
@@ -44,8 +46,23 @@ export default function ResumeHub() {
 
   const fetchResumes = async () => {
     setLoadingCommunity(true);
-    const { data } = await supabase.from('community_resumes').select('*').order('created_at', { ascending: false });
-    if (data) setResumes(data);
+    // Fetch both community resumes AND admin-published resume templates
+    const [communityRes, templatesRes] = await Promise.all([
+      supabase.from('community_resumes').select('*').order('created_at', { ascending: false }),
+      supabase.from('resume_templates').select('*').order('created_at', { ascending: false })
+    ]);
+
+    const communityData = (communityRes.data || []).map((r: any) => ({ ...r, _type: 'community' }));
+    const templateData = (templatesRes.data || []).map((r: any) => ({ 
+      ...r, 
+      _type: 'premium',
+      name: r.title,
+      domain: r.category || 'Resume Template',
+      experience_level: r.level || 'All Levels',
+      shortlisted_by: 'GraduateNex Premium',
+    }));
+
+    setResumes([...templateData, ...communityData]);
     setLoadingCommunity(false);
   };
 
@@ -649,26 +666,66 @@ export default function ResumeHub() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredResumes.map((resume) => (
-                <div key={resume.id} className="bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm flex flex-col">
+                <div key={resume.id} className="bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
+                  {resume._type === 'premium' && resume.image_url && (
+                    <div className="relative h-44 bg-muted">
+                      <img src={resume.image_url} alt={resume.name} className="w-full h-full object-cover" />
+                      <div className="absolute top-3 left-3 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                        <Star className="w-3 h-3" /> Premium
+                      </div>
+                      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur text-gray-900 font-extrabold text-sm px-3 py-1 rounded-full shadow">
+                        ₹{resume.price}
+                      </div>
+                    </div>
+                  )}
                   <div className="p-6 flex-grow">
                     <div className="flex justify-between items-start mb-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${resume.experience_level === 'Fresher' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                        {resume.experience_level}
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        resume._type === 'premium' 
+                          ? 'bg-amber-100 text-amber-700' 
+                          : resume.experience_level === 'Fresher' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                      }`}>
+                        {resume._type === 'premium' ? '⭐ Premium Template' : resume.experience_level}
                       </span>
                       <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{resume.domain}</span>
                     </div>
                     <h3 className="text-xl font-bold mb-2">{resume.name}</h3>
-                    <div className="flex items-center gap-2 mt-4 text-sm bg-blue-50 p-3 rounded-lg">
-                      <Building className="h-5 w-5 text-blue-500" />
-                      <div>
-                        <span className="block text-xs font-semibold uppercase text-blue-400">Shortlisted By</span>
-                        <span className="font-bold text-gray-800">{resume.shortlisted_by}</span>
+                    {resume._type === 'community' && (
+                      <div className="flex items-center gap-2 mt-4 text-sm bg-blue-50 p-3 rounded-lg">
+                        <Building className="h-5 w-5 text-blue-500" />
+                        <div>
+                          <span className="block text-xs font-semibold uppercase text-blue-400">Shortlisted By</span>
+                          <span className="font-bold text-gray-800">{resume.shortlisted_by}</span>
+                        </div>
                       </div>
-                    </div>
+                    )}
+                    {resume._type === 'premium' && resume.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2 mt-2">{resume.description}</p>
+                    )}
                   </div>
                   <div className="grid grid-cols-2 border-t divide-x">
-                    <button className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 hover:bg-gray-50"><Eye className="h-4 w-4" /> Preview</button>
-                    <button className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"><Download className="h-4 w-4" /> Download</button>
+                    {resume._type === 'premium' ? (
+                      <>
+                        <a href={resume.file_url || resume.pdf_url || '#'} target="_blank" rel="noreferrer"
+                          className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 hover:bg-gray-50">
+                          <Eye className="h-4 w-4" /> Preview
+                        </a>
+                        <button
+                          onClick={() => {
+                            const price = typeof resume.price === 'string' ? parseFloat(resume.price.replace(/[^\d.]/g, '')) : Number(resume.price);
+                            addToCart({ id: resume.id, title: resume.name, price: price || 0, quantity: 1, image_url: resume.image_url, file_url: resume.file_url || resume.pdf_url });
+                            alert(`${resume.name} added to cart!`);
+                          }}
+                          className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50">
+                          <ShoppingCart className="h-4 w-4" /> Add to Cart
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 hover:bg-gray-50"><Eye className="h-4 w-4" /> Preview</button>
+                        <button className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"><Download className="h-4 w-4" /> Download</button>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
