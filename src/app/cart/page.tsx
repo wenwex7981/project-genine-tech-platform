@@ -6,6 +6,7 @@ import { CreditCard, Minus, Plus, ShoppingCart, Trash2, ArrowLeft, CheckCircle2 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { supabase } from "@/lib/supabase";
 
 export default function CartPage() {
   const { cart, updateQuantity, totalPrice, clearCart } = useCart();
@@ -23,6 +24,9 @@ export default function CartPage() {
   const handleCheckout = async () => {
     if (!isCheckoutLoaded || totalPrice === 0) return;
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userEmail = session?.user?.email || null;
+
       const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,7 +51,8 @@ export default function CartPage() {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 items: cart,
-                total_amount: order.amount / 100
+                total_amount: order.amount / 100,
+                user_email: userEmail
               })
             });
             const verifyData = await verifyRes.json();
@@ -60,17 +65,17 @@ export default function CartPage() {
             }
           } catch (err) {
             console.error(err);
-            alert("Error verifying payment");
+            alert("Error verifying payment.");
           }
         },
-        theme: { color: "#f97316" }
+        theme: { color: "#10b981" }
       };
 
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
     } catch (err) {
       console.error(err);
-      alert("Checkout failed. Please try again.");
+      alert("Error initiating checkout.");
     }
   };
 

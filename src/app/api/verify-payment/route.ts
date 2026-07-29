@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
         razorpay_payment_id: razorpay_payment_id || 'mock_payment',
         items,
         total_amount,
-        status: 'paid'
+        status: 'paid',
+        user_email: body.user_email || null
       });
       return NextResponse.json({ success: true, verified: false, mock: true });
     }
@@ -38,14 +39,15 @@ export async function POST(req: NextRequest) {
       .update(razorpay_order_id + '|' + razorpay_payment_id)
       .digest('hex');
 
-    if (generated_signature === razorpay_signature) {
+      if (generated_signature === razorpay_signature) {
       // Signature is legit, record order
       const { error } = await supabase.from('orders').insert({
         razorpay_order_id,
         razorpay_payment_id,
         items,
         total_amount,
-        status: 'paid'
+        status: 'paid',
+        user_email: body.user_email || null
       });
 
       if (error) {

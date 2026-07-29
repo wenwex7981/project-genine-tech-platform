@@ -19,7 +19,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "GraduateNex | Premium Academic Projects & AI Tools",
   description: "GraduateNex provides premium, zero-plagiarism source code, research papers, and AI-powered document generation for Indian students. Secure your dream job today.",
-  keywords: ["Final year projects", "BTech projects", "MTech projects", "Source code", "Plagiarism removal", "AI Resume Builder", "GraduateNex"],
+  keywords: [
+    "Final year projects", "BTech projects", "MTech projects", "Source code", 
+    "Resume ATS score checker", "Plagiarism removal", "Abstract maker", 
+    "PPT maker", "Document generator", "Major project", "Mini project", 
+    "Minor project", "Resume job description matching", "GraduateNex"
+  ],
   authors: [{ name: "Appala Nithin" }],
   openGraph: {
     title: "GraduateNex | Academic Success Platform",

@@ -5,23 +5,22 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Lock, X, ShoppingCart } from "lucide-react";
+import { Lock, X, ShoppingCart, Menu, UserCircle } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const { totalItems } = useCart();
 
   useEffect(() => {
-    // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
 
-    // Listen for changes on auth state (sign in, sign out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -51,67 +50,68 @@ export default function Navbar() {
     window.location.href = "/";
   };
 
-  // Check for both the typo version the user provided, and the correct spelling just in case
   const isAdmin = 
     user?.email === 'proejctgenie16@gmail.com' || 
     user?.email === 'projectgenie16@gmail.com' ||
     user?.email === 'nithinpatel2025@gmail.com';
 
+  const NavLinks = () => (
+    <>
+      <Link href="/projects" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+        Projects
+      </Link>
+      <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+        Services
+      </Link>
+      <Link href="/resume" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
+        Resume Hub
+      </Link>
+      <Link href="/hackathons" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
+        Hackathons
+      </Link>
+      <Link href="/ai-services" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
+        AI Tools
+      </Link>
+      {user && (
+        <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-bold text-primary transition-colors hover:text-primary/80 flex items-center gap-1 border-l pl-4 border-muted">
+          <UserCircle className="w-4 h-4" /> My Dashboard
+        </Link>
+      )}
+      {isAdmin && (
+        <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-bold text-red-500 transition-colors hover:text-red-400 flex items-center gap-1 border-l pl-4 border-muted">
+          <Lock className="w-4 h-4" /> Admin
+        </Link>
+      )}
+    </>
+  );
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center px-4 md:px-6">
-        <Link href={user ? "/home" : "/"} className="flex items-center gap-3 transition-transform hover:scale-105">
+      <div className="container mx-auto flex h-16 items-center px-4 md:px-6 justify-between">
+        
+        {/* Left: Logo */}
+        <Link href={user ? "/home" : "/"} className="flex items-center gap-3 transition-transform hover:scale-105 z-50">
           <div className="relative h-10 w-10 overflow-hidden rounded-md">
             <Image src="/logo.png" alt="GraduateNex Logo" fill className="object-cover" />
           </div>
-          <span className="font-extrabold text-xl tracking-tight text-foreground hidden sm:inline-block">
+          <span className="font-extrabold text-xl tracking-tight text-foreground sm:inline-block">
             GraduateNex
           </span>
         </Link>
-        {user && (
-          <nav className="ml-auto hidden md:flex gap-4 sm:gap-6 items-center">
-            <Link href="/projects" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
-              Projects
-            </Link>
-            <Link href="/services" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
-              Services
-            </Link>
-            <Link href="/resume" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              Resume Hub
-            </Link>
-            <Link href="/hackathons" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
-              </span>
-              Hackathons
-            </Link>
-            <Link href="/ai-services" className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-              </span>
-              AI Services
-            </Link>
-            {isAdmin && (
-              <Link href="/admin" className="text-sm font-bold text-primary transition-colors hover:text-primary/80 flex items-center gap-1 ml-2 border-l pl-4 border-muted">
-                Admin Dashboard
-              </Link>
-            )}
-          </nav>
-        )}
-        <div className="ml-auto flex items-center gap-4">
-          {!user && (
-            <nav className="hidden md:flex items-center gap-6 mr-2">
+        
+        {/* Center/Desktop Nav */}
+        <nav className="hidden md:flex gap-4 lg:gap-6 items-center absolute left-1/2 -translate-x-1/2">
+          {user ? <NavLinks /> : (
+            <>
               <Link href="/about" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">About</Link>
               <Link href="/services" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">Services</Link>
               <Link href="/contact" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">Contact</Link>
-            </nav>
+            </>
           )}
+        </nav>
+
+        {/* Right Actions */}
+        <div className="flex items-center gap-3 z-50">
           {user && (
             <Link href="/cart" className="relative p-2 hover:bg-muted rounded-full transition-colors flex items-center justify-center">
               <ShoppingCart className="h-6 w-6 text-foreground" />
@@ -122,20 +122,58 @@ export default function Navbar() {
               )}
             </Link>
           )}
-          {user ? (
-            <Button variant="outline" onClick={handleSignOut} className="hidden sm:inline-flex">Sign Out</Button>
-          ) : (
-            <>
-              <Link href="/login" className="hidden sm:inline-block">
-                <Button variant="outline">Sign In</Button>
-              </Link>
-              <Link href="/login">
-                <Button className="font-bold">Get Started Free</Button>
-              </Link>
-            </>
-          )}
+
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center gap-2">
+            {user ? (
+              <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
+            ) : (
+              <>
+                <Link href="/login"><Button variant="outline">Sign In</Button></Link>
+                <Link href="/login"><Button className="font-bold">Get Started Free</Button></Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="md:hidden p-2 hover:bg-muted rounded-full"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b shadow-xl animate-in slide-in-from-top-2 p-6 flex flex-col gap-6">
+          <nav className="flex flex-col gap-4">
+            {user ? <NavLinks /> : (
+              <>
+                <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-base font-medium">About</Link>
+                <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className="text-base font-medium">Services</Link>
+                <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-base font-medium">Contact</Link>
+              </>
+            )}
+          </nav>
+          
+          <div className="flex flex-col gap-3 pt-4 border-t">
+            {user ? (
+              <Button variant="outline" onClick={() => { handleSignOut(); setIsMobileMenuOpen(false); }} className="w-full">Sign Out</Button>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full">Sign In</Button>
+                </Link>
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full font-bold">Get Started Free</Button>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Modern Admin Login Modal */}
       {showLoginModal && (
