@@ -33,6 +33,7 @@ export default function ResumeTemplatesPage() {
       id: template.id,
       title: template.title,
       price: template.price,
+      quantity: 1,
       image_url: template.image_url,
       file_url: template.file_url
     });
