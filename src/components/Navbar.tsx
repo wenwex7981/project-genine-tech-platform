@@ -108,7 +108,8 @@ export default function Navbar() {
           {!user && (
             <nav className="hidden md:flex items-center gap-6 mr-2">
               <Link href="/about" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">About</Link>
-              <Link href="#services" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">Services</Link>
+              <Link href="/services" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">Services</Link>
+              <Link href="/contact" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">Contact</Link>
             </nav>
           )}
           {user && (

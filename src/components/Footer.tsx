@@ -21,7 +21,7 @@ export default function Footer() {
             </p>
             <div className="flex flex-col gap-2 pt-2">
               <p className="text-sm flex items-center gap-2"><Phone className="h-4 w-4" /> +91 79819 94870</p>
-              <p className="text-sm flex items-center gap-2"><Mail className="h-4 w-4" /> support@projectgenie.tech</p>
+              <p className="text-sm flex items-center gap-2"><Mail className="h-4 w-4" /> support@graduatenex.online</p>
               <p className="text-sm flex items-center gap-2"><MapPin className="h-4 w-4" /> Hyderabad, Telangana, India</p>
             </div>
           </div>

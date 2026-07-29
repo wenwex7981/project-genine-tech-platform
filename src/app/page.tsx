@@ -7,14 +7,14 @@ import {
   ArrowRight, Globe, ShieldCheck, Zap, MapPin, Star, CheckCircle,
   BookOpen, Brain, FileText, Cpu, Users, Award, Rocket, Code2,
   Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, Mail,
-  ChevronRight, TrendingUp, Lock, Layers, Database, Cloud
+  ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield
 } from "lucide-react";
 
 const STATS = [
   { value: "2,500+", label: "Projects Delivered" },
   { value: "98%", label: "Student Satisfaction" },
   { value: "50+", label: "Cities Across India" },
-  { value: "0%", label: "Plagiarism Guaranteed" },
+  { value: "0%", label: "Plagiarism Score" },
 ];
 
 const SERVICES = [
@@ -177,7 +177,7 @@ export default function LandingPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-6 pt-2">
-                <div className="flex items-center gap-2 text-sm text-zinc-400"><CheckCircle className="h-4 w-4 text-emerald-400" /> 0% Plagiarism Guaranteed</div>
+                <div className="flex items-center gap-2 text-sm text-zinc-400"><CheckCircle className="h-4 w-4 text-emerald-400" /> Original, Plagiarism-Free Work</div>
                 <div className="flex items-center gap-2 text-sm text-zinc-400"><CheckCircle className="h-4 w-4 text-emerald-400" /> 24/7 Expert Support</div>
                 <div className="flex items-center gap-2 text-sm text-zinc-400"><CheckCircle className="h-4 w-4 text-emerald-400" /> 50+ Cities Served</div>
               </div>
@@ -195,7 +195,7 @@ export default function LandingPage() {
                     <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
                   </div>
                   <div className="flex-1 mx-4 bg-zinc-700/60 rounded-md px-3 py-1 text-xs text-zinc-400 font-mono">
-                    projectgenie.tech/dashboard
+                    graduatenex.online/dashboard
                   </div>
                 </div>
                 {/* Dashboard content */}
@@ -530,6 +530,69 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── FAQ SECTION ── */}
+      <section className="w-full py-24 bg-background">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-16 space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+              Frequently Asked <span className="text-primary">Questions</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">Quick answers to common queries about our services.</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {[
+              { q: "What is GraduateNex?", a: "GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India." },
+              { q: "Are the projects plagiarism-free?", a: "Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards." },
+              { q: "How are digital products delivered?", a: "All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address." },
+              { q: "What payment methods do you accept?", a: "We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway." },
+              { q: "Can I get a refund?", a: "Digital products are generally non-refundable once delivered. However, refunds are issued for technical payment failures, undelivered products, and custom projects that don't meet agreed specifications. See our Refund Policy for full details." },
+              { q: "Do you offer support after purchase?", a: "Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST." },
+            ].map((faq) => (
+              <div key={faq.q} className="bg-muted/30 border rounded-2xl p-6">
+                <h3 className="font-bold text-lg mb-2">{faq.q}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TRUST SIGNALS ── */}
+      <section className="w-full py-16 bg-zinc-950 border-y border-zinc-800">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+            <div className="flex items-center gap-3 text-zinc-400">
+              <Shield className="h-8 w-8 text-emerald-400" />
+              <div>
+                <p className="text-sm font-bold text-white">Secure Payments</p>
+                <p className="text-xs text-zinc-500">256-bit SSL Encryption</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-zinc-400">
+              <CreditCard className="h-8 w-8 text-blue-400" />
+              <div>
+                <p className="text-sm font-bold text-white">Powered by Razorpay</p>
+                <p className="text-xs text-zinc-500">PCI-DSS Compliant</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-zinc-400">
+              <CheckCircle className="h-8 w-8 text-primary" />
+              <div>
+                <p className="text-sm font-bold text-white">2,500+ Orders</p>
+                <p className="text-xs text-zinc-500">Delivered Successfully</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-zinc-400">
+              <Phone className="h-8 w-8 text-violet-400" />
+              <div>
+                <p className="text-sm font-bold text-white">Dedicated Support</p>
+                <p className="text-xs text-zinc-500">Mon–Fri, 9AM–6PM IST</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── FINAL CTA ── */}
       <section className="w-full py-32 bg-gradient-to-br from-primary via-orange-500 to-yellow-500 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
@@ -541,7 +604,7 @@ export default function LandingPage() {
             Your Final Year Project is<br />One Click Away.
           </h2>
           <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Join 2,500+ students who have already secured top grades, beaten plagiarism detectors, and landed their dream jobs using GraduateNex.
+            Join 2,500+ students who have already secured top grades, submitted original documentation, and advanced their careers using GraduateNex.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/login">
@@ -556,7 +619,7 @@ export default function LandingPage() {
             </a>
           </div>
           <p className="text-white/60 text-sm">
-            📞 +91 79819 94870 &nbsp;|&nbsp; ✉️ support@projectgenie.tech &nbsp;|&nbsp; 📍 Hyderabad, India
+            📞 +91 79819 94870 &nbsp;|&nbsp; ✉️ support@graduatenex.online &nbsp;|&nbsp; 📍 T Hub, Hitech City, Hyderabad
           </p>
         </div>
       </section>

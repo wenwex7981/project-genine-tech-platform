@@ -45,7 +45,7 @@ export default function AboutPage() {
               <div className="bg-muted/50 p-6 rounded-2xl border">
                 <Shield className="h-10 w-10 text-primary mb-4" />
                 <h3 className="text-xl font-bold mb-2">Originality</h3>
-                <p className="text-sm text-muted-foreground">Guaranteed 100% plagiarism-free documentation.</p>
+                <p className="text-sm text-muted-foreground">Original, plagiarism-free documentation.</p>
               </div>
               <div className="bg-muted/50 p-6 rounded-2xl border">
                 <Zap className="h-10 w-10 text-primary mb-4" />
