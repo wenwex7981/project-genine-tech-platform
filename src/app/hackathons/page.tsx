@@ -28,7 +28,7 @@ export default function HackathonsDirectory() {
   const fetchHackathons = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from('hackathons')
+      .from('hackathons_v2')
       .select('*')
       .order('created_at', { ascending: false });
     
@@ -70,17 +70,17 @@ export default function HackathonsDirectory() {
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl p-8 md:p-12 text-white shadow-xl flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
         <div className="max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 flex items-center gap-3">
-            <Trophy className="h-10 w-10 text-yellow-400" />
-            Hackathons India
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+            Discover Top <span className="text-primary">Hackathons</span>
           </h1>
-          <p className="text-indigo-100 text-lg md:text-xl">Discover and participate in the biggest hackathons across India. Build projects, win prizes, and get hired by top tech companies.</p>
-        </div>
-        <div className="shrink-0">
-          <Button size="lg" onClick={() => setShowPostModal(true)} className="bg-white text-indigo-600 hover:bg-gray-100 shadow-lg text-lg h-14 px-8 rounded-full">
-            <PlusCircle className="mr-2 h-6 w-6" />
-            Post a Hackathon
-          </Button>
+          <p className="text-lg md:text-xl text-indigo-100 max-w-2xl mx-auto mb-8">
+            Participate in the best hackathons from colleges and companies worldwide. Build, learn, and win!
+          </p>
+          <Link href="/hackathons/post">
+            <Button size="lg" className="h-12 px-8 font-bold text-lg rounded-full shadow-lg hover:scale-105 transition-transform bg-white text-indigo-600 hover:bg-gray-100">
+              <PlusCircle className="mr-2 h-5 w-5" /> Host a Hackathon
+            </Button>
+          </Link>
         </div>
       </div>
 

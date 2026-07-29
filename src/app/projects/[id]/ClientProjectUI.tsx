@@ -180,7 +180,21 @@ export default function ClientProjectUI({ project }: { project: any }) {
           {/* Add to Cart Actions */}
           <div className="mt-auto pt-8 border-t flex flex-col sm:flex-row items-center gap-4">
             <Button 
-              onClick={() => addToCart(project)} 
+              onClick={() => {
+                const numericPrice = typeof project.price === 'string' ? 
+                  parseFloat(project.price.replace(/[^\d.]/g, '')) : 
+                  Number(project.price);
+                  
+                addToCart({
+                  id: project.id,
+                  title: project.title,
+                  price: numericPrice || 0,
+                  quantity: 1,
+                  image_url: project.image_url || (project.images && project.images[0]),
+                  file_url: project.pdf_url || project.file_url
+                });
+                alert(`${project.title} added to cart!`);
+              }} 
               size="lg" 
               className="w-full h-16 text-xl font-bold bg-primary hover:bg-primary/90 text-white shadow-xl flex items-center justify-center gap-3 rounded-2xl transition-transform hover:scale-105"
             >

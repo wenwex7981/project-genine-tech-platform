@@ -77,6 +77,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="ml-3">Resume Templates</span>
               </Link>
             </li>
+            <li>
+              <Link href="/admin/study" className="flex items-center p-2 text-foreground rounded-lg hover:bg-muted group">
+                <FileText className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                <span className="ml-3">Interview Prep</span>
+              </Link>
+            </li>
           </ul>
         </div>
       </aside>

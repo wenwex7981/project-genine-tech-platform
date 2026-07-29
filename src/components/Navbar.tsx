@@ -69,6 +69,9 @@ export default function Navbar() {
       <Link href="/hackathons" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
         Hackathons
       </Link>
+      <Link href="/study" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
+        Study Hub
+      </Link>
       <Link href="/ai-services" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary flex items-center gap-1">
         AI Tools
       </Link>
