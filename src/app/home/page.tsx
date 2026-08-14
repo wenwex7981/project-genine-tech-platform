@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Code, FileText, Presentation, Trophy, Bot, Sparkles, BrainCircuit } from "lucide-react";
-
+import Image from "next/image";
+import CustomRequirementsForm from "@/components/CustomRequirementsForm";
+import AIHelper from "@/components/AIHelper";
+import AIHumanizer from "@/components/AIHumanizer";
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
