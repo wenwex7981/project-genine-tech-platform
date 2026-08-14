@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, FileText, Upload, ShoppingCart, ShieldCheck } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
+import ReactMarkdown from 'react-markdown';
 
 export default function ClientProjectUI({ project }: { project: any }) {
   const { addToCart } = useCart();
@@ -132,10 +133,6 @@ export default function ClientProjectUI({ project }: { project: any }) {
               <ShieldCheck className="h-4 w-4 text-emerald-500" /> 100% Original
             </div>
           </div>
-
-          <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-            {project.description}
-          </p>
           
           <div className="space-y-4 mb-10">
             <h3 className="text-xl font-bold">What's Included in this package:</h3>
@@ -209,6 +206,16 @@ export default function ClientProjectUI({ project }: { project: any }) {
                 Go to Cart
               </Button>
             </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Full-width Project Description Section */}
+      <div className="mt-16 pt-16 border-t">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-black mb-8">Project Details & Documentation</h2>
+          <div className="prose prose-lg prose-indigo dark:prose-invert max-w-none whitespace-pre-wrap bg-white dark:bg-zinc-950 p-8 rounded-2xl border shadow-sm">
+            <ReactMarkdown>{project.description}</ReactMarkdown>
           </div>
         </div>
       </div>
