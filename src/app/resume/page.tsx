@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Loader2, FileText, Upload, Briefcase, CheckCircle, AlertCircle,
   AlertTriangle, Lightbulb, FileDown, Percent, Users,
-  Search, Eye, Download, PlusCircle, Building, X, Trophy, FileCheck, Copy, Check, ShoppingCart, Star, Lock, Zap
+  Search, Eye, Download, PlusCircle, Building, X, Trophy, FileCheck, Copy, Check, ShoppingCart, Star, Lock, Zap, GraduationCap
 } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { supabase } from "@/lib/supabase";
@@ -53,7 +53,8 @@ export default function ResumeHub() {
   // --- MAKER STATE ---
   const [makerPrompt, setMakerPrompt] = useState("");
   const [makerInfo, setMakerInfo] = useState({
-    name: "", email: "", phone: "", linkedin: "", github: "", portfolio: "", title: ""
+    name: "", email: "", phone: "", linkedin: "", github: "", portfolio: "", title: "",
+    college: "", branch: "", course: "", graduationYear: "", location: ""
   });
   const [makerTemplate, setMakerTemplate] = useState<File | null>(null);
   const makerFileRef = useRef<HTMLInputElement>(null);
@@ -803,6 +804,16 @@ export default function ResumeHub() {
                 <input type="tel" placeholder="Phone" value={makerInfo.phone} onChange={(e) => setMakerInfo({...makerInfo, phone: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
                 <input type="text" placeholder="LinkedIn URL" value={makerInfo.linkedin} onChange={(e) => setMakerInfo({...makerInfo, linkedin: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
                 <input type="text" placeholder="GitHub URL" value={makerInfo.github} onChange={(e) => setMakerInfo({...makerInfo, github: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+              </div>
+              <h3 className="text-lg font-bold flex items-center gap-2 mt-4">
+                <GraduationCap className="h-5 w-5 text-indigo-500" /> Education Details
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" placeholder="College/University Name" value={makerInfo.college} onChange={(e) => setMakerInfo({...makerInfo, college: e.target.value})} className="col-span-2 w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="text" placeholder="Course (e.g. B.Tech)" value={makerInfo.course} onChange={(e) => setMakerInfo({...makerInfo, course: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="text" placeholder="Branch (e.g. CSE)" value={makerInfo.branch} onChange={(e) => setMakerInfo({...makerInfo, branch: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="text" placeholder="Location" value={makerInfo.location} onChange={(e) => setMakerInfo({...makerInfo, location: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="text" placeholder="Graduation Year" value={makerInfo.graduationYear} onChange={(e) => setMakerInfo({...makerInfo, graduationYear: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
               </div>
             </div>
 
