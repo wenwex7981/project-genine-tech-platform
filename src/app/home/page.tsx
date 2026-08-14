@@ -1,11 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, Code, FileText, Presentation } from "lucide-react";
-import Image from "next/image";
-import CustomRequirementsForm from "@/components/CustomRequirementsForm";
-import AIHelper from "@/components/AIHelper";
-import AIHumanizer from "@/components/AIHumanizer";
-import { Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Code, FileText, Presentation, Trophy, Bot, Sparkles, BrainCircuit } from "lucide-react";
 
 export default function Home() {
   return (
@@ -52,61 +47,109 @@ export default function Home() {
       </section>
 
       {/* Services/Features Grid */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
+      <section className="w-full py-16 md:py-24 lg:py-32 bg-slate-50 dark:bg-zinc-950/50">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Our Premium Services</h2>
-            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed">
-              Everything you need to score top grades, from full source code to presentation materials.
+          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-slate-800 dark:text-slate-200">Our Premium Platform Services</h2>
+            <p className="max-w-[800px] text-slate-600 dark:text-slate-400 md:text-lg">
+              Everything you need to excel in your academic journey—from deploying full-stack projects to securing top placements.
             </p>
           </div>
-          <div className="mx-auto grid max-w-6xl items-start gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mx-auto grid max-w-6xl items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
             
-            <Link href="/resume" className="group block overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm hover:shadow-xl transition-all">
-              <div className="relative h-48 w-full overflow-hidden border-b bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-950/30 dark:to-teal-950/30">
-                <Image src="/service_resume_hub.png" alt="Resume Analyzer" fill className="object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
+            {/* Service 1: Projects */}
+            <Link href="/projects" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Code className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Academic Projects Hub</h3>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                  Premium major and mini projects for B.Tech, MCA, and MBA students with full source code, database schemas, and execution guides.
+                </p>
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-bold mb-2 flex items-center justify-between">
-                  Resume Hub <ArrowRight className="h-5 w-5 text-primary opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">Massive 17-point ATS scoring & 20-point JD Matching with Cover Letter generation.</p>
-              </div>
-            </Link>
-
-            <Link href="/hackathons" className="group block overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm hover:shadow-xl transition-all">
-              <div className="relative h-48 w-full overflow-hidden border-b bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-950/30 dark:to-yellow-950/30">
-                <Image src="/service_projects_marketplace.png" alt="Hackathons Directory" fill className="object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <div className="p-6">
-                <h3 className="text-lg font-bold mb-2 flex items-center justify-between">
-                  Hackathons <ArrowRight className="h-5 w-5 text-primary opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">Discover, post, and register for nationwide student hackathons in a central directory.</p>
+              <div className="mt-6 flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400">
+                Explore Projects <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
               </div>
             </Link>
 
-            <Link href="/ai-services" className="group block overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm hover:shadow-xl transition-all">
-              <div className="relative h-48 w-full overflow-hidden border-b bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30">
-                <Image src="/service_ai_humanizer.png" alt="AI Stealth Humanizer" fill className="object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
+            {/* Service 2: Resume */}
+            <Link href="/resume" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <FileText className="h-6 w-6 text-teal-600 dark:text-teal-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Resume & ATS Engine</h3>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                  Massive 17-point ATS scoring & 20-point Job Description matching to perfectly optimize your resume for top tech companies.
+                </p>
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-bold mb-2 flex items-center justify-between">
-                  Stealth Humanizer <ArrowRight className="h-5 w-5 text-primary opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">Advanced AI content refinement tool. Enhances writing to natural, polished academic quality.</p>
+              <div className="mt-6 flex items-center text-sm font-semibold text-teal-600 dark:text-teal-400">
+                Optimize Resume <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
               </div>
             </Link>
 
-            <Link href="/resume" className="group block overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm hover:shadow-xl transition-all">
-              <div className="relative h-48 w-full overflow-hidden border-b bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30">
-                <Image src="/service_plagiarism_checker.png" alt="Zero Plagiarism Documents" fill className="object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
+            {/* Service 3: Hackathons */}
+            <Link href="/hackathons" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Trophy className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">National Hackathons</h3>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                  Discover, post, and register for nationwide student hackathons and coding competitions in one centralized directory.
+                </p>
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-bold mb-2 flex items-center justify-between">
-                  Community <ArrowRight className="h-5 w-5 text-primary opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">Publish and explore a gallery of winning resumes shortlisted by top companies.</p>
+              <div className="mt-6 flex items-center text-sm font-semibold text-orange-600 dark:text-orange-400">
+                View Hackathons <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+              </div>
+            </Link>
+
+            {/* Service 4: Stealth Humanizer */}
+            <Link href="/ai-services" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Bot className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Stealth AI Humanizer</h3>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                  Advanced AI content refinement tool. Seamlessly enhances machine-generated writing to natural, polished academic quality.
+                </p>
+              </div>
+              <div className="mt-6 flex items-center text-sm font-semibold text-violet-600 dark:text-violet-400">
+                Humanize Content <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+              </div>
+            </Link>
+
+            {/* Service 5: Study Hub */}
+            <Link href="/study" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <BookOpen className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Study & Resource Hub</h3>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                  Access premium study materials, comprehensive tech roadmaps, and academic resources curated for top grades.
+                </p>
+              </div>
+              <div className="mt-6 flex items-center text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                Access Resources <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+              </div>
+            </Link>
+
+            {/* Service 6: AI Assistant */}
+            <Link href="/ai-services" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <BrainCircuit className="h-6 w-6 text-rose-600 dark:text-rose-400" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Smart AI Assistant</h3>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                  Instantly generate custom project abstracts, presentations, and technical documentation using our proprietary AI engine.
+                </p>
+              </div>
+              <div className="mt-6 flex items-center text-sm font-semibold text-rose-600 dark:text-rose-400">
+                Try AI Tools <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
               </div>
             </Link>
             
