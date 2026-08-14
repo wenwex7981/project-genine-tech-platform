@@ -108,12 +108,12 @@ export default function ResumeEditor({ initialData }: { initialData: any }) {
     }
 
     return (
-      <div className={`group/item relative ${className}`}>
+      <span className={`group/item relative rounded hover:bg-gray-50/50 dark:hover:bg-zinc-800/30 transition-colors ${className}`}>
         <span>{text}</span>
-        <button onClick={() => startEdit(section, text, index, field)} className="absolute -right-6 top-0 opacity-0 group-hover/item:opacity-100 text-gray-400 hover:text-indigo-500">
+        <button onClick={() => startEdit(section, text, index, field)} className="inline-flex ml-2 opacity-60 hover:opacity-100 text-indigo-500 transition-opacity align-middle p-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/40">
           <Pencil className="h-3 w-3" />
         </button>
-      </div>
+      </span>
     );
   };
 
@@ -215,10 +215,24 @@ export default function ResumeEditor({ initialData }: { initialData: any }) {
           <p className="text-sm text-gray-500">Drag sections to reorder. Click pencil to edit.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => generateDocx(data)} className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50">
+          <Button variant="outline" onClick={async () => {
+            try {
+              await generateDocx(data);
+            } catch (err: any) {
+              alert("Failed to generate Word document: " + err.message);
+              console.error(err);
+            }
+          }} className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50">
             <FileText className="h-4 w-4" /> Word (.docx)
           </Button>
-          <Button onClick={() => generatePdf("resume-pdf-container", data.personalInfo?.name || "Resume")} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white">
+          <Button onClick={async () => {
+            try {
+              await generatePdf("resume-pdf-container", data.personalInfo?.name || "Resume");
+            } catch (err: any) {
+              alert("Failed to generate PDF: " + err.message);
+              console.error(err);
+            }
+          }} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white">
             <Download className="h-4 w-4" /> PDF
           </Button>
         </div>

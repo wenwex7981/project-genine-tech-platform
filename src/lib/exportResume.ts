@@ -24,63 +24,71 @@ export const generateDocx = async (resumeData: any) => {
           new Paragraph({ text: resumeData.summary || "" }),
 
           // Experience
-          new Paragraph({ text: "EXPERIENCE", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } }),
-          ...(resumeData.experience || []).flatMap((exp: any) => [
-            new Paragraph({
-              children: [
-                new TextRun({ text: `${exp.position} - ${exp.company}`, bold: true }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: `${exp.startDate} to ${exp.endDate} | ${exp.location}`, italics: true }),
-              ],
-              spacing: { after: 100 },
-            }),
-            ...(exp.bullets || []).map((bullet: string) => 
-              new Paragraph({ text: bullet, bullet: { level: 0 } })
-            ),
-          ]),
+          ...(resumeData.experience && resumeData.experience.length > 0 ? [
+            new Paragraph({ text: "EXPERIENCE", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } }),
+            ...resumeData.experience.flatMap((exp: any) => [
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `${exp.position || ""} - ${exp.company || ""}`, bold: true }),
+                ],
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `${exp.startDate || ""} to ${exp.endDate || ""} | ${exp.location || ""}`, italics: true }),
+                ],
+                spacing: { after: 100 },
+              }),
+              ...(exp.bullets || []).map((bullet: string) => 
+                new Paragraph({ text: bullet, bullet: { level: 0 } })
+              ),
+            ])
+          ] : []),
 
           // Education
-          new Paragraph({ text: "EDUCATION", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } }),
-          ...(resumeData.education || []).flatMap((edu: any) => [
-            new Paragraph({
-              children: [
-                new TextRun({ text: `${edu.degree} - ${edu.institution}`, bold: true }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: `${edu.startDate} to ${edu.endDate} | GPA: ${edu.gpa}`, italics: true }),
-              ],
-            }),
-          ]),
+          ...(resumeData.education && resumeData.education.length > 0 ? [
+            new Paragraph({ text: "EDUCATION", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } }),
+            ...resumeData.education.flatMap((edu: any) => [
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `${edu.degree || ""} - ${edu.institution || ""}`, bold: true }),
+                ],
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `${edu.startDate || ""} to ${edu.endDate || ""} | GPA: ${edu.gpa || ""}`, italics: true }),
+                ],
+              }),
+            ])
+          ] : []),
 
           // Projects
-          new Paragraph({ text: "PROJECTS", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } }),
-          ...(resumeData.projects || []).flatMap((proj: any) => [
-            new Paragraph({
-              children: [
-                new TextRun({ text: proj.title, bold: true }),
-                new TextRun({ text: ` | ${proj.technologies}`, italics: true }),
-              ],
-            }),
-            ...(proj.bullets || []).map((bullet: string) => 
-              new Paragraph({ text: bullet, bullet: { level: 0 } })
-            ),
-          ]),
+          ...(resumeData.projects && resumeData.projects.length > 0 ? [
+            new Paragraph({ text: "PROJECTS", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } }),
+            ...resumeData.projects.flatMap((proj: any) => [
+              new Paragraph({
+                children: [
+                  new TextRun({ text: proj.title || "", bold: true }),
+                  new TextRun({ text: proj.technologies ? ` | ${proj.technologies}` : "", italics: true }),
+                ],
+              }),
+              ...(proj.bullets || []).map((bullet: string) => 
+                new Paragraph({ text: bullet, bullet: { level: 0 } })
+              ),
+            ])
+          ] : []),
           
           // Skills
-          new Paragraph({ text: "SKILLS", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } }),
-          ...(resumeData.skills || []).map((skill: any) => 
-            new Paragraph({
-              children: [
-                new TextRun({ text: `${skill.category}: `, bold: true }),
-                new TextRun(skill.items.join(", ")),
-              ],
-            })
-          ),
+          ...(resumeData.skills && resumeData.skills.length > 0 ? [
+            new Paragraph({ text: "SKILLS", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } }),
+            ...resumeData.skills.map((skill: any) => 
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `${skill.category || ""}: `, bold: true }),
+                  new TextRun(Array.isArray(skill.items) ? skill.items.join(", ") : ""),
+                ],
+              })
+            )
+          ] : []),
         ],
       },
     ],
