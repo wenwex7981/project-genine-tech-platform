@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Upload, Loader2, Save } from "lucide-react";
+import { Upload, Loader2, Save, X, Image as ImageIcon, Video, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function NewProjectPage() {
@@ -136,20 +136,73 @@ export default function NewProjectPage() {
           <p className="text-muted-foreground text-sm">Select files to automatically upload to your R2 bucket upon save.</p>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="border p-4 rounded-xl space-y-2 bg-muted/20">
-              <label className="font-semibold text-sm">Thumbnail Images (Select Multiple)</label>
-              <input type="file" multiple accept="image/*" onChange={(e) => setImageFiles(Array.from(e.target.files || []))} className="w-full text-xs" />
-              {imageFiles.length > 0 && <p className="text-xs text-muted-foreground mt-1">{imageFiles.length} images selected</p>}
+            
+            {/* Images Upload */}
+            <div className="border-2 border-dashed rounded-xl p-4 relative group hover:bg-muted/30 transition-colors">
+              <label className="cursor-pointer flex flex-col items-center justify-center h-full min-h-[120px]">
+                <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                <span className="font-semibold text-sm text-center">Thumbnail Images</span>
+                <span className="text-xs text-muted-foreground mt-1 text-center">Click anywhere to browse (Multiple)</span>
+                <input type="file" multiple accept="image/*" onChange={(e) => setImageFiles(Array.from(e.target.files || []))} className="hidden" />
+              </label>
+              
+              {imageFiles.length > 0 && (
+                <div className="absolute inset-0 bg-background/95 p-4 rounded-xl flex flex-col">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-bold">{imageFiles.length} images ready</span>
+                    <Button type="button" variant="ghost" size="icon" className="h-6 w-6 rounded-full bg-red-100 text-red-600 hover:bg-red-200" onClick={() => setImageFiles([])}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                    {imageFiles.map((f, i) => (
+                      <img key={i} src={URL.createObjectURL(f)} className="h-16 w-16 object-cover rounded-md border border-muted flex-shrink-0" alt="Preview" />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             
-            <div className="border p-4 rounded-xl space-y-2 bg-muted/20">
-              <label className="font-semibold text-sm">Preview Video</label>
-              <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} className="w-full text-xs" />
+            {/* Video Upload */}
+            <div className="border-2 border-dashed rounded-xl p-4 relative group hover:bg-muted/30 transition-colors">
+              <label className="cursor-pointer flex flex-col items-center justify-center h-full min-h-[120px]">
+                <Video className="h-8 w-8 text-muted-foreground mb-2" />
+                <span className="font-semibold text-sm text-center">Preview Video</span>
+                <span className="text-xs text-muted-foreground mt-1 text-center">Click anywhere to browse</span>
+                <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} className="hidden" />
+              </label>
+
+              {videoFile && (
+                <div className="absolute inset-0 bg-background/95 p-4 rounded-xl flex flex-col items-center justify-center text-center">
+                  <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6 rounded-full bg-red-100 text-red-600 hover:bg-red-200" onClick={() => setVideoFile(null)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <Video className="h-8 w-8 text-primary mb-2" />
+                  <span className="text-xs font-bold truncate max-w-full px-2">{videoFile.name}</span>
+                  <span className="text-xs text-muted-foreground mt-1">{(videoFile.size / (1024*1024)).toFixed(2)} MB</span>
+                </div>
+              )}
             </div>
             
-            <div className="border p-4 rounded-xl space-y-2 bg-muted/20">
-              <label className="font-semibold text-sm">Documentation PDF</label>
-              <input type="file" accept="application/pdf" onChange={(e) => setPdfFile(e.target.files?.[0] || null)} className="w-full text-xs" />
+            {/* PDF Upload */}
+            <div className="border-2 border-dashed rounded-xl p-4 relative group hover:bg-muted/30 transition-colors">
+              <label className="cursor-pointer flex flex-col items-center justify-center h-full min-h-[120px]">
+                <FileText className="h-8 w-8 text-muted-foreground mb-2" />
+                <span className="font-semibold text-sm text-center">Documentation PDF</span>
+                <span className="text-xs text-muted-foreground mt-1 text-center">Click anywhere to browse</span>
+                <input type="file" accept="application/pdf" onChange={(e) => setPdfFile(e.target.files?.[0] || null)} className="hidden" />
+              </label>
+
+              {pdfFile && (
+                <div className="absolute inset-0 bg-background/95 p-4 rounded-xl flex flex-col items-center justify-center text-center">
+                  <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6 rounded-full bg-red-100 text-red-600 hover:bg-red-200" onClick={() => setPdfFile(null)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <FileText className="h-8 w-8 text-blue-500 mb-2" />
+                  <span className="text-xs font-bold truncate max-w-full px-2">{pdfFile.name}</span>
+                  <span className="text-xs text-muted-foreground mt-1">{(pdfFile.size / (1024*1024)).toFixed(2)} MB</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
