@@ -64,6 +64,48 @@ export default function RootLayout({
           </main>
           <Footer />
         </CartProvider>
+        
+        {/* Global Organization JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'GraduateNex',
+              url: 'https://graduatenex.online',
+              logo: 'https://graduatenex.online/icon.png',
+              sameAs: [
+                'https://www.linkedin.com/company/graduatenex',
+                'https://twitter.com/graduatenex'
+              ],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                email: 'projectgenie16@gmail.com',
+                contactType: 'Customer Support',
+                areaServed: 'IN',
+                availableLanguage: ['English', 'Hindi', 'Telugu']
+              }
+            })
+          }}
+        />
+        
+        {/* WebSite SearchAction Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              url: 'https://graduatenex.online',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: 'https://graduatenex.online/projects?q={search_term_string}',
+                'query-input': 'required name=search_term_string'
+              }
+            })
+          }}
+        />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX"} />
       </body>
     </html>
