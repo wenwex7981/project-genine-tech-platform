@@ -1,6 +1,4 @@
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
-import html2pdf from "html2pdf.js";
-
 export const generateDocx = async (resumeData: any) => {
   const doc = new Document({
     sections: [
@@ -99,9 +97,11 @@ export const generateDocx = async (resumeData: any) => {
   window.URL.revokeObjectURL(url);
 };
 
-export const generatePdf = (elementId: string, filename: string) => {
+export const generatePdf = async (elementId: string, filename: string) => {
   const element = document.getElementById(elementId);
   if (!element) return;
+  
+  const html2pdf = (await import('html2pdf.js')).default;
   
   const opt: any = {
     margin: 10,
