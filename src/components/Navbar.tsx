@@ -69,14 +69,15 @@ export default function Navbar() {
       <Link href="/hackathons" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Hackathons
       </Link>
-      <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-bold text-amber-500 transition-colors hover:text-amber-600 flex items-center gap-1">
-        <Sparkles className="w-4 h-4" /> Pricing
-      </Link>
+
       <Link href="/study" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Study Hub
       </Link>
       <Link href="/ai-services" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         AI Tools
+      </Link>
+      <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+        Pricing
       </Link>
       {user && (
         <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-bold text-primary transition-colors hover:text-primary/80 flex items-center gap-1 border-l pl-4 border-muted">
