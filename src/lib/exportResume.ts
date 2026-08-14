@@ -103,7 +103,7 @@ export const generatePdf = (elementId: string, filename: string) => {
   const element = document.getElementById(elementId);
   if (!element) return;
   
-  const opt = {
+  const opt: any = {
     margin: 10,
     filename: `${filename}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
