@@ -61,98 +61,122 @@ export default function Home() {
           <div className="mx-auto grid max-w-6xl items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
             
             {/* Service 1: Projects */}
-            <Link href="/projects" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Code className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <Link href="/projects" className="group relative overflow-hidden rounded-2xl border border-zinc-800 shadow-xl aspect-square md:aspect-[4/5] lg:aspect-[3/4]">
+              <Image src="/service_projects_new.png" alt="Students coding" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-full bg-blue-500/20 backdrop-blur-md flex items-center justify-center border border-blue-500/30">
+                    <Code className="h-5 w-5 text-blue-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Academic Projects Hub</h3>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Academic Projects Hub</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
                   Premium major and mini projects for B.Tech, MCA, and MBA students with full source code, database schemas, and execution guides.
                 </p>
-              </div>
-              <div className="mt-6 flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400">
-                Explore Projects <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <div className="flex items-center text-sm font-bold text-blue-400">
+                  Explore Projects <ArrowRight className="ml-2 h-4 w-4 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </div>
               </div>
             </Link>
 
             {/* Service 2: Resume */}
-            <Link href="/resume" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <FileText className="h-6 w-6 text-teal-600 dark:text-teal-400" />
+            <Link href="/resume" className="group relative overflow-hidden rounded-2xl border border-zinc-800 shadow-xl aspect-square md:aspect-[4/5] lg:aspect-[3/4]">
+              <Image src="/service_resume_new.png" alt="Recruiter reviewing resume" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-full bg-teal-500/20 backdrop-blur-md flex items-center justify-center border border-teal-500/30">
+                    <FileText className="h-5 w-5 text-teal-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Resume & ATS Engine</h3>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Resume & ATS Engine</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
                   Massive 17-point ATS scoring & 20-point Job Description matching to perfectly optimize your resume for top tech companies.
                 </p>
-              </div>
-              <div className="mt-6 flex items-center text-sm font-semibold text-teal-600 dark:text-teal-400">
-                Optimize Resume <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <div className="flex items-center text-sm font-bold text-teal-400">
+                  Optimize Resume <ArrowRight className="ml-2 h-4 w-4 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </div>
               </div>
             </Link>
 
             {/* Service 3: Hackathons */}
-            <Link href="/hackathons" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Trophy className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+            <Link href="/hackathons" className="group relative overflow-hidden rounded-2xl border border-zinc-800 shadow-xl aspect-square md:aspect-[4/5] lg:aspect-[3/4]">
+              <Image src="/service_hackathons_new.png" alt="Students at a hackathon" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-full bg-orange-500/20 backdrop-blur-md flex items-center justify-center border border-orange-500/30">
+                    <Trophy className="h-5 w-5 text-orange-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">National Hackathons</h3>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">National Hackathons</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
                   Discover, post, and register for nationwide student hackathons and coding competitions in one centralized directory.
                 </p>
-              </div>
-              <div className="mt-6 flex items-center text-sm font-semibold text-orange-600 dark:text-orange-400">
-                View Hackathons <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <div className="flex items-center text-sm font-bold text-orange-400">
+                  View Hackathons <ArrowRight className="ml-2 h-4 w-4 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </div>
               </div>
             </Link>
 
             {/* Service 4: Stealth Humanizer */}
-            <Link href="/ai-services" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Bot className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+            <Link href="/ai-services" className="group relative overflow-hidden rounded-2xl border border-zinc-800 shadow-xl aspect-square md:aspect-[4/5] lg:aspect-[3/4]">
+              <Image src="/service_humanizer_new.png" alt="Student writing an essay" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-full bg-violet-500/20 backdrop-blur-md flex items-center justify-center border border-violet-500/30">
+                    <Bot className="h-5 w-5 text-violet-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Stealth AI Humanizer</h3>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Stealth AI Humanizer</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
                   Advanced AI content refinement tool. Seamlessly enhances machine-generated writing to natural, polished academic quality.
                 </p>
-              </div>
-              <div className="mt-6 flex items-center text-sm font-semibold text-violet-600 dark:text-violet-400">
-                Humanize Content <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <div className="flex items-center text-sm font-bold text-violet-400">
+                  Humanize Content <ArrowRight className="ml-2 h-4 w-4 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </div>
               </div>
             </Link>
 
             {/* Service 5: Study Hub */}
-            <Link href="/study" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <BookOpen className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+            <Link href="/study" className="group relative overflow-hidden rounded-2xl border border-zinc-800 shadow-xl aspect-square md:aspect-[4/5] lg:aspect-[3/4]">
+              <Image src="/service_study_new.png" alt="Students studying together" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-full bg-emerald-500/20 backdrop-blur-md flex items-center justify-center border border-emerald-500/30">
+                    <BookOpen className="h-5 w-5 text-emerald-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Study & Resource Hub</h3>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Study & Resource Hub</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
                   Access premium study materials, comprehensive tech roadmaps, and academic resources curated for top grades.
                 </p>
-              </div>
-              <div className="mt-6 flex items-center text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                Access Resources <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <div className="flex items-center text-sm font-bold text-emerald-400">
+                  Access Resources <ArrowRight className="ml-2 h-4 w-4 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </div>
               </div>
             </Link>
 
             {/* Service 6: AI Assistant */}
-            <Link href="/ai-services" className="group flex flex-col justify-between bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-8 shadow-sm hover:shadow-md transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <BrainCircuit className="h-6 w-6 text-rose-600 dark:text-rose-400" />
+            <Link href="/ai-services" className="group relative overflow-hidden rounded-2xl border border-zinc-800 shadow-xl aspect-square md:aspect-[4/5] lg:aspect-[3/4]">
+              <Image src="/service_assistant_new.png" alt="High tech smart AI interface" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-full bg-rose-500/20 backdrop-blur-md flex items-center justify-center border border-rose-500/30">
+                    <BrainCircuit className="h-5 w-5 text-rose-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Smart AI Assistant</h3>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-slate-200">Smart AI Assistant</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
                   Instantly generate custom project abstracts, presentations, and technical documentation using our proprietary AI engine.
                 </p>
-              </div>
-              <div className="mt-6 flex items-center text-sm font-semibold text-rose-600 dark:text-rose-400">
-                Try AI Tools <ArrowRight className="ml-1 h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <div className="flex items-center text-sm font-bold text-rose-400">
+                  Try AI Tools <ArrowRight className="ml-2 h-4 w-4 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </div>
               </div>
             </Link>
             
