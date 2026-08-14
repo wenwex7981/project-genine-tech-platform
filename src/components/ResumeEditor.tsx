@@ -73,7 +73,7 @@ export default function ResumeEditor({ initialData }: { initialData: any }) {
     const { section, index, field } = editingField;
     
     setData((prev: any) => {
-      const newData = { ...prev };
+      const newData = JSON.parse(JSON.stringify(prev));
       if (index !== undefined && field) {
         newData[section][index][field] = editValue;
       } else if (index !== undefined) {

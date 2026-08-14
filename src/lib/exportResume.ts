@@ -7,15 +7,15 @@ export const generateDocx = async (resumeData: any) => {
         children: [
           // Header
           new Paragraph({
-            text: resumeData.personalInfo.name || "Name",
+            text: resumeData.personalInfo?.name || "Name",
             heading: HeadingLevel.HEADING_1,
             alignment: AlignmentType.CENTER,
           }),
           new Paragraph({
             alignment: AlignmentType.CENTER,
             children: [
-              new TextRun(`${resumeData.personalInfo.email || ""} | ${resumeData.personalInfo.phone || ""}`),
-              new TextRun({ text: ` | ${resumeData.personalInfo.linkedin || ""}`, break: 1 }),
+              new TextRun(`${resumeData.personalInfo?.email || ""} | ${resumeData.personalInfo?.phone || ""}`),
+              new TextRun({ text: ` | ${resumeData.personalInfo?.linkedin || ""}`, break: 1 }),
             ],
           }),
           
@@ -106,18 +106,7 @@ export const generateDocx = async (resumeData: any) => {
 };
 
 export const generatePdf = async (elementId: string, filename: string) => {
-  const element = document.getElementById(elementId);
-  if (!element) return;
-  
-  const html2pdf = (await import('html2pdf.js')).default;
-  
-  const opt: any = {
-    margin: 10,
-    filename: `${filename}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  
-  html2pdf().set(opt).from(element).save();
+  // Using native browser print for 100% ATS-friendly text-based PDFs
+  // It relies on Tailwind 'print:' utilities applied in the component
+  window.print();
 };
