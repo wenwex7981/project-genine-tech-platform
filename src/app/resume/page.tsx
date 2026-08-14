@@ -13,9 +13,11 @@ import { useCart } from "@/context/CartContext";
 
 import { useRouter } from "next/navigation";
 
+import ResumeEditor from "@/components/ResumeEditor";
+
 export default function ResumeHub() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community">("ats");
+  const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community" | "maker">("ats");
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const { addToCart } = useCart();
   
@@ -47,6 +49,16 @@ export default function ResumeHub() {
     domain: "Software Engineering",
     experienceLevel: "Fresher",
   });
+
+  // --- MAKER STATE ---
+  const [makerPrompt, setMakerPrompt] = useState("");
+  const [makerInfo, setMakerInfo] = useState({
+    name: "", email: "", phone: "", linkedin: "", github: "", portfolio: "", title: ""
+  });
+  const [makerTemplate, setMakerTemplate] = useState<File | null>(null);
+  const makerFileRef = useRef<HTMLInputElement>(null);
+  const [makerResult, setMakerResult] = useState<any | null>(null);
+  const [isMaking, setIsMaking] = useState(false);
 
   // Reset result when switching analyzer tabs
   useEffect(() => {
@@ -276,6 +288,9 @@ export default function ResumeHub() {
         </button>
         <button onClick={() => setActiveTab("jd")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "jd" ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500'}`}>
           <Search className="h-4 w-4" /> 20-Point JD Analyzer
+        </button>
+        <button onClick={() => setActiveTab("maker")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "maker" ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500'}`}>
+          <Zap className="h-4 w-4" /> AI Resume Maker
         </button>
         <button onClick={() => setActiveTab("community")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "community" ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500'}`}>
           <Users className="h-4 w-4" /> Community Templates
@@ -768,7 +783,93 @@ export default function ResumeHub() {
         </div>
       )}
 
-      {/* -------------------- COMMUNITY TEMPLATES -------------------- */}
+      {/* -------------------- AI RESUME MAKER -------------------- */}
+      {activeTab === "maker" && !makerResult && (
+        <div className="max-w-4xl mx-auto space-y-6 bg-white dark:bg-zinc-900 p-8 rounded-2xl border shadow-sm">
+          <div className="text-center mb-6">
+            <h2 className="text-3xl font-black text-gray-900 dark:text-gray-100">AI Resume Maker</h2>
+            <p className="text-gray-500 mt-2">Generate a perfect ATS resume in seconds using an AI prompt.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <FileText className="h-5 w-5 text-indigo-500" /> 1. Personal Details
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" placeholder="Full Name" value={makerInfo.name} onChange={(e) => setMakerInfo({...makerInfo, name: e.target.value})} className="col-span-2 w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="text" placeholder="Desired Title (e.g. Frontend Dev)" value={makerInfo.title} onChange={(e) => setMakerInfo({...makerInfo, title: e.target.value})} className="col-span-2 w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="email" placeholder="Email" value={makerInfo.email} onChange={(e) => setMakerInfo({...makerInfo, email: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="tel" placeholder="Phone" value={makerInfo.phone} onChange={(e) => setMakerInfo({...makerInfo, phone: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="text" placeholder="LinkedIn URL" value={makerInfo.linkedin} onChange={(e) => setMakerInfo({...makerInfo, linkedin: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+                <input type="text" placeholder="GitHub URL" value={makerInfo.github} onChange={(e) => setMakerInfo({...makerInfo, github: e.target.value})} className="w-full p-3 bg-gray-50 dark:bg-zinc-800 border rounded-xl" />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-indigo-500" /> 2. AI Prompt
+              </h3>
+              <textarea 
+                placeholder="E.g. Create a highly professional Software Engineering resume. I have 3 years of experience at Amazon working on AWS lambda, and I graduated from Stanford. I want the tone to be impactful..."
+                value={makerPrompt}
+                onChange={(e) => setMakerPrompt(e.target.value)}
+                className="w-full h-32 p-4 bg-gray-50 dark:bg-zinc-800 border rounded-xl resize-none focus:ring-2 focus:ring-indigo-500"
+              />
+
+              <h3 className="text-lg font-bold flex items-center gap-2 mt-4">
+                <Upload className="h-5 w-5 text-indigo-500" /> 3. Sample Template (Optional)
+              </h3>
+              <div onClick={() => makerFileRef.current?.click()} className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/50">
+                <p className="text-sm font-semibold">{makerTemplate ? makerTemplate.name : "Upload a PDF/DOCX to extract layout"}</p>
+                <input type="file" ref={makerFileRef} onChange={(e) => setMakerTemplate(e.target.files?.[0] || null)} accept=".pdf,.docx" className="hidden" />
+              </div>
+            </div>
+          </div>
+
+          <Button 
+            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white shadow-xl shadow-indigo-500/20 rounded-xl mt-8"
+            onClick={async () => {
+              if (!makerPrompt) return alert("Please enter a prompt.");
+              if (!hasResumePro && !unlockedAts) return setShowPaywall("ats"); // Using ATS paywall check for now
+              setIsMaking(true);
+              try {
+                const formData = new FormData();
+                formData.append('prompt', makerPrompt);
+                formData.append('personalInfo', JSON.stringify(makerInfo));
+                if (makerTemplate) formData.append('file', makerTemplate);
+
+                const res = await fetch('/api/generate-resume', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                setMakerResult(data);
+              } catch (err: any) {
+                alert(err.message || "Failed to generate resume.");
+              } finally {
+                setIsMaking(false);
+              }
+            }}
+            disabled={isMaking}
+          >
+            {isMaking ? (
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Generating Your Resume...</>
+            ) : (
+              <><Zap className="mr-2 h-5 w-5" /> Generate Resume Now</>
+            )}
+          </Button>
+        </div>
+      )}
+
+      {activeTab === "maker" && makerResult && (
+        <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <Button variant="outline" onClick={() => setMakerResult(null)} className="mb-4">
+            ← Back to Generator
+          </Button>
+          <ResumeEditor initialData={makerResult} />
+        </div>
+      )}
+
+      {/* -------------------- COMMUNITY TAB -------------------- */}
       {activeTab === "community" && (
         <div className="animate-in fade-in duration-500">
           <div className="flex justify-between items-center mb-8">
