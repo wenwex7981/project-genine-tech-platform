@@ -219,12 +219,17 @@ export default function ResumeEditor({ initialData }: { initialData: any }) {
         );
         break;
       case "certifications":
-            <div>
-              <span className="font-bold">{renderEditableText(cert.title, "certifications", i, "title")}</span> - {renderEditableText(cert.issuer, "certifications", i, "issuer")}
-            </div>
-            <span className="text-sm text-gray-500">{renderEditableText(cert.date, "certifications", i, "date")}</span>
+        content = (
+          <div>
+            <SectionHeader title="Certifications" />
+            {data.certifications.map((cert: any, i: number) => (
+              <div key={cert.id || i} className="mb-1 last:mb-0 font-serif text-[13px] leading-snug text-black flex justify-between items-baseline">
+                <span className="font-bold">{renderEditableText(cert.title, "certifications", i, "title")}</span>
+                <span className="italic">{renderEditableText(cert.issuer, "certifications", i, "issuer")} | {renderEditableText(cert.date, "certifications", i, "date")}</span>
+              </div>
+            ))}
           </div>
-        ));
+        );
         break;
     }
 
