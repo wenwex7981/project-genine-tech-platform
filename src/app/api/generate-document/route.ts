@@ -70,7 +70,7 @@ CRITICAL SYNTAX RULES:
 1) Output ONLY valid Mermaid.js syntax.
 2) You MUST wrap the diagram in a markdown code block starting with \`\`\`mermaid and ending with \`\`\`. Do NOT output any conversational text.
 3) Node IDs must be strictly alphanumeric (no spaces).
-4) If node labels contain spaces or special characters (e.g. parentheses), you MUST enclose the label in double quotes, e.g., A["Label Name (Info)"].
+4) CRITICAL: If node labels contain ANY spaces, hyphens, or special characters (e.g. parentheses, brackets), you ABSOLUTELY MUST enclose the label in double quotes, e.g., A["Label Name (Info)"]. NEVER use unquoted parentheses.
 5) Use ONLY standard Mermaid arrows (e.g. \`-->\` or \`-->|Label|\`). Do NOT use invalid arrows like \`-->|Label|>\`.
 6) For Class Diagrams, you MUST explicitly map out the relationships between classes using valid syntax (e.g., \`ClassA <|-- ClassB\`, \`ClassC *-- ClassD\`). Do not leave classes floating without connections.
 7) CRITICAL: ONLY output the single diagram type requested. Do NOT output a flowchart AND a class diagram AND a sequence diagram. STOP generating after the first diagram block is complete.
@@ -114,6 +114,8 @@ Just return the markdown block containing the diagram.`;
       
       // Auto-fix common AI syntax hallucinations
       cleanResult = cleanResult.replace(/\|>/g, '|'); // Fixes -->|Label|>
+      cleanResult = cleanResult.replace(/\]\s*-->/g, '] -->'); // minor fixes
+      cleanResult = cleanResult.replace(/\(\(/g, '(').replace(/\)\)/g, ')'); // Prevent double parenthesis
     } else {
       cleanResult = cleanResult.replace(/```(?:mermaid)?/gi, '').replace(/```/g, '').trim();
     }

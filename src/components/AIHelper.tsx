@@ -22,9 +22,13 @@ export default function AIHelper() {
       import('mermaid').then((m) => {
         m.default.initialize({ startOnLoad: false, theme: 'default' });
         m.default.render('mermaid-svg', resultText).then(({ svg }) => {
+          if (svg.includes('Syntax error') || svg.includes('mermaid-error')) {
+            throw new Error('Mermaid syntax error');
+          }
           mermaidRef.current!.innerHTML = svg;
-        }).catch(() => {
-          mermaidRef.current!.innerHTML = '<div class="text-red-500 p-4">Failed to render UML diagram. AI produced invalid syntax.</div>';
+        }).catch((err) => {
+          console.error("Mermaid error:", err);
+          mermaidRef.current!.innerHTML = '<div class="text-red-500 p-4 bg-red-50 dark:bg-red-950/20 rounded-xl border border-red-200 mt-4 text-sm font-semibold">⚠️ AI generated invalid diagram syntax. Please try generating it again with a slightly different prompt to help the AI format it correctly.</div>';
         });
       });
     }
