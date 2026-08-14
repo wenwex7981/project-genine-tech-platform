@@ -1,7 +1,21 @@
 import { MetadataRoute } from 'next';
+import { supabase } from '@/lib/supabase';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://graduatenex.online';
+  
+  // Fetch published blogs
+  const { data: blogs } = await supabase
+    .from('blogs')
+    .select('slug, updated_at, created_at')
+    .eq('published', true);
+
+  const blogEntries: MetadataRoute.Sitemap = (blogs || []).map((blog) => ({
+    url: `${baseUrl}/blog/${blog.slug}`,
+    lastModified: new Date(blog.updated_at || blog.created_at),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
   
   return [
     {
@@ -45,6 +59,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,
-    }
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    ...blogEntries,
   ];
 }

@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://graduatenex.online'),
   title: "GraduateNex | Premium Academic Projects & AI Tools",
   description: "GraduateNex provides premium, zero-plagiarism source code, research papers, and AI-powered document generation for Indian students. Secure your dream job today.",
   keywords: [
