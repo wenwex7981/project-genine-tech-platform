@@ -13,10 +13,12 @@ Your task is to rewrite, tailor, and optimize the user's provided Resume specifi
 CRITICAL INSTRUCTIONS:
 1. You MUST output STRICTLY a JSON object matching the exact structure below. Do NOT wrap it in markdown blocks (\`\`\`json), just return raw JSON.
 2. Rewrite the Summary to perfectly align with the JD's core requirements.
-3. Rewrite the Experience and Project bullet points using strong Action Verbs. If the user's past experience was in a different role, AGGRESSIVELY REFRAME and REWRITE their past experience bullet points to sound as relevant as possible to the NEW JD role. Highlight transferable skills.
-4. **100% KEYWORD MATCHING**: You MUST scan the JD for all hard skills, soft skills, and exact keyword phrases. You MUST aggressively inject these EXACT keywords into the user's Experience bullets, Projects, and Skills section to ensure the resume scores a 100% match rate in any ATS system.
-5. Reorder Skills so the most relevant ones to the JD are listed first, adding any missing skills from the JD that the user implies they know.
-6. Ensure the final resume is highly professional, ATS-friendly, and massively increases their chances of getting an interview.
+3. **ANTI-HALLUCINATION RULE**: DO NOT invent or add new work experiences. If the user has 1 job, only output 1 job. DO NOT move Projects into the Experience section. ONLY use the exact companies/roles the user actually worked at.
+4. Rewrite the Experience and Project bullet points using strong Action Verbs. If the user's past experience was in a different role, AGGRESSIVELY REFRAME and REWRITE their past experience bullet points to sound as relevant as possible to the NEW JD role. Highlight transferable skills. (Exception: Keep the original Project Titles if they provided them, but completely rewrite the bullets under them).
+5. **100% KEYWORD MATCHING**: You MUST scan the JD for all hard skills, soft skills, and exact keyword phrases. You MUST aggressively inject these EXACT keywords into the user's Experience bullets, Projects, and Skills section to ensure the resume scores a 100% match rate in any ATS system.
+6. Reorder Skills so the most relevant ones to the JD are listed first, adding any missing skills from the JD that the user implies they know.
+7. **EXACT PERSONAL INFO**: Extract the personalInfo (Name, Email, Phone, LinkedIn, GitHub) EXACTLY as they appear. Do not modify or hallucinate them.
+8. Ensure the final resume is highly professional, ATS-friendly, and massively increases their chances of getting an interview.
 
 REQUIRED JSON STRUCTURE:
 {
