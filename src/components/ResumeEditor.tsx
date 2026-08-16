@@ -24,7 +24,7 @@ const SortableSection = ({ id, title, content, onEdit }: SectionProps) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative group bg-white dark:bg-zinc-900 mb-6 p-6 rounded-xl border border-transparent hover:border-indigo-500/30 hover:shadow-lg transition-all">
+    <div ref={setNodeRef} style={style} className="relative group bg-white dark:bg-zinc-900 mb-6 p-6 print:mb-1 print:p-0 rounded-xl border border-transparent hover:border-indigo-500/30 hover:shadow-lg transition-all print:border-none print:shadow-none print:rounded-none">
       <div className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-grab" {...attributes} {...listeners}>
         <GripVertical className="h-5 w-5 text-gray-400 hover:text-indigo-500" />
       </div>
@@ -118,7 +118,7 @@ export default function ResumeEditor({ initialData }: { initialData: any }) {
   };
 
   const SectionHeader = ({ title }: { title: string }) => (
-    <h3 className="uppercase font-bold font-serif text-[14px] border-b-[1.5px] border-black pb-0.5 mb-2 mt-4 tracking-wide text-black">
+    <h3 className="uppercase font-bold font-serif text-[14px] border-b-[1.5px] border-black pb-0.5 mb-1 mt-4 print:mt-1 tracking-wide text-black">
       {title}
     </h3>
   );
@@ -287,7 +287,7 @@ export default function ResumeEditor({ initialData }: { initialData: any }) {
         }
       `}} />
 
-      <div id="resume-pdf-container" className="bg-white shadow-2xl rounded-xl px-12 py-10 max-w-[210mm] mx-auto min-h-[297mm]">
+      <div id="resume-pdf-container" className="bg-white shadow-2xl print:shadow-none rounded-xl print:rounded-none px-12 py-10 print:px-6 print:py-6 max-w-[210mm] print:max-w-none mx-auto min-h-[297mm]">
         {/* Header (Not draggable) */}
         <div className="text-center mb-4">
           <h1 className="text-[26px] font-bold font-serif uppercase tracking-widest text-black mb-1">

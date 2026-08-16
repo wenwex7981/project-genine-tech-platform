@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Loader2, FileText, Upload, Briefcase, CheckCircle, AlertCircle,
   AlertTriangle, Lightbulb, FileDown, Percent, Users,
-  Search, Eye, Download, PlusCircle, Building, X, Trophy, FileCheck, Copy, Check, ShoppingCart, Star, Lock, Zap, GraduationCap
+  Search, Eye, Download, PlusCircle, Building, X, Trophy, FileCheck, Copy, Check, ShoppingCart, Star, Lock, Zap, GraduationCap, Sparkles
 } from "lucide-react";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { supabase } from "@/lib/supabase";
@@ -217,6 +217,34 @@ export default function ResumeHub() {
     }
   };
 
+  const [isTailoring, setIsTailoring] = useState(false);
+
+  const handleTailor = async () => {
+    if (!file) return alert("Please upload a previous resume first.");
+    if (!jd) return alert("Please paste the Job Description.");
+
+    setIsTailoring(true);
+    const formData = new FormData();
+    formData.append("resume", file);
+    formData.append("jd", jd);
+
+    try {
+      const response = await fetch('/api/tailor-resume', { method: 'POST', body: formData });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || 'Failed to tailor resume');
+      }
+      const tailoredData = await response.json();
+      setMakerResult(tailoredData);
+      setActiveTab("maker");
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setIsTailoring(false);
+    }
+  };
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedText(text);
@@ -323,9 +351,20 @@ export default function ResumeHub() {
             </div>
           )}
 
-          <Button onClick={handleAnalyze} disabled={!file || (activeTab === "jd" && !jd) || isProcessing} size="lg" className="w-full h-14 text-lg bg-indigo-600 hover:bg-indigo-700 text-white">
-            {isProcessing ? <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Deep Scanning...</> : <><Percent className="mr-2 h-6 w-6" /> Run Full Analysis</>}
-          </Button>
+          {activeTab === "ats" ? (
+            <Button onClick={handleAnalyze} disabled={!file || isProcessing} size="lg" className="w-full h-14 text-lg bg-indigo-600 hover:bg-indigo-700 text-white">
+              {isProcessing ? <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Deep Scanning...</> : <><Percent className="mr-2 h-6 w-6" /> Run Full Analysis</>}
+            </Button>
+          ) : (
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button onClick={handleAnalyze} disabled={!file || !jd || isProcessing || isTailoring} size="lg" className="flex-1 h-14 text-lg bg-indigo-600 hover:bg-indigo-700 text-white">
+                {isProcessing ? <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Deep Scanning...</> : <><Percent className="mr-2 h-6 w-6" /> JD Match Analyzer</>}
+              </Button>
+              <Button onClick={handleTailor} disabled={!file || !jd || isProcessing || isTailoring} size="lg" className="flex-1 h-14 text-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20">
+                {isTailoring ? <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Tailoring Resume...</> : <><Sparkles className="mr-2 h-6 w-6" /> Tailor My Resume (AI Rewrite)</>}
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
