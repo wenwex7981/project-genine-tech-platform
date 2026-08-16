@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -135,11 +133,36 @@ const badgeColorMap: Record<string, string> = {
   "Premium": "bg-cyan-600 text-white",
 };
 
-export default function LandingPage() {
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
+export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "url": "https://www.graduatenex.online/",
+        "name": "GraduateNex",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.graduatenex.online/projects?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "GraduateNex",
+        "url": "https://www.graduatenex.online/",
+        "logo": "https://www.graduatenex.online/logo.png"
+      }
+    ]
+  };
 
-      {/* ── HERO ── */}
+  return (
+    <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans selection:bg-primary/30">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      {/* ── HERO SECTION ── */}
       <section className="relative w-full min-h-[92vh] flex items-center bg-zinc-950 overflow-hidden text-white">
         {/* Background gradient orbs */}
         <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3 pointer-events-none" />

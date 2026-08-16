@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Download top-rated final year projects for CSE and IT. Get full source code, zero-plagiarism reports, and documentation for Machine Learning, Web Dev, and App Dev projects.",
   keywords: ["final year projects cse", "btech projects download", "machine learning projects for final year", "react js projects with source code", "zero plagiarism project report", "major projects for cse"],
   alternates: {
-    canonical: "https://graduatenex.online/projects",
+    canonical: "https://www.graduatenex.online/projects",
   }
 };
 

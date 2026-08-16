@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/cart/', '/api/'],
+      disallow: ['/admin/', '/cart/', '/api/', '/dashboard/'],
     },
-    sitemap: 'https://graduatenex.online/sitemap.xml',
+    sitemap: 'https://www.graduatenex.online/sitemap.xml',
   };
 }

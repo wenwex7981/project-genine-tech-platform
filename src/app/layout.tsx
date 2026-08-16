@@ -17,29 +17,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://graduatenex.online'),
-  title: "GraduateNex | Premium Academic Projects & AI Tools",
-  description: "GraduateNex provides premium, zero-plagiarism source code, research papers, and AI-powered document generation for Indian students. Secure your dream job today.",
+  metadataBase: new URL('https://www.graduatenex.online'),
+  title: "GraduateNex | Premium Academic Projects & AI Career Tools in India",
+  description: "GraduateNex provides premium, zero-plagiarism source code, research papers, and AI-powered document generation for Indian students and freshers to secure top jobs.",
   keywords: [
-    "Final year projects", "BTech projects", "MTech projects", "Source code", 
-    "Resume ATS score checker", "Plagiarism removal", "Abstract maker", 
-    "PPT maker", "Document generator", "Major project", "Mini project", 
-    "Minor project", "Resume job description matching", "GraduateNex"
+    "Final year projects for CSE students in India", "BTech projects with source code", "MTech research projects", 
+    "Free ATS Resume Checker India", "Plagiarism removal service online", "AI Abstract maker", 
+    "PPT maker for engineering projects", "Document generator", "Major project for CSE", "Mini project ideas", 
+    "Job description resume matching", "GraduateNex", "Fresher resume builder"
   ],
   authors: [{ name: "Appala Nithin" }],
   openGraph: {
-    title: "GraduateNex | Academic Success Platform",
-    description: "Production-ready projects, zero-plagiarism documentation, and AI-driven career tools to secure your dream job.",
-    url: "https://graduatenex.online",
+    title: "GraduateNex | Academic & Career Success Platform in India",
+    description: "Production-ready engineering projects, zero-plagiarism documentation, and AI-driven career tools to secure your dream job in India.",
+    url: "https://www.graduatenex.online",
     siteName: "GraduateNex",
-    images: [{ url: "https://graduatenex.online/logo.png", width: 800, height: 800 }],
+    images: [{ url: "https://www.graduatenex.online/logo.png", width: 800, height: 800 }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "GraduateNex | Academic Success Platform",
-    description: "Production-ready projects, zero-plagiarism documentation, and AI-driven career tools.",
-    images: ["https://graduatenex.online/logo.png"],
+    title: "GraduateNex | Academic & Career Success Platform",
+    description: "Production-ready engineering projects, zero-plagiarism documentation, and AI-driven career tools for Indian students.",
+    images: ["https://www.graduatenex.online/logo.png"],
   },
   verification: {
     google: "6_tHEFyTHMeA_lWml1WH05XPgbSpiXIP6cJouAd5-OQ",
@@ -73,8 +73,8 @@ export default function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'Organization',
               name: 'GraduateNex',
-              url: 'https://graduatenex.online',
-              logo: 'https://graduatenex.online/icon.png',
+              url: 'https://www.graduatenex.online',
+              logo: 'https://www.graduatenex.online/icon.png',
               sameAs: [
                 'https://www.linkedin.com/company/graduatenex',
                 'https://twitter.com/graduatenex'
@@ -97,10 +97,11 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              url: 'https://graduatenex.online',
+              name: 'GraduateNex',
+              url: 'https://www.graduatenex.online',
               potentialAction: {
                 '@type': 'SearchAction',
-                target: 'https://graduatenex.online/projects?q={search_term_string}',
+                target: 'https://www.graduatenex.online/projects?q={search_term_string}',
                 'query-input': 'required name=search_term_string'
               }
             })

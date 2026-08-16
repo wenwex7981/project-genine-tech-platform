@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Free ATS Resume Checker & JD Matcher | GraduateNex",
-  description: "Check your resume ATS score for free, use our Job Description (JD) matcher, and access community resume templates tailored for Indian tech students.",
-  keywords: ["ATS resume checker free", "JD matcher", "resume templates", "BTech resume", "data science resume", "software engineer resume india"],
+  title: "Free ATS Resume Builder & FANG Template Maker | GraduateNex",
+  description: "Create a 1-page, ATS-friendly resume tailored to any Job Description. Our free AI resume builder for Indian freshers generates FANG-standard resumes that bypass ATS bots.",
+  keywords: ["Free ATS Resume Checker India", "JD matcher", "FANG resume templates", "BTech resume", "data science resume", "software engineer resume india"],
   alternates: {
-    canonical: "https://graduatenex.online/resume",
+    canonical: "https://www.graduatenex.online/resume",
   }
 };
 
