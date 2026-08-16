@@ -13,9 +13,10 @@ Your task is to rewrite, tailor, and optimize the user's provided Resume specifi
 CRITICAL INSTRUCTIONS:
 1. You MUST output STRICTLY a JSON object matching the exact structure below. Do NOT wrap it in markdown blocks (\`\`\`json), just return raw JSON.
 2. Rewrite the Summary to perfectly align with the JD's core requirements.
-3. Rewrite the Experience and Project bullet points using strong Action Verbs and integrating keywords from the JD naturally. If the user's past experience was in a different role, AGGRESSIVELY REFRAME and REWRITE their past experience bullet points to sound as relevant as possible to the NEW JD role. Highlight transferable skills and frame past work entirely in the context of the new JD requirements.
-4. Reorder Skills so the most relevant ones to the JD are listed first.
-5. Ensure the final resume is highly professional, ATS-friendly, and massively increases their chances of getting an interview.
+3. Rewrite the Experience and Project bullet points using strong Action Verbs. If the user's past experience was in a different role, AGGRESSIVELY REFRAME and REWRITE their past experience bullet points to sound as relevant as possible to the NEW JD role. Highlight transferable skills.
+4. **100% KEYWORD MATCHING**: You MUST scan the JD for all hard skills, soft skills, and exact keyword phrases. You MUST aggressively inject these EXACT keywords into the user's Experience bullets, Projects, and Skills section to ensure the resume scores a 100% match rate in any ATS system.
+5. Reorder Skills so the most relevant ones to the JD are listed first, adding any missing skills from the JD that the user implies they know.
+6. Ensure the final resume is highly professional, ATS-friendly, and massively increases their chances of getting an interview.
 
 REQUIRED JSON STRUCTURE:
 {
