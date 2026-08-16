@@ -60,6 +60,70 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* SEO Locations & Universities */}
+        <div className="mt-16 pt-8 border-t border-zinc-800">
+          <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-4">Proudly Serving Students Across States</h3>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-zinc-600">
+            <span>Andhra Pradesh</span>
+            <span>Telangana</span>
+            <span>Maharashtra</span>
+            <span>Karnataka</span>
+            <span>Tamil Nadu</span>
+            <span>Delhi NCR</span>
+            <span>Uttar Pradesh</span>
+            <span>Gujarat</span>
+            <span>West Bengal</span>
+            <span>Rajasthan</span>
+            <span>Madhya Pradesh</span>
+            <span>Kerala</span>
+            <span>Punjab</span>
+            <span>Haryana</span>
+            <span>Bihar</span>
+            <span>Odisha</span>
+            <span>Assam</span>
+            <span>Jharkhand</span>
+            <span>Chhattisgarh</span>
+            <span>Uttarakhand</span>
+          </div>
+          
+          <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-4">Top Universities & Institutions We Support</h3>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-zinc-600">
+            <span>Indian Institutes of Technology (IITs)</span>
+            <span>National Institutes of Technology (NITs)</span>
+            <span>IIITs</span>
+            <span>BITS Pilani</span>
+            <span>JNTU Hyderabad (JNTUH)</span>
+            <span>JNTU Kakinada (JNTUK)</span>
+            <span>JNTU Anantapur (JNTUA)</span>
+            <span>Anna University</span>
+            <span>Visvesvaraya Technological University (VTU)</span>
+            <span>Delhi University (DU)</span>
+            <span>Mumbai University</span>
+            <span>Pune University (SPPU)</span>
+            <span>Osmania University (OU)</span>
+            <span>SRM Institute of Science and Technology</span>
+            <span>VIT Vellore</span>
+            <span>Manipal Academy of Higher Education</span>
+            <span>Amity University</span>
+            <span>Lovely Professional University (LPU)</span>
+            <span>Chandigarh University</span>
+            <span>AKTU (UPTU)</span>
+            <span>Gujarat Technological University (GTU)</span>
+            <span>RGPV Bhopal</span>
+            <span>APJ Abdul Kalam Technological University (KTU Kerala)</span>
+            <span>MAKAUT West Bengal</span>
+            <span>Biju Patnaik University of Technology (BPUT)</span>
+            <span>Andhra University (AU)</span>
+            <span>Sri Venkateswara University (SVU)</span>
+            <span>KLU</span>
+            <span>Gitam University</span>
+            <span>Thapar Institute</span>
+            <span>KIIT Bhubaneswar</span>
+            <span>PES University</span>
+            <span>Christ University</span>
+          </div>
+        </div>
+
         <div className="mt-16 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-zinc-500">
             &copy; {new Date().getFullYear()} GraduateNex. All rights reserved.

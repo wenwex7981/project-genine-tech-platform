@@ -24,7 +24,13 @@ export const metadata: Metadata = {
     "Final year projects for CSE students in India", "BTech projects with source code", "MTech research projects", 
     "Free ATS Resume Checker India", "Plagiarism removal service online", "AI Abstract maker", 
     "PPT maker for engineering projects", "Document generator", "Major project for CSE", "Mini project ideas", 
-    "Job description resume matching", "GraduateNex", "Fresher resume builder"
+    "Job description resume matching", "GraduateNex", "Fresher resume builder",
+    "JNTUH projects", "JNTUK", "JNTUA", "Anna University BTech projects", "VTU final year projects",
+    "DU", "Delhi University", "Mumbai University", "SPPU Pune University", "Osmania University",
+    "SRM University projects", "VIT Vellore", "Manipal University", "Amity", "LPU", "Chandigarh University",
+    "AKTU projects", "UPTU", "GTU Gujarat", "RGPV Bhopal", "KTU Kerala", "MAKAUT", "BPUT", "Andhra University", "SVU",
+    "IIT projects", "NIT final year projects", "IIIT", "BITS Pilani",
+    "Andhra Pradesh", "Telangana", "Maharashtra", "Karnataka", "Tamil Nadu", "Delhi NCR", "Uttar Pradesh"
   ],
   authors: [{ name: "Appala Nithin" }],
   openGraph: {
