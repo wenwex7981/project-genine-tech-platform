@@ -234,9 +234,10 @@ export default function ResumeHub() {
         const errorData = await response.json().catch(() => null);
         throw new Error(errorData?.error || 'Failed to tailor resume');
       }
-      const tailoredData = await response.json();
-      setMakerResult(tailoredData);
+      const data = await response.json();
+      setMakerResult(data.tailoredResume);
       setActiveTab("maker");
+      alert(`🎉 AI Tailoring Complete!\n\nOriginal ATS Match Score: ${data.beforeScore}%\nNew ATS Match Score: ${data.afterScore}%\n\nYour resume has been rewritten to perfectly match the Job Description!`);
     } catch (error: any) {
       console.error(error);
       alert(error.message);

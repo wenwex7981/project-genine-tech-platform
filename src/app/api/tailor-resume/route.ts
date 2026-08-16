@@ -19,64 +19,69 @@ CRITICAL INSTRUCTIONS:
 6. Reorder Skills so the most relevant ones to the JD are listed first, adding any missing skills from the JD that the user implies they know.
 7. **EXACT PERSONAL INFO**: Extract the personalInfo (Name, Email, Phone, LinkedIn, GitHub) EXACTLY as they appear. Do not modify or hallucinate them.
 8. Ensure the final resume is highly professional, ATS-friendly, and massively increases their chances of getting an interview.
+9. **SCORES**: Evaluate the original resume's match percentage to the JD (beforeScore) and evaluate your newly tailored resume's match percentage (afterScore, which should aim for 100).
 
 REQUIRED JSON STRUCTURE:
 {
-  "personalInfo": {
-    "name": "Extract or infer",
-    "email": "Extract or infer",
-    "phone": "Extract or infer",
-    "linkedin": "Extract or infer",
-    "github": "Extract or infer",
-    "portfolio": "Extract or infer",
-    "title": "Match to JD title if appropriate"
+  "tailoredResume": {
+    "personalInfo": {
+      "name": "Extract or infer",
+      "email": "Extract or infer",
+      "phone": "Extract or infer",
+      "linkedin": "Extract or infer",
+      "github": "Extract or infer",
+      "portfolio": "Extract or infer",
+      "title": "Match to JD title if appropriate"
+    },
+    "summary": "Expertly rewritten summary matching JD.",
+    "experience": [
+      {
+        "company": "Company Name",
+        "position": "Job Title",
+        "startDate": "MM/YYYY",
+        "endDate": "MM/YYYY",
+        "location": "City, State",
+        "bullets": [
+          "Highly optimized bullet 1 with metrics and keywords.",
+          "Highly optimized bullet 2 with metrics and keywords."
+        ]
+      }
+    ],
+    "education": [
+      {
+        "institution": "University Name",
+        "degree": "Degree",
+        "startDate": "YYYY",
+        "endDate": "YYYY",
+        "gpa": "GPA"
+      }
+    ],
+    "projects": [
+      {
+        "title": "Project Name",
+        "technologies": "Tech Stack",
+        "bullets": [
+          "Optimized bullet highlighting relevance to JD.",
+          "Optimized bullet."
+        ]
+      }
+    ],
+    "skills": [
+      {
+        "category": "Languages/Frameworks/Tools",
+        "items": ["Skill1", "Skill2"]
+      }
+    ],
+    "certifications": [
+      {
+        "title": "Cert Name",
+        "issuer": "Issuer",
+        "date": "YYYY"
+      }
+    ]
   },
-  "summary": "Expertly rewritten summary matching JD.",
-  "experience": [
-    {
-      "company": "Company Name",
-      "position": "Job Title",
-      "startDate": "MM/YYYY",
-      "endDate": "MM/YYYY",
-      "location": "City, State",
-      "bullets": [
-        "Highly optimized bullet 1 with metrics and keywords.",
-        "Highly optimized bullet 2 with metrics and keywords."
-      ]
-    }
-  ],
-  "education": [
-    {
-      "institution": "University Name",
-      "degree": "Degree",
-      "startDate": "YYYY",
-      "endDate": "YYYY",
-      "gpa": "GPA"
-    }
-  ],
-  "projects": [
-    {
-      "title": "Project Name",
-      "technologies": "Tech Stack",
-      "bullets": [
-        "Optimized bullet highlighting relevance to JD.",
-        "Optimized bullet."
-      ]
-    }
-  ],
-  "skills": [
-    {
-      "category": "Languages/Frameworks/Tools",
-      "items": ["Skill1", "Skill2"]
-    }
-  ],
-  "certifications": [
-    {
-      "title": "Cert Name",
-      "issuer": "Issuer",
-      "date": "YYYY"
-    }
-  ]
+  "beforeScore": 45,
+  "afterScore": 100
 }`;
 
 export async function POST(req: NextRequest) {
@@ -99,18 +104,23 @@ export async function POST(req: NextRequest) {
       const result = await mammoth.extractRawText({ buffer: fileBuffer });
       resumeText = result.value;
     } else if (file.name.endsWith('.pdf')) {
-      resumeText = await new Promise((resolve, reject) => {
-        const pdfParser = new PDFParser(null, true);
-        pdfParser.on('pdfParser_dataError', (errData: any) => reject(errData.parserError));
-        pdfParser.on('pdfParser_dataReady', (pdfData: any) => resolve(pdfParser.getRawTextContent()));
-        pdfParser.parseBuffer(fileBuffer);
-      });
+      try {
+        resumeText = await new Promise((resolve, reject) => {
+          const pdfParser = new PDFParser(null, true);
+          pdfParser.on('pdfParser_dataError', (errData: any) => reject(errData.parserError));
+          pdfParser.on('pdfParser_dataReady', (pdfData: any) => resolve(pdfParser.getRawTextContent()));
+          pdfParser.parseBuffer(fileBuffer);
+        });
+      } catch (err: any) {
+        console.error("PDF Parse error:", err);
+        return NextResponse.json({ error: 'Could not extract text from the PDF. Ensure it is a standard text-based PDF.' }, { status: 400 });
+      }
     } else {
       return NextResponse.json({ error: 'Unsupported file type. Please upload PDF or DOCX.' }, { status: 400 });
     }
 
     if (!resumeText || resumeText.trim().length === 0) {
-      return NextResponse.json({ error: 'Could not extract text from the document.' }, { status: 400 });
+      return NextResponse.json({ error: 'Extracted text is empty. The document might be image-based or corrupted.' }, { status: 400 });
     }
 
     const completion = await groq.chat.completions.create({
