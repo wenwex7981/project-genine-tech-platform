@@ -163,10 +163,13 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* ── HERO SECTION ── */}
-      <section className="relative w-full min-h-[92vh] flex items-center bg-zinc-950 overflow-hidden text-white">
+      <section className="relative w-full min-h-[92vh] flex items-center bg-zinc-950 bg-[url('/images/hero-bg.png')] bg-cover bg-center bg-no-repeat overflow-hidden text-white">
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/90 to-zinc-950/40 z-0"></div>
+        
         {/* Background gradient orbs */}
-        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3 pointer-events-none z-0" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none z-0" />
 
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center py-20">
