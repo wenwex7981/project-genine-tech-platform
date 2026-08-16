@@ -1,0 +1,75 @@
+export type SEOLocation = {
+  slug: string;
+  name: string;
+  type: 'state' | 'university' | 'city';
+};
+
+export const seoLocations: SEOLocation[] = [
+  // Major States
+  { slug: 'andhra-pradesh', name: 'Andhra Pradesh', type: 'state' },
+  { slug: 'telangana', name: 'Telangana', type: 'state' },
+  { slug: 'maharashtra', name: 'Maharashtra', type: 'state' },
+  { slug: 'karnataka', name: 'Karnataka', type: 'state' },
+  { slug: 'tamil-nadu', name: 'Tamil Nadu', type: 'state' },
+  { slug: 'delhi-ncr', name: 'Delhi NCR', type: 'state' },
+  { slug: 'uttar-pradesh', name: 'Uttar Pradesh', type: 'state' },
+  { slug: 'gujarat', name: 'Gujarat', type: 'state' },
+  { slug: 'west-bengal', name: 'West Bengal', type: 'state' },
+  { slug: 'rajasthan', name: 'Rajasthan', type: 'state' },
+  { slug: 'madhya-pradesh', name: 'Madhya Pradesh', type: 'state' },
+  { slug: 'kerala', name: 'Kerala', type: 'state' },
+  { slug: 'punjab', name: 'Punjab', type: 'state' },
+  { slug: 'haryana', name: 'Haryana', type: 'state' },
+  { slug: 'bihar', name: 'Bihar', type: 'state' },
+  { slug: 'odisha', name: 'Odisha', type: 'state' },
+  { slug: 'assam', name: 'Assam', type: 'state' },
+  { slug: 'jharkhand', name: 'Jharkhand', type: 'state' },
+  { slug: 'chhattisgarh', name: 'Chhattisgarh', type: 'state' },
+  { slug: 'uttarakhand', name: 'Uttarakhand', type: 'state' },
+
+  // Major Cities
+  { slug: 'hyderabad', name: 'Hyderabad', type: 'city' },
+  { slug: 'bangalore', name: 'Bangalore', type: 'city' },
+  { slug: 'mumbai', name: 'Mumbai', type: 'city' },
+  { slug: 'pune', name: 'Pune', type: 'city' },
+  { slug: 'chennai', name: 'Chennai', type: 'city' },
+  { slug: 'delhi', name: 'Delhi', type: 'city' },
+  { slug: 'noida', name: 'Noida', type: 'city' },
+  { slug: 'gurugram', name: 'Gurugram', type: 'city' },
+  { slug: 'ahmedabad', name: 'Ahmedabad', type: 'city' },
+  { slug: 'kolkata', name: 'Kolkata', type: 'city' },
+
+  // Top Universities
+  { slug: 'iit', name: 'IITs', type: 'university' },
+  { slug: 'nit', name: 'NITs', type: 'university' },
+  { slug: 'iiit', name: 'IIITs', type: 'university' },
+  { slug: 'bits-pilani', name: 'BITS Pilani', type: 'university' },
+  { slug: 'jntuh', name: 'JNTUH (Jawaharlal Nehru Technological University, Hyderabad)', type: 'university' },
+  { slug: 'jntuk', name: 'JNTUK (JNTU Kakinada)', type: 'university' },
+  { slug: 'jntua', name: 'JNTUA (JNTU Anantapur)', type: 'university' },
+  { slug: 'anna-university', name: 'Anna University', type: 'university' },
+  { slug: 'vtu', name: 'VTU (Visvesvaraya Technological University)', type: 'university' },
+  { slug: 'delhi-university', name: 'Delhi University (DU)', type: 'university' },
+  { slug: 'mumbai-university', name: 'Mumbai University', type: 'university' },
+  { slug: 'sppu', name: 'Pune University (SPPU)', type: 'university' },
+  { slug: 'osmania-university', name: 'Osmania University (OU)', type: 'university' },
+  { slug: 'srm', name: 'SRM Institute of Science and Technology', type: 'university' },
+  { slug: 'vit', name: 'VIT Vellore', type: 'university' },
+  { slug: 'manipal', name: 'Manipal Academy of Higher Education', type: 'university' },
+  { slug: 'amity', name: 'Amity University', type: 'university' },
+  { slug: 'lpu', name: 'Lovely Professional University (LPU)', type: 'university' },
+  { slug: 'chandigarh-university', name: 'Chandigarh University', type: 'university' },
+  { slug: 'aktu', name: 'AKTU (UPTU)', type: 'university' },
+  { slug: 'gtu', name: 'Gujarat Technological University (GTU)', type: 'university' },
+  { slug: 'rgpv', name: 'RGPV Bhopal', type: 'university' },
+  { slug: 'ktu', name: 'APJ Abdul Kalam Technological University (KTU Kerala)', type: 'university' },
+  { slug: 'makaut', name: 'MAKAUT West Bengal', type: 'university' },
+  { slug: 'bput', name: 'Biju Patnaik University of Technology (BPUT)', type: 'university' },
+  { slug: 'andhra-university', name: 'Andhra University (AU)', type: 'university' },
+  { slug: 'svu', name: 'Sri Venkateswara University (SVU)', type: 'university' },
+  { slug: 'klu', name: 'KLU', type: 'university' },
+  { slug: 'gitam', name: 'Gitam University', type: 'university' },
+  { slug: 'kiit', name: 'KIIT Bhubaneswar', type: 'university' },
+  { slug: 'pes-university', name: 'PES University', type: 'university' },
+  { slug: 'christ-university', name: 'Christ University', type: 'university' }
+];

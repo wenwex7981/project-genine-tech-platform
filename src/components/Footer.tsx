@@ -1,8 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { seoLocations } from "@/lib/seo-data";
 
 export default function Footer() {
+  const states = seoLocations.filter(loc => loc.type === 'state');
+  const universities = seoLocations.filter(loc => loc.type === 'university');
+
   return (
     <footer className="w-full bg-zinc-950 text-zinc-300 py-16 mt-auto border-t border-zinc-800">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
@@ -64,63 +68,20 @@ export default function Footer() {
         <div className="mt-16 pt-8 border-t border-zinc-800">
           <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-4">Proudly Serving Students Across States</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-zinc-600">
-            <span>Andhra Pradesh</span>
-            <span>Telangana</span>
-            <span>Maharashtra</span>
-            <span>Karnataka</span>
-            <span>Tamil Nadu</span>
-            <span>Delhi NCR</span>
-            <span>Uttar Pradesh</span>
-            <span>Gujarat</span>
-            <span>West Bengal</span>
-            <span>Rajasthan</span>
-            <span>Madhya Pradesh</span>
-            <span>Kerala</span>
-            <span>Punjab</span>
-            <span>Haryana</span>
-            <span>Bihar</span>
-            <span>Odisha</span>
-            <span>Assam</span>
-            <span>Jharkhand</span>
-            <span>Chhattisgarh</span>
-            <span>Uttarakhand</span>
+            {states.map((state) => (
+              <Link key={state.slug} href={`/locations/${state.slug}`} className="hover:text-primary hover:underline transition-colors">
+                {state.name}
+              </Link>
+            ))}
           </div>
           
           <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-4">Top Universities & Institutions We Support</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-zinc-600">
-            <span>Indian Institutes of Technology (IITs)</span>
-            <span>National Institutes of Technology (NITs)</span>
-            <span>IIITs</span>
-            <span>BITS Pilani</span>
-            <span>JNTU Hyderabad (JNTUH)</span>
-            <span>JNTU Kakinada (JNTUK)</span>
-            <span>JNTU Anantapur (JNTUA)</span>
-            <span>Anna University</span>
-            <span>Visvesvaraya Technological University (VTU)</span>
-            <span>Delhi University (DU)</span>
-            <span>Mumbai University</span>
-            <span>Pune University (SPPU)</span>
-            <span>Osmania University (OU)</span>
-            <span>SRM Institute of Science and Technology</span>
-            <span>VIT Vellore</span>
-            <span>Manipal Academy of Higher Education</span>
-            <span>Amity University</span>
-            <span>Lovely Professional University (LPU)</span>
-            <span>Chandigarh University</span>
-            <span>AKTU (UPTU)</span>
-            <span>Gujarat Technological University (GTU)</span>
-            <span>RGPV Bhopal</span>
-            <span>APJ Abdul Kalam Technological University (KTU Kerala)</span>
-            <span>MAKAUT West Bengal</span>
-            <span>Biju Patnaik University of Technology (BPUT)</span>
-            <span>Andhra University (AU)</span>
-            <span>Sri Venkateswara University (SVU)</span>
-            <span>KLU</span>
-            <span>Gitam University</span>
-            <span>Thapar Institute</span>
-            <span>KIIT Bhubaneswar</span>
-            <span>PES University</span>
-            <span>Christ University</span>
+            {universities.map((uni) => (
+              <Link key={uni.slug} href={`/locations/${uni.slug}`} className="hover:text-primary hover:underline transition-colors">
+                {uni.name}
+              </Link>
+            ))}
           </div>
         </div>
 
