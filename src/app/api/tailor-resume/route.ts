@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
         { role: 'system', content: TAILOR_PROMPT },
         { role: 'user', content: `JOB DESCRIPTION:\n${jdText}\n\nORIGINAL RESUME:\n${resumeText}` }
       ],
-      model: 'llama3-70b-8192',
+      model: 'llama-3.3-70b-versatile',
       temperature: 0.2,
       response_format: { type: 'json_object' }
     });
