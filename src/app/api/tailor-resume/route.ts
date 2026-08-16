@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
       resumeText = result.value;
     } else if (file.name.endsWith('.pdf')) {
       resumeText = await new Promise((resolve, reject) => {
-        const pdfParser = new PDFParser(null, 1);
+        const pdfParser = new PDFParser(null, true);
         pdfParser.on('pdfParser_dataError', (errData: any) => reject(errData.parserError));
         pdfParser.on('pdfParser_dataReady', (pdfData: any) => resolve(pdfParser.getRawTextContent()));
         pdfParser.parseBuffer(fileBuffer);
