@@ -26,7 +26,7 @@ export default function ResumeLayout({
       price: '0',
       priceCurrency: 'INR',
     },
-    url: 'https://graduatenex.online/resume'
+    url: 'https://www.graduatenex.online/resume'
   };
 
   return (

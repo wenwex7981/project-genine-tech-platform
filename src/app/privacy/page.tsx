@@ -80,7 +80,7 @@ export default function PrivacyPage() {
                   <h2 className="text-2xl font-bold text-white m-0">1. Introduction</h2>
                 </div>
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 space-y-4 text-zinc-300 leading-relaxed">
-                  <p>GraduateNex (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your personal data and respecting your privacy. This Privacy Policy describes the types of information we collect when you visit <a href="https://graduatenex.online" className="text-primary hover:underline">graduatenex.online</a>, how we use and safeguard that information, and your rights regarding your personal data.</p>
+                  <p>GraduateNex (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your personal data and respecting your privacy. This Privacy Policy describes the types of information we collect when you visit <a href="https://www.graduatenex.online" className="text-primary hover:underline">graduatenex.online</a>, how we use and safeguard that information, and your rights regarding your personal data.</p>
                   <p>By using our Platform, you consent to the collection and use of information in accordance with this policy. If you do not agree with this policy, please do not use our services.</p>
                   <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
                     <p className="text-blue-400 text-sm font-medium flex items-start gap-2">

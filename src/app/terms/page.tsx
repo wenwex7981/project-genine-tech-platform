@@ -101,7 +101,7 @@ export default function TermsPage() {
                   <h2 className="text-2xl font-bold text-white m-0">1. Introduction</h2>
                 </div>
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 space-y-4 text-zinc-300 leading-relaxed">
-                  <p>Welcome to <strong className="text-white">GraduateNex</strong> (accessible at <a href="https://graduatenex.online" className="text-primary hover:underline">graduatenex.online</a>), operated by GraduateNex, headquartered at T Hub, Hitech City, Hyderabad, Telangana, India.</p>
+                  <p>Welcome to <strong className="text-white">GraduateNex</strong> (accessible at <a href="https://www.graduatenex.online" className="text-primary hover:underline">graduatenex.online</a>), operated by GraduateNex, headquartered at T Hub, Hitech City, Hyderabad, Telangana, India.</p>
                   <p>These Terms and Conditions (&quot;Terms&quot;, &quot;Agreement&quot;) govern your access to and use of the GraduateNex website, mobile applications, and all related services (collectively, the &quot;Platform&quot;). By creating an account, placing an order, or otherwise using our Platform, you acknowledge that you have read, understood, and agree to be bound by these Terms.</p>
                   <p>If you do not agree with any part of these Terms, you must immediately discontinue use of the Platform.</p>
                 </div>

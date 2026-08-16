@@ -97,7 +97,7 @@ export default function Navbar() {
       <div className="container mx-auto flex h-16 items-center px-4 md:px-6 justify-between gap-4">
         
         {/* Left: Logo */}
-        <Link href={user ? "/home" : "/"} className="flex items-center gap-3 transition-transform hover:scale-105 z-50">
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-3 transition-transform hover:scale-105 z-50">
           <div className="relative h-10 w-10 overflow-hidden rounded-md">
             <Image src="/logo.png" alt="GraduateNex Logo" fill className="object-cover" />
           </div>

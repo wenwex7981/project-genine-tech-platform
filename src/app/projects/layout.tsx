@@ -19,7 +19,7 @@ export default function ProjectsLayout({
     '@type': 'OfferCatalog',
     name: 'GraduateNex Academic Projects Catalog',
     description: 'A curated catalog of high-quality academic projects with full source code and documentation.',
-    url: 'https://graduatenex.online/projects',
+    url: 'https://www.graduatenex.online/projects',
     itemListElement: [
       {
         '@type': 'Offer',

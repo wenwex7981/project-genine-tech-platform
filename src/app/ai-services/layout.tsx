@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Free AI-powered tools for engineering students: Remove plagiarism to humanize text, generate research abstracts, create PPTs, and build UML diagrams instantly.",
   keywords: ["AI plagiarism remover free", "AI humanize text", "AI abstract generator", "AI PPT maker for projects", "UML diagram generator AI", "BTech project AI tools"],
   alternates: {
-    canonical: "https://graduatenex.online/ai-services",
+    canonical: "https://www.graduatenex.online/ai-services",
   }
 };
 
@@ -26,7 +26,7 @@ export default function AIServicesLayout({
       price: '0',
       priceCurrency: 'INR',
     },
-    url: 'https://graduatenex.online/ai-services'
+    url: 'https://www.graduatenex.online/ai-services'
   };
 
   return (

@@ -79,7 +79,7 @@ export default function RefundsPage() {
                   <h2 className="text-2xl font-bold text-white m-0">1. Overview</h2>
                 </div>
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 space-y-4 text-zinc-300 leading-relaxed">
-                  <p>At GraduateNex, customer satisfaction is our priority. Due to the digital nature of our products, refund eligibility varies by product type. This policy applies to all purchases made through <a href="https://graduatenex.online" className="text-primary hover:underline">graduatenex.online</a>.</p>
+                  <p>At GraduateNex, customer satisfaction is our priority. Due to the digital nature of our products, refund eligibility varies by product type. This policy applies to all purchases made through <a href="https://www.graduatenex.online" className="text-primary hover:underline">graduatenex.online</a>.</p>
                   <div className="grid md:grid-cols-3 gap-3 mt-4">
                     <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center">
                       <CheckCircle className="h-8 w-8 text-emerald-400 mx-auto mb-2" />

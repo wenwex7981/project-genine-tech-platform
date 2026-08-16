@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Affordable tech solutions for students. Get unlimited access to AI tools, premium resumes, zero-plagiarism project codes, and VIP hackathon passes.",
   keywords: ["graduatenex pricing", "student tech subscriptions", "buy final year project online", "premium resume builder price", "hackathon access badge"],
   alternates: {
-    canonical: "https://graduatenex.online/pricing",
+    canonical: "https://www.graduatenex.online/pricing",
   }
 };
 
@@ -19,7 +19,7 @@ export default function PricingLayout({
     '@type': 'WebPage',
     name: 'GraduateNex Pricing',
     description: 'Pricing and subscription plans for GraduateNex services.',
-    url: 'https://graduatenex.online/pricing',
+    url: 'https://www.graduatenex.online/pricing',
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: [

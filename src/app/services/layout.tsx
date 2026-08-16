@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Explore GraduateNex services including custom web development, ML models, UI/UX design, and zero-plagiarism project creation for final year students.",
   keywords: ["custom final year projects", "web development for students", "machine learning freelance projects", "hire developer for btech project", "project report writing service"],
   alternates: {
-    canonical: "https://graduatenex.online/services",
+    canonical: "https://www.graduatenex.online/services",
   }
 };
 
@@ -21,7 +21,7 @@ export default function ServicesLayout({
     provider: {
       '@type': 'Organization',
       name: 'GraduateNex',
-      url: 'https://graduatenex.online'
+      url: 'https://www.graduatenex.online'
     },
     description: 'Custom academic project development, thesis assistance, and AI software solutions.',
     areaServed: 'IN',

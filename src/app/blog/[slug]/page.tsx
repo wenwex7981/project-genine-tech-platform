@@ -37,7 +37,7 @@ export async function generateMetadata(
       description: blog.excerpt,
       type: "article",
       publishedTime: blog.created_at,
-      url: `https://graduatenex.online/blog/${blog.slug}`,
+      url: `https://www.graduatenex.online/blog/${blog.slug}`,
       images: ogImage,
     },
     twitter: {
@@ -47,7 +47,7 @@ export async function generateMetadata(
       images: ogImage,
     },
     alternates: {
-      canonical: `https://graduatenex.online/blog/${blog.slug}`,
+      canonical: `https://www.graduatenex.online/blog/${blog.slug}`,
     }
   };
 }
@@ -81,19 +81,19 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     author: [{
       '@type': 'Organization',
       name: 'GraduateNex',
-      url: 'https://graduatenex.online'
+      url: 'https://www.graduatenex.online'
     }],
     publisher: {
       '@type': 'Organization',
       name: 'GraduateNex',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://graduatenex.online/icon.png'
+        url: 'https://www.graduatenex.online/icon.png'
       }
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://graduatenex.online/blog/${blog.slug}`
+      '@id': `https://www.graduatenex.online/blog/${blog.slug}`
     }
   };
 
