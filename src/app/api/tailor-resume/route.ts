@@ -13,7 +13,7 @@ Your task is to rewrite, tailor, and optimize the user's provided Resume specifi
 CRITICAL INSTRUCTIONS:
 1. You MUST output STRICTLY a JSON object matching the exact structure below. Do NOT wrap it in markdown blocks (\`\`\`json), just return raw JSON.
 2. Rewrite the Summary to perfectly align with the JD's core requirements.
-3. Rewrite the Experience and Project bullet points using strong Action Verbs and integrating keywords from the JD naturally.
+3. Rewrite the Experience and Project bullet points using strong Action Verbs and integrating keywords from the JD naturally. If the user's past experience was in a different role, AGGRESSIVELY REFRAME and REWRITE their past experience bullet points to sound as relevant as possible to the NEW JD role. Highlight transferable skills and frame past work entirely in the context of the new JD requirements.
 4. Reorder Skills so the most relevant ones to the JD are listed first.
 5. Ensure the final resume is highly professional, ATS-friendly, and massively increases their chances of getting an interview.
 

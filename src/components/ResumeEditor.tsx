@@ -29,7 +29,7 @@ const SortableSection = ({ id, title, content, onEdit }: SectionProps) => {
         <GripVertical className="h-5 w-5 text-gray-400 hover:text-indigo-500" />
       </div>
       <div className="pl-6">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 print:hidden">
           <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider border-b-2 border-indigo-500 pb-1">{title}</h3>
           <button onClick={onEdit} className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-indigo-500 transition-opacity rounded-full hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
             <Pencil className="h-4 w-4" />
@@ -269,6 +269,10 @@ export default function ResumeEditor({ initialData }: { initialData: any }) {
 
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
+          @page {
+            size: A4;
+            margin: 0;
+          }
           body * {
             visibility: hidden;
           }
@@ -279,10 +283,12 @@ export default function ResumeEditor({ initialData }: { initialData: any }) {
             position: absolute;
             left: 0;
             top: 0;
-            width: 100%;
+            width: 210mm;
+            min-height: 297mm;
             margin: 0 !important;
-            padding: 0 !important;
+            padding: 10mm 15mm !important;
             box-shadow: none !important;
+            transform-origin: top left;
           }
         }
       `}} />
