@@ -4,9 +4,6 @@ export const metadata: Metadata = {
   title: "Premium Final Year Projects & Source Code for BTech | GraduateNex",
   description: "Download top-rated final year projects for CSE and IT. Get full source code, zero-plagiarism reports, and documentation for Machine Learning, Web Dev, and App Dev projects.",
   keywords: ["final year projects cse", "btech projects download", "machine learning projects for final year", "react js projects with source code", "zero plagiarism project report", "major projects for cse"],
-  alternates: {
-    canonical: "https://www.graduatenex.online/projects",
-  }
 };
 
 export default function ProjectsLayout({

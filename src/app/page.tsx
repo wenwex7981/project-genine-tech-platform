@@ -650,6 +650,67 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQPage Schema for Google Rich Results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              {
+                '@type': 'Question',
+                name: 'What is GraduateNex?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'Are the projects plagiarism-free?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'How are digital products delivered?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'What payment methods do you accept?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'Can I get a refund?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: "Digital products are generally non-refundable once delivered. However, refunds are issued for technical payment failures, undelivered products, and custom projects that don't meet agreed specifications."
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'Do you offer support after purchase?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST.'
+                }
+              }
+            ]
+          })
+        }}
+      />
+
     </div>
   );
 }

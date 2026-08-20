@@ -2,6 +2,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Target, Users, Zap, Shield, GraduationCap, Award } from "lucide-react";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "About GraduateNex | India's #1 Academic Project Platform",
+  description: "Learn about GraduateNex, India's leading platform for academic projects, research assistance, and career guidance for engineering students.",
+  alternates: {
+    canonical: 'https://www.graduatenex.online/about',
+  },
+  openGraph: {
+    title: "About GraduateNex | India's #1 Academic Project Platform",
+    description: "Learn about GraduateNex, India's leading platform for academic projects, research assistance, and career guidance for engineering students.",
+    url: 'https://www.graduatenex.online/about',
+    siteName: 'GraduateNex',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "About GraduateNex | India's #1 Academic Project Platform",
+    description: "Learn about GraduateNex, India's leading platform for academic projects, research assistance, and career guidance for engineering students.",
+  }
+};
 
 export default function AboutPage() {
   return (

@@ -18,8 +18,22 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.graduatenex.online'),
-  title: "GraduateNex | Premium Academic Projects & AI Career Tools in India",
+  title: {
+    default: "GraduateNex | Premium Academic Projects & AI Career Tools in India",
+    template: "%s | GraduateNex",
+  },
   description: "GraduateNex provides premium, zero-plagiarism source code, research papers, and AI-powered document generation for Indian students and freshers to secure top jobs.",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   keywords: [
     "Final year projects for CSE students in India", "BTech projects with source code", "MTech research projects", 
     "Free ATS Resume Checker India", "Plagiarism removal service online", "AI Abstract maker", 

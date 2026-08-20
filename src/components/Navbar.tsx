@@ -97,7 +97,7 @@ export default function Navbar() {
       <div className="container mx-auto flex h-16 items-center px-4 md:px-6 justify-between gap-4">
         
         {/* Left: Logo */}
-        <Link href={user ? "/home" : "/"} className="flex items-center gap-3 transition-transform hover:scale-105 z-50">
+        <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-105 z-50">
           <div className="relative h-10 w-10 overflow-hidden rounded-md">
             <Image src="/logo.png" alt="GraduateNex Logo" fill className="object-cover" />
           </div>
@@ -108,13 +108,7 @@ export default function Navbar() {
         
         {/* Center/Desktop Nav */}
         <nav className="hidden lg:flex gap-3 xl:gap-5 items-center">
-          {user ? <NavLinks /> : (
-            <>
-              <Link href="/about" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">About</Link>
-              <Link href="/services" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">Services</Link>
-              <Link href="/contact" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">Contact</Link>
-            </>
-          )}
+          <NavLinks />
         </nav>
 
         {/* Right Actions */}
@@ -159,13 +153,7 @@ export default function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b shadow-xl animate-in slide-in-from-top-2 p-6 flex flex-col gap-6">
           <nav className="flex flex-col gap-4">
-            {user ? <NavLinks /> : (
-              <>
-                <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-base font-medium">About</Link>
-                <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className="text-base font-medium">Services</Link>
-                <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-base font-medium">Contact</Link>
-              </>
-            )}
+            <NavLinks />
           </nav>
           
           <div className="flex flex-col gap-3 pt-4 border-t">
