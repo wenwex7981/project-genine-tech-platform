@@ -80,6 +80,22 @@ export default function AdminStudyPage() {
               <h3 className="font-bold mb-2 line-clamp-1">{doc.title}</h3>
               <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{doc.description}</p>
               <div className="mt-auto flex gap-2">
+                <Link href={`/admin/study/${doc.id}/edit`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Edit
+                  </Button>
+                </Link>
+                {doc.file_url && doc.file_url !== 'pending' ? (
+                  <a href={doc.file_url} target="_blank" rel="noreferrer" className="flex-1">
+                    <Button variant="outline" size="sm" className="w-full text-indigo-600 border-indigo-200 hover:bg-indigo-50">
+                      View
+                    </Button>
+                  </a>
+                ) : (
+                  <Button variant="outline" size="sm" className="flex-1 text-gray-400 border-gray-200" disabled title="No PDF uploaded yet">
+                    View
+                  </Button>
+                )}
                 <Button variant="outline" size="sm" className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => handleDelete(doc.id)}>
                   <Trash2 className="w-4 h-4 mr-1" /> Delete
                 </Button>
