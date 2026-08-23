@@ -20,7 +20,7 @@ export function ModelSelector({ value, onChange, className = "" }: ModelSelector
         onChange={(e) => onChange(e.target.value as AIModel)}
         className="w-[180px] h-9 text-xs px-2 py-1 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
       >
-        <option value="gemini">Gemini 1.5 Flash</option>
+        <option value="gemini">Gemini 3.6 Flash</option>
         <option value="deepseek">DeepSeek V3 (Primary)</option>
         <option value="openai">OpenAI GPT-4o Mini (Fast)</option>
         <option value="mistral">Mistral Large (Smart)</option>
