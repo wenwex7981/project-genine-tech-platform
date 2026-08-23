@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 import { Mistral } from '@mistralai/mistralai';
 
-export type AIModel = 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks';
+export type AIModel = 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai';
 
 interface AIGenerateOptions {
   prompt: string;
@@ -24,7 +24,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
   } = options;
 
   const fallbackOrder: AIModel[] = [preferredModel];
-  const allModels: AIModel[] = ['deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq'];
+  const allModels: AIModel[] = ['deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq', 'kimi', 'xai'];
   
   // Add remaining models as fallbacks in order
   for (const m of allModels) {
@@ -115,6 +115,34 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         const completion = await groq.chat.completions.create({
           messages: messages as any,
           model: 'openai/gpt-oss-120b',
+          temperature,
+          max_tokens: maxTokens,
+          ...(jsonMode && { response_format: { type: 'json_object' } }),
+        });
+        content = completion.choices[0]?.message?.content || '';
+      }
+      else if (model === 'kimi' && process.env.KIMI_API_KEY) {
+        const openai = new OpenAI({ 
+          apiKey: process.env.KIMI_API_KEY,
+          baseURL: 'https://api.moonshot.cn/v1' 
+        });
+        const completion = await openai.chat.completions.create({
+          messages: messages as any,
+          model: 'moonshot-v1-8k',
+          temperature,
+          max_tokens: maxTokens,
+          ...(jsonMode && { response_format: { type: 'json_object' } }),
+        });
+        content = completion.choices[0]?.message?.content || '';
+      }
+      else if (model === 'xai' && process.env.XAI_API_KEY) {
+        const openai = new OpenAI({ 
+          apiKey: process.env.XAI_API_KEY,
+          baseURL: 'https://api.x.ai/v1' 
+        });
+        const completion = await openai.chat.completions.create({
+          messages: messages as any,
+          model: 'grok-beta',
           temperature,
           max_tokens: maxTokens,
           ...(jsonMode && { response_format: { type: 'json_object' } }),
