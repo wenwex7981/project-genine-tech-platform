@@ -46,10 +46,14 @@ export default function StudyHubPage() {
         setDocs(interviewDocs || []);
 
         const { data: { session } } = await supabase.auth.getSession();
+        
+        let adminStatus = session?.user?.email === "admin@graduatenex.online";
+        if (typeof window !== "undefined" && sessionStorage.getItem("adminAuth") === "true") {
+          adminStatus = true;
+        }
+        setIsAdmin(adminStatus);
+
         if (session?.user) {
-          if (session.user.email === "admin@graduatenex.online") {
-             setIsAdmin(true);
-          }
           const { data: orders } = await supabase
             .from("orders")
             .select("items")

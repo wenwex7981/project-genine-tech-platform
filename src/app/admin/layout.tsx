@@ -15,6 +15,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (password === "admin123") {
       setIsAuthenticated(true);
       setError("");
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("adminAuth", "true");
+      }
     } else {
       setError("Invalid master password");
     }

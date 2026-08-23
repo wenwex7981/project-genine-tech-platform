@@ -38,7 +38,12 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ id: s
         }
         
         // Let admins view anything
-        const isAdmin = session?.user?.email === "admin@graduatenex.online"; // Add any admin emails or flags here if needed
+        let isAdmin = session?.user?.email === "admin@graduatenex.online"; // Add any admin emails or flags here if needed
+        if (typeof window !== "undefined") {
+          if (sessionStorage.getItem("adminAuth") === "true") {
+            isAdmin = true;
+          }
+        }
         if (isAdmin) userOwns = true;
         
         setHasAccess(userOwns);

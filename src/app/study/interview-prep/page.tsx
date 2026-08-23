@@ -13,6 +13,7 @@ export default function InterviewPrepPage() {
   const [purchasedIds, setPurchasedIds] = useState<string[]>([]);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<any | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { addToCart, cart } = useCart();
 
   useEffect(() => {
@@ -28,6 +29,13 @@ export default function InterviewPrepPage() {
 
         // Fetch user + their purchases
         const { data: { session } } = await supabase.auth.getSession();
+        
+        let adminStatus = session?.user?.email === "admin@graduatenex.online";
+        if (typeof window !== "undefined" && sessionStorage.getItem("adminAuth") === "true") {
+          adminStatus = true;
+        }
+        setIsAdmin(adminStatus);
+
         if (session?.user) {
           setUserEmail(session.user.email || null);
           const { data: orders } = await supabase
@@ -151,40 +159,58 @@ export default function InterviewPrepPage() {
                   <div className="p-6 flex-1 flex flex-col">
                     <h3 className="font-bold text-xl mb-2">{doc.title}</h3>
                     <p className="text-muted-foreground text-sm mb-6 flex-grow line-clamp-2">{doc.description}</p>
+                  </div>
 
-                    {purchased ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-green-600 font-bold text-sm mb-2">
-                          <CheckCircle className="w-4 h-4" /> You own this document
+                  {/* Actions */}
+                  <div className="p-6 pt-0 mt-auto">
+                    {isAdmin ? (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2">
+                          <a
+                            href={doc.file_url === "pending" ? `/view/${doc.id}` : doc.file_url}
+                            target={doc.file_url === "pending" ? "_self" : "_blank"}
+                            rel="noreferrer"
+                            className="flex-1 block"
+                          >
+                            <Button className="w-full font-bold h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center">
+                              <ExternalLink className="w-4 h-4 mr-1" /> View
+                            </Button>
+                          </a>
+                          <Link href={`/admin/study/${doc.id}/edit`} className="flex-1 block">
+                            <Button className="w-full font-bold h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center">
+                              Edit
+                            </Button>
+                          </Link>
                         </div>
-                        <a
-                          href={doc.file_url === 'pending' ? `/view/${doc.id}` : doc.file_url}
-                          target={doc.file_url === 'pending' ? "_self" : "_blank"}
-                          rel="noreferrer"
-                          className="w-full"
-                        >
-                          <Button className="w-full font-bold h-12 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
-                            <ExternalLink className="w-4 h-4" /> Open Full Document
-                          </Button>
-                        </a>
-                      </div>
-                    ) : inCart ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-indigo-600 font-semibold text-sm">
-                          <ShoppingCart className="w-4 h-4" /> Added to cart
-                        </div>
-                        <Link href="/cart">
-                          <Button variant="outline" className="w-full font-bold h-12 rounded-xl border-indigo-500 text-indigo-600">
-                            Go to Cart & Pay
+                        <Link href={`/admin/study`} className="w-full block">
+                          <Button variant="outline" className="w-full font-bold h-10 rounded-xl border-red-200 text-red-600 hover:bg-red-50 flex items-center justify-center">
+                            Manage / Delete in Admin
                           </Button>
                         </Link>
                       </div>
+                    ) : purchased ? (
+                      <a
+                        href={doc.file_url === "pending" ? `/view/${doc.id}` : doc.file_url}
+                        target={doc.file_url === "pending" ? "_self" : "_blank"}
+                        rel="noreferrer"
+                        className="w-full block"
+                      >
+                        <Button className="w-full font-bold h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center gap-2">
+                          <ExternalLink className="w-4 h-4" /> Open Full Document
+                        </Button>
+                      </a>
+                    ) : inCart ? (
+                      <Link href="/cart" className="w-full block">
+                        <Button variant="outline" className="w-full font-bold h-12 rounded-xl border-indigo-500 text-indigo-600 hover:bg-indigo-50">
+                          <ShoppingCart className="w-4 h-4 mr-2" /> Go to Cart & Pay
+                        </Button>
+                      </Link>
                     ) : (
                       <Button
                         onClick={() => handleAddToCart(doc)}
-                        className="w-full font-bold h-12 text-lg rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2 justify-center"
+                        className="w-full font-bold h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center gap-2"
                       >
-                        <ShoppingCart className="w-5 h-5" /> Add to Cart — ₹{doc.price}
+                        <ShoppingCart className="w-4 h-4" /> Add to Cart — ₹{doc.price}
                       </Button>
                     )}
                   </div>
