@@ -3,13 +3,17 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Globe } from "lucide-react";
+import { ArrowLeft, Save, Globe, Bot, X, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function AdminBlogNew() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiTopic, setAiTopic] = useState("");
+  
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -35,6 +39,37 @@ export default function AdminBlogNew() {
       title,
       slug: generateSlug(title)
     }));
+  };
+
+  const handleAiGenerate = async () => {
+    if (!aiTopic.trim()) return;
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/generate-blog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: aiTopic, category: formData.category }),
+      });
+      if (!res.ok) throw new Error("Failed to generate blog");
+      const data = await res.json();
+      
+      setFormData(prev => ({
+        ...prev,
+        title: data.title || prev.title,
+        slug: data.slug || prev.slug,
+        excerpt: data.excerpt || prev.excerpt,
+        keywords: data.keywords || prev.keywords,
+        content: data.content || prev.content,
+        category: data.category || prev.category
+      }));
+      setShowAiModal(false);
+      setAiTopic("");
+    } catch (error) {
+      console.error(error);
+      alert("Error generating blog with AI");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent, publishNow: boolean) => {
@@ -65,18 +100,59 @@ export default function AdminBlogNew() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-20">
-      <div className="flex items-center gap-4">
-        <Link href="/admin/blog">
-          <Button variant="outline" size="icon" className="rounded-full">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Write SEO Blog</h1>
-          <p className="text-muted-foreground mt-1">Create high-ranking content.</p>
+    <div className="max-w-4xl mx-auto space-y-6 pb-20 relative">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Link href="/admin/blog">
+            <Button variant="outline" size="icon" className="rounded-full">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Write SEO Blog</h1>
+            <p className="text-muted-foreground mt-1">Create high-ranking content.</p>
+          </div>
         </div>
+        <Button onClick={() => setShowAiModal(true)} variant="secondary" className="gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-400">
+          <Bot className="h-4 w-4" /> 🤖 Generate with AI
+        </Button>
       </div>
+
+      {showAiModal && (
+        <div className="bg-white dark:bg-zinc-950 border rounded-2xl p-6 shadow-md relative">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute top-4 right-4" 
+            onClick={() => setShowAiModal(false)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Bot className="h-5 w-5 text-indigo-600" /> Generate Blog with AI
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2">Target Keyword/Topic</label>
+              <input 
+                type="text" 
+                value={aiTopic}
+                onChange={(e) => setAiTopic(e.target.value)}
+                placeholder="e.g., Best Final Year AI Projects"
+                className="w-full p-3 border rounded-lg bg-muted/50 outline-none focus:ring-2 focus:ring-indigo-500/50"
+              />
+            </div>
+            <Button 
+              onClick={handleAiGenerate} 
+              disabled={generating || !aiTopic.trim()} 
+              className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bot className="h-4 w-4" />}
+              {generating ? "Generating full article... (This takes a minute)" : "Generate Full SEO Article"}
+            </Button>
+          </div>
+        </div>
+      )}
 
       <form className="space-y-8" onSubmit={(e) => handleSubmit(e, false)}>
         <div className="bg-white dark:bg-zinc-950 border rounded-2xl p-6 md:p-8 space-y-6 shadow-sm">

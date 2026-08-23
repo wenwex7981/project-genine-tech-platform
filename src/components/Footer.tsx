@@ -5,6 +5,7 @@ import { seoLocations } from "@/lib/seo-data";
 
 export default function Footer() {
   const states = seoLocations.filter(loc => loc.type === 'state');
+  const cities = seoLocations.filter(loc => loc.type === 'city');
   const universities = seoLocations.filter(loc => loc.type === 'university');
 
   return (
@@ -37,6 +38,10 @@ export default function Footer() {
               <li><Link href="/about" className="text-sm hover:text-primary transition-colors">Who Are We</Link></li>
               <li><Link href="/contact" className="text-sm hover:text-primary transition-colors">Contact Us</Link></li>
               <li><Link href="/services" className="text-sm hover:text-primary transition-colors">Services & Pricing</Link></li>
+              <li><Link href="/projects" className="text-sm hover:text-primary transition-colors">Browse Projects</Link></li>
+              <li><Link href="/resume" className="text-sm hover:text-primary transition-colors">Resume Hub</Link></li>
+              <li><Link href="/hackathons" className="text-sm hover:text-primary transition-colors">Hackathons</Link></li>
+              <li><Link href="/blog" className="text-sm hover:text-primary transition-colors">Blog & Guides</Link></li>
             </ul>
           </div>
 
@@ -75,6 +80,15 @@ export default function Footer() {
             ))}
           </div>
           
+          <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-4">Major Cities</h3>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-zinc-600">
+            {cities.map((city) => (
+              <Link key={city.slug} href={`/locations/${city.slug}`} className="hover:text-primary hover:underline transition-colors">
+                {city.name}
+              </Link>
+            ))}
+          </div>
+
           <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mt-6 mb-4">Top Universities & Institutions We Support</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-zinc-600">
             {universities.map((uni) => (

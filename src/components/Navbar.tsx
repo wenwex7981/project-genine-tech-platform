@@ -79,6 +79,9 @@ export default function Navbar() {
       <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
         Pricing
       </Link>
+      <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+        Blog
+      </Link>
       {user && (
         <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-bold text-primary transition-colors hover:text-primary/80 flex items-center gap-1 border-l pl-4 border-muted">
           <UserCircle className="w-4 h-4" /> My Dashboard

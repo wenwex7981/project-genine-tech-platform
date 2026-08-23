@@ -4,8 +4,8 @@ import { ArrowRight, Calendar, Tag } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "GraduateNex Blog & Resources | Ultimate Tech Guides",
-  description: "Read the latest guides on final year projects, data science, AI services, hackathons, and resume building from GraduateNex.",
+  title: "Engineering Student Guides — Projects, Resumes & Hackathon Tips [2026]",
+  description: "Expert guides on final year project ideas, ATS resume building, hackathon winning strategies, and AI tools for Indian engineering students. Updated weekly.",
 };
 
 // Next.js Revalidation - dynamically fetch at most every 60 seconds (for ISR SEO)

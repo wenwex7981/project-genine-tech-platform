@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Upcoming Hackathons in India 2026 | Tech Events for Students",
-  description: "Find the best upcoming offline and online hackathons in India. Join coding competitions, win cash prizes, and network with tech companies. Exclusive hackathon pass available.",
-  keywords: ["upcoming hackathons in india 2026", "coding competitions for students", "hackathons for beginners", "tech events hyderabad", "smart india hackathon alternatives", "offline hackathons bangalore"],
+  title: "Upcoming Hackathons in India Aug 2026 — Register Now | Free & Paid Events",
+  description: "Find the best upcoming offline and online hackathons in India. Join coding competitions, win cash prizes up to ₹5 Lakhs, and network with top tech companies. Updated daily.",
+  keywords: ["upcoming hackathons in india 2026", "coding competitions for students", "hackathons for beginners", "tech events hyderabad", "smart india hackathon alternatives", "offline hackathons bangalore", "hackathon registration 2026"],
 };
 
 export default function HackathonsLayout({

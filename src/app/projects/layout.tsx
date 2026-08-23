@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Premium Final Year Projects & Source Code for BTech | GraduateNex",
-  description: "Download top-rated final year projects for CSE and IT. Get full source code, zero-plagiarism reports, and documentation for Machine Learning, Web Dev, and App Dev projects.",
-  keywords: ["final year projects cse", "btech projects download", "machine learning projects for final year", "react js projects with source code", "zero plagiarism project report", "major projects for cse"],
+  title: "100+ Final Year BTech Projects with Source Code [2026] — Download Now",
+  description: "Download production-ready final year projects for CSE, IT, ECE & EEE. Full source code, zero-plagiarism documentation, PPTs & research papers. ML, AI, Web Dev, IoT projects available.",
+  keywords: ["final year projects cse", "btech projects download", "machine learning projects for final year", "react js projects with source code", "zero plagiarism project report", "major projects for cse", "final year project 2026"],
 };
 
 export default function ProjectsLayout({
