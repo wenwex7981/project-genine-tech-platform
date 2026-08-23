@@ -24,7 +24,7 @@ Each object in the array must have the following fields:
       systemPrompt,
       preferredModel: preferredModel as AIModel,
       jsonMode: true,
-      maxTokens: 4000,
+      maxTokens: 8000,
     });
 
     let docs: any = [];

@@ -19,7 +19,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
     prompt,
     systemPrompt = "You are a helpful AI assistant.",
     preferredModel = 'deepseek',
-    maxTokens = 4000,
+    maxTokens = 8000,
     temperature = 0.4,
     jsonMode = false,
   } = options;
@@ -79,7 +79,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         });
         const completion = await openai.chat.completions.create({
           messages: messages as any,
-          model: 'llama3.1-70b',
+          model: 'llama3.1-8b',
           temperature,
           max_tokens: maxTokens,
           ...(jsonMode && { response_format: { type: 'json_object' } }),
@@ -93,7 +93,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         });
         const completion = await openai.chat.completions.create({
           messages: messages as any,
-          model: 'accounts/fireworks/models/llama-v3p1-70b-instruct',
+          model: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
           temperature,
           max_tokens: maxTokens,
           ...(jsonMode && { response_format: { type: 'json_object' } }),
@@ -115,7 +115,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
         const completion = await groq.chat.completions.create({
           messages: messages as any,
-          model: 'llama3-8b-8192',
+          model: 'llama-3.1-8b-instant',
           temperature,
           max_tokens: maxTokens,
           ...(jsonMode && { response_format: { type: 'json_object' } }),
