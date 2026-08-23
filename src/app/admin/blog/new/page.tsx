@@ -14,7 +14,9 @@ export default function AdminBlogNew() {
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiTopic, setAiTopic] = useState("");
   const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
@@ -135,6 +137,37 @@ export default function AdminBlogNew() {
     } finally {
       setUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingCover(true);
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", file);
+      uploadFormData.append("folder", "blogs");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadFormData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Failed to upload image");
+
+      setFormData((prev) => ({
+        ...prev,
+        image_url: data.url,
+      }));
+    } catch (error: any) {
+      console.error("Error uploading cover:", error);
+      alert("Failed to upload cover image.");
+    } finally {
+      setUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
     }
   };
 
@@ -272,12 +305,34 @@ export default function AdminBlogNew() {
           </div>
           
           <div className="space-y-2">
-            <label className="block text-sm font-semibold">OpenGraph Image URL (Optional)</label>
+            <div className="flex justify-between items-end mb-2">
+              <label className="block text-sm font-semibold">Cover Image URL (Shows on Blog Grid & Socials)</label>
+              <div>
+                <input 
+                  type="file" 
+                  ref={coverInputRef} 
+                  onChange={handleCoverUpload} 
+                  accept="image/*" 
+                  className="hidden" 
+                />
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2 h-8"
+                  onClick={() => coverInputRef.current?.click()}
+                  disabled={uploadingCover}
+                >
+                  {uploadingCover ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+                  {uploadingCover ? "Uploading..." : "Upload Cover"}
+                </Button>
+              </div>
+            </div>
             <input 
               type="url" 
               value={formData.image_url}
               onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
-              placeholder="https://... (Image shown when link is shared on WhatsApp/LinkedIn)"
+              placeholder="https://... (Or upload using the button above)"
               className="w-full p-3 border rounded-lg bg-muted/50 outline-none focus:ring-2 focus:ring-primary/50 text-sm"
             />
           </div>
