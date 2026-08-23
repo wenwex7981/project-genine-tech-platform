@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 import { Mistral } from '@mistralai/mistralai';
+import { supabase } from '@/lib/supabase';
 
 export type AIModel = 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai';
 
@@ -160,6 +161,24 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
           JSON.parse(content);
         }
         console.log(`Success with ${model}`);
+        
+        // Asynchronously log usage metrics to Supabase
+        const estimatedTokens = Math.ceil(content.length / 4);
+        supabase.rpc('increment_ai_usage', { 
+          p_model_name: model, 
+          p_tokens: estimatedTokens 
+        }).then(({ error }) => {
+          if (error) {
+            // Fallback if RPC doesn't exist (e.g. they just created a standard table without RPC)
+            // We can't do upsert easily without knowing ID, so we just insert a new log row
+            supabase.from('ai_usage_metrics').insert([{
+              model_name: model,
+              requests_count: 1,
+              tokens_used: estimatedTokens
+            }]).then(() => {});
+          }
+        });
+
         return content;
       }
 

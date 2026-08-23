@@ -29,12 +29,18 @@ Each object in the array must have the following fields:
       maxTokens: 3000,
     });
 
-    let projects = [];
+    let projects: any = [];
     try {
-      projects = JSON.parse(jsonStr);
-      // If the AI wrapped it in an object like { "projects": [...] }
-      if (projects.projects && Array.isArray(projects.projects)) {
-        projects = projects.projects;
+      const cleaned = jsonStr.replace(/^```json\n?/, '').replace(/```$/, '').trim();
+      let parsed = JSON.parse(cleaned);
+      
+      if (Array.isArray(parsed)) {
+        projects = parsed;
+      } else if (typeof parsed === 'object') {
+        const arrayVal = Object.values(parsed).find(val => Array.isArray(val));
+        if (arrayVal) {
+          projects = arrayVal;
+        }
       }
     } catch (parseError) {
       console.error("Failed to parse JSON from AI:", jsonStr);

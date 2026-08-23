@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, ListTodo, FolderGit2, FileText, ArrowLeft, PenTool } from "lucide-react";
+import { LayoutDashboard, ListTodo, FolderGit2, FileText, ArrowLeft, PenTool, Activity } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -87,6 +87,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link href="/admin/blog" className="flex items-center p-2 text-foreground rounded-lg hover:bg-muted group">
                 <PenTool className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 <span className="ml-3">SEO Blog Manager</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/admin/ai-usage" className="flex items-center p-2 text-foreground rounded-lg hover:bg-muted group">
+                <Activity className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                <span className="ml-3">AI Usage Metrics</span>
               </Link>
             </li>
           </ul>

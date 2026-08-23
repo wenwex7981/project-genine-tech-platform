@@ -27,13 +27,18 @@ Each object in the array must have the following fields:
       maxTokens: 4000,
     });
 
-    let docs = [];
+    let docs: any = [];
     try {
-      docs = JSON.parse(jsonStr);
-      if (docs.docs && Array.isArray(docs.docs)) {
-        docs = docs.docs;
-      } else if (docs.guides && Array.isArray(docs.guides)) {
-        docs = docs.guides;
+      const cleaned = jsonStr.replace(/^```json\n?/, '').replace(/```$/, '').trim();
+      let parsed = JSON.parse(cleaned);
+      
+      if (Array.isArray(parsed)) {
+        docs = parsed;
+      } else if (typeof parsed === 'object') {
+        const arrayVal = Object.values(parsed).find(val => Array.isArray(val));
+        if (arrayVal) {
+          docs = arrayVal;
+        }
       }
     } catch (parseError) {
       console.error("Failed to parse JSON from AI:", jsonStr);
