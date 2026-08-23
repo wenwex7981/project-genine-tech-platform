@@ -204,7 +204,7 @@ export default function AdminBlogEdit() {
       }));
     } catch (error: any) {
       console.error("Error uploading cover:", error);
-      alert("Failed to upload cover image.");
+      alert(`Failed to upload cover image: ${error.message}. If on Vercel, make sure R2 keys are in Environment Variables!`);
     } finally {
       setUploadingCover(false);
       if (coverInputRef.current) coverInputRef.current.value = "";
