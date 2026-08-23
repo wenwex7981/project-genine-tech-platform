@@ -28,21 +28,26 @@ Each object in the array must have the following fields:
 
     let templates: any = [];
     try {
-      // Find JSON block if wrapped in markdown
-      const jsonBlockMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-      let cleaned = jsonStr;
-      if (jsonBlockMatch && jsonBlockMatch[1]) {
-        cleaned = jsonBlockMatch[1];
-      } else {
-        // Fallback: extract substring from first [ or { to last ] or }
-        const firstIdx = jsonStr.search(/\[|\{/);
-        const lastIdx = Math.max(jsonStr.lastIndexOf(']'), jsonStr.lastIndexOf('}'));
-        if (firstIdx !== -1 && lastIdx !== -1 && lastIdx >= firstIdx) {
-          cleaned = jsonStr.substring(firstIdx, lastIdx + 1);
+      let parsed;
+      try {
+        // Try to parse the raw string directly first (in case it's perfectly valid JSON)
+        parsed = JSON.parse(jsonStr);
+      } catch (initialError) {
+        // Find JSON block if wrapped in markdown
+        const jsonBlockMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        let cleaned = jsonStr;
+        if (jsonBlockMatch && jsonBlockMatch[1]) {
+          cleaned = jsonBlockMatch[1];
+        } else {
+          // Fallback: extract substring from first [ or { to last ] or }
+          const firstIdx = jsonStr.search(/\[|\{/);
+          const lastIdx = Math.max(jsonStr.lastIndexOf(']'), jsonStr.lastIndexOf('}'));
+          if (firstIdx !== -1 && lastIdx !== -1 && lastIdx >= firstIdx) {
+            cleaned = jsonStr.substring(firstIdx, lastIdx + 1);
+          }
         }
+        parsed = JSON.parse(cleaned);
       }
-      
-      let parsed = JSON.parse(cleaned);
       
       if (Array.isArray(parsed)) {
         templates = parsed;
@@ -57,7 +62,7 @@ Each object in the array must have the following fields:
       }
     } catch (parseError) {
       console.error("Failed to parse JSON from AI:", jsonStr);
-      return NextResponse.json({ error: "AI returned invalid JSON format" }, { status: 500 });
+      return NextResponse.json({ error: `AI returned invalid JSON format. RAW: ${jsonStr.substring(0, 200)}` }, { status: 500 });
     }
 
     if (!Array.isArray(templates)) {
