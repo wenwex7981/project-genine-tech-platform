@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
+import OpenAI from 'openai';
 
 export const maxDuration = 60; // Allow up to 60 seconds for long AI generation
 
@@ -11,12 +12,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey || apiKey === 'dummy_key_for_build') {
-      return NextResponse.json({ error: 'GROQ_API_KEY is not configured on the server.' }, { status: 500 });
-    }
+    const groqApiKey = process.env.GROQ_API_KEY;
+    const openaiApiKey = process.env.OPENAI_API_KEY;
 
-    const groq = new Groq({ apiKey });
+    if ((!groqApiKey || groqApiKey === 'dummy_key_for_build') && !openaiApiKey) {
+      return NextResponse.json({ error: 'No API keys configured on the server.' }, { status: 500 });
+    }
 
     const prompt = `You are an expert SEO content writer for GraduateNex, a platform that provides final year engineering projects, ATS resume tools, and hackathon listings for Indian students.
 
@@ -47,23 +48,50 @@ OUTPUT FORMAT: Return a valid JSON object with exactly these fields:
 
 Return ONLY the JSON object, nothing else.`;
 
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      model: 'openai/gpt-oss-120b',
-      temperature: 0.4,
-      max_tokens: 4000,
-      response_format: { type: 'json_object' },
-    });
+    let rawContent = '';
 
-    const rawContent = chatCompletion.choices[0]?.message?.content;
+    // Hybrid Approach: Try Groq First
+    if (groqApiKey && groqApiKey !== 'dummy_key_for_build') {
+      try {
+        const groq = new Groq({ apiKey: groqApiKey });
+        const chatCompletion = await groq.chat.completions.create({
+          messages: [{ role: 'user', content: prompt }],
+          model: 'openai/gpt-oss-120b',
+          temperature: 0.4,
+          max_tokens: 4000,
+          response_format: { type: 'json_object' },
+        });
+        rawContent = chatCompletion.choices[0]?.message?.content || '';
+        
+        // Attempt to parse to see if it's truncated/invalid
+        JSON.parse(rawContent);
+      } catch (groqError: any) {
+        console.warn('Groq generation failed, falling back to OpenAI...', groqError.message);
+        rawContent = ''; // reset to trigger fallback
+      }
+    }
+
+    // Fallback: Try OpenAI if Groq failed or wasn't available
+    if (!rawContent && openaiApiKey) {
+      try {
+        console.log("Using OpenAI Fallback");
+        const openai = new OpenAI({ apiKey: openaiApiKey });
+        const completion = await openai.chat.completions.create({
+          messages: [{ role: 'user', content: prompt }],
+          model: 'gpt-4o-mini',
+          temperature: 0.4,
+          max_tokens: 8000,
+          response_format: { type: 'json_object' },
+        });
+        rawContent = completion.choices[0]?.message?.content || '';
+      } catch (openaiError: any) {
+        console.error('OpenAI fallback failed:', openaiError);
+        return NextResponse.json({ error: `Hybrid AI Generation Failed: ${openaiError.message}` }, { status: 500 });
+      }
+    }
 
     if (!rawContent) {
-      return NextResponse.json({ error: 'AI returned empty response. Please try again.' }, { status: 500 });
+      return NextResponse.json({ error: 'AI returned empty response from both providers. Please try again.' }, { status: 500 });
     }
 
     let parsed;
@@ -71,7 +99,7 @@ Return ONLY the JSON object, nothing else.`;
       parsed = JSON.parse(rawContent);
     } catch (parseErr) {
       console.error('Failed to parse AI JSON response:', rawContent.substring(0, 500));
-      return NextResponse.json({ error: 'AI returned invalid JSON. Please try again with a different topic.' }, { status: 500 });
+      return NextResponse.json({ error: 'AI returned invalid JSON (possibly truncated). Please try a shorter topic.' }, { status: 500 });
     }
 
     // Validate required fields exist
@@ -94,17 +122,7 @@ Return ONLY the JSON object, nothing else.`;
       category: category,
     });
   } catch (error: any) {
-    console.error('Error generating blog:', error);
-    
-    // Provide more specific error messages
-    const message = error.message || 'Unknown error';
-    if (message.includes('rate_limit')) {
-      return NextResponse.json({ error: 'AI rate limit reached. Please wait 30 seconds and try again.' }, { status: 429 });
-    }
-    if (message.includes('decommissioned') || message.includes('model')) {
-      return NextResponse.json({ error: 'AI model error. Contact admin.' }, { status: 500 });
-    }
-    
-    return NextResponse.json({ error: `Failed to generate blog: ${message}` }, { status: 500 });
+    console.error('Error in AI generate-blog route:', error);
+    return NextResponse.json({ error: `Failed to generate blog: ${error.message}` }, { status: 500 });
   }
 }
