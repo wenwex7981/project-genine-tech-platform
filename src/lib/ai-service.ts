@@ -39,7 +39,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
     { role: 'user', content: prompt }
   ];
 
-  let lastError = null;
+  let errors: string[] = [];
 
   for (const model of fallbackOrder) {
     try {
@@ -115,7 +115,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
         const completion = await groq.chat.completions.create({
           messages: messages as any,
-          model: 'openai/gpt-oss-120b',
+          model: 'llama-3.3-70b-versatile',
           temperature,
           max_tokens: maxTokens,
           ...(jsonMode && { response_format: { type: 'json_object' } }),
@@ -152,6 +152,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
       }
       else {
         console.warn(`Skipping ${model} - No API key found`);
+        errors.push(`${model}: No API key configured`);
         continue; // Skip if no API key
       }
 
@@ -184,10 +185,15 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
 
     } catch (error: any) {
       console.warn(`Model ${model} failed:`, error.message);
-      lastError = error;
+      errors.push(`${model} error: ${error.message}`);
       // Continue to next model in fallback array
     }
   }
 
-  throw new Error(`All AI models failed. Last error: ${lastError?.message || 'Unknown error'}`);
+  const preferredModelError = errors.find(e => e.startsWith(`${preferredModel} `) || e.startsWith(`${preferredModel}:`));
+  const errorMessage = preferredModelError 
+    ? `Your selected model (${preferredModel}) failed: ${preferredModelError}. Fallbacks also failed. All errors: ${errors.join(' | ')}`
+    : `All AI models failed. Errors: ${errors.join(' | ')}`;
+
+  throw new Error(errorMessage);
 }
