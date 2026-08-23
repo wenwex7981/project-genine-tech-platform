@@ -158,8 +158,8 @@ export default function InterviewPrepPage() {
                           <CheckCircle className="w-4 h-4" /> You own this document
                         </div>
                         <a
-                          href={doc.file_url}
-                          target="_blank"
+                          href={doc.file_url === 'pending' ? `/view/${doc.id}` : doc.file_url}
+                          target={doc.file_url === 'pending' ? "_self" : "_blank"}
                           rel="noreferrer"
                           className="w-full"
                         >

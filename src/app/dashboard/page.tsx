@@ -198,8 +198,8 @@ export default function DashboardPage() {
                         </div>
                         {item.file_url ? (
                           <a
-                            href={item.file_url}
-                            target="_blank"
+                            href={item.file_url === 'pending' ? `/view/${item.id}` : item.file_url}
+                            target={item.file_url === 'pending' ? "_self" : "_blank"}
                             rel="noopener noreferrer"
                             className="shrink-0 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition-colors flex items-center gap-1"
                           >
