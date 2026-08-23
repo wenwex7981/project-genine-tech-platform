@@ -127,6 +127,40 @@ export default function RootLayout({
             })
           }}
         />
+        {/* AEO: AI Engine Optimization Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebPage',
+              speakable: {
+                '@type': 'SpeakableSpecification',
+                cssSelector: ['h1', 'h2', '.prose', '[role="main"]']
+              },
+              mainEntity: {
+                '@type': 'EducationalOrganization',
+                name: 'GraduateNex',
+                description: 'India\'s #1 Academic & Career Success Platform providing production-ready engineering projects, zero-plagiarism documentation, AI-powered resume builders, and hackathon discovery for Indian engineering students.',
+                url: 'https://www.graduatenex.online',
+                areaServed: {
+                  '@type': 'Country',
+                  name: 'India'
+                },
+                hasOfferCatalog: {
+                  '@type': 'OfferCatalog',
+                  name: 'Academic Services',
+                  itemListElement: [
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Final Year Project Source Code', description: 'Production-ready BTech/MTech projects with complete source code in Java, Python, React, ML, AI, IoT, Blockchain' } },
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'ATS Resume Builder', description: 'Free ATS resume checker, JD matching analyzer, and AI-powered resume generation for Indian freshers' } },
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Interview Preparation', description: 'AI-generated interview prep guides for Deloitte, TCS, Infosys, Wipro, Google, Amazon and more' } },
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Research Paper Writing', description: 'IEEE-format research papers, project documentation, and abstracts with zero plagiarism guarantee' } }
+                  ]
+                }
+              }
+            })
+          }}
+        />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX"} />
       </body>
     </html>

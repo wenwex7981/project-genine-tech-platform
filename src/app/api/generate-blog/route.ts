@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { generateAIResponse, AIModel } from '@/lib/ai-service';
+import { pingGoogleForIndexing } from '@/lib/google-indexing';
 
 export const maxDuration = 60; // Allow up to 60 seconds for long AI generation
 
@@ -60,6 +61,9 @@ Return ONLY the JSON object, nothing else.`;
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '');
+
+    // Ping Google to crawl new blog
+    pingGoogleForIndexing().catch(() => {});
 
     return NextResponse.json({
       title: parsed.title,

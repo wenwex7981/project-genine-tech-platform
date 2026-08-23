@@ -32,6 +32,7 @@ export default function AdminDashboard() {
 
   const [recentRequests, setRecentRequests] = useState<any[]>([]);
   const [recentBlogs, setRecentBlogs] = useState<any[]>([]);
+  const [recentHackathons, setRecentHackathons] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -90,8 +91,15 @@ export default function AdminDashboard() {
           .order("created_at", { ascending: false })
           .limit(5);
 
+        const { data: hackathonsData } = await supabase
+          .from("hackathons_v2")
+          .select("id, title, org_name, contact_person, contact_email, event_date, pricing_plan, payment_status, created_at")
+          .order("created_at", { ascending: false })
+          .limit(10);
+
         setRecentRequests(requestsData || []);
         setRecentBlogs(blogsData || []);
+        setRecentHackathons(hackathonsData || []);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -248,6 +256,55 @@ export default function AdminDashboard() {
               ))
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Hackathon Partners */}
+      <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden mt-8">
+        <div className="p-6 border-b border-gray-800 flex items-center justify-between">
+          <h3 className="text-xl font-bold text-white flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-purple-500" />
+            Hackathon Partner Registrations
+          </h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-400">
+            <thead className="bg-gray-800/50 text-gray-300">
+              <tr>
+                <th className="p-4 font-medium">Organization</th>
+                <th className="p-4 font-medium">Contact</th>
+                <th className="p-4 font-medium">Event Title</th>
+                <th className="p-4 font-medium">Event Date</th>
+                <th className="p-4 font-medium">Plan</th>
+                <th className="p-4 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-800">
+              {recentHackathons.length === 0 ? (
+                <tr><td colSpan={6} className="p-6 text-center text-gray-500">No registrations yet</td></tr>
+              ) : (
+                recentHackathons.map((h) => (
+                  <tr key={h.id} className="hover:bg-gray-800/50 transition-colors">
+                    <td className="p-4 font-medium text-white">{h.org_name}</td>
+                    <td className="p-4">
+                      <div className="text-white">{h.contact_person}</div>
+                      <div className="text-xs">{h.contact_email}</div>
+                    </td>
+                    <td className="p-4">{h.title}</td>
+                    <td className="p-4">{h.event_date}</td>
+                    <td className="p-4">
+                      <span className="px-2 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs">{h.pricing_plan}</span>
+                    </td>
+                    <td className="p-4">
+                      <span className={`px-2 py-1 rounded-full text-xs ${h.payment_status === 'paid' ? 'bg-green-500/10 text-green-500' : (h.payment_status === 'free' ? 'bg-blue-500/10 text-blue-500' : 'bg-yellow-500/10 text-yellow-500')}`}>
+                        {h.payment_status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

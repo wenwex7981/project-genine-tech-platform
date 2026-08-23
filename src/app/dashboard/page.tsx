@@ -152,6 +152,20 @@ export default function DashboardPage() {
               </Button>
             </form>
           </div>
+
+          {/* Hackathon Partner CTA */}
+          <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg">
+            <h2 className="text-xl font-bold mb-3 flex items-center gap-2">🚀 Join as Hackathon Partner</h2>
+            <p className="text-indigo-100 text-sm mb-4">Are you an event organizer or company? Post your hackathon to reach thousands of top developers and engineering students across India.</p>
+            <div className="flex gap-3 flex-wrap">
+              <Link href="/hackathons/post">
+                <Button className="bg-white text-indigo-700 hover:bg-gray-100 font-bold px-6">Host a Hackathon</Button>
+              </Link>
+              <Link href="/hackathons">
+                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 font-bold">Browse Events</Button>
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Purchase History Section */}

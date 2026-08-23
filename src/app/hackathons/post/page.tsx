@@ -56,13 +56,14 @@ export default function PostHackathonPage() {
     reg_start_date: "", reg_end_date: "", event_date: "", mode: "Online", city: "", state: "", venue: "",
     total_prize_pool: "", first_prize: "", second_prize: "", third_prize: "", 
     has_certificates: false, has_internship: false, has_ppo: false, has_goodies: false,
-    reg_fee: 0, max_participants: "", pricing_plan: "Free Listing"
+    reg_fee: 0, max_participants: "", pricing_plan: "Free Listing", registrationLink: ""
   });
 
   const saveHackathonToDB = async (paymentStatus: string = "unpaid") => {
     try {
       const { error } = await supabase.from('hackathons_v2').insert([{
         ...formData,
+        registration_link: formData.registrationLink,
         max_participants: formData.max_participants ? parseInt(formData.max_participants) : null,
         payment_status: paymentStatus
       }]);
@@ -220,6 +221,11 @@ export default function PostHackathonPage() {
               <div>
                 <label className="block text-sm font-semibold mb-2">Description *</label>
                 <textarea required rows={4} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2">Registration Form Link</label>
+                <input type="url" value={formData.registrationLink || ''} onChange={e => setFormData({...formData, registrationLink: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 outline-none" placeholder="https://forms.google.com/... or your registration page URL" />
+                <p className="text-xs text-gray-500 mt-1">Participants will be redirected to this link when they click &quot;Join&quot;</p>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>

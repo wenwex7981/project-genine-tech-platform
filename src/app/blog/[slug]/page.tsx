@@ -94,6 +94,10 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `https://www.graduatenex.online/blog/${blog.slug}`
+    },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.prose', 'article']
     }
   };
 

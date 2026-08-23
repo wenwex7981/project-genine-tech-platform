@@ -115,11 +115,11 @@ export default function HackathonsDirectory() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <Calendar className="h-4 w-4 text-indigo-500" />
-                    <span>{hackathon.date}</span>
+                    <span>{hackathon.event_date || hackathon.date || 'TBA'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <MapPin className="h-4 w-4 text-indigo-500" />
-                    <span>{hackathon.location}</span>
+                    <span>{hackathon.city ? `${hackathon.city}${hackathon.state ? ', ' + hackathon.state : ''}` : hackathon.location || hackathon.mode || 'Online'}</span>
                   </div>
                 </div>
 
@@ -129,9 +129,15 @@ export default function HackathonsDirectory() {
                   <Link href={`/hackathons/${hackathon.id}`} className="flex-1">
                     <Button variant="outline" className="w-full">Details</Button>
                   </Link>
-                  <a href={hackathon.registration_link} target="_blank" rel="noreferrer" className="flex-1">
-                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">Join <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                  </a>
+                  {hackathon.registration_link ? (
+                    <a href={hackathon.registration_link} target="_blank" rel="noreferrer" className="flex-1">
+                      <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">Join <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                    </a>
+                  ) : (
+                    <Link href={`/hackathons/${hackathon.id}`} className="flex-1">
+                      <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">Join <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

@@ -10,39 +10,14 @@ export default function HackathonDetails({ params }: { params: Promise<{ id: str
   const resolvedParams = use(params);
   const [hackathon, setHackathon] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [hasBadge, setHasBadge] = useState(false);
 
   useEffect(() => {
     fetchHackathon();
-    checkBadge();
   }, [resolvedParams.id]);
-
-  const checkBadge = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const email = session?.user?.email;
-    if (email) {
-      const adminEmails = ["projectgenie16@gmail.com", "proejctgenie16@gmail.com", "nithinpatel2025@gmail.com"];
-      if (adminEmails.includes(email)) {
-        setHasBadge(true);
-        return;
-      }
-      
-      const { data } = await supabase
-        .from('user_subscriptions')
-        .select('*')
-        .eq('user_email', email)
-        .in('plan_id', ['hackathon_badge_15', 'hackathon_badge_unlimited'])
-        .eq('status', 'active');
-        
-      if (data && data.length > 0) {
-        setHasBadge(true);
-      }
-    }
-  };
 
   const fetchHackathon = async () => {
     const { data, error } = await supabase
-      .from('hackathons')
+      .from('hackathons_v2')
       .select('*')
       .eq('id', resolvedParams.id)
       .single();
@@ -93,21 +68,18 @@ export default function HackathonDetails({ params }: { params: Promise<{ id: str
         <div className="p-8 md:p-12 relative">
           {/* Action Bar Floating */}
           <div className="md:absolute right-12 top-0 md:-translate-y-1/2 flex gap-4 mt-6 md:mt-0 bg-white dark:bg-zinc-900 p-2 rounded-2xl shadow-xl border">
-            {hasBadge ? (
+            {hackathon.registration_link ? (
               <a href={hackathon.registration_link} target="_blank" rel="noreferrer" className="w-full">
                 <Button size="lg" className="w-full h-14 px-8 text-lg bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md">
-                  Register Now <ExternalLink className="ml-2 h-5 w-5" />
+                  Join Hackathon <ExternalLink className="ml-2 h-5 w-5" />
                 </Button>
               </a>
             ) : (
-              <Link href="/pricing" className="w-full">
-                <Button size="lg" className="w-full h-14 px-8 text-lg bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-600 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300"></div>
-                  <span className="relative flex items-center gap-2">
-                    <Trophy className="h-5 w-5" /> Get Access Badge to Join
-                  </span>
+              <a href={`mailto:${hackathon.contact_email}`} className="w-full">
+                <Button size="lg" className="w-full h-14 px-8 text-lg bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md">
+                  Contact Organizer <ExternalLink className="ml-2 h-5 w-5" />
                 </Button>
-              </Link>
+              </a>
             )}
           </div>
 
@@ -120,7 +92,7 @@ export default function HackathonDetails({ params }: { params: Promise<{ id: str
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-500">Date</p>
-                <p className="font-bold">{hackathon.date}</p>
+                <p className="font-bold">{hackathon.event_date || hackathon.date}</p>
               </div>
             </div>
             
@@ -130,9 +102,32 @@ export default function HackathonDetails({ params }: { params: Promise<{ id: str
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-500">Location</p>
-                <p className="font-bold">{hackathon.location}</p>
+                <p className="font-bold">{hackathon.city && hackathon.state ? `${hackathon.city}, ${hackathon.state}` : hackathon.location || hackathon.mode}</p>
               </div>
             </div>
+
+            {hackathon.org_name && (
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600">
+                  <Users className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-500">Organized By</p>
+                  <p className="font-bold">{hackathon.org_name}</p>
+                </div>
+              </div>
+            )}
+            {hackathon.total_prize_pool && (
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-xl text-amber-600">
+                  <Trophy className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-500">Prize Pool</p>
+                  <p className="font-bold">{hackathon.total_prize_pool}</p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-6">

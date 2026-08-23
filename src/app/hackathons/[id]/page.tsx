@@ -5,7 +5,7 @@ import { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const { data: hackathon } = await supabase.from('hackathons').select('*').eq('id', id).single();
+  const { data: hackathon } = await supabase.from('hackathons_v2').select('*').eq('id', id).single();
   
   if (!hackathon) {
     return {
