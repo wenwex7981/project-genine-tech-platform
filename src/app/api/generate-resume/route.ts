@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
 import mammoth from 'mammoth';
 import PDFParser from 'pdf2json';
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build',
-});
+import { generateAIResponse, AIModel } from '@/lib/ai-service';
 
 const RESUME_PROMPT = `You are an elite AI Resume Writer and Career Coach. 
 Your task is to generate a highly professional, ATS-optimized 1-page resume based on the user's prompt, personal details, and an optional sample template.
@@ -100,6 +96,7 @@ export async function POST(req: NextRequest) {
     const prompt = formData.get('prompt') as string;
     const personalInfoStr = formData.get('personalInfo') as string;
     const file = formData.get('file') as File | null;
+    const preferredModel = formData.get('preferredModel') as string || 'deepseek';
 
     if (!prompt) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
@@ -137,17 +134,14 @@ ${personalInfoStr || "Use generic placeholders if not provided."}
 ${templateText ? `Sample Template to extract styling/base layout/inspiration from: \n\n${templateText}` : ""}
     `;
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage }
-      ],
-      model: 'openai/gpt-oss-120b',
+    const resultStr = await generateAIResponse({
+      systemPrompt,
+      prompt: userMessage,
+      preferredModel: preferredModel as AIModel,
+      jsonMode: true,
       temperature: 0.5,
-      response_format: { type: 'json_object' }
     });
 
-    const resultStr = completion.choices[0]?.message?.content;
     if (!resultStr) throw new Error("No response from AI");
 
     const jsonMatch = resultStr.match(/\{[\s\S]*\}/);

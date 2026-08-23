@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
 import mammoth from 'mammoth';
 import PDFParser from 'pdf2json';
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build',
-});
+import { generateAIResponse, AIModel } from '@/lib/ai-service';
 
 const ATS_PROMPT = `You are an elite AI ATS (Applicant Tracking System) and expert resume reviewer. 
 Your task is to analyze the candidate's resume strictly without a specific Job Description and provide a massively detailed 17-point ATS checker report.
@@ -73,6 +69,7 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File;
     const jd = formData.get('jd') as string;
     const mode = formData.get('mode') as string; // 'ats' or 'jd'
+    const preferredModel = formData.get('preferredModel') as string || 'deepseek';
 
     if (!file) {
       return NextResponse.json({ error: 'Missing file' }, { status: 400 });
@@ -108,17 +105,14 @@ export async function POST(req: NextRequest) {
       ? `=== CANDIDATE RESUME ===\n${extractedText}\n\n=== JOB DESCRIPTION ===\n${jd}`
       : `=== CANDIDATE RESUME ===\n${extractedText}`;
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      model: 'openai/gpt-oss-120b',
+    const responseContent = await generateAIResponse({
+      systemPrompt,
+      prompt: userPrompt,
+      preferredModel: preferredModel as AIModel,
+      jsonMode: true,
       temperature: 0.1,
-      response_format: { type: "json_object" }
     });
 
-    const responseContent = completion.choices[0]?.message?.content || '{}';
     const analysisResult = JSON.parse(responseContent);
     return NextResponse.json(analysisResult);
 

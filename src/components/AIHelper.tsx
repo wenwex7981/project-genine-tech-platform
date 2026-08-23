@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText, Download, Sparkles, Workflow } from "lucide-react";
 import * as htmlToImage from 'html-to-image';
+import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 type Format = "text" | "pdf" | "docx" | "xlsx" | "pptx" | "uml";
 
@@ -15,6 +16,7 @@ export default function AIHelper() {
   const [themeColor, setThemeColor] = useState("363636");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [diagramType, setDiagramType] = useState("auto");
+  const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   const mermaidRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function AIHelper() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ topic, format, themeColor, fontFamily, diagramType }),
+        body: JSON.stringify({ topic, format, themeColor, fontFamily, diagramType, preferredModel }),
       });
 
       if (!response.ok) {
@@ -265,6 +267,10 @@ export default function AIHelper() {
                 </div>
               </div>
             )}
+
+            <div className="mt-2">
+              <ModelSelector value={preferredModel} onChange={setPreferredModel} />
+            </div>
 
             <Button 
               onClick={handleGenerate} 

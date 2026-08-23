@@ -12,12 +12,13 @@ import { supabase } from "@/lib/supabase";
 import { useCart } from "@/context/CartContext";
 
 import { useRouter } from "next/navigation";
-
 import ResumeEditor from "@/components/ResumeEditor";
+import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 export default function ResumeHub() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community" | "maker">("ats");
+  const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const { addToCart } = useCart();
   
@@ -199,6 +200,7 @@ export default function ResumeHub() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("mode", activeTab);
+    formData.append("preferredModel", preferredModel);
     if (activeTab === "jd") formData.append("jd", jd);
 
     try {
@@ -227,6 +229,7 @@ export default function ResumeHub() {
     const formData = new FormData();
     formData.append("resume", file);
     formData.append("jd", jd);
+    formData.append("preferredModel", preferredModel);
 
     try {
       const response = await fetch('/api/tailor-resume', { method: 'POST', body: formData });
@@ -325,6 +328,12 @@ export default function ResumeHub() {
         <button onClick={() => setActiveTab("community")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "community" ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500'}`}>
           <Users className="h-4 w-4" /> Community Templates
         </button>
+      </div>
+
+      <div className="mb-6 flex justify-end">
+        {(activeTab === "ats" || activeTab === "jd" || activeTab === "maker") && (
+          <ModelSelector value={preferredModel} onChange={setPreferredModel} />
+        )}
       </div>
 
       {/* -------------------- ANALYZER INPUTS -------------------- */}
@@ -888,6 +897,7 @@ export default function ResumeHub() {
                 const formData = new FormData();
                 formData.append('prompt', makerPrompt);
                 formData.append('personalInfo', JSON.stringify(makerInfo));
+                formData.append('preferredModel', preferredModel);
                 if (makerTemplate) formData.append('file', makerTemplate);
 
                 const res = await fetch('/api/generate-resume', { method: 'POST', body: formData });

@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
 import mammoth from 'mammoth';
 import PDFParser from 'pdf2json';
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build',
-});
+import { generateAIResponse, AIModel } from '@/lib/ai-service';
 
 const TAILOR_PROMPT = `You are an elite AI ATS and expert Resume Writer. 
 Your task is to rewrite, tailor, and optimize the user's provided Resume specifically for the provided Job Description (JD). 
@@ -89,6 +85,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get('resume') as File | null;
     const jdText = formData.get('jd') as string | null;
+    const preferredModel = formData.get('preferredModel') as string || 'deepseek';
 
     if (!file) {
       return NextResponse.json({ error: 'Resume file is required' }, { status: 400 });
@@ -123,17 +120,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Extracted text is empty. The document might be image-based or corrupted.' }, { status: 400 });
     }
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        { role: 'system', content: TAILOR_PROMPT },
-        { role: 'user', content: `JOB DESCRIPTION:\n${jdText}\n\nORIGINAL RESUME:\n${resumeText}` }
-      ],
-      model: 'openai/gpt-oss-120b',
+    const output = await generateAIResponse({
+      systemPrompt: TAILOR_PROMPT,
+      prompt: `JOB DESCRIPTION:\n${jdText}\n\nORIGINAL RESUME:\n${resumeText}`,
+      preferredModel: preferredModel as AIModel,
+      jsonMode: true,
       temperature: 0.2,
-      response_format: { type: 'json_object' }
     });
-
-    const output = completion.choices[0]?.message?.content;
     
     if (!output) {
       throw new Error("No response from Groq");

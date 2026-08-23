@@ -7,6 +7,7 @@ import {
   Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, Mail,
   ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield
 } from "lucide-react";
+import AuthRedirect from "@/components/AuthRedirect";
 
 const STATS = [
   { value: "2,500+", label: "Projects Delivered" },
@@ -162,6 +163,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <AuthRedirect />
       {/* ── HERO SECTION ── */}
       <section className="relative w-full min-h-[92vh] flex items-center bg-zinc-950 bg-[url('/images/hero-bg.png')] bg-cover bg-center bg-no-repeat overflow-hidden text-white">
         {/* Dark overlay for text readability */}

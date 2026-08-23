@@ -1,10 +1,11 @@
 "use client";
+import { Loader2, ShieldCheck, ShieldAlert, Sparkles, Wand2, Upload, Printer, Lock, Zap, X } from "lucide-react";
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, ShieldCheck, ShieldAlert, Sparkles, Wand2, Upload, Printer, Lock, Zap, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 const ADMIN_EMAILS = ["projectgenie16@gmail.com", "proejctgenie16@gmail.com", "nithinpatel2025@gmail.com"];
 const USAGE_KEY = "ai_humanizer_used";
@@ -16,6 +17,7 @@ export default function AIHumanizer() {
   const [result, setResult] = useState<{ originalAiScore: number, newAiScore: number, humanizedText: string } | null>(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [hasPro, setHasPro] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -71,7 +73,7 @@ export default function AIHumanizer() {
       const response = await fetch('/api/humanize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, preferredModel }),
       });
 
       if (!response.ok) {
@@ -133,6 +135,10 @@ export default function AIHumanizer() {
               placeholder="Paste your essay, report, or abstract here..."
               className="w-full min-h-[200px] p-4 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
             />
+          </div>
+
+          <div className="mt-2">
+            <ModelSelector value={preferredModel} onChange={setPreferredModel} />
           </div>
 
           <Button

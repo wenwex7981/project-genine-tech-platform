@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Loader2, Map, ChevronRight, FileText, BarChart3, Target, BookOpen, Download, Copy, Cpu, Layers } from "lucide-react";
+import { Loader2, Map, ChevronRight, FileText, BarChart3, Target, BookOpen, Download, Copy, Cpu, Layers, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 export default function CareerGuidancePage() {
   const [goal, setGoal] = useState("");
@@ -12,6 +13,7 @@ export default function CareerGuidancePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [roadmap, setRoadmap] = useState("");
   const [activeView, setActiveView] = useState<"text" | "visual">("text");
+  const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   const roadmapRef = useRef<HTMLDivElement>(null);
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -23,7 +25,7 @@ export default function CareerGuidancePage() {
       const res = await fetch("/api/career-roadmap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ goal, background }),
+        body: JSON.stringify({ goal, background, preferredModel }),
       });
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
@@ -87,24 +89,46 @@ export default function CareerGuidancePage() {
     setTimeout(() => { printWindow.print(); }, 600);
   };
 
-  // Parse roadmap text into visual phases
   const parseVisualPhases = (text: string) => {
     const lines = text.split("\n");
-    const phases: { title: string; items: string[] }[] = [];
-    let current: { title: string; items: string[] } | null = null;
+    const phases: { title: string; items: string[], description: string }[] = [];
+    let current: { title: string; items: string[], description: string } | null = null;
+    let inList = false;
 
     for (const line of lines) {
       const trimmed = line.trim();
       if (!trimmed) continue;
-      if (trimmed.startsWith("##") || trimmed.startsWith("**Month") || trimmed.startsWith("**Phase") || trimmed.startsWith("## Phase") || trimmed.startsWith("## Month")) {
-        if (current) phases.push(current);
-        current = { title: trimmed.replace(/^#+\s*/, "").replace(/\*\*/g, ""), items: [] };
-      } else if (trimmed.startsWith("-") || trimmed.startsWith("*") || trimmed.match(/^\d+\./)) {
-        if (current) current.items.push(trimmed.replace(/^[-*]\s*/, "").replace(/^\d+\.\s*/, "").replace(/\*\*/g, ""));
+
+      const isHeader = trimmed.startsWith("##") || trimmed.startsWith("###");
+      const isBoldPhase = trimmed.startsWith("**Phase") || trimmed.startsWith("**Month") || trimmed.startsWith("**Step");
+      
+      if (isHeader || isBoldPhase) {
+        const titleText = trimmed.replace(/^#+\s*/, "").replace(/\*\*/g, "").trim();
+        // Skip boilerplate intro titles
+        if (titleText.toLowerCase().includes("overview") || titleText.toLowerCase() === "career roadmap") continue;
+
+        if (current && (current.items.length > 0 || current.description)) {
+            phases.push(current);
+        }
+        current = { title: titleText, items: [], description: "" };
+        inList = false;
+      } else if (trimmed.startsWith("-") || trimmed.startsWith("* ") || trimmed.match(/^\d+\.\s/)) {
+        if (current) {
+          const itemText = trimmed.replace(/^[-*]\s*/, "").replace(/^\d+\.\s*/, "").replace(/\*\*/g, "").trim();
+          if (itemText) {
+             current.items.push(itemText);
+          }
+          inList = true;
+        }
+      } else {
+        if (current && !inList && !current.description) {
+           current.description = trimmed.replace(/\*\*/g, "");
+        }
       }
     }
-    if (current) phases.push(current);
-    return phases.slice(0, 8);
+    if (current && (current.items.length > 0 || current.description)) phases.push(current);
+    
+    return phases.filter(p => p.items.length > 0 || p.description.length > 10);
   };
 
   const phaseColors = [
@@ -153,6 +177,9 @@ export default function CareerGuidancePage() {
                 <textarea rows={3} placeholder="e.g. 3rd year CS student, know basic Python"
                   value={background} onChange={e => setBackground(e.target.value)}
                   className="w-full p-3 rounded-xl border bg-gray-50 outline-none focus:ring-2 focus:ring-purple-500 text-sm" />
+              </div>
+              <div className="mb-4">
+                <ModelSelector value={preferredModel} onChange={setPreferredModel} />
               </div>
               <Button type="submit" disabled={isLoading} className="w-full h-12 font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl">
                 {isLoading ? <Loader2 className="animate-spin mr-2 h-5 w-5" /> : <Map className="mr-2 h-5 w-5" />}
@@ -217,43 +244,90 @@ export default function CareerGuidancePage() {
 
                 {/* Visual Timeline View */}
                 {activeView === "visual" && (
-                  <div className="p-6 animate-in fade-in duration-300">
-                    <h2 className="text-xl font-bold mb-6 text-center flex items-center justify-center gap-2"><BarChart3 className="w-5 h-5 text-indigo-500" /> Visual Career Roadmap</h2>
-                    {phases.length > 0 ? (
-                      <div className="relative">
-                        {/* Vertical Line */}
-                        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-violet-500 to-pink-500 hidden md:block" />
+                  <div className="p-8 bg-slate-50 dark:bg-zinc-950 animate-in fade-in duration-300 min-h-[600px]">
+                    <div className="text-center mb-12">
+                      <h2 className="text-3xl font-black mb-2 flex items-center justify-center gap-3 text-slate-800 dark:text-slate-100">
+                        <Map className="w-8 h-8 text-indigo-500" /> 
+                        Your Visual Roadmap
+                      </h2>
+                      <p className="text-slate-500">A step-by-step journey to your dream role</p>
+                    </div>
 
-                        <div className="space-y-6">
-                          {phases.map((phase, i) => (
-                            <div key={i} className="flex gap-4 animate-in fade-in slide-in-from-left-4" style={{ animationDelay: `${i * 100}ms` }}>
-                              {/* Step Number */}
-                              <div className={`shrink-0 w-12 h-12 rounded-full bg-gradient-to-br ${phaseColors[i % phaseColors.length]} text-white font-black text-lg flex items-center justify-center shadow-lg z-10`}>
-                                {i + 1}
+                    {phases.length > 0 ? (
+                      <div className="relative max-w-4xl mx-auto py-10">
+                        {/* Central Vertical Line (hidden on mobile, visible on md+) */}
+                        <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 transform md:-translate-x-1/2 rounded-full" />
+
+                        <div className="space-y-12">
+                          {phases.map((phase, i) => {
+                            const isEven = i % 2 === 0;
+                            return (
+                              <div key={i} className="relative flex flex-col md:flex-row items-center justify-between animate-in fade-in slide-in-from-bottom-8" style={{ animationDelay: `${i * 150}ms`, animationFillMode: "both" }}>
+                                
+                                {/* Left Side */}
+                                <div className={`hidden md:flex w-5/12 ${isEven ? 'justify-end pr-10' : 'justify-start pl-10 order-3'}`}>
+                                  {isEven && (
+                                    <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl border border-indigo-100 dark:border-zinc-800 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 w-full text-right group">
+                                      <h3 className="font-bold text-xl mb-3 text-indigo-700 dark:text-indigo-400 group-hover:text-indigo-600 transition-colors">{phase.title}</h3>
+                                      {phase.description && <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">{phase.description}</p>}
+                                      {phase.items.length > 0 && (
+                                        <ul className="space-y-2 inline-flex flex-col items-end">
+                                          {phase.items.slice(0, 6).map((item, j) => (
+                                            <li key={j} className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300 flex-row-reverse text-right">
+                                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                                              <span className="leading-snug">{item}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Center Node */}
+                                <div className="absolute left-8 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center z-10 md:order-2">
+                                  <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${phaseColors[i % phaseColors.length]} shadow-xl flex items-center justify-center text-white font-black text-xl ring-4 ring-white dark:ring-zinc-900 transition-transform duration-300 hover:scale-110`}>
+                                    {i + 1}
+                                  </div>
+                                </div>
+
+                                {/* Right Side & Mobile */}
+                                <div className={`w-full md:w-5/12 pl-24 md:pl-0 ${!isEven ? 'md:pr-10 md:order-1 hidden md:flex md:justify-end' : 'md:pl-10 md:order-3'}`}>
+                                  {(!isEven || true) && ( // On mobile, always show here
+                                    <div className={`bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl border ${isEven ? 'border-indigo-100 dark:border-zinc-800 md:hidden' : 'border-purple-100 dark:border-zinc-800'} hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 w-full text-left group`}>
+                                      <h3 className={`font-bold text-xl mb-3 ${isEven ? 'text-indigo-700 dark:text-indigo-400' : 'text-purple-700 dark:text-purple-400'}`}>{phase.title}</h3>
+                                      {phase.description && <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">{phase.description}</p>}
+                                      {phase.items.length > 0 && (
+                                        <ul className="space-y-2">
+                                          {phase.items.slice(0, 6).map((item, j) => (
+                                            <li key={j} className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300">
+                                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                                              <span className="leading-snug">{item}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+
                               </div>
-                              {/* Card */}
-                              <div className="flex-1 bg-white dark:bg-zinc-800 border rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-                                <h3 className="font-bold text-base mb-3 text-gray-900 dark:text-white">{phase.title}</h3>
-                                {phase.items.length > 0 && (
-                                  <ul className="space-y-1.5">
-                                    {phase.items.slice(0, 5).map((item, j) => (
-                                      <li key={j} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
-                                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
-                                        {item.substring(0, 100)}{item.length > 100 ? "..." : ""}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
-                        <div className="mt-8 text-center text-sm text-muted-foreground">
-                          Switch to "Detailed Text" view for the complete roadmap
+                        
+                        <div className="mt-16 text-center">
+                           <div className="inline-flex items-center justify-center p-1 rounded-full bg-slate-200 dark:bg-zinc-800">
+                              <div className="px-4 py-2 rounded-full text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-zinc-700 shadow-sm">
+                                You've reached the end of the visual timeline!
+                              </div>
+                           </div>
+                           <p className="mt-4 text-sm text-slate-400">Switch to "Detailed Text" view to see any additional tips and resources.</p>
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center text-muted-foreground py-8">
+                      <div className="text-center text-slate-400 py-16">
+                        <Map className="w-16 h-16 mx-auto mb-4 opacity-20" />
                         <p>Switch to Detailed Text view to see your full roadmap</p>
                       </div>
                     )}

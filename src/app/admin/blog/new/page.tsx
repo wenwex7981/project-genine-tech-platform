@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Globe, Bot, X, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 export default function AdminBlogNew() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function AdminBlogNew() {
   const [generating, setGenerating] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiTopic, setAiTopic] = useState("");
+  const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   
   const [formData, setFormData] = useState({
     title: "",
@@ -48,7 +50,7 @@ export default function AdminBlogNew() {
       const res = await fetch("/api/generate-blog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: aiTopic, category: formData.category }),
+        body: JSON.stringify({ topic: aiTopic, category: formData.category, preferredModel }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -143,6 +145,9 @@ export default function AdminBlogNew() {
                 placeholder="e.g., Best Final Year AI Projects"
                 className="w-full p-3 border rounded-lg bg-muted/50 outline-none focus:ring-2 focus:ring-indigo-500/50"
               />
+            </div>
+            <div className="mb-2">
+              <ModelSelector value={preferredModel} onChange={setPreferredModel} />
             </div>
             <Button 
               onClick={handleAiGenerate} 

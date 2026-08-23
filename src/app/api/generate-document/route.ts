@@ -4,14 +4,11 @@ import PDFDocument from 'pdfkit';
 import { Document, Packer, Paragraph, TextRun, AlignmentType } from 'docx';
 import * as xlsx from 'xlsx';
 import pptxgen from 'pptxgenjs';
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build',
-});
+import { generateAIResponse, AIModel } from '@/lib/ai-service';
 
 export async function POST(req: Request) {
   try {
-    const { topic, format, themeColor = '363636', fontFamily = 'Arial', diagramType = 'auto' } = await req.json();
+    const { topic, format, themeColor = '363636', fontFamily = 'Arial', diagramType = 'auto', preferredModel } = await req.json();
 
     if (!topic) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
@@ -79,22 +76,12 @@ CRITICAL SYNTAX RULES:
 Just return the markdown block containing the diagram.`;
     }
 
-    // Call Groq
-    const completion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: systemPrompt,
-        },
-        {
-          role: 'user',
-          content: topic,
-        }
-      ],
-      model: 'openai/gpt-oss-120b',
+    // Call AI Service
+    const result = await generateAIResponse({
+      systemPrompt,
+      prompt: topic,
+      preferredModel: preferredModel as AIModel,
     });
-
-    const result = completion.choices[0]?.message?.content || 'No abstract generated.';
 
     let cleanResult = result.replace(/\*\*/g, '');
 

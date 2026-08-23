@@ -1,22 +1,14 @@
 import { NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
-import OpenAI from 'openai';
+import { generateAIResponse, AIModel } from '@/lib/ai-service';
 
 export const maxDuration = 60; // Allow up to 60 seconds for long AI generation
 
 export async function POST(req: Request) {
   try {
-    const { topic, category } = await req.json();
+    const { topic, category, preferredModel } = await req.json();
 
     if (!topic) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
-    }
-
-    const groqApiKey = process.env.GROQ_API_KEY;
-    const openaiApiKey = process.env.OPENAI_API_KEY;
-
-    if ((!groqApiKey || groqApiKey === 'dummy_key_for_build') && !openaiApiKey) {
-      return NextResponse.json({ error: 'No API keys configured on the server.' }, { status: 500 });
     }
 
     const prompt = `You are an expert SEO content writer for GraduateNex, a platform that provides final year engineering projects, ATS resume tools, and hackathon listings for Indian students.
@@ -48,59 +40,15 @@ OUTPUT FORMAT: Return a valid JSON object with exactly these fields:
 
 Return ONLY the JSON object, nothing else.`;
 
-    let rawContent = '';
+    const rawContent = await generateAIResponse({
+      prompt,
+      preferredModel: preferredModel as AIModel,
+      maxTokens: 4000,
+      temperature: 0.4,
+      jsonMode: true
+    });
 
-    // Hybrid Approach: Try Groq First
-    if (groqApiKey && groqApiKey !== 'dummy_key_for_build') {
-      try {
-        const groq = new Groq({ apiKey: groqApiKey });
-        const chatCompletion = await groq.chat.completions.create({
-          messages: [{ role: 'user', content: prompt }],
-          model: 'openai/gpt-oss-120b',
-          temperature: 0.4,
-          max_tokens: 4000,
-          response_format: { type: 'json_object' },
-        });
-        rawContent = chatCompletion.choices[0]?.message?.content || '';
-        
-        // Attempt to parse to see if it's truncated/invalid
-        JSON.parse(rawContent);
-      } catch (groqError: any) {
-        console.warn('Groq generation failed, falling back to OpenAI...', groqError.message);
-        rawContent = ''; // reset to trigger fallback
-      }
-    }
-
-    // Fallback: Try OpenAI if Groq failed or wasn't available
-    if (!rawContent && openaiApiKey) {
-      try {
-        console.log("Using OpenAI Fallback");
-        const openai = new OpenAI({ apiKey: openaiApiKey });
-        const completion = await openai.chat.completions.create({
-          messages: [{ role: 'user', content: prompt }],
-          model: 'gpt-4o-mini',
-          temperature: 0.4,
-          max_tokens: 8000,
-          response_format: { type: 'json_object' },
-        });
-        rawContent = completion.choices[0]?.message?.content || '';
-      } catch (openaiError: any) {
-        console.error('OpenAI fallback failed:', openaiError);
-        return NextResponse.json({ error: `Hybrid AI Generation Failed: ${openaiError.message}` }, { status: 500 });
-      }
-    }
-
-    if (!rawContent) {
-      return NextResponse.json({ error: 'AI returned empty response from both providers. Please try again.' }, { status: 500 });
-    }
-
-    let parsed;
-    try {
-      parsed = JSON.parse(rawContent);
-    } catch (parseErr) {
-      console.error('Failed to parse AI JSON response:', rawContent.substring(0, 500));
-      return NextResponse.json({ error: 'AI returned invalid JSON (possibly truncated). Please try a shorter topic.' }, { status: 500 });
-    }
+    const parsed = JSON.parse(rawContent);
 
     // Validate required fields exist
     if (!parsed.title || !parsed.content) {
