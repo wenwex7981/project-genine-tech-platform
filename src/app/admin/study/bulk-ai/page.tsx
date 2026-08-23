@@ -231,9 +231,36 @@ export default function BulkAIInterviewPublisher() {
                 <CheckCircle2 className="w-5 h-5" /> 
                 {progress.current} Guides Published!
               </div>
-              <Link href="/admin/study" className="w-full">
+              
+              {generatedDocs.length > 0 && (
+                <div className="mt-4 border-t border-zinc-800 pt-4">
+                  <h4 className="text-zinc-300 font-bold mb-3 text-sm">Generated Documents:</h4>
+                  <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                    {generatedDocs.map((doc, i) => (
+                      <div key={i} className="bg-zinc-900 border border-zinc-800 p-3 rounded-lg">
+                        <div className="font-bold text-sm text-white mb-1 line-clamp-1">{doc.title}</div>
+                        <div className="text-xs text-zinc-400 mb-3 line-clamp-1">{doc.company_name}</div>
+                        <div className="flex gap-2">
+                          <Link href={`/view/${doc.id}`} target="_blank" className="flex-1">
+                            <Button variant="outline" size="sm" className="w-full h-8 text-xs bg-indigo-900/30 hover:bg-indigo-900/50 text-indigo-300 border-indigo-800">
+                              View (AI)
+                            </Button>
+                          </Link>
+                          <Link href={`/admin/study/${doc.id}/edit`} className="flex-1">
+                            <Button variant="outline" size="sm" className="w-full h-8 text-xs bg-blue-900/30 hover:bg-blue-900/50 text-blue-300 border-blue-800">
+                              Edit
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <Link href="/admin/study" className="w-full mt-2">
                 <Button variant="outline" className="w-full bg-zinc-900 hover:bg-zinc-800 border-zinc-700 text-zinc-300">
-                  View, Edit, or Delete Generated Docs
+                  Manage All Documents
                 </Button>
               </Link>
             </div>

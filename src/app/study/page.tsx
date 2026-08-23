@@ -30,6 +30,7 @@ export default function StudyHubPage() {
   const [docs, setDocs] = useState<any[]>([]);
   const [isLoadingDocs, setIsLoadingDocs] = useState(true);
   const [purchasedIds, setPurchasedIds] = useState<string[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCompany, setSelectedCompany] = useState<string>("All");
   const { addToCart, cart } = useCart();
@@ -46,6 +47,9 @@ export default function StudyHubPage() {
 
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
+          if (session.user.email === "admin@graduatenex.online") {
+             setIsAdmin(true);
+          }
           const { data: orders } = await supabase
             .from("orders")
             .select("items")
@@ -379,7 +383,32 @@ export default function StudyHubPage() {
 
                         {/* Action Button */}
                         <div className="mt-auto">
-                          {purchased ? (
+                          {isAdmin ? (
+                            <div className="flex flex-col gap-2">
+                              <div className="flex gap-2">
+                                <a
+                                  href={doc.file_url === "pending" ? `/view/${doc.id}` : doc.file_url}
+                                  target={doc.file_url === "pending" ? "_self" : "_blank"}
+                                  rel="noreferrer"
+                                  className="flex-1 block"
+                                >
+                                  <Button className="w-full font-bold h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center">
+                                    <ExternalLink className="w-4 h-4 mr-1" /> View
+                                  </Button>
+                                </a>
+                                <Link href={`/admin/study/${doc.id}/edit`} className="flex-1 block">
+                                  <Button className="w-full font-bold h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center">
+                                    Edit
+                                  </Button>
+                                </Link>
+                              </div>
+                              <Link href={`/admin/study`} className="w-full block">
+                                <Button variant="outline" className="w-full font-bold h-10 rounded-xl border-red-200 text-red-600 hover:bg-red-50 flex items-center justify-center">
+                                  Manage / Delete in Admin
+                                </Button>
+                              </Link>
+                            </div>
+                          ) : purchased ? (
                             <a
                               href={doc.file_url === "pending" ? `/view/${doc.id}` : doc.file_url}
                               target={doc.file_url === "pending" ? "_self" : "_blank"}
