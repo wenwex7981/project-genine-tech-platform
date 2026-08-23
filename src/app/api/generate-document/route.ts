@@ -91,7 +91,7 @@ Just return the markdown block containing the diagram.`;
           content: topic,
         }
       ],
-      model: 'llama-3.1-8b-instant',
+      model: 'openai/gpt-oss-120b',
     });
 
     const result = completion.choices[0]?.message?.content || 'No abstract generated.';

@@ -30,7 +30,7 @@ export async function POST(req: Request) {
           content: `I am a student with this background: ${background || 'Recent graduate'}. My ultimate career goal is: ${goal}. Please generate a detailed roadmap for me.`
         }
       ],
-      model: 'llama-3.1-8b-instant',
+      model: 'openai/gpt-oss-120b',
       temperature: 0.7,
       max_tokens: 1500,
     });

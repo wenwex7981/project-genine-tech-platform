@@ -34,7 +34,7 @@ export async function POST(req: Request) {
           content: `Topic: ${topic}`
         }
       ],
-      model: 'llama-3.1-8b-instant',
+      model: 'openai/gpt-oss-120b',
       temperature: 0.7,
       max_tokens: 800,
     });

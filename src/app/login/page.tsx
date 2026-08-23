@@ -5,10 +5,30 @@ import { supabase } from "@/lib/supabase";
 import { ArrowLeft, Globe } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.push("/home");
+      }
+    });
+
+    // Listen for login events
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        router.push("/home");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
