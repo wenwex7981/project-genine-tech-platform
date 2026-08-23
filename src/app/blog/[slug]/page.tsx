@@ -143,7 +143,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
       {/* Main Markdown Content */}
       <div className={`max-w-3xl mx-auto px-4 ${!blog.image_url ? 'pt-16' : ''}`}>
-        <div className="prose prose-lg prose-indigo dark:prose-invert max-w-none">
+        <div className="prose prose-lg prose-indigo dark:prose-invert max-w-none text-left">
           <ReactMarkdown>{blog.content}</ReactMarkdown>
         </div>
 

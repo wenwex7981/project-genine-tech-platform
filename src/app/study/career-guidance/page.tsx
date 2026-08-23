@@ -236,7 +236,7 @@ export default function CareerGuidancePage() {
                 {/* Text View */}
                 {activeView === "text" && (
                   <div className="p-8 animate-in fade-in duration-300">
-                    <div ref={roadmapRef} className="prose dark:prose-invert max-w-none prose-headings:text-indigo-800 dark:prose-headings:text-indigo-300 prose-h2:border-l-4 prose-h2:border-indigo-500 prose-h2:pl-3">
+                    <div ref={roadmapRef} className="prose dark:prose-invert max-w-none prose-headings:text-indigo-800 dark:prose-headings:text-indigo-300 prose-h2:border-l-4 prose-h2:border-indigo-500 prose-h2:pl-3 text-left">
                       <ReactMarkdown>{roadmap}</ReactMarkdown>
                     </div>
                   </div>

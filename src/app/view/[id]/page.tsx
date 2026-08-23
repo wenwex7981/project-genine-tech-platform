@@ -134,7 +134,7 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ id: s
             {doc.title}
           </h1>
           
-          <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-8 prose-h2:border-b prose-h2:pb-2 prose-indigo">
+          <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-8 prose-h2:border-b prose-h2:pb-2 prose-indigo text-left">
             <ReactMarkdown>
               {doc.description || "*No content available for this document.*"}
             </ReactMarkdown>

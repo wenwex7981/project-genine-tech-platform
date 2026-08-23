@@ -214,7 +214,7 @@ export default function ClientProjectUI({ project }: { project: any }) {
       <div className="mt-16 pt-16 border-t">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-black mb-8">Project Details & Documentation</h2>
-          <div className="prose prose-lg prose-indigo dark:prose-invert max-w-none whitespace-pre-wrap bg-white dark:bg-zinc-950 p-8 rounded-2xl border shadow-sm">
+          <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-8 prose-h2:border-b prose-h2:pb-2 prose-indigo text-left bg-white dark:bg-zinc-950 p-8 rounded-2xl border shadow-sm">
             <ReactMarkdown>{project.description}</ReactMarkdown>
           </div>
         </div>
