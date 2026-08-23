@@ -74,7 +74,7 @@ export default function BulkAIInterviewPublisher() {
           description: d.description || "",
           price: price,
           image_url: null, // Fallback handles this in UI
-          file_url: null, // Left null for AI generated
+          file_url: "", // Empty string to satisfy not-null constraint
         }));
 
         // 3. Insert into Supabase
