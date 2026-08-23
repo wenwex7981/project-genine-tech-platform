@@ -52,8 +52,8 @@ export async function generateMetadata(
   };
 }
 
-// ISR Revalidation
-export const revalidate = 60;
+// Force dynamic rendering to ensure blogs reflect latest updates
+export const dynamic = "force-dynamic";
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;

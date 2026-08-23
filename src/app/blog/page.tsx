@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   description: "Expert guides on final year project ideas, ATS resume building, hackathon winning strategies, and AI tools for Indian engineering students. Updated weekly.",
 };
 
-// Next.js Revalidation - dynamically fetch at most every 60 seconds (for ISR SEO)
-export const revalidate = 60;
+// Force dynamic rendering to ensure new blogs show up immediately
+export const dynamic = "force-dynamic";
 
 export default async function BlogIndex() {
   // Fetch published blogs from Supabase
