@@ -73,7 +73,7 @@ export default function BulkAIResumePublisher() {
           description: t.description || "",
           price: price,
           image_url: null, // Fallback handles this in UI
-          file_url: "", // Empty string to satisfy not-null constraint
+          file_url: "pending", // Dummy string to satisfy not-null constraint completely
         }));
 
         // 3. Insert into Supabase
