@@ -26,7 +26,7 @@ Each object in the array must have the following fields:
       systemPrompt,
       preferredModel: preferredModel as AIModel,
       jsonMode: true,
-      maxTokens: 8000,
+      maxTokens: 3000,
     });
 
     let projects = [];
