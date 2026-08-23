@@ -3,7 +3,9 @@ import Groq from 'groq-sdk';
 import { Mistral } from '@mistralai/mistralai';
 import { supabase } from '@/lib/supabase';
 
-export type AIModel = 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai';
+import { GoogleGenAI } from '@google/genai';
+
+export type AIModel = 'gemini' | 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai';
 
 interface AIGenerateOptions {
   prompt: string;
@@ -25,7 +27,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
   } = options;
 
   const fallbackOrder: AIModel[] = [preferredModel];
-  const allModels: AIModel[] = ['deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq', 'kimi', 'xai'];
+  const allModels: AIModel[] = ['gemini', 'deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq', 'kimi', 'xai'];
   
   // Add remaining models as fallbacks in order
   for (const m of allModels) {
@@ -46,7 +48,24 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
       console.log(`Attempting AI generation with model: ${model}`);
       let content = '';
 
-      if (model === 'deepseek' && process.env.DEEPSEEK_API_KEY) {
+      if (model === 'gemini' && process.env.GEMINI_API_KEY) {
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        let geminiSystem = systemPrompt;
+        if (jsonMode) {
+          geminiSystem += "\n\nIMPORTANT: Return ONLY raw, valid JSON. No markdown backticks (```json), no extra text. Just the JSON object or array.";
+        }
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.6-flash',
+          contents: prompt,
+          config: {
+            systemInstruction: geminiSystem,
+            temperature,
+            responseMimeType: jsonMode ? "application/json" : "text/plain",
+          }
+        });
+        content = response.text || '';
+      }
+      else if (model === 'deepseek' && process.env.DEEPSEEK_API_KEY) {
         // DeepSeek is OpenAI compatible
         const openai = new OpenAI({ 
           apiKey: process.env.DEEPSEEK_API_KEY,
@@ -115,7 +134,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
         const completion = await groq.chat.completions.create({
           messages: messages as any,
-          model: 'llama-3.1-8b-instant',
+          model: 'mixtral-8x7b-32768',
           temperature,
           max_tokens: maxTokens,
           ...(jsonMode && { response_format: { type: 'json_object' } }),
@@ -143,7 +162,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         });
         const completion = await openai.chat.completions.create({
           messages: messages as any,
-          model: 'grok-beta',
+          model: 'grok-2-latest',
           temperature,
           max_tokens: maxTokens,
           ...(jsonMode && { response_format: { type: 'json_object' } }),
