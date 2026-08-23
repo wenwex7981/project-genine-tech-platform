@@ -21,6 +21,7 @@ export default function BulkAIInterviewPublisher() {
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [statusText, setStatusText] = useState("");
   const [logs, setLogs] = useState<string[]>([]);
+  const [generatedDocs, setGeneratedDocs] = useState<any[]>([]);
 
   const BATCH_SIZE = 5;
 
@@ -78,10 +79,14 @@ export default function BulkAIInterviewPublisher() {
         }));
 
         // 3. Insert into Supabase
-        const { error } = await supabase.from("interview_prep_docs").insert(dbPayload);
+        const { data: insertedDocs, error } = await supabase.from("interview_prep_docs").insert(dbPayload).select();
 
         if (error) {
           throw error;
+        }
+        
+        if (insertedDocs) {
+           setGeneratedDocs(prev => [...prev, ...insertedDocs]);
         }
 
         generatedCount += docs.length;
