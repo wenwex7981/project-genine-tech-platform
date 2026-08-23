@@ -293,12 +293,12 @@ export default function CareerGuidancePage() {
 
                                 {/* Right Side & Mobile */}
                                 <div className={`w-full md:w-5/12 pl-24 md:pl-0 ${!isEven ? 'md:pr-10 md:order-1 hidden md:flex md:justify-end' : 'md:pl-10 md:order-3'}`}>
-                                  {(!isEven || true) && ( // On mobile, always show here
-                                    <div className={`bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl border ${isEven ? 'border-indigo-100 dark:border-zinc-800 md:hidden' : 'border-purple-100 dark:border-zinc-800'} hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 w-full text-left group`}>
-                                      <h3 className={`font-bold text-xl mb-3 ${isEven ? 'text-indigo-700 dark:text-indigo-400' : 'text-purple-700 dark:text-purple-400'}`}>{phase.title}</h3>
-                                      {phase.description && <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">{phase.description}</p>}
-                                      {phase.items.length > 0 && (
-                                        <ul className="space-y-2">
+                                  {/* Mobile Card (always visible) and Desktop Odd Card */}
+                                  <div className={`bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl border ${isEven ? 'border-indigo-100 dark:border-zinc-800 md:opacity-0 md:pointer-events-none' : 'border-purple-100 dark:border-zinc-800'} hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 w-full text-left group`}>
+                                    <h3 className={`font-bold text-xl mb-3 ${isEven ? 'text-indigo-700 dark:text-indigo-400' : 'text-purple-700 dark:text-purple-400'}`}>{phase.title}</h3>
+                                    {phase.description && <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">{phase.description}</p>}
+                                    {phase.items.length > 0 && (
+                                      <ul className="space-y-2">
                                           {phase.items.slice(0, 6).map((item, j) => (
                                             <li key={j} className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300">
                                               <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -308,7 +308,6 @@ export default function CareerGuidancePage() {
                                         </ul>
                                       )}
                                     </div>
-                                  )}
                                 </div>
 
                               </div>
