@@ -25,6 +25,7 @@ STRICT RULES:
    - [Browse Final Year Projects](/projects)
    - [Free ATS Resume Checker](/resume)
    - [Upcoming Hackathons in India](/hackathons)
+   - [Premium Interview Prep Guides](/study)
    - [Read More Guides](/blog)
 5. Write in a helpful, authoritative tone targeted at Indian engineering students.
 6. Include a compelling introduction and a clear conclusion with a CTA.
