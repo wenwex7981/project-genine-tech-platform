@@ -38,7 +38,7 @@ export default function InterviewPrepPage() {
           // Collect all purchased item IDs
           const ids: string[] = [];
           (orders || []).forEach((order: any) => {
-            (order.items || []).forEach((item: any) => ids.push(item.id));
+            (order.items || []).forEach((item: any) => ids.push(String(item.id)));
           });
           setPurchasedIds(ids);
         }
@@ -51,8 +51,8 @@ export default function InterviewPrepPage() {
     fetchData();
   }, []);
 
-  const isInCart = (id: string) => cart.some(c => c.id === id);
-  const isPurchased = (id: string) => purchasedIds.includes(id);
+  const isInCart = (id: string) => cart.some(c => String(c.id) === String(id));
+  const isPurchased = (id: string) => purchasedIds.includes(String(id));
 
   const handleAddToCart = (doc: any) => {
     addToCart({
