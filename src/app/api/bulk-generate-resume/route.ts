@@ -28,15 +28,21 @@ Each object in the array must have the following fields:
 
     let templates: any = [];
     try {
-      const cleaned = jsonStr.replace(/^```json\n?/, '').replace(/```$/, '').trim();
+      // Find the first JSON block (array or object)
+      const match = jsonStr.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
+      const cleaned = match ? match[0] : jsonStr;
+      
       let parsed = JSON.parse(cleaned);
       
       if (Array.isArray(parsed)) {
         templates = parsed;
-      } else if (typeof parsed === 'object') {
+      } else if (typeof parsed === 'object' && parsed !== null) {
         const arrayVal = Object.values(parsed).find(val => Array.isArray(val));
         if (arrayVal) {
           templates = arrayVal;
+        } else {
+          // It might be a single object, wrap it
+          templates = [parsed];
         }
       }
     } catch (parseError) {
