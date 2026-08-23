@@ -50,8 +50,10 @@ export default function AdminBlogNew() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic: aiTopic, category: formData.category }),
       });
-      if (!res.ok) throw new Error("Failed to generate blog");
       const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to generate blog");
+      }
       
       setFormData(prev => ({
         ...prev,
@@ -64,9 +66,9 @@ export default function AdminBlogNew() {
       }));
       setShowAiModal(false);
       setAiTopic("");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Error generating blog with AI");
+      alert("❌ " + (error.message || "Error generating blog with AI. Please try again."));
     } finally {
       setGenerating(false);
     }
