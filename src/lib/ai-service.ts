@@ -115,7 +115,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
         const completion = await groq.chat.completions.create({
           messages: messages as any,
-          model: 'llama-3.3-70b-versatile',
+          model: 'llama3-8b-8192',
           temperature,
           max_tokens: maxTokens,
           ...(jsonMode && { response_format: { type: 'json_object' } }),
