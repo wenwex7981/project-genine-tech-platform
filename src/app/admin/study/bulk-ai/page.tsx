@@ -69,9 +69,9 @@ export default function BulkAIInterviewPublisher() {
         addLog(`AI successfully generated ${docs.length} docs. Parsing and uploading...`);
 
         // 2. Prepare for Supabase
-        const dbPayload = docs.map(d => ({
-          title: d.title || "Untitled Interview Guide",
-          company_name: d.company_name || topic,
+        const dbPayload = docs.map((d: any, index: number) => ({
+          title: d.title || `Untitled Interview Guide ${generatedCount + index + 1}`,
+          company_name: d.company_name || topic.substring(0, 50),
           description: d.description || "",
           price: price,
           image_url: null, // Fallback handles this in UI

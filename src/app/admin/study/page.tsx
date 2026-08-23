@@ -72,7 +72,7 @@ export default function AdminStudyPage() {
               <div className="absolute top-2 right-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded">
                 ₹{doc.price}
               </div>
-              <div className="absolute top-2 left-2 bg-white text-black text-xs font-bold px-2 py-1 rounded">
+              <div className="absolute top-2 left-2 bg-white text-black text-xs font-bold px-2 py-1 rounded max-w-[70%] truncate">
                 {doc.company_name}
               </div>
             </div>

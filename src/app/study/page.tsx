@@ -359,14 +359,14 @@ export default function StudyHubPage() {
                             </div>
                           </>
                         ) : (
-                          <div className="flex items-center justify-center h-full flex-col gap-2">
-                            <FileText className="w-12 h-12 text-indigo-400 opacity-40" />
-                            <span className="text-xs font-bold text-muted-foreground">{doc.company_name} Prep Guide</span>
+                          <div className="flex items-center justify-center h-full flex-col gap-2 p-4 w-full">
+                            <FileText className="w-12 h-12 text-indigo-400 opacity-40 shrink-0" />
+                            <span className="text-xs font-bold text-muted-foreground w-full truncate text-center">{doc.company_name} Prep Guide</span>
                           </div>
                         )}
 
                         {/* Floating Badges */}
-                        <div className="absolute top-4 left-4 bg-indigo-600 text-white font-bold px-3 py-1 rounded-xl text-xs shadow">
+                        <div className="absolute top-4 left-4 bg-indigo-600 text-white font-bold px-3 py-1 rounded-xl text-xs shadow max-w-[70%] truncate">
                           {doc.company_name}
                         </div>
                         <div className="absolute top-4 right-4 bg-white/90 dark:bg-zinc-900/90 backdrop-blur text-foreground font-black px-3 py-1 rounded-xl shadow border text-sm">

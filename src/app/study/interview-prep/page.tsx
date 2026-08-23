@@ -139,7 +139,7 @@ export default function InterviewPrepPage() {
                     )}
 
                     {/* Badges */}
-                    <div className="absolute top-4 left-4 bg-indigo-600 text-white font-bold px-3 py-1 rounded-lg text-xs shadow">
+                    <div className="absolute top-4 left-4 bg-indigo-600 text-white font-bold px-3 py-1 rounded-lg text-xs shadow max-w-[70%] truncate">
                       {doc.company_name}
                     </div>
                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-gray-900 font-extrabold px-3 py-1.5 rounded-lg shadow border text-sm">

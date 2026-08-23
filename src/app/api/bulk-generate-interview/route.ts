@@ -51,14 +51,25 @@ Each object in the array must have the following fields:
       }
       
       if (Array.isArray(parsed)) {
-        docs = parsed;
+        docs = parsed.map(d => ({
+          ...d,
+          title: d.title ? String(d.title).substring(0, 100) : "",
+          company_name: d.company_name ? String(d.company_name).substring(0, 50) : "",
+        }));
       } else if (typeof parsed === 'object' && parsed !== null) {
         const arrayVal = Object.values(parsed).find(val => Array.isArray(val));
         if (arrayVal) {
-          docs = arrayVal;
+          docs = (arrayVal as any[]).map(d => ({
+            ...d,
+            title: d.title ? String(d.title).substring(0, 100) : "",
+            company_name: d.company_name ? String(d.company_name).substring(0, 50) : "",
+          }));
         } else {
-          // It might be a single object, wrap it
-          docs = [parsed];
+          docs = [{
+            ...parsed,
+            title: parsed.title ? String(parsed.title).substring(0, 100) : "",
+            company_name: parsed.company_name ? String(parsed.company_name).substring(0, 50) : "",
+          }];
         }
       }
     } catch (parseError) {
