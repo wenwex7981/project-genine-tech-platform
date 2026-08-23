@@ -10,11 +10,11 @@ export async function POST(req: Request) {
     }
 
     const systemPrompt = `You are an expert career coach and ATS resume writer. 
-Your task is to generate ${count} unique, highly detailed ATS-friendly resume template posts for the role or domain: "${topic}".
+Your task is to generate ${count} unique, highly detailed ATS-friendly sample resumes for the role or domain: "${topic}".
 You MUST return ONLY a JSON array of objects. Do not include markdown formatting outside the JSON array or extra text.
 Each object in the array must have the following fields:
 - "title" (string): A catchy title for the resume template, e.g., "ATS-Friendly Modern AI Engineer Resume" or "Google SWE Recommended Layout".
-- "description" (string): A massive, highly detailed markdown-formatted description. It MUST include what sections the template covers, why it's good for ATS (Applicant Tracking Systems), recommended action verbs, and how to use it. Format it beautifully with markdown headers, bullet points, and bold text.`;
+- "description" (string): A full, complete sample resume with placeholder dummy data tailored for this role. The resume MUST look like an actual completed resume (e.g. John Doe, Contact Info, Summary, Experience, Skills, Projects, Education). Do NOT output meta-instructions like "Why it works for ATS", "Sections Covered", or "How to use". ONLY output the actual resume content formatted beautifully in markdown. Use ## for major sections like Summary, Experience, Skills, Education, Projects. Use bullet points for responsibilities.`;
 
     const prompt = `Generate ${count} resume template posts for: ${topic}. Format strictly as a JSON array.`;
 
