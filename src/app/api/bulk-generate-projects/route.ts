@@ -16,7 +16,7 @@ Each object in the array must have the following fields:
 - "title" (string): A catchy, academic project title.
 - "type" (string): Either "Major" or "Mini".
 - "sub_domain" (string): E.g., AI/ML, Blockchain, Web Dev, IoT.
-- "description" (string): A detailed 2-3 sentence abstract/description.
+- "description" (string): A highly detailed, long markdown-formatted description (at least 4 to 8 paragraphs). It MUST include sections with markdown headers like "## Project Overview", "## Problem Statement", "## Proposed Solution", and "## Expected Outcomes".
 - "features" (array of strings): 3 to 5 key features of the project.`;
 
     const prompt = `Generate ${count} academic projects for the topic: ${topic}. Format as a JSON array.`;

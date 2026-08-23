@@ -45,9 +45,16 @@ export default function AdminStudyPage() {
     <div>
       <div className="flex justify-between items-end mb-8">
         <h1 className="text-3xl font-bold">Manage Interview Prep Docs</h1>
-        <Link href="/admin/study/new">
-          <Button><Plus className="mr-2 h-4 w-4" /> Add New Document</Button>
-        </Link>
+        <div className="flex gap-3">
+          <Link href="/admin/study/bulk-ai">
+            <Button variant="secondary" className="gap-2 border shadow-sm">
+              <span className="text-blue-600 dark:text-blue-400 font-bold">Bulk AI Generate</span>
+            </Button>
+          </Link>
+          <Link href="/admin/study/new">
+            <Button><Plus className="mr-2 h-4 w-4" /> Add New Document</Button>
+          </Link>
+        </div>
       </div>
       
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

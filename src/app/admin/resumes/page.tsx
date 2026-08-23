@@ -45,9 +45,16 @@ export default function AdminResumesPage() {
     <div>
       <div className="flex justify-between items-end mb-8">
         <h1 className="text-3xl font-bold">Manage Resume Templates</h1>
-        <Link href="/admin/resumes/new">
-          <Button><Plus className="mr-2 h-4 w-4" /> Add New Template</Button>
-        </Link>
+        <div className="flex gap-3">
+          <Link href="/admin/resumes/bulk-ai">
+            <Button variant="secondary" className="gap-2 border shadow-sm">
+              <span className="text-pink-600 dark:text-pink-400 font-bold">Bulk AI Generate</span>
+            </Button>
+          </Link>
+          <Link href="/admin/resumes/new">
+            <Button><Plus className="mr-2 h-4 w-4" /> Add New Template</Button>
+          </Link>
+        </div>
       </div>
       
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
