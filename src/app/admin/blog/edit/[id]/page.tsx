@@ -1,17 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save, Globe, Bot, X, Loader2, ImagePlus } from "lucide-react";
-import { useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
-export default function AdminBlogNew() {
+export default function AdminBlogEdit() {
   const router = useRouter();
+  const params = useParams();
+  const blogId = params.id as string;
+
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,6 +32,40 @@ export default function AdminBlogNew() {
     image_url: "",
     published: false
   });
+
+  useEffect(() => {
+    if (blogId) fetchBlog();
+  }, [blogId]);
+
+  const fetchBlog = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("blogs")
+        .select("*")
+        .eq("id", blogId)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setFormData({
+          title: data.title || "",
+          slug: data.slug || "",
+          content: data.content || "",
+          excerpt: data.excerpt || "",
+          keywords: data.keywords || "",
+          category: data.category || "Projects",
+          image_url: data.image_url || "",
+          published: data.published || false
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching blog:", error);
+      alert("Failed to load blog.");
+      router.push("/admin/blog");
+    } finally {
+      setInitialLoading(false);
+    }
+  };
 
   const generateSlug = (title: string) => {
     return title
@@ -84,10 +121,13 @@ export default function AdminBlogNew() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.from("blogs").insert([{
-        ...formData,
-        published: publishNow
-      }]);
+      const { error } = await supabase
+        .from("blogs")
+        .update({
+          ...formData,
+          published: publishNow
+        })
+        .eq("id", blogId);
 
       if (error) {
         if (error.code === '23505') {
@@ -99,7 +139,7 @@ export default function AdminBlogNew() {
         router.push("/admin/blog");
       }
     } catch (error: any) {
-      console.error("Error creating blog:", error);
+      console.error("Error updating blog:", error);
       alert(error.message || "An error occurred");
     } finally {
       setLoading(false);
@@ -138,6 +178,10 @@ export default function AdminBlogNew() {
     }
   };
 
+  if (initialLoading) {
+    return <div className="p-12 text-center text-muted-foreground">Loading blog editor...</div>;
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20 relative">
       <div className="flex items-center justify-between gap-4">
@@ -148,8 +192,8 @@ export default function AdminBlogNew() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Write SEO Blog</h1>
-            <p className="text-muted-foreground mt-1">Create high-ranking content.</p>
+            <h1 className="text-3xl font-bold tracking-tight">Edit SEO Blog</h1>
+            <p className="text-muted-foreground mt-1">Update your high-ranking content.</p>
           </div>
         </div>
         <Button onClick={() => setShowAiModal(true)} variant="secondary" className="gap-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-400">
@@ -196,7 +240,7 @@ export default function AdminBlogNew() {
         </div>
       )}
 
-      <form className="space-y-8" onSubmit={(e) => handleSubmit(e, false)}>
+      <form className="space-y-8" onSubmit={(e) => handleSubmit(e, formData.published)}>
         <div className="bg-white dark:bg-zinc-950 border rounded-2xl p-6 md:p-8 space-y-6 shadow-sm">
           
           {/* Title & Slug */}
@@ -337,7 +381,7 @@ export default function AdminBlogNew() {
                 <Save className="h-4 w-4" /> Save as Draft
               </Button>
               <Button type="button" className="flex-1 sm:flex-none gap-2 bg-indigo-600 hover:bg-indigo-700" onClick={(e) => handleSubmit(e, true)} disabled={loading}>
-                <Globe className="h-4 w-4" /> Publish Now
+                <Globe className="h-4 w-4" /> Update Blog
               </Button>
             </div>
           </div>

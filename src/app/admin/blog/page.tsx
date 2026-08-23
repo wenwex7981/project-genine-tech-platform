@@ -127,9 +127,11 @@ export default function AdminBlogList() {
                         <Button variant="outline" size="sm" onClick={() => togglePublish(blog.id, blog.published)}>
                           {blog.published ? 'Unpublish' : 'Publish'}
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20" onClick={() => alert('Editing coming shortly!')}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
+                        <Link href={`/admin/blog/edit/${blog.id}`}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </Link>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={() => deleteBlog(blog.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
