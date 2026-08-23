@@ -79,12 +79,6 @@ export default function ResumeHub() {
       const email = session?.user?.email;
       if (email) {
         setUserEmail(email);
-        const adminEmails = ["projectgenie16@gmail.com", "proejctgenie16@gmail.com", "nithinpatel2025@gmail.com"];
-        if (adminEmails.includes(email)) {
-          setHasResumePro(true);
-          return;
-        }
-
         const { data } = await supabase
           .from('user_subscriptions')
           .select('*')
