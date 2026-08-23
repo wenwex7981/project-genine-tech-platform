@@ -226,9 +226,16 @@ export default function BulkAIInterviewPublisher() {
           )}
 
           {progress.current > 0 && progress.current === progress.total && !isGenerating && (
-            <div className="mt-4 bg-emerald-900/30 border border-emerald-800 p-3 rounded-lg text-emerald-400 text-sm flex items-center justify-center gap-2 font-bold">
-              <CheckCircle2 className="w-5 h-5" /> 
-              {progress.current} Guides Published!
+            <div className="mt-4 flex flex-col gap-3">
+              <div className="bg-emerald-900/30 border border-emerald-800 p-3 rounded-lg text-emerald-400 text-sm flex items-center justify-center gap-2 font-bold">
+                <CheckCircle2 className="w-5 h-5" /> 
+                {progress.current} Guides Published!
+              </div>
+              <Link href="/admin/study" className="w-full">
+                <Button variant="outline" className="w-full bg-zinc-900 hover:bg-zinc-800 border-zinc-700 text-zinc-300">
+                  View, Edit, or Delete Generated Docs
+                </Button>
+              </Link>
             </div>
           )}
         </div>

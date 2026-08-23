@@ -121,8 +121,17 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ id: s
           <Link href="/dashboard" className="text-muted-foreground hover:text-foreground flex items-center gap-2 font-medium transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back
           </Link>
-          <div className="font-bold text-sm bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 px-3 py-1 rounded-full">
-            {doc.company_name || "Premium Document"}
+          <div className="flex items-center gap-4">
+            <div className="font-bold text-sm bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 px-3 py-1 rounded-full">
+              {doc.company_name || "Premium Document"}
+            </div>
+            {doc.docType && (
+              <Link href={`/admin/${doc.docType === 'resume' ? 'resumes' : doc.docType === 'project' ? 'projects' : 'study'}/${doc.id}/edit`}>
+                <Button variant="outline" size="sm" className="hidden sm:flex border-blue-200 text-blue-600 hover:bg-blue-50">
+                  Edit Document
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>

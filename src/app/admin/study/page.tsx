@@ -92,9 +92,11 @@ export default function AdminStudyPage() {
                     </Button>
                   </a>
                 ) : (
-                  <Button variant="outline" size="sm" className="flex-1 text-gray-400 border-gray-200" disabled title="No PDF uploaded yet">
-                    View
-                  </Button>
+                  <Link href={`/view/${doc.id}`} target="_blank" className="flex-1">
+                    <Button variant="outline" size="sm" className="w-full text-indigo-600 border-indigo-200 hover:bg-indigo-50">
+                      View (AI)
+                    </Button>
+                  </Link>
                 )}
                 <Button variant="outline" size="sm" className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => handleDelete(doc.id)}>
                   <Trash2 className="w-4 h-4 mr-1" /> Delete

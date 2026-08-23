@@ -77,13 +77,19 @@ export default function AdminResumesPage() {
               <div className="text-lg font-extrabold mb-4">{template.price}</div>
               
               <div className="mt-auto flex gap-2">
-                {template.file_url && (
+                {template.file_url && template.file_url !== 'pending' ? (
                   <Link href={template.file_url} target="_blank" className="w-full">
                     <Button variant="outline" size="sm" className="w-full" title="View Document">
                       <ExternalLink className="h-4 w-4"/>
                     </Button>
                   </Link>
-                )}
+                ) : template.file_url === 'pending' ? (
+                  <Link href={`/view/${template.id}`} target="_blank" className="w-full">
+                    <Button variant="outline" size="sm" className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border-indigo-200" title="View AI Document">
+                      <ExternalLink className="h-4 w-4"/>
+                    </Button>
+                  </Link>
+                ) : null}
                 <Link href={`/admin/resumes/${template.id}/edit`} className="w-full">
                   <Button variant="outline" size="sm" className="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/40" title="Edit">
                     <Edit className="h-4 w-4"/>
