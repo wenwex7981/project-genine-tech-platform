@@ -29,9 +29,19 @@ Each object in the array must have the following fields:
 
     let docs: any = [];
     try {
-      // Find the first JSON block (array or object)
-      const match = jsonStr.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
-      const cleaned = match ? match[0] : jsonStr;
+      // Find JSON block if wrapped in markdown
+      const jsonBlockMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      let cleaned = jsonStr;
+      if (jsonBlockMatch && jsonBlockMatch[1]) {
+        cleaned = jsonBlockMatch[1];
+      } else {
+        // Fallback: extract substring from first [ or { to last ] or }
+        const firstIdx = jsonStr.search(/\[|\{/);
+        const lastIdx = Math.max(jsonStr.lastIndexOf(']'), jsonStr.lastIndexOf('}'));
+        if (firstIdx !== -1 && lastIdx !== -1 && lastIdx >= firstIdx) {
+          cleaned = jsonStr.substring(firstIdx, lastIdx + 1);
+        }
+      }
       
       let parsed = JSON.parse(cleaned);
       
