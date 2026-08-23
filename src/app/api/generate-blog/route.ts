@@ -56,7 +56,7 @@ Return ONLY the JSON object, nothing else.`;
       ],
       model: 'openai/gpt-oss-120b',
       temperature: 0.4,
-      max_tokens: 8000,
+      max_tokens: 4000,
       response_format: { type: 'json_object' },
     });
 
