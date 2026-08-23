@@ -53,14 +53,14 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ id: s
         
         const { data: interviewDoc } = await supabase.from('interview_prep_docs').select('*').eq('id', id).single();
         if (interviewDoc) {
-           foundDoc = interviewDoc;
+           foundDoc = { ...interviewDoc, docType: 'interview' };
         } else {
            const { data: projectDoc } = await supabase.from('projects').select('*').eq('id', id).single();
            if (projectDoc) {
-             foundDoc = projectDoc;
+             foundDoc = { ...projectDoc, docType: 'project' };
            } else {
              const { data: resumeDoc } = await supabase.from('resume_templates').select('*').eq('id', id).single();
-             if (resumeDoc) foundDoc = resumeDoc;
+             if (resumeDoc) foundDoc = { ...resumeDoc, docType: 'resume' };
            }
         }
         
@@ -128,13 +128,17 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ id: s
       </div>
 
       {/* Document Content */}
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border p-8 md:p-12">
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-6 pb-6 border-b text-gray-900 dark:text-white">
+      <div className={`container mx-auto px-4 py-8 ${doc.docType === 'resume' ? 'max-w-5xl' : 'max-w-4xl'}`}>
+        <div className={`bg-white dark:bg-zinc-900 shadow-sm border ${doc.docType === 'resume' ? 'rounded-sm p-10 md:p-16 min-h-[1122px] shadow-lg print:shadow-none print:border-none' : 'rounded-2xl p-8 md:p-12'}`}>
+          <h1 className={`font-extrabold mb-6 pb-6 border-b text-gray-900 dark:text-white ${doc.docType === 'resume' ? 'text-4xl text-center uppercase tracking-wider' : 'text-3xl md:text-4xl'}`}>
             {doc.title}
           </h1>
           
-          <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-8 prose-h2:border-b prose-h2:pb-2 prose-indigo text-left">
+          <div className={
+            doc.docType === 'resume' 
+              ? "prose prose-sm md:prose-base dark:prose-invert max-w-none text-left prose-headings:font-bold prose-headings:uppercase prose-headings:tracking-widest prose-h2:text-xl prose-h2:mt-6 prose-h2:mb-3 prose-h2:border-b-2 prose-h2:border-gray-800 dark:prose-h2:border-gray-200 prose-h2:pb-1 prose-p:my-1 prose-ul:my-1 prose-li:my-0" 
+              : "prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h2:mt-8 prose-h2:border-b prose-h2:pb-2 prose-indigo text-left"
+          }>
             <ReactMarkdown>
               {doc.description || "*No content available for this document.*"}
             </ReactMarkdown>

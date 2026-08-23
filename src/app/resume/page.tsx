@@ -24,6 +24,7 @@ export default function ResumeHub() {
   
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [hasResumePro, setHasResumePro] = useState(false);
+  const [purchasedIds, setPurchasedIds] = useState<string[]>([]);
   const [unlockedAts, setUnlockedAts] = useState(false);
   const [unlockedJd, setUnlockedJd] = useState(false);
   const [showPaywall, setShowPaywall] = useState<"ats" | "jd" | null>(null);
@@ -95,6 +96,19 @@ export default function ResumeHub() {
         if (data && (!data.expires_at || new Date(data.expires_at) > new Date())) {
           setHasResumePro(true);
         }
+
+        const { data: orders } = await supabase
+          .from('orders')
+          .select('items')
+          .eq('user_email', email);
+        
+        const ids: string[] = [];
+        (orders || []).forEach((order: any) => {
+          (order.items || []).forEach((item: any) => {
+            ids.push(String(item.id));
+          });
+        });
+        setPurchasedIds(ids);
       }
     });
   }, []);
@@ -992,7 +1006,14 @@ export default function ResumeHub() {
                       }`}>
                         {resume._type === 'premium' ? '⭐ Premium Template' : resume.experience_level}
                       </span>
-                      <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{resume.domain}</span>
+                      <div className="flex gap-2">
+                        {resume._type === 'premium' && !resume.image_url && (
+                          <span className="text-xs font-extrabold text-white bg-gray-900 px-3 py-1 rounded-full shadow-sm">
+                            ₹{resume.price}
+                          </span>
+                        )}
+                        <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{resume.domain}</span>
+                      </div>
                     </div>
                     <h3 className="text-xl font-bold mb-2">{resume.name}</h3>
                     {resume._type === 'community' && (
@@ -1005,26 +1026,29 @@ export default function ResumeHub() {
                       </div>
                     )}
                     {resume._type === 'premium' && resume.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2 mt-2">{resume.description}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
+                        {resume.description.replace(/[#*`_[\]]/g, '')}
+                      </p>
                     )}
                   </div>
-                  <div className="grid grid-cols-2 border-t divide-x">
+                  <div className="grid grid-cols-1 border-t divide-x">
                     {resume._type === 'premium' ? (
-                      <>
-                        <a href={resume.file_url || resume.pdf_url || '#'} target="_blank" rel="noreferrer"
-                          className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 hover:bg-gray-50">
-                          <Eye className="h-4 w-4" /> Preview
+                      purchasedIds.includes(String(resume.id)) || hasResumePro ? (
+                        <a href={resume.file_url === 'pending' ? `/view/${resume.id}` : (resume.file_url || resume.pdf_url || '#')} target={resume.file_url === 'pending' ? "_self" : "_blank"} rel="noreferrer"
+                          className="py-4 flex items-center justify-center gap-2 text-sm font-bold text-green-600 hover:bg-green-50 bg-green-50/30">
+                          <CheckCircle className="h-4 w-4" /> Open Resume
                         </a>
+                      ) : (
                         <button
                           onClick={() => {
                             const price = typeof resume.price === 'string' ? parseFloat(resume.price.replace(/[^\d.]/g, '')) : Number(resume.price);
                             addToCart({ id: resume.id, title: resume.name, price: price || 0, quantity: 1, image_url: resume.image_url, file_url: resume.file_url || resume.pdf_url });
                             alert(`${resume.name} added to cart!`);
                           }}
-                          className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50">
-                          <ShoppingCart className="h-4 w-4" /> Add to Cart
+                          className="py-4 flex items-center justify-center gap-2 text-sm font-bold text-indigo-600 hover:bg-indigo-50 bg-indigo-50/30">
+                          <Lock className="h-4 w-4" /> Unlock for ₹{resume.price}
                         </button>
-                      </>
+                      )
                     ) : (
                       <>
                         <button className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 hover:bg-gray-50"><Eye className="h-4 w-4" /> Preview</button>
