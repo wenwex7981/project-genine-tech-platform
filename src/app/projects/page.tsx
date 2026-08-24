@@ -69,11 +69,20 @@ export default function ProjectsHub() {
   return (
     <div className="flex flex-col min-h-screen bg-background pb-32">
       {/* Hero Banner */}
-      <div className="bg-zinc-950 text-white py-24 px-4 md:px-6 mb-12 border-b relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
+      <div className="relative min-h-[400px] flex items-center justify-center text-white py-24 px-4 md:px-6 mb-12 overflow-hidden shadow-2xl border-b border-zinc-800">
+        <div className="absolute inset-0">
+          <Image 
+            src="/images/projects-banner.png" 
+            alt="Final Year Projects Hub Banner" 
+            fill 
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+        </div>
         <div className="container mx-auto max-w-6xl text-center space-y-6 relative z-10">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">Final Year <span className="text-primary">Projects Hub</span></h1>
-          <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg text-white">Final Year <span className="text-primary">Projects Hub</span></h1>
+          <p className="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
             Everything you need to score top grades. From full deployable source code to pristine, zero-plagiarism documentation.
           </p>
         </div>

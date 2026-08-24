@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import Image from "next/image";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 export default function StudyHubPage() {
@@ -226,16 +227,25 @@ export default function StudyHubPage() {
   return (
     <div className="min-h-screen bg-muted/20 pb-24">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-indigo-950 via-indigo-900 to-purple-950 text-white py-20 border-b relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="container mx-auto px-4 md:px-6 text-center max-w-4xl relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-indigo-200 font-bold text-sm mb-6 border border-white/20 backdrop-blur-md">
-            <GraduationCap className="h-4 w-4 text-purple-300" /> The Ultimate Study & Career Hub
+      <div className="relative min-h-[450px] flex items-center justify-center text-white py-20 border-b border-zinc-800 overflow-hidden shadow-2xl">
+        <div className="absolute inset-0">
+          <Image 
+            src="/images/study-banner.png" 
+            alt="Study Hub Banner" 
+            fill 
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+        </div>
+        <div className="container mx-auto px-4 md:px-6 text-center max-w-4xl relative z-10 w-full">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 text-purple-100 font-bold text-sm mb-6 border border-white/30 backdrop-blur-md">
+            <GraduationCap className="h-4 w-4 text-purple-200" /> The Ultimate Study & Career Hub
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl mb-6">
-            Master Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-amber-300">Career & Interviews</span>
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl mb-6 drop-shadow-lg text-white">
+            Master Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300">Career & Interviews</span>
           </h1>
-          <p className="text-xl text-indigo-100 mb-10 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xl text-gray-200 mb-10 leading-relaxed max-w-3xl mx-auto drop-shadow-md">
             Access real interview question banks asked by Deloitte, FAANG & top companies, or generate custom AI learning roadmaps.
           </p>
 

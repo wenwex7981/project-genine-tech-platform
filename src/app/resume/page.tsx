@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabase";
 import { useCart } from "@/context/CartContext";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import ResumeEditor from "@/components/ResumeEditor";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
@@ -292,28 +293,37 @@ export default function ResumeHub() {
   return (
     <div className="w-full min-h-screen bg-muted/10 pb-20">
       {/* Premium Hero Banner */}
-      <div className="bg-gradient-to-r from-indigo-950 via-blue-900 to-slate-950 text-white py-20 px-4 md:px-8 border-b mb-12 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
+      <div className="relative min-h-[450px] flex items-center text-white py-20 px-4 md:px-8 border-b border-zinc-800 mb-12 overflow-hidden shadow-2xl">
+        <div className="absolute inset-0">
+          <Image 
+            src="/images/resume-banner.png" 
+            alt="The Resume Hub Banner" 
+            fill 
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+        </div>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10 w-full">
           <div className="space-y-6 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-sm font-semibold backdrop-blur-sm">
-              <Briefcase className="h-4 w-4 text-blue-300" />
-              <span className="text-blue-100">AI-Powered Career Engine</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 border border-white/30 text-sm font-semibold backdrop-blur-md">
+              <Briefcase className="h-4 w-4 text-blue-200" />
+              <span className="text-blue-50">AI-Powered Career Engine</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Resume Hub</span></h1>
-            <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-medium">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg">The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Resume Hub</span></h1>
+            <p className="text-lg md:text-xl text-gray-200 leading-relaxed font-medium drop-shadow-md">
               Maximize your callback rate. Deeply analyze your resume against a staggering 17-point ATS checklist and an exhaustive 20-point JD matching system.
             </p>
           </div>
-          <div className="hidden md:flex p-8 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md shadow-2xl">
+          <div className="hidden md:flex p-8 bg-white/10 border border-white/20 rounded-3xl backdrop-blur-lg shadow-2xl">
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col items-center p-4 bg-white/10 rounded-xl">
-                <CheckCircle className="h-8 w-8 text-blue-400 mb-2" />
-                <span className="text-sm font-bold">17-Pt ATS</span>
+              <div className="flex flex-col items-center p-4 bg-white/20 rounded-xl backdrop-blur-md shadow-inner">
+                <CheckCircle className="h-8 w-8 text-blue-300 mb-2 drop-shadow" />
+                <span className="text-sm font-bold text-white drop-shadow">17-Pt ATS</span>
               </div>
-              <div className="flex flex-col items-center p-4 bg-white/10 rounded-xl">
-                <Search className="h-8 w-8 text-indigo-400 mb-2" />
-                <span className="text-sm font-bold">20-Pt Match</span>
+              <div className="flex flex-col items-center p-4 bg-white/20 rounded-xl backdrop-blur-md shadow-inner">
+                <Search className="h-8 w-8 text-indigo-300 mb-2 drop-shadow" />
+                <span className="text-sm font-bold text-white drop-shadow">20-Pt Match</span>
               </div>
             </div>
           </div>
