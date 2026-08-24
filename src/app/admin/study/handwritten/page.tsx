@@ -70,25 +70,40 @@ export default function HandwrittenNotesGenerator() {
       const opt = {
         margin: 10,
         filename: `${topic.replace(/\s+/g, '-').toLowerCase()}-notes.pdf`,
-        image: { type: 'jpeg' as const, quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        image: { type: 'jpeg' as const, quality: 0.8 },
+        html2canvas: { scale: 1.5, useCORS: true },
         jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
       };
       
       const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
       
-      // 2. Upload to Cloudflare R2
-      const formData = new FormData();
-      formData.append('file', new File([pdfBlob], opt.filename, { type: 'application/pdf' }));
-      formData.append('folder', 'handwritten-notes');
-      
-      const uploadRes = await fetch('/api/upload', {
+      // 2. Upload to Cloudflare R2 via Presigned URL
+      const presignRes = await fetch('/api/upload/presigned', {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: opt.filename,
+          contentType: 'application/pdf',
+          folder: 'handwritten-notes'
+        })
       });
       
-      if (!uploadRes.ok) throw new Error("Failed to upload PDF");
-      const { url: pdfUrl } = await uploadRes.json();
+      if (!presignRes.ok) {
+        const err = await presignRes.json().catch(() => ({}));
+        throw new Error(`Failed to get upload URL: ${err.error || presignRes.statusText}`);
+      }
+      
+      const { presignedUrl, publicUrl } = await presignRes.json();
+      
+      const uploadRes = await fetch(presignedUrl, {
+        method: 'PUT',
+        body: pdfBlob,
+        headers: { 'Content-Type': 'application/pdf' }
+      });
+      
+      if (!uploadRes.ok) throw new Error("Failed to upload PDF directly to R2");
+      
+      const pdfUrl = publicUrl;
       
       // 3. Save to Supabase (Study Hub)
       const { error } = await supabase.from('interview_prep_docs').insert([
