@@ -18,7 +18,7 @@ import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 export default function ResumeHub() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community" | "maker">("ats");
+  const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community" | "maker">("community");
   const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const { addToCart } = useCart();
@@ -334,17 +334,17 @@ export default function ResumeHub() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 mb-8 bg-gray-100 dark:bg-zinc-800 p-1.5 rounded-xl border max-w-fit">
-        <button onClick={() => setActiveTab("ats")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "ats" ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500'}`}>
+        <button onClick={() => setActiveTab("ats")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "ats" ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-700 dark:text-slate-300 hover:bg-gray-200/50 dark:hover:bg-zinc-700'}`}>
           <CheckCircle className="h-4 w-4" /> 17-Point ATS Checker
         </button>
-        <button onClick={() => setActiveTab("jd")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "jd" ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500'}`}>
+        <button onClick={() => setActiveTab("jd")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "jd" ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-700 dark:text-slate-300 hover:bg-gray-200/50 dark:hover:bg-zinc-700'}`}>
           <Search className="h-4 w-4" /> 20-Point JD Analyzer
         </button>
-        <button onClick={() => setActiveTab("maker")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "maker" ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500'}`}>
+        <button onClick={() => setActiveTab("maker")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "maker" ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-700 dark:text-slate-300 hover:bg-gray-200/50 dark:hover:bg-zinc-700'}`}>
           <Zap className="h-4 w-4" /> AI Resume Maker
         </button>
-        <button onClick={() => setActiveTab("community")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "community" ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500'}`}>
-          <Users className="h-4 w-4" /> Community Templates
+        <button onClick={() => setActiveTab("community")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "community" ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-700 dark:text-slate-300 hover:bg-gray-200/50 dark:hover:bg-zinc-700'}`}>
+          <Users className="h-4 w-4" /> Resume Templates
         </button>
       </div>
 
