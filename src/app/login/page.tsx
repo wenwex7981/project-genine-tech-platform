@@ -71,14 +71,21 @@ export default function LoginPage() {
 
   const handleSendOtp = async () => {
     if (!phone) return alert("Please enter your phone number with country code (e.g. +91...)");
+    
+    // Format to strict E.164 format (e.g. +919876543210)
+    let formattedPhone = phone.replace(/[\s\-()]/g, ""); // Remove spaces, dashes, parentheses
+    if (!formattedPhone.startsWith('+')) {
+      formattedPhone = '+' + formattedPhone;
+    }
+
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOtp({ phone });
+      const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
       if (error) throw error;
       setIsOtpSent(true);
-      alert("OTP sent to your phone!");
+      alert("OTP sent to your phone! Please check your messages.");
     } catch (error: any) {
-      alert(error.message);
+      alert("Failed to send OTP: " + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -86,12 +93,18 @@ export default function LoginPage() {
 
   const handleVerifyOtp = async () => {
     if (!otp) return alert("Please enter the OTP");
+    
+    let formattedPhone = phone.replace(/[\s\-()]/g, "");
+    if (!formattedPhone.startsWith('+')) {
+      formattedPhone = '+' + formattedPhone;
+    }
+
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' });
+      const { error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token: otp, type: 'sms' });
       if (error) throw error;
     } catch (error: any) {
-      alert(error.message);
+      alert("Failed to verify OTP: " + error.message);
     } finally {
       setIsLoading(false);
     }
