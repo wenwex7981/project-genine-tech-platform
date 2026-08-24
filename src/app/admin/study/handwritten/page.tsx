@@ -20,9 +20,28 @@ export default function HandwrittenNotesGenerator() {
   
   const previewRef = useRef<HTMLDivElement>(null);
 
+  // Load from localStorage on mount
   useEffect(() => {
     mermaid.initialize({ startOnLoad: false, theme: 'default' });
+    const saved = localStorage.getItem('handwritten_draft');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.topic) setTopic(parsed.topic);
+        if (parsed.companyName) setCompanyName(parsed.companyName);
+        if (parsed.price) setPrice(parsed.price);
+        if (parsed.model) setModel(parsed.model);
+        if (parsed.generatedNotes) setGeneratedNotes(parsed.generatedNotes);
+      } catch(e) {}
+    }
   }, []);
+
+  // Save to localStorage when things change
+  useEffect(() => {
+    localStorage.setItem('handwritten_draft', JSON.stringify({
+      topic, companyName, price, model, generatedNotes
+    }));
+  }, [topic, companyName, price, model, generatedNotes]);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,9 +86,10 @@ export default function HandwrittenNotesGenerator() {
       // 1. Generate PDF
       const html2pdf = (await import('html2pdf.js')).default;
       const element = previewRef.current;
+      const safeTopic = topic.replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-').substring(0, 50);
       const opt = {
         margin: 10,
-        filename: `${topic.replace(/\s+/g, '-').toLowerCase()}-notes.pdf`,
+        filename: `${safeTopic}-notes.pdf`,
         image: { type: 'jpeg' as const, quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
