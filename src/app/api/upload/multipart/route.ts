@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { r2Client } from '@/lib/r2';
 import { 
   CreateMultipartUploadCommand, 

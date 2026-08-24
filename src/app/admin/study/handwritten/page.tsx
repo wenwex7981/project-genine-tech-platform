@@ -84,7 +84,10 @@ export default function HandwrittenNotesGenerator() {
       startFd.append('folder', 'handwritten-notes');
       
       const startRes = await fetch('/api/upload/multipart', { method: 'POST', body: startFd });
-      if (!startRes.ok) throw new Error("Failed to start upload");
+      if (!startRes.ok) {
+        const err = await startRes.json().catch(() => ({}));
+        throw new Error(`Failed to start upload: ${err.error || startRes.statusText}`);
+      }
       const { uploadId, key } = await startRes.json();
       
       const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB chunks
@@ -101,7 +104,10 @@ export default function HandwrittenNotesGenerator() {
         chunkFd.append('file', new File([chunk], 'chunk.pdf'));
         
         const uploadRes = await fetch('/api/upload/multipart', { method: 'POST', body: chunkFd });
-        if (!uploadRes.ok) throw new Error(`Failed to upload part ${partNumber}`);
+        if (!uploadRes.ok) {
+          const err = await uploadRes.json().catch(() => ({}));
+          throw new Error(`Failed to upload part ${partNumber}: ${err.error || uploadRes.statusText}`);
+        }
         const { ETag } = await uploadRes.json();
         parts.push({ PartNumber: partNumber, ETag });
         partNumber++;
