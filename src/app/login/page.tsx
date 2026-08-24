@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [confirmationResult, setConfirmationResult] = useState<any>(null);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const router = useRouter();
 
@@ -32,6 +33,23 @@ export default function LoginPage() {
         router.push("/home");
       }
     });
+    
+    // Initialize RecaptchaVerifier for Firebase Phone Auth
+    if (typeof window !== "undefined") {
+      import("firebase/auth").then(({ RecaptchaVerifier }) => {
+        import("@/lib/firebase").then(({ auth }) => {
+          if (!(window as any).recaptchaVerifier) {
+            try {
+              (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+              });
+            } catch (e) {
+              console.error("Recaptcha init error", e);
+            }
+          }
+        });
+      });
+    }
 
     return () => subscription.unsubscribe();
   }, [router]);
@@ -80,12 +98,23 @@ export default function LoginPage() {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
-      if (error) throw error;
+      const { signInWithPhoneNumber } = await import("firebase/auth");
+      const { auth } = await import("@/lib/firebase");
+      
+      const appVerifier = (window as any).recaptchaVerifier;
+      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+      
+      setConfirmationResult(confirmation);
       setIsOtpSent(true);
       alert("OTP sent to your phone! Please check your messages.");
     } catch (error: any) {
-      alert("Failed to send OTP: " + error.message);
+      alert("Failed to send OTP via Firebase: " + error.message);
+      // Reset recaptcha if failed
+      if ((window as any).recaptchaVerifier) {
+         (window as any).recaptchaVerifier.render().then((widgetId: any) => {
+           (window as any).grecaptcha.reset(widgetId);
+         });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -93,16 +122,25 @@ export default function LoginPage() {
 
   const handleVerifyOtp = async () => {
     if (!otp) return alert("Please enter the OTP");
+    if (!confirmationResult) return alert("No OTP session found. Please request a new OTP.");
     
-    let formattedPhone = phone.replace(/[\s\-()]/g, "");
-    if (!formattedPhone.startsWith('+')) {
-      formattedPhone = '+' + formattedPhone;
-    }
-
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token: otp, type: 'sms' });
-      if (error) throw error;
+      const result = await confirmationResult.confirm(otp);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+      
+      // IMPORTANT: The user is now logged into Firebase, NOT Supabase natively!
+      // You must use this `idToken` to make authenticated requests to your Supabase Postgres database.
+      // E.g., setting global headers for the Supabase client:
+      // supabase.rest.headers['Authorization'] = `Bearer ${idToken}`;
+      
+      alert("Phone login successful via Firebase! Note: You need to pass the Firebase Token to Supabase manually to access the database.");
+      console.log("Firebase ID Token:", idToken);
+      
+      // Redirect to home
+      router.push("/home");
+      
     } catch (error: any) {
       alert("Failed to verify OTP: " + error.message);
     } finally {
@@ -218,6 +256,7 @@ export default function LoginPage() {
                       </div>
                     </div>
                     <div className="pt-2">
+                      <div id="recaptcha-container" className="mb-4 flex justify-center"></div>
                       <Button 
                         onClick={handleSendOtp} 
                         disabled={isLoading}
