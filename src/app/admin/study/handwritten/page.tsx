@@ -70,40 +70,29 @@ export default function HandwrittenNotesGenerator() {
       const opt = {
         margin: 10,
         filename: `${topic.replace(/\s+/g, '-').toLowerCase()}-notes.pdf`,
-        image: { type: 'jpeg' as const, quality: 0.8 },
-        html2canvas: { scale: 1.5, useCORS: true },
+        image: { type: 'jpeg' as const, quality: 0.6 },
+        html2canvas: { scale: 1, useCORS: true },
         jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
       };
       
       const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
       
-      // 2. Upload to Cloudflare R2 via Presigned URL
-      const presignRes = await fetch('/api/upload/presigned', {
+      // 2. Upload to Cloudflare R2 via Next.js API
+      const formData = new FormData();
+      formData.append('file', new File([pdfBlob], opt.filename, { type: 'application/pdf' }));
+      formData.append('folder', 'handwritten-notes');
+      
+      const uploadRes = await fetch('/api/upload', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          filename: opt.filename,
-          contentType: 'application/pdf',
-          folder: 'handwritten-notes'
-        })
+        body: formData
       });
       
-      if (!presignRes.ok) {
-        const err = await presignRes.json().catch(() => ({}));
-        throw new Error(`Failed to get upload URL: ${err.error || presignRes.statusText}`);
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json().catch(() => ({}));
+        throw new Error(`Failed to upload PDF: ${err.error || uploadRes.statusText}`);
       }
       
-      const { presignedUrl, publicUrl } = await presignRes.json();
-      
-      const uploadRes = await fetch(presignedUrl, {
-        method: 'PUT',
-        body: pdfBlob,
-        headers: { 'Content-Type': 'application/pdf' }
-      });
-      
-      if (!uploadRes.ok) throw new Error("Failed to upload PDF directly to R2");
-      
-      const pdfUrl = publicUrl;
+      const { url: pdfUrl } = await uploadRes.json();
       
       // 3. Save to Supabase (Study Hub)
       const { error } = await supabase.from('interview_prep_docs').insert([
