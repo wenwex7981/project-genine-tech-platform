@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   
   if (!hackathon) {
     return {
-      title: "Hackathon Not Found | GraduateNex",
+      title: "Event Not Found | GraduateNex",
     };
   }
 

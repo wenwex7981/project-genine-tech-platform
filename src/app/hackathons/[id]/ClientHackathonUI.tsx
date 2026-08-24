@@ -39,7 +39,7 @@ export default function HackathonDetails({ params }: { params: Promise<{ id: str
   if (!hackathon) {
     return (
       <div className="w-full max-w-4xl mx-auto mt-12 p-8 text-center">
-        <h2 className="text-2xl font-bold">Hackathon Not Found</h2>
+        <h2 className="text-2xl font-bold">Event Not Found</h2>
         <Link href="/hackathons" className="text-indigo-600 mt-4 inline-block hover:underline">
           <ArrowLeft className="inline mr-2 h-4 w-4" /> Back to Directory
         </Link>
@@ -50,7 +50,7 @@ export default function HackathonDetails({ params }: { params: Promise<{ id: str
   return (
     <div className="w-full max-w-5xl mx-auto mt-8 mb-20">
       <Link href="/hackathons" className="inline-flex items-center text-sm text-gray-500 hover:text-indigo-600 mb-6 px-4">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Hackathons
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Events Directory
       </Link>
 
       <div className="bg-white dark:bg-zinc-900 rounded-3xl border shadow-lg overflow-hidden">
@@ -71,7 +71,7 @@ export default function HackathonDetails({ params }: { params: Promise<{ id: str
             {hackathon.registration_link ? (
               <a href={hackathon.registration_link} target="_blank" rel="noreferrer" className="w-full">
                 <Button size="lg" className="w-full h-14 px-8 text-lg bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md">
-                  Join Hackathon <ExternalLink className="ml-2 h-5 w-5" />
+                  Join Event <ExternalLink className="ml-2 h-5 w-5" />
                 </Button>
               </a>
             ) : (
@@ -102,7 +102,11 @@ export default function HackathonDetails({ params }: { params: Promise<{ id: str
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-500">Location</p>
-                <p className="font-bold">{hackathon.city && hackathon.state ? `${hackathon.city}, ${hackathon.state}` : hackathon.location || hackathon.mode}</p>
+                <p className="font-bold">
+                  {hackathon.mode === 'Online' 
+                    ? 'Online' 
+                    : [hackathon.address, hackathon.city, hackathon.district, hackathon.state, hackathon.country].filter(Boolean).join(', ') || hackathon.location || 'Offline'}
+                </p>
               </div>
             </div>
 

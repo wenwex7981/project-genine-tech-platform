@@ -53,7 +53,7 @@ export default function PostHackathonPage() {
   const [formData, setFormData] = useState({
     org_name: "", org_type: "Company", contact_person: "", contact_email: "", contact_phone: "", website: "", linkedin: "",
     title: "", theme: "", description: "", eligibility: "", team_size_min: 1, team_size_max: 4,
-    reg_start_date: "", reg_end_date: "", event_date: "", mode: "Online", city: "", state: "", venue: "",
+    reg_start_date: "", reg_end_date: "", event_date: "", mode: "Online", city: "", state: "", venue: "", country: "", district: "", address: "",
     total_prize_pool: "", first_prize: "", second_prize: "", third_prize: "", 
     has_certificates: false, has_internship: false, has_ppo: false, has_goodies: false,
     reg_fee: 0, max_participants: "", pricing_plan: "Free Listing", registrationLink: ""
@@ -69,11 +69,11 @@ export default function PostHackathonPage() {
       }]);
 
       if (error) throw error;
-      alert("Hackathon published successfully!");
+      alert("Event published successfully!");
       router.push('/hackathons');
     } catch (err: any) {
       console.error(err);
-      alert("Failed to publish hackathon. Make sure the hackathons_v2 table exists.");
+      alert("Failed to publish event. Make sure the hackathons_v2 table exists.");
     }
   };
 
@@ -160,7 +160,7 @@ export default function PostHackathonPage() {
           <Link href="/hackathons" className="text-primary hover:underline font-semibold mb-6 inline-flex items-center gap-1">
             <ChevronLeft className="w-4 h-4" /> Back to Directory
           </Link>
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Host a Hackathon</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Host an Event / Hackathon</h1>
           <p className="text-muted-foreground mt-2">Publish your event to thousands of top developers and students.</p>
         </div>
       </div>
@@ -215,7 +215,7 @@ export default function PostHackathonPage() {
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 max-w-3xl mx-auto">
               <h2 className="text-2xl font-bold border-b pb-4">2. Event Details</h2>
               <div>
-                <label className="block text-sm font-semibold mb-2">Hackathon Name *</label>
+                <label className="block text-sm font-semibold mb-2">Event / Hackathon Name *</label>
                 <input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 outline-none" />
               </div>
               <div>
@@ -241,6 +241,34 @@ export default function PostHackathonPage() {
                   <input type="date" value={formData.event_date} onChange={e => setFormData({...formData, event_date: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 outline-none" />
                 </div>
               </div>
+              
+              {formData.mode !== 'Online' && (
+                <div className="bg-gray-50 p-4 rounded-xl border space-y-4">
+                  <h3 className="font-semibold text-gray-700">Location Details (Required for Offline/Hybrid)</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Country *</label>
+                      <input required value={formData.country} onChange={e => setFormData({...formData, country: e.target.value})} className="w-full p-3 rounded-xl border bg-white outline-none" placeholder="e.g. India" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">State *</label>
+                      <input required value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} className="w-full p-3 rounded-xl border bg-white outline-none" placeholder="e.g. Telangana" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">District *</label>
+                      <input required value={formData.district} onChange={e => setFormData({...formData, district: e.target.value})} className="w-full p-3 rounded-xl border bg-white outline-none" placeholder="e.g. Hyderabad" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">City</label>
+                      <input value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="w-full p-3 rounded-xl border bg-white outline-none" placeholder="e.g. Madhapur" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Full Venue Address *</label>
+                    <textarea required rows={2} value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full p-3 rounded-xl border bg-white outline-none" placeholder="Complete street address and venue name" />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

@@ -68,17 +68,27 @@ export default function HackathonsDirectory() {
   return (
     <div className="w-full max-w-7xl mx-auto mt-12 p-4 md:p-8">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl p-8 md:p-12 text-white shadow-xl flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
-            Discover Top <span className="text-primary">Hackathons</span>
+      <div className="relative rounded-3xl overflow-hidden shadow-2xl mb-12 min-h-[350px] flex items-center p-8 md:p-12">
+        <div className="absolute inset-0">
+          <Image 
+            src="/images/events-banner.png" 
+            alt="Events and Hackathons Banner" 
+            fill 
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+        </div>
+        <div className="relative z-10 max-w-2xl text-white">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 text-white drop-shadow-md">
+            Discover Top Events & Hackathons
           </h1>
-          <p className="text-lg md:text-xl text-indigo-100 max-w-2xl mx-auto mb-8">
-            Participate in the best hackathons from colleges and companies worldwide. Build, learn, and win!
+          <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-8 drop-shadow">
+            Participate in the best idea pitches, college fests, and hackathons worldwide. Build, learn, and win!
           </p>
           <Link href="/hackathons/post">
-            <Button size="lg" className="h-12 px-8 font-bold text-lg rounded-full shadow-lg hover:scale-105 transition-transform bg-white text-indigo-600 hover:bg-gray-100">
-              <PlusCircle className="mr-2 h-5 w-5" /> Host a Hackathon
+            <Button size="lg" className="h-12 px-8 font-bold text-lg rounded-full shadow-xl hover:scale-105 transition-transform bg-white text-indigo-900 hover:bg-gray-100 border-none">
+              <PlusCircle className="mr-2 h-5 w-5" /> Host an Event
             </Button>
           </Link>
         </div>
@@ -94,7 +104,7 @@ export default function HackathonsDirectory() {
       ) : hackathons.length === 0 ? (
         <div className="text-center p-20 bg-white dark:bg-zinc-900 rounded-2xl border border-dashed">
           <Trophy className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-          <h3 className="text-xl font-bold">No upcoming hackathons</h3>
+          <h3 className="text-xl font-bold">No upcoming events</h3>
           <p className="text-gray-500 mt-2">Be the first to host an event for the community!</p>
         </div>
       ) : (
@@ -150,13 +160,13 @@ export default function HackathonsDirectory() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-zinc-900 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden border max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white dark:bg-zinc-900 z-10">
-              <h2 className="text-2xl font-bold flex items-center gap-2"><PlusCircle className="text-indigo-600" /> Post Hackathon</h2>
+              <h2 className="text-2xl font-bold flex items-center gap-2"><PlusCircle className="text-indigo-600" /> Post Event</h2>
               <button onClick={() => setShowPostModal(false)} className="text-gray-400 hover:text-gray-800"><X className="h-6 w-6" /></button>
             </div>
             <form onSubmit={handlePostHackathon} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-semibold mb-2">Hackathon Title</label>
-                <input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800" placeholder="e.g. Smart India Hackathon 2026" />
+                <label className="block text-sm font-semibold mb-2">Event Title</label>
+                <input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800" placeholder="e.g. Smart India Hackathon 2026 or College Tech Fest" />
               </div>
               
               <div>
