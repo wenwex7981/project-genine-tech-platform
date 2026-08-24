@@ -46,6 +46,11 @@ export default function AdminStudyPage() {
       <div className="flex justify-between items-end mb-8">
         <h1 className="text-3xl font-bold">Manage Interview Prep Docs</h1>
         <div className="flex gap-3">
+          <Link href="/admin/study/handwritten">
+            <Button variant="outline" className="gap-2 border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 shadow-sm">
+              <span className="font-bold">✨ Handwritten AI</span>
+            </Button>
+          </Link>
           <Link href="/admin/study/bulk-ai">
             <Button variant="secondary" className="gap-2 border shadow-sm">
               <span className="text-blue-600 dark:text-blue-400 font-bold">Bulk AI Generate</span>

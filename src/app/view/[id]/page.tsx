@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
-import { Loader2, ArrowLeft, Lock } from "lucide-react";
+import { Loader2, ArrowLeft, Lock, Download } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { use } from "react";
@@ -13,6 +13,30 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ id: s
   const [doc, setDoc] = useState<any>(null);
   const [hasAccess, setHasAccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadPDF = async () => {
+    if (!contentRef.current || !doc) return;
+    setIsDownloading(true);
+    try {
+      const html2pdf = (await import('html2pdf.js')).default;
+      const element = contentRef.current;
+      const opt = {
+        margin: 10,
+        filename: `${doc.title || 'document'}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error("Failed to generate PDF", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   useEffect(() => {
     async function loadDocument() {
@@ -137,13 +161,22 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ id: s
                 </Button>
               </Link>
             )}
+            <Button 
+              onClick={handleDownloadPDF} 
+              disabled={isDownloading}
+              size="sm" 
+              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm"
+            >
+              {isDownloading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+              {isDownloading ? "Generating PDF..." : "Download PDF"}
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Document Content */}
       <div className={`container mx-auto px-4 py-8 ${doc.docType === 'resume' ? 'max-w-5xl' : 'max-w-4xl'}`}>
-        <div className={`bg-white dark:bg-zinc-900 shadow-sm border ${doc.docType === 'resume' ? 'rounded-sm p-10 md:p-16 min-h-[1122px] shadow-lg print:shadow-none print:border-none' : 'rounded-2xl p-8 md:p-12'}`}>
+        <div ref={contentRef} className={`bg-white dark:bg-zinc-900 shadow-sm border ${doc.docType === 'resume' ? 'rounded-sm p-10 md:p-16 min-h-[1122px] shadow-lg print:shadow-none print:border-none' : 'rounded-2xl p-8 md:p-12'}`}>
           <h1 className={`font-extrabold mb-6 pb-6 border-b text-gray-900 dark:text-white ${doc.docType === 'resume' ? 'text-4xl text-center uppercase tracking-wider' : 'text-3xl md:text-4xl'}`}>
             {doc.title}
           </h1>
