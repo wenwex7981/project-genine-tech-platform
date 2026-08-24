@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const { totalItems } = useCart();
+  const pathname = usePathname();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -55,31 +57,33 @@ export default function Navbar() {
     user?.email === 'projectgenie16@gmail.com' ||
     user?.email === 'nithinpatel2025@gmail.com';
 
-  const NavLinks = () => (
+  const NavLinks = () => {
+    const isActive = (path: string) => pathname.startsWith(path) ? "text-primary font-bold" : "text-foreground/80";
+    return (
     <>
-      <Link href="/projects" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/projects" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/projects")}`}>
         Projects
       </Link>
-      <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/services")}`}>
         Services
       </Link>
-      <Link href="/resume" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/resume" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/resume")}`}>
         Resume Hub
       </Link>
-      <Link href="/hackathons" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/hackathons" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/hackathons")}`}>
         Hackathons
       </Link>
 
-      <Link href="/study" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/study" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/study")}`}>
         Study Hub
       </Link>
-      <Link href="/ai-services" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/ai-services" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/ai-services")}`}>
         AI Tools
       </Link>
-      <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/pricing")}`}>
         Pricing
       </Link>
-      <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="whitespace-nowrap text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+      <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/blog")}`}>
         Blog
       </Link>
       {user && (
@@ -93,7 +97,8 @@ export default function Navbar() {
         </Link>
       )}
     </>
-  );
+    );
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
