@@ -74,14 +74,25 @@ export default function LoginPage() {
     if (!email || !password) return alert("Please enter email and password");
     setIsLoading(true);
     try {
-      const { error } = isSignUp 
-        ? await supabase.auth.signUp({ email, password })
-        : await supabase.auth.signInWithPassword({ email, password });
+      const { createUserWithEmailAndPassword, signInWithEmailAndPassword } = await import("firebase/auth");
+      const { auth } = await import("@/lib/firebase");
       
-      if (error) throw error;
-      if (isSignUp) alert("Success! Check your email for a confirmation link (if required) or proceed.");
+      let userCredential;
+      if (isSignUp) {
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        alert("Sign Up successful via Firebase!");
+      } else {
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
+      }
+      
+      const idToken = await userCredential.user.getIdToken();
+      // Like phone auth, this is a Firebase token.
+      console.log("Firebase ID Token:", idToken);
+      
+      router.push("/home");
+      
     } catch (error: any) {
-      alert(error.message);
+      alert("Firebase Email Auth Error: " + error.message);
     } finally {
       setIsLoading(false);
     }
