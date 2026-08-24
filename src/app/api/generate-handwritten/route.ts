@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const systemPrompt = `You are an expert technical instructor creating structured, handwritten-style study notes.
 You MUST respond with valid JSON and NO markdown formatting or wrapping around it.
 Do NOT wrap the output in \`\`\`json blocks.
-Generate 3 to 5 pages of notes. 
+Generate 15 to 20 pages of extensive notes covering all aspects of the topic deeply. 
 
 JSON Schema:
 {
@@ -31,17 +31,13 @@ JSON Schema:
           "type": "code",
           "title": "String - 'Syntax:' or 'Example:'",
           "code": "String - The code snippet (do NOT include line numbers in the string)"
-        },
-        {
-          "type": "callout",
-          "text": "String - A short, fun, encouraging phrase (e.g., 'Good logs lead to happy apps!')"
         }
       ]
     }
   ]
 }
 
-Ensure the items array has a mix of bullets, code snippets, and at least one callout per page. Make the text concise and easy to read.`;
+Ensure the items array has a mix of bullets and code snippets. Make the text detailed and easy to read.`;
 
     const content = await generateAIResponse({
       prompt,

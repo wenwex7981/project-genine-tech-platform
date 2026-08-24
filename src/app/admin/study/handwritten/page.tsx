@@ -275,21 +275,6 @@ export default function HandwrittenNotesGenerator() {
               padding-right: 12px;
               user-select: none;
             }
-            .callout-cloud {
-              position: relative;
-              float: right;
-              margin-left: 20px;
-              margin-bottom: 20px;
-              width: 180px;
-              text-align: center;
-              padding: 30px 20px;
-              color: #be185d;
-              font-family: 'Kalam', cursive;
-              font-size: 18px;
-              line-height: 1.2;
-              background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 50,75 C 50,50 80,40 100,50 C 110,30 150,30 160,55 C 180,60 180,90 160,100 C 170,120 130,130 110,120 C 90,135 60,125 50,110 C 30,100 30,80 50,75 Z' fill='%23ffffff' stroke='%23fbcfe8' stroke-width='4'/%3E%3C/svg%3E");
-              background-size: 100% 100%;
-            }
           `}} />
           
           <div className="bg-white px-4 py-3 border-b text-sm font-bold flex justify-between items-center shadow-sm z-10">
@@ -304,12 +289,12 @@ export default function HandwrittenNotesGenerator() {
               </div>
             ) : (
               <div className="shadow-2xl mx-auto max-w-[800px]">
-                <div ref={previewRef} className="bg-white">
+                <div ref={previewRef} style={{ backgroundColor: '#ffffff' }}>
                   {/* Notes Render */}
                   {generatedNotes.pages?.map((page: any, idx: number) => (
                     <div key={idx} className="handwritten-page">
                       
-                      <div className="absolute top-10 left-4 w-10 h-10 border-2 border-pink-600 text-pink-600 rounded-full flex items-center justify-center font-bold text-xl bg-white" style={{fontFamily: 'Kalam'}}>
+                      <div className="absolute top-10 left-4 w-10 h-10 border-2 rounded-full flex items-center justify-center font-bold text-xl" style={{fontFamily: 'Kalam', borderColor: '#db2777', color: '#db2777', backgroundColor: '#ffffff'}}>
                         {idx + 1}
                       </div>
                       
@@ -320,22 +305,15 @@ export default function HandwrittenNotesGenerator() {
                       {page.summary && (
                         <div className="handwritten-summary">
                           <div className="summary-title">Chapter Summary</div>
-                          <div className="flex gap-2 items-start font-bold">
+                          <div className="flex gap-2 items-start" style={{ fontWeight: 'bold' }}>
                             <span className="heart-bullet">♥</span>
                             <span>{page.summary}</span>
                           </div>
                         </div>
                       )}
                       
-                      <div className="mt-4">
+                      <div style={{ marginTop: '16px' }}>
                         {page.items?.map((item: any, i: number) => {
-                          if (item.type === 'callout') {
-                            return (
-                              <div key={i} className="callout-cloud">
-                                {item.text}
-                              </div>
-                            );
-                          }
                           if (item.type === 'bullet') {
                             return (
                               <div key={i} className="handwritten-bullet">
@@ -355,9 +333,9 @@ export default function HandwrittenNotesGenerator() {
                                       <div key={li}>{li + 1}</div>
                                     ))}
                                   </div>
-                                  <div className="flex-1">
+                                  <div style={{ flex: 1 }}>
                                     {lines.map((line: string, li: number) => (
-                                      <div key={li} className="whitespace-pre">{line || ' '}</div>
+                                      <div key={li} style={{ whiteSpace: 'pre' }}>{line || ' '}</div>
                                     ))}
                                   </div>
                                 </div>
