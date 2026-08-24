@@ -195,35 +195,100 @@ export default function HandwrittenNotesGenerator() {
         {/* Preview Panel */}
         <div className="bg-gray-100 border rounded-2xl overflow-hidden min-h-[600px] flex flex-col relative">
           <style dangerouslySetInnerHTML={{__html: `
-            @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
-            @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Kalam:wght@700&display=swap');
             
             .handwritten-page {
-              font-family: 'Patrick Hand', 'Caveat', cursive;
-              background-color: #fdfbf7;
-              background-image: linear-gradient(rgba(255, 255, 255, 0) 95%, #e2e8f0 5%);
-              background-size: 100% 2rem;
+              font-family: 'Comic Neue', cursive;
+              background-color: #ffffff;
+              background-image: 
+                linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 59px, #ef4444 60px, rgba(255,255,255,0) 61px),
+                linear-gradient(#bfdbfe 1px, rgba(255,255,255,0) 1px);
+              background-size: 100% 100%, 100% 2rem;
               line-height: 2rem;
-              padding: 40px;
-              color: #1e1b4b;
+              padding: 40px 40px 40px 80px;
+              color: #1e3a8a;
               min-height: 1122px; /* A4 approx */
+              position: relative;
             }
-            .handwritten-box {
-              border: 3px solid #db2777;
-              border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-              padding: 15px;
-              margin: 15px 0;
-              background: rgba(255,255,255,0.8);
+            .handwritten-title {
+              font-family: 'Kalam', cursive;
+              font-weight: 700;
+              color: #dc2626;
+              font-size: 32px;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 24px;
             }
-            .handwritten-code {
-              font-family: monospace;
-              background: #f8fafc;
-              border: 2px solid #475569;
-              border-radius: 10px;
-              padding: 15px;
-              margin: 15px 0;
-              font-size: 14px;
-              line-height: 1.5;
+            .handwritten-summary {
+              border: 2px solid #15803d;
+              border-radius: 8px;
+              padding: 12px 20px;
+              margin: 20px 0;
+              background: #ffffff;
+            }
+            .summary-title {
+              color: #dc2626;
+              font-family: 'Kalam', cursive;
+              text-align: center;
+              font-size: 24px;
+              margin-bottom: 8px;
+            }
+            .heart-bullet {
+              color: #ec4899;
+              display: inline-block;
+              width: 20px;
+            }
+            .handwritten-bullet {
+              display: flex;
+              align-items: flex-start;
+              gap: 12px;
+              margin-bottom: 4px;
+              font-size: 18px;
+              font-weight: 700;
+            }
+            .handwritten-bullet-dot {
+              color: #2563eb;
+              margin-top: -2px;
+            }
+            .handwritten-code-title {
+              color: #16a34a;
+              font-family: 'Kalam', cursive;
+              font-size: 22px;
+              margin-top: 16px;
+              margin-bottom: 4px;
+            }
+            .handwritten-code-box {
+              border: 2px solid #7e22ce;
+              border-radius: 8px;
+              background: #ffffff;
+              padding: 12px;
+              font-family: 'Comic Neue', monospace;
+              font-size: 16px;
+              color: #4c1d95;
+              display: flex;
+              margin-bottom: 16px;
+            }
+            .code-lines {
+              color: #94a3b8;
+              text-align: right;
+              padding-right: 12px;
+              user-select: none;
+            }
+            .callout-cloud {
+              position: relative;
+              float: right;
+              margin-left: 20px;
+              margin-bottom: 20px;
+              width: 180px;
+              text-align: center;
+              padding: 30px 20px;
+              color: #be185d;
+              font-family: 'Kalam', cursive;
+              font-size: 18px;
+              line-height: 1.2;
+              background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 50,75 C 50,50 80,40 100,50 C 110,30 150,30 160,55 C 180,60 180,90 160,100 C 170,120 130,130 110,120 C 90,135 60,125 50,110 C 30,100 30,80 50,75 Z' fill='%23ffffff' stroke='%23fbcfe8' stroke-width='4'/%3E%3C/svg%3E");
+              background-size: 100% 100%;
             }
           `}} />
           
@@ -232,7 +297,7 @@ export default function HandwrittenNotesGenerator() {
             <span className="text-xs font-normal text-muted-foreground">This will be converted to PDF</span>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-4 md:p-8">
+          <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-gray-200">
             {!generatedNotes ? (
               <div className="h-full flex items-center justify-center text-muted-foreground">
                 Generate notes to see preview...
@@ -244,39 +309,58 @@ export default function HandwrittenNotesGenerator() {
                   {generatedNotes.pages?.map((page: any, idx: number) => (
                     <div key={idx} className="handwritten-page">
                       
-                      <div className="flex justify-between items-end border-b-4 border-indigo-200 pb-2 mb-6">
-                        <h2 className="text-4xl font-bold text-indigo-700" style={{fontFamily: 'Caveat'}}>{page.chapterTitle}</h2>
-                        <span className="text-xl text-pink-500 border-2 border-pink-500 rounded-full w-8 h-8 flex items-center justify-center">{idx + 1}</span>
+                      <div className="absolute top-10 left-4 w-10 h-10 border-2 border-pink-600 text-pink-600 rounded-full flex items-center justify-center font-bold text-xl bg-white" style={{fontFamily: 'Kalam'}}>
+                        {idx + 1}
                       </div>
                       
+                      <h2 className="handwritten-title">
+                        {page.chapterTitle}
+                      </h2>
+                      
                       {page.summary && (
-                        <div className="handwritten-box text-lg">
-                          <strong>Summary:</strong> {page.summary}
+                        <div className="handwritten-summary">
+                          <div className="summary-title">Chapter Summary</div>
+                          <div className="flex gap-2 items-start font-bold">
+                            <span className="heart-bullet">♥</span>
+                            <span>{page.summary}</span>
+                          </div>
                         </div>
                       )}
                       
-                      <div className="space-y-4 mt-6 text-xl">
+                      <div className="mt-4">
                         {page.items?.map((item: any, i: number) => {
+                          if (item.type === 'callout') {
+                            return (
+                              <div key={i} className="callout-cloud">
+                                {item.text}
+                              </div>
+                            );
+                          }
                           if (item.type === 'bullet') {
                             return (
-                              <div key={i} className="flex gap-3 items-start">
-                                <span className="text-blue-600 font-bold mt-1">•</span>
+                              <div key={i} className="handwritten-bullet">
+                                <span className="handwritten-bullet-dot">●</span>
                                 <span>{item.text}</span>
                               </div>
                             );
                           }
                           if (item.type === 'code') {
+                            const lines = item.code.split('\\n');
                             return (
-                              <div key={i} className="handwritten-code">
-                                <div className="text-xs text-gray-500 mb-1 border-b pb-1 uppercase">{item.language}</div>
-                                <pre className="whitespace-pre-wrap">{item.code}</pre>
-                              </div>
-                            );
-                          }
-                          if (item.type === 'diagram') {
-                            return (
-                              <div key={i} className="flex justify-center my-6 bg-white p-4 border-2 border-dashed border-gray-300 rounded-xl">
-                                <pre className="mermaid-diagram">{item.mermaid}</pre>
+                              <div key={i}>
+                                <div className="handwritten-code-title">{item.title || "Syntax:"}</div>
+                                <div className="handwritten-code-box">
+                                  <div className="code-lines">
+                                    {lines.map((_: any, li: number) => (
+                                      <div key={li}>{li + 1}</div>
+                                    ))}
+                                  </div>
+                                  <div className="flex-1">
+                                    {lines.map((line: string, li: number) => (
+                                      <div key={li} className="whitespace-pre">{line || ' '}</div>
+                                    ))}
+                                  </div>
+                                </div>
                               </div>
                             );
                           }

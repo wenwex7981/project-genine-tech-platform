@@ -13,8 +13,7 @@ export async function POST(req: Request) {
     const systemPrompt = `You are an expert technical instructor creating structured, handwritten-style study notes.
 You MUST respond with valid JSON and NO markdown formatting or wrapping around it.
 Do NOT wrap the output in \`\`\`json blocks.
-Generate 5 to 10 pages of notes. 
-Include code snippets and Mermaid.js diagrams to explain concepts.
+Generate 3 to 5 pages of notes. 
 
 JSON Schema:
 {
@@ -30,19 +29,19 @@ JSON Schema:
         },
         {
           "type": "code",
-          "language": "String (e.g. python, javascript)",
-          "code": "String - The code snippet"
+          "title": "String - 'Syntax:' or 'Example:'",
+          "code": "String - The code snippet (do NOT include line numbers in the string)"
         },
         {
-          "type": "diagram",
-          "mermaid": "String - Valid Mermaid.js syntax (e.g. graph TD; A-->B;)"
+          "type": "callout",
+          "text": "String - A short, fun, encouraging phrase (e.g., 'Good logs lead to happy apps!')"
         }
       ]
     }
   ]
 }
 
-Ensure the items array has a mix of bullets, code (if applicable to the topic), and diagrams to make the notes visual and engaging.`;
+Ensure the items array has a mix of bullets, code snippets, and at least one callout per page. Make the text concise and easy to read.`;
 
     const content = await generateAIResponse({
       prompt,
