@@ -70,29 +70,56 @@ export default function HandwrittenNotesGenerator() {
       const opt = {
         margin: 10,
         filename: `${topic.replace(/\s+/g, '-').toLowerCase()}-notes.pdf`,
-        image: { type: 'jpeg' as const, quality: 0.6 },
-        html2canvas: { scale: 1, useCORS: true },
+        image: { type: 'jpeg' as const, quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
       };
       
       const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
       
-      // 2. Upload to Cloudflare R2 via Next.js API
-      const formData = new FormData();
-      formData.append('file', new File([pdfBlob], opt.filename, { type: 'application/pdf' }));
-      formData.append('folder', 'handwritten-notes');
+      // 2. Upload to Cloudflare R2 using Multipart Chunking to bypass Vercel limits safely
+      const startFd = new FormData();
+      startFd.append('action', 'START');
+      startFd.append('filename', opt.filename);
+      startFd.append('folder', 'handwritten-notes');
       
-      const uploadRes = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
+      const startRes = await fetch('/api/upload/multipart', { method: 'POST', body: startFd });
+      if (!startRes.ok) throw new Error("Failed to start upload");
+      const { uploadId, key } = await startRes.json();
       
-      if (!uploadRes.ok) {
-        const err = await uploadRes.json().catch(() => ({}));
-        throw new Error(`Failed to upload PDF: ${err.error || uploadRes.statusText}`);
+      const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB chunks
+      const parts = [];
+      let partNumber = 1;
+      
+      for (let start = 0; start < pdfBlob.size; start += CHUNK_SIZE) {
+        const chunk = pdfBlob.slice(start, start + CHUNK_SIZE);
+        const chunkFd = new FormData();
+        chunkFd.append('action', 'UPLOAD');
+        chunkFd.append('uploadId', uploadId);
+        chunkFd.append('key', key);
+        chunkFd.append('partNumber', partNumber.toString());
+        chunkFd.append('file', new File([chunk], 'chunk.pdf'));
+        
+        const uploadRes = await fetch('/api/upload/multipart', { method: 'POST', body: chunkFd });
+        if (!uploadRes.ok) throw new Error(`Failed to upload part ${partNumber}`);
+        const { ETag } = await uploadRes.json();
+        parts.push({ PartNumber: partNumber, ETag });
+        partNumber++;
       }
       
-      const { url: pdfUrl } = await uploadRes.json();
+      const completeFd = new FormData();
+      completeFd.append('action', 'COMPLETE');
+      completeFd.append('uploadId', uploadId);
+      completeFd.append('key', key);
+      completeFd.append('parts', JSON.stringify(parts));
+      
+      const completeRes = await fetch('/api/upload/multipart', { method: 'POST', body: completeFd });
+      if (!completeRes.ok) {
+        const err = await completeRes.json().catch(() => ({}));
+        throw new Error(`Failed to complete upload: ${err.error || completeRes.statusText}`);
+      }
+      
+      const { url: pdfUrl } = await completeRes.json();
       
       // 3. Save to Supabase (Study Hub)
       const { error } = await supabase.from('interview_prep_docs').insert([
