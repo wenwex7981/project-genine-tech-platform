@@ -256,7 +256,6 @@ export default function LoginPage() {
                       </div>
                     </div>
                     <div className="pt-2">
-                      <div id="recaptcha-container" className="mb-4 flex justify-center"></div>
                       <Button 
                         onClick={handleSendOtp} 
                         disabled={isLoading}
@@ -341,6 +340,9 @@ export default function LoginPage() {
               Back to Website
             </Link>
           </div>
+          
+          {/* Always mount recaptcha-container to avoid auth/argument-error */}
+          <div id="recaptcha-container"></div>
         </div>
       </div>
 
