@@ -15,6 +15,7 @@ export default function HandwrittenNotesGenerator() {
   const [model, setModel] = useState<AIModel>("deepseek");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   
   const [generatedNotes, setGeneratedNotes] = useState<any>(null);
   
@@ -34,14 +35,17 @@ export default function HandwrittenNotesGenerator() {
         if (parsed.generatedNotes) setGeneratedNotes(parsed.generatedNotes);
       } catch(e) {}
     }
+    setIsLoaded(true);
   }, []);
 
   // Save to localStorage when things change
   useEffect(() => {
-    localStorage.setItem('handwritten_draft', JSON.stringify({
-      topic, companyName, price, model, generatedNotes
-    }));
-  }, [topic, companyName, price, model, generatedNotes]);
+    if (isLoaded) {
+      localStorage.setItem('handwritten_draft', JSON.stringify({
+        topic, companyName, price, model, generatedNotes
+      }));
+    }
+  }, [topic, companyName, price, model, generatedNotes, isLoaded]);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,55 +101,33 @@ export default function HandwrittenNotesGenerator() {
       
       const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
       
-      // 2. Upload to Cloudflare R2 using Multipart Chunking to bypass Vercel limits safely
-      const startFd = new FormData();
-      startFd.append('action', 'START');
-      startFd.append('filename', opt.filename);
-      startFd.append('folder', 'handwritten-notes');
+      // 2. Upload to Cloudflare R2 via Presigned URL (Direct Browser Upload)
+      const presignRes = await fetch('/api/upload/presigned', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: opt.filename,
+          contentType: 'application/pdf',
+          folder: 'handwritten-notes'
+        })
+      });
       
-      const startRes = await fetch('/api/upload/multipart', { method: 'POST', body: startFd });
-      if (!startRes.ok) {
-        const err = await startRes.json().catch(() => ({}));
-        throw new Error(`Failed to start upload: ${err.error || startRes.statusText}`);
-      }
-      const { uploadId, key } = await startRes.json();
-      
-      const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB chunks
-      const parts = [];
-      let partNumber = 1;
-      
-      for (let start = 0; start < pdfBlob.size; start += CHUNK_SIZE) {
-        const chunk = pdfBlob.slice(start, start + CHUNK_SIZE);
-        const chunkFd = new FormData();
-        chunkFd.append('action', 'UPLOAD');
-        chunkFd.append('uploadId', uploadId);
-        chunkFd.append('key', key);
-        chunkFd.append('partNumber', partNumber.toString());
-        chunkFd.append('file', new File([chunk], 'chunk.pdf'));
-        
-        const uploadRes = await fetch('/api/upload/multipart', { method: 'POST', body: chunkFd });
-        if (!uploadRes.ok) {
-          const err = await uploadRes.json().catch(() => ({}));
-          throw new Error(`Failed to upload part ${partNumber}: ${err.error || uploadRes.statusText}`);
-        }
-        const { ETag } = await uploadRes.json();
-        parts.push({ PartNumber: partNumber, ETag });
-        partNumber++;
+      if (!presignRes.ok) {
+        const err = await presignRes.json().catch(() => ({}));
+        throw new Error(`Failed to get upload URL: ${err.error || presignRes.statusText}`);
       }
       
-      const completeFd = new FormData();
-      completeFd.append('action', 'COMPLETE');
-      completeFd.append('uploadId', uploadId);
-      completeFd.append('key', key);
-      completeFd.append('parts', JSON.stringify(parts));
+      const { presignedUrl, publicUrl } = await presignRes.json();
       
-      const completeRes = await fetch('/api/upload/multipart', { method: 'POST', body: completeFd });
-      if (!completeRes.ok) {
-        const err = await completeRes.json().catch(() => ({}));
-        throw new Error(`Failed to complete upload: ${err.error || completeRes.statusText}`);
-      }
+      const uploadRes = await fetch(presignedUrl, {
+        method: 'PUT',
+        body: pdfBlob,
+        headers: { 'Content-Type': 'application/pdf' }
+      });
       
-      const { url: pdfUrl } = await completeRes.json();
+      if (!uploadRes.ok) throw new Error("Failed to upload PDF directly to R2. Please check CORS settings.");
+      
+      const pdfUrl = publicUrl;
       
       // 3. Save to Supabase (Study Hub)
       const { error } = await supabase.from('interview_prep_docs').insert([
