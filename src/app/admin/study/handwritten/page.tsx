@@ -201,7 +201,7 @@ export default function HandwrittenNotesGenerator() {
             .handwritten-page {
               font-family: 'Patrick Hand', 'Caveat', cursive;
               background-color: #fdfbf7;
-              background-image: linear-gradient(transparent 95%, #e2e8f0 5%);
+              background-image: linear-gradient(rgba(255, 255, 255, 0) 95%, #e2e8f0 5%);
               background-size: 100% 2rem;
               line-height: 2rem;
               padding: 40px;
