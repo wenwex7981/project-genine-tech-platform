@@ -165,142 +165,53 @@ export default function Home() {
       />
       <AuthRedirect />
       {/* ── HERO SECTION ── */}
-      <section className="relative w-full min-h-[92vh] flex items-center bg-zinc-950 bg-[url('/images/hero-bg.png')] bg-cover bg-center bg-no-repeat overflow-hidden text-white">
+      <section className="relative w-full min-h-[92vh] flex flex-col justify-center bg-zinc-950 bg-[url('/images/hero-bg.png')] bg-cover bg-center bg-no-repeat overflow-hidden text-white">
         {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/90 to-zinc-950/40 z-0"></div>
+        <div className="absolute inset-0 bg-zinc-950/75 backdrop-blur-[2px] z-0"></div>
         
         {/* Background gradient orbs */}
         <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3 pointer-events-none z-0" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none z-0" />
 
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center py-20">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-bold tracking-wide">
-                <Globe className="h-4 w-4" /> India&apos;s #1 Academic Project Platform
-              </div>
-
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05]">
-                Your Academic<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-400 to-yellow-400">
-                  Success Partner
-                </span>
-              </h1>
-
-              <p className="text-xl text-zinc-400 leading-relaxed max-w-xl">
-                From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — GraduateNex is the complete ecosystem that helps over <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/login">
-                  <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:scale-105 transition-all">
-                    Start Free Today <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="#services">
-                  <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-zinc-800 border border-zinc-600 text-white hover:bg-zinc-700 transition-all">
-                    Explore Services
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-6 pt-2">
-                <div className="flex items-center gap-2 text-sm text-zinc-400"><CheckCircle className="h-4 w-4 text-emerald-400" /> Original, Plagiarism-Free Work</div>
-                <div className="flex items-center gap-2 text-sm text-zinc-400"><CheckCircle className="h-4 w-4 text-emerald-400" /> 24/7 Expert Support</div>
-                <div className="flex items-center gap-2 text-sm text-zinc-400"><CheckCircle className="h-4 w-4 text-emerald-400" /> 50+ Cities Served</div>
-              </div>
+          <div className="max-w-4xl mx-auto text-center space-y-8 py-20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-bold tracking-wide">
+              <Globe className="h-4 w-4" /> India&apos;s #1 Academic Project Platform
             </div>
 
-            {/* Hero — Clean CSS Product Mockup */}
-            <div className="relative hidden lg:flex items-center justify-center">
-              {/* Browser chrome frame */}
-              <div className="w-full max-w-[520px] rounded-2xl overflow-hidden shadow-2xl border border-zinc-700 bg-zinc-900">
-                {/* Title bar */}
-                <div className="flex items-center gap-2 px-4 py-3 bg-zinc-800 border-b border-zinc-700">
-                  <div className="flex gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-red-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                  </div>
-                  <div className="flex-1 mx-4 bg-zinc-700/60 rounded-md px-3 py-1 text-xs text-zinc-400 font-mono">
-                    graduatenex.online/dashboard
-                  </div>
-                </div>
-                {/* Dashboard content */}
-                <div className="p-5 bg-[#f8f9fc] space-y-4">
-                  {/* Top greeting */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-slate-500 font-medium">Welcome back 👋</p>
-                      <p className="text-sm font-bold text-slate-800">Rahul's Dashboard</p>
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Active
-                    </div>
-                  </div>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05]">
+              Your Academic<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-400 to-yellow-400">
+                Success Partner
+              </span>
+            </h1>
 
-                  {/* Stat row */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm text-center">
-                      <p className="text-xl font-black text-primary">98%</p>
-                      <p className="text-[10px] text-slate-500 mt-0.5 font-medium">ATS Score</p>
-                    </div>
-                    <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm text-center">
-                      <p className="text-xl font-black text-emerald-600">0%</p>
-                      <p className="text-[10px] text-slate-500 mt-0.5 font-medium">Plagiarism</p>
-                    </div>
-                    <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-sm text-center">
-                      <p className="text-xl font-black text-violet-600">A+</p>
-                      <p className="text-[10px] text-slate-500 mt-0.5 font-medium">Project Grade</p>
-                    </div>
-                  </div>
+            <p className="text-xl text-zinc-300 leading-relaxed max-w-2xl mx-auto font-medium">
+              From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — GraduateNex is the complete ecosystem that helps over <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
+            </p>
 
-                  {/* Project cards */}
-                  <div className="space-y-2.5">
-                    <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Your Projects</p>
-                    {[
-                      { title: "AI-Powered Crop Yield Prediction", tag: "Machine Learning", color: "bg-violet-100 text-violet-700", dot: "bg-violet-500", status: "Delivered ✓" },
-                      { title: "IEEE Paper — Smart Agriculture", tag: "Research Paper", color: "bg-blue-100 text-blue-700", dot: "bg-blue-500", status: "0% Plagiarism" },
-                      { title: "ATS Resume — Software Engineer", tag: "Career Tool", color: "bg-orange-100 text-orange-700", dot: "bg-orange-500", status: "Score: 98%" },
-                    ].map((p) => (
-                      <div key={p.title} className="bg-white rounded-xl px-4 py-3 border border-slate-100 shadow-sm flex items-center gap-3">
-                        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${p.dot}`} />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold text-slate-800 truncate">{p.title}</p>
-                          <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${p.color}`}>{p.tag}</span>
-                        </div>
-                        <span className="text-[10px] font-bold text-emerald-600 whitespace-nowrap">{p.status}</span>
-                      </div>
-                    ))}
-                  </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/login">
+                <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:scale-105 transition-all">
+                  Start Free Today <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="#services">
+                <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all backdrop-blur-md">
+                  Explore Services
+                </Button>
+              </Link>
+            </div>
 
-                  {/* Bottom CTA bar */}
-                  <div className="bg-gradient-to-r from-primary to-orange-500 rounded-xl px-4 py-3 flex items-center justify-between">
-                    <p className="text-white text-xs font-bold">Ready for your viva? 🎓</p>
-                    <div className="bg-white text-primary text-[11px] font-black px-3 py-1 rounded-lg cursor-pointer">Prepare Now →</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating badge cards */}
-              <div className="absolute -bottom-5 -left-8 bg-white rounded-2xl shadow-2xl p-3.5 border flex items-center gap-3 z-10">
-                <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-black text-xs">0%</div>
-                <div>
-                  <p className="text-[10px] text-slate-500">Plagiarism</p>
-                  <p className="text-sm font-bold text-slate-800">Guaranteed</p>
-                </div>
-              </div>
-              <div className="absolute -top-5 -right-5 bg-white rounded-2xl shadow-2xl p-3.5 border flex items-center gap-3 z-10">
-                <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center text-white font-black text-xs">98%</div>
-                <div>
-                  <p className="text-[10px] text-slate-500">Student</p>
-                  <p className="text-sm font-bold text-slate-800">Satisfaction</p>
-                </div>
-              </div>
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-6">
+              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> Original, Plagiarism-Free Work</div>
+              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 24/7 Expert Support</div>
+              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 50+ Cities Served</div>
             </div>
           </div>
         </div>
+
+
       </section>
 
       {/* ── STATS TICKER ── */}
