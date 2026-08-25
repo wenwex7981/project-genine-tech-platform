@@ -359,10 +359,10 @@ export default function MockInterviewPage() {
         {/* <div className="absolute inset-0 z-0 flex items-center justify-center opacity-60 md:opacity-80 pointer-events-none">
         </div> */}
 
-        <div className="w-full max-w-4xl flex flex-col h-[90vh] max-h-[900px] z-20 mt-10 md:mt-16 relative">
+        <div className="w-full max-w-4xl flex flex-col h-[90vh] max-h-[900px] z-20 mt-4 md:mt-6 relative">
           
           {/* Header */}
-          <div className="flex justify-between items-center mb-8 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 mt-10 md:mt-0">
+          <div className="flex justify-between items-center mb-4 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 mt-4 md:mt-0 flex-shrink-0">
             <div>
               <h2 className="text-xl font-black text-white">{role} Interview</h2>
               <p className="text-sm font-medium text-purple-200">{company ? `${company} • ` : ''}{round} Round • {difficulty}</p>
@@ -380,10 +380,10 @@ export default function MockInterviewPage() {
           </div>
 
           {/* Floating Question Card Section */}
-          <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0 pt-4 md:pt-10">
+          <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0 pt-2 md:pt-4">
             
-            {/* The Top Avatar - structurally placed above the card, pulled down slightly with negative margin */}
-            <div className="z-30 w-48 h-48 md:w-64 md:h-64 -mb-12 pointer-events-none drop-shadow-2xl flex-shrink-0">
+            {/* The Top Avatar - structurally placed completely above the card with no negative margin */}
+            <div className="z-30 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mb-0 pointer-events-none drop-shadow-2xl flex-shrink-0">
               {avatarVariant === 'minion' ? (
                 <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
               ) : (
@@ -392,7 +392,7 @@ export default function MockInterviewPage() {
             </div>
 
             {/* Solid White Card */}
-            <div className={`w-full max-w-3xl max-h-[50vh] md:max-h-[60vh] bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 md:p-10 pt-16 md:pt-20 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative z-20 ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+            <div className={`w-full max-w-3xl max-h-[40vh] bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 md:p-10 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative z-20 ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
               
               {/* Left Hand Holding Card */}
               <div className="absolute top-1/2 -left-10 md:-left-12 -translate-y-1/2 z-40 hidden md:block w-14 h-20 md:w-16 md:h-24">
@@ -441,7 +441,7 @@ export default function MockInterviewPage() {
           </div>
 
           {/* Input Area (Glassmorphism) */}
-          <div className="mt-8 bg-black/40 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-white/20 flex flex-col md:flex-row gap-2 items-stretch max-w-3xl w-full mx-auto">
+          <div className="mt-4 bg-black/40 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-white/20 flex flex-col md:flex-row gap-2 items-stretch max-w-3xl w-full mx-auto flex-shrink-0">
             <button 
               onClick={toggleRecording}
               className={`md:w-32 flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_20px_rgba(244,63,94,0.5)]' : 'bg-white/10 text-white hover:bg-white/20'}`}
