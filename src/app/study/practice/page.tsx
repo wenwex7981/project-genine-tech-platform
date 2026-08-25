@@ -16,6 +16,7 @@ function PracticeArena() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [tasksCompleted, setTasksCompleted] = useState(0);
+  const [mode, setMode] = useState<"learning" | "quiz">("learning");
 
   // Initialize the first task
   useEffect(() => {
@@ -34,7 +35,8 @@ function PracticeArena() {
           topic,
           code: submittedCode || "",
           history,
-          isFixRequest
+          isFixRequest,
+          mode
         }),
       });
       
@@ -107,7 +109,21 @@ function PracticeArena() {
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+           <div className="flex bg-slate-950 rounded-lg p-1 mr-4 border border-white/10">
+             <button
+               onClick={() => { setMode("learning"); setHistory([]); setTerminalOutput(""); fetchNextTask("", false); }}
+               className={`px-3 py-1 text-xs font-bold rounded-md transition ${mode === "learning" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-white"}`}
+             >
+               Learning Mode
+             </button>
+             <button
+               onClick={() => { setMode("quiz"); setHistory([]); setTerminalOutput(""); fetchNextTask("", false); }}
+               className={`px-3 py-1 text-xs font-bold rounded-md transition ${mode === "quiz" ? "bg-rose-600 text-white" : "text-slate-400 hover:text-white"}`}
+             >
+               Quiz Mode
+             </button>
+           </div>
            <button 
              onClick={handleRunCode}
              disabled={isLoading}

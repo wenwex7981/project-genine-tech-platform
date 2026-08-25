@@ -5,18 +5,22 @@ export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    const { topic, code, history, isFixRequest } = await req.json();
+    const { topic, code, history, isFixRequest, mode } = await req.json();
 
     if (!topic) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
+    
+    const isQuizMode = mode === "quiz";
 
     const systemPrompt = `You are an elite, interactive AI coding tutor. The user has 0 prior knowledge and is learning the topic: "${topic}".
 Your goal is to take them from absolute beginner ("Zero") to advanced ("Hero").
 
 You must guide the user through a storyline/curriculum consisting of 5 to 10 sequential, practical coding tasks.
 CRITICAL RULES:
-1. DO NOT write the final code for the user. Force them to write the code themselves.
+${isQuizMode 
+  ? "1. STRICT QUIZ MODE: DO NOT write the final code for the user. Force them to write the code themselves. Just give hints."
+  : "1. LEARNING MODE: You are a friendly tutor. If the user asks for the answer or struggles, you MAY write the code for them and explain how it works."}
 2. Start from the absolute basics if this is the first task.
 3. Keep your explanations concise, engaging, and story-driven.
 
