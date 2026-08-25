@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { 
   GraduationCap, BookOpen, Map, CheckCircle, CheckCircle2, Loader2, 
   FileText, Lock, ShoppingCart, ExternalLink, Target, Cpu, Layers, 
-  Download, Copy, BarChart3, Search, Sparkles, Filter
+  Download, Copy, BarChart3, Search, Sparkles, Filter, Mic
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
@@ -295,6 +295,11 @@ export default function StudyHubPage() {
                   Real questions, coding challenges & solution guides asked by top MNCs and tech companies.
                 </p>
               </div>
+              <Link href="/study/interview-prep/mock-interview">
+                <Button size="lg" className="h-12 px-6 text-base font-bold rounded-xl bg-purple-600 hover:bg-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all flex items-center">
+                  <Mic className="mr-2 h-5 w-5" /> Try AI Voice Mock Interviewer
+                </Button>
+              </Link>
             </div>
 
             {/* Search & Filter Bar */}
