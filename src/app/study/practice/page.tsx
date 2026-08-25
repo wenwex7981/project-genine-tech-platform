@@ -69,7 +69,7 @@ function PracticeArena() {
       }
 
     } catch (err: any) {
-      alert("Error: " + err.message);
+      setTerminalOutput(`Error loading task: ${err.message}`);
     } finally {
       setIsLoading(false);
     }

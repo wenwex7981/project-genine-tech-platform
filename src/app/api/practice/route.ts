@@ -78,6 +78,12 @@ You MUST return your response as a raw JSON object with exactly these fields:
     return NextResponse.json(parsedResponse);
   } catch (error: any) {
     console.error('Error in practice API:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    // Return a 200 with error in terminal so the UI can display it
+    return NextResponse.json({ 
+      error: false, 
+      completed: false, 
+      story: "The AI encountered an error while trying to process this request.", 
+      terminal: `BACKEND ERROR: ${error.message || 'Internal server error'}\nCheck the server logs.` 
+    });
   }
 }
