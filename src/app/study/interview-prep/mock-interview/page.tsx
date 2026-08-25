@@ -534,7 +534,7 @@ export default function MockInterviewPage() {
               </div>
               
               <button 
-                onClick={handleSendMessage}
+                onClick={() => handleSendMessage()}
                 disabled={!textInput.trim() || isLoading}
                 className="md:w-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 flex items-center justify-center rounded-xl text-white transition-all shadow-md"
               >
