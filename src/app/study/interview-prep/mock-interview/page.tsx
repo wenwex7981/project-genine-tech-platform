@@ -77,12 +77,12 @@ export default function MockInterviewPage() {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const rec = new SpeechRecognition();
-        rec.continuous = false;
+        rec.continuous = true;
         rec.interimResults = false;
         rec.lang = "en-US";
         
         rec.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
+          const transcript = event.results[event.resultIndex][0].transcript;
           setTextInput(prev => prev + (prev ? " " : "") + transcript);
         };
         
@@ -398,7 +398,7 @@ export default function MockInterviewPage() {
               className={`md:w-32 flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse shadow-lg' : 'bg-purple-50 text-purple-700 hover:bg-purple-100'}`}
             >
               {isRecording ? <MicOff className="w-6 h-6 mb-1" /> : <Mic className="w-6 h-6 mb-1" />}
-              <span className="text-xs font-bold">{isRecording ? "Stop" : "Hold to Speak"}</span>
+              <span className="text-xs font-bold text-center leading-tight">{isRecording ? "Stop\nListening" : "Tap to\nSpeak"}</span>
             </button>
             
             <textarea 
