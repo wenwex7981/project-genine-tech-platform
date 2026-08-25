@@ -19,6 +19,15 @@ export default function DashboardPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Quiz States
+  const [quizModalOpen, setQuizModalOpen] = useState(false);
+  const [currentQuizDomain, setCurrentQuizDomain] = useState("");
+  const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
+  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
+  const [quizLoading, setQuizLoading] = useState(false);
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizFinished, setQuizFinished] = useState(false);
+
   useEffect(() => {
     const checkUserAndFetchData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -134,6 +143,58 @@ export default function DashboardPage() {
     }
   };
 
+  const startQuiz = async (domain: string) => {
+    setQuizModalOpen(true);
+    setCurrentQuizDomain(domain);
+    setQuizLoading(true);
+    setQuizQuestions([]);
+    setCurrentQuestionIdx(0);
+    setQuizScore(0);
+    setQuizFinished(false);
+
+    try {
+      const res = await fetch("/api/daily-quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ domain })
+      });
+      const data = await res.json();
+      if(data.error) throw new Error(data.error);
+      setQuizQuestions(data);
+    } catch (err) {
+      alert("Failed to load quiz.");
+      setQuizModalOpen(false);
+    } finally {
+      setQuizLoading(false);
+    }
+  };
+
+  const handleAnswer = async (optIdx: number) => {
+    const currentQ = quizQuestions[currentQuestionIdx];
+    const isCorrect = optIdx === currentQ.correctAnswer;
+    const newScore = isCorrect ? quizScore + 1 : quizScore;
+    
+    if(isCorrect) setQuizScore(newScore);
+    
+    if (currentQuestionIdx + 1 < quizQuestions.length) {
+      setCurrentQuestionIdx(prev => prev + 1);
+    } else {
+      // Finish
+      setQuizFinished(true);
+      // Update total score in Supabase (10 pts per correct answer)
+      const pointsEarned = newScore * 10;
+      if (pointsEarned > 0) {
+        const newTotal = (profile.total_score || 0) + pointsEarned;
+        try {
+          await supabase.from('user_profiles').update({ total_score: newTotal }).eq('email', user.email);
+          setProfile({ ...profile, total_score: newTotal });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  };
+
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div></div>;
   }
@@ -178,6 +239,22 @@ export default function DashboardPage() {
             <p className="text-white/80 font-semibold text-sm uppercase tracking-wider mb-1">Badges Earned</p>
             <h3 className="text-3xl font-black">{(profile?.badges || []).length}</h3>
           </div>
+        </div>
+      </div>
+
+      {/* Daily Domain Quizzes */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><GraduationCap className="text-primary"/> Daily Domain Quizzes</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {["Python", "Java", "DSA", "Cyber Security", "Frontend", "SQL"].map((domain) => (
+            <button 
+              key={domain}
+              onClick={() => startQuiz(domain)}
+              className="bg-muted/30 hover:bg-primary/10 border border-muted hover:border-primary transition-all p-4 rounded-2xl text-center font-bold shadow-sm"
+            >
+              {domain}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -252,64 +329,65 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {orders.map((order, index) => (
-                <div key={index} className="bg-background border rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start mb-4 border-b pb-4">
-                    <div>
-                      <p className="text-sm font-bold text-muted-foreground">Order #{order.razorpay_order_id?.substring(0, 16)}...</p>
-                      <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' })}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                        ✓ {order.status}
-                      </div>
-                      <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold">
-                        ₹{order.total_amount}
-                      </div>
-                    </div>
+              {orders.map((order, idx) => (
+                <div key={idx} className="bg-muted/10 border rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <h3 className="font-bold text-lg">{order.item_title || 'Service Purchase'}</h3>
+                    <p className="text-sm text-muted-foreground">Order ID: {order.order_id}</p>
+                    <p className="text-sm font-semibold mt-1 text-primary">₹{(order.amount / 100).toLocaleString()}</p>
                   </div>
-
-                  <div className="space-y-3">
-                    {order.items && Array.isArray(order.items) && order.items.map((item: any, i: number) => (
-                      <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-muted/30 border">
-                        <div className="h-12 w-12 rounded-lg bg-muted overflow-hidden relative flex-shrink-0 border">
-                          <Image src={item.image_url || "/feature_resume.png"} alt="Item" fill className="object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-sm line-clamp-1">{item.title}</p>
-                          <p className="text-xs text-muted-foreground">Qty: {item.quantity} · ₹{item.price}</p>
-                        </div>
-                        {item.file_url ? (
-                          <a
-                            href={item.file_url === 'pending' ? `/view/${item.id}` : item.file_url}
-                            target={item.file_url === 'pending' ? "_self" : "_blank"}
-                            rel="noopener noreferrer"
-                            className="shrink-0 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition-colors flex items-center gap-1"
-                          >
-                            <ExternalLink className="h-3 w-3" /> Open
-                          </a>
-                        ) : (
-                          <span className="shrink-0 px-3 py-2 bg-muted text-muted-foreground text-xs font-bold rounded-lg">
-                            No file
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex justify-end mt-4 pt-3 border-t">
-                    <a href={`mailto:support@graduatenex.online?subject=Support for Order ${order.razorpay_order_id}`} className="text-sm text-primary hover:underline font-semibold flex items-center gap-1">
-                      Need help? Contact Support <ExternalLink className="h-3 w-3" />
-                    </a>
+                  <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase">
+                    {order.status}
                   </div>
                 </div>
               ))}
-
             </div>
           )}
         </div>
-
       </div>
+
+      {/* Quiz Modal */}
+      {quizModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-background rounded-3xl p-8 max-w-xl w-full shadow-2xl relative border">
+            <button onClick={() => setQuizModalOpen(false)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground font-bold">✕</button>
+            
+            {quizLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+                <h3 className="font-bold text-lg">Generating {currentQuizDomain} Quiz...</h3>
+              </div>
+            ) : quizFinished ? (
+              <div className="text-center py-8">
+                <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+                <h2 className="text-3xl font-black mb-2">Quiz Completed!</h2>
+                <p className="text-xl mb-4">You scored {quizScore} out of {quizQuestions.length}</p>
+                <p className="text-muted-foreground mb-8 text-sm">+{quizScore * 10} Gamification Points added to your total score!</p>
+                <Button onClick={() => setQuizModalOpen(false)} className="w-full font-bold">Awesome!</Button>
+              </div>
+            ) : quizQuestions.length > 0 && currentQuestionIdx < quizQuestions.length ? (
+              <div>
+                <div className="flex justify-between text-sm font-bold text-muted-foreground mb-6 uppercase tracking-wider">
+                  <span>{currentQuizDomain}</span>
+                  <span>Question {currentQuestionIdx + 1} of {quizQuestions.length}</span>
+                </div>
+                <h3 className="text-xl font-bold mb-6">{quizQuestions[currentQuestionIdx].question}</h3>
+                <div className="space-y-3">
+                  {quizQuestions[currentQuestionIdx].options.map((opt: string, i: number) => (
+                    <button 
+                      key={i} 
+                      onClick={() => handleAnswer(i)}
+                      className="w-full text-left p-4 rounded-xl border border-muted hover:border-primary hover:bg-primary/5 transition-all"
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

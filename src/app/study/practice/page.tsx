@@ -66,7 +66,6 @@ function PracticeArena() {
       if (data.completed && !isFixRequest) {
         setIsCompleted(true);
         setTasksCompleted(prev => prev + 1);
-        setTimeout(() => setIsCompleted(false), 3000);
       }
 
     } catch (err: any) {
@@ -92,6 +91,16 @@ function PracticeArena() {
     fetchNextTask(code, true);
   };
 
+  const handleNextTask = () => {
+    setIsCompleted(false);
+    setCode("");
+    setTerminalOutput("");
+    fetchNextTask("", false);
+  };
+
+  const totalTasks = 10;
+  const progressPercentage = Math.min((tasksCompleted / totalTasks) * 100, 100);
+
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col font-sans">
       
@@ -110,6 +119,13 @@ function PracticeArena() {
           </div>
         </div>
         <div className="flex gap-2 items-center">
+           <div className="hidden md:flex flex-col items-end mr-4">
+             <div className="text-xs font-bold text-slate-400 mb-1">{Math.round(progressPercentage)}% Complete</div>
+             <div className="w-32 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/5">
+               <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all duration-500 ease-out" style={{ width: `${progressPercentage}%` }} />
+             </div>
+           </div>
+           
            <div className="flex bg-slate-950 rounded-lg p-1 mr-4 border border-white/10">
              <button
                onClick={() => { setMode("learning"); setHistory([]); setTerminalOutput(""); fetchNextTask("", false); }}
@@ -151,6 +167,18 @@ function PracticeArena() {
                 <p>Generating your adventure...</p>
               </div>
             )}
+
+            {history.length === 0 && !isLoading && (
+              <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-4">
+                <p>Failed to load the task, or the session hasn't started yet.</p>
+                <button 
+                  onClick={() => fetchNextTask()}
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-bold shadow flex items-center gap-2 transition"
+                >
+                  <Play className="w-4 h-4" /> Start Challenge
+                </button>
+              </div>
+            )}
             
             {history.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -188,9 +216,18 @@ function PracticeArena() {
             </div>
             
             {isCompleted && (
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-emerald-500 text-white px-6 py-2 rounded-full font-bold shadow-xl flex items-center gap-2 animate-bounce">
-                <CheckCircle className="w-5 h-5" />
-                Challenge Passed!
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-slate-900 border border-emerald-500/30 p-4 rounded-xl shadow-2xl flex flex-col items-center gap-3 animate-in slide-in-from-top-4">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                  <CheckCircle className="w-5 h-5" />
+                  Challenge Passed!
+                </div>
+                <button 
+                  onClick={handleNextTask}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold shadow flex items-center gap-2 transition w-full justify-center"
+                >
+                  Next Task
+                  <Play className="w-4 h-4" />
+                </button>
               </div>
             )}
 
