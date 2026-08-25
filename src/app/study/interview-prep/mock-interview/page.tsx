@@ -361,17 +361,8 @@ export default function MockInterviewPage() {
             <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-[120%] h-[120%] max-w-none max-h-none opacity-100" />
           )}
         </div>
-        
-        {/* We also put a clear animated avatar on top of the card so it feels like a real character */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 w-64 h-64 md:w-80 md:h-80 pointer-events-none">
-          {avatarVariant === 'minion' ? (
-            <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
-          ) : (
-            <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-full h-full opacity-100 drop-shadow-2xl" />
-          )}
-        </div>
 
-        <div className="w-full max-w-4xl flex flex-col h-[90vh] max-h-[900px] z-20 mt-20 md:mt-10 relative">
+        <div className="w-full max-w-4xl flex flex-col h-[90vh] max-h-[900px] z-20 mt-10 md:mt-16 relative">
           
           {/* Header */}
           <div className="flex justify-between items-center mb-8 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 mt-10 md:mt-0">
@@ -391,9 +382,37 @@ export default function MockInterviewPage() {
             </div>
           </div>
 
-          {/* Floating Question Card (Glassmorphism & Scrollable) */}
-          <div className="flex-1 flex flex-col items-center justify-center w-full relative min-h-0">
-            <div className={`w-full max-w-3xl max-h-full bg-white/10 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/20 p-6 md:p-10 transition-all duration-500 text-center flex flex-col items-center overflow-hidden ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+          {/* Floating Question Card (Solid bg to prevent blurring background, plus scrollable) */}
+          <div className="flex-1 flex flex-col items-center justify-center w-full relative min-h-0 pt-20 mt-24 md:mt-32">
+            
+            {/* The Top Avatar is now relative to the card container, pulled up with negative margin so it sits on the top edge */}
+            <div className="absolute -top-32 left-1/2 -translate-x-1/2 z-30 w-64 h-64 md:w-80 md:h-80 pointer-events-none">
+              {avatarVariant === 'minion' ? (
+                <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
+              ) : (
+                <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-full h-full opacity-100 drop-shadow-2xl" />
+              )}
+            </div>
+
+            <div className={`w-full max-w-3xl max-h-full bg-slate-900 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] border border-white/10 p-6 md:p-10 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+              
+              {/* Left Hand Holding Card */}
+              <div className="absolute top-1/2 -left-12 -translate-y-1/2 z-40 hidden md:block w-16 h-24">
+                <svg viewBox="0 0 100 150" className="w-full h-full drop-shadow-lg">
+                  <path d="M 90 20 Q 50 10 30 40 Q 10 70 30 110 Q 50 140 90 130 Q 100 130 100 100 Q 80 100 80 75 Q 100 50 100 20 Z" fill={avatarVariant === 'minion' ? '#2563eb' : (avatarVariant === 'human' ? '#fbcfe8' : '#6366f1')} />
+                  <path d="M 95 30 Q 60 25 50 45" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
+                  <path d="M 95 120 Q 60 125 50 105" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
+                </svg>
+              </div>
+
+              {/* Right Hand Holding Card */}
+              <div className="absolute top-1/2 -right-12 -translate-y-1/2 z-40 hidden md:block w-16 h-24 transform scale-x-[-1]">
+                <svg viewBox="0 0 100 150" className="w-full h-full drop-shadow-lg">
+                  <path d="M 90 20 Q 50 10 30 40 Q 10 70 30 110 Q 50 140 90 130 Q 100 130 100 100 Q 80 100 80 75 Q 100 50 100 20 Z" fill={avatarVariant === 'minion' ? '#2563eb' : (avatarVariant === 'human' ? '#fbcfe8' : '#6366f1')} />
+                  <path d="M 95 30 Q 60 25 50 45" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
+                  <path d="M 95 120 Q 60 125 50 105" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
+                </svg>
+              </div>
               
               {/* Speaking Indicator Badge (Moved to card top) */}
               {isSpeaking && (
@@ -408,14 +427,14 @@ export default function MockInterviewPage() {
               )}
 
               {isLoading ? (
-                <div className="flex flex-col gap-4 w-full items-center">
-                  <div className="h-6 bg-white/20 rounded-md w-3/4 animate-pulse"></div>
-                  <div className="h-6 bg-white/20 rounded-md w-full animate-pulse"></div>
-                  <div className="h-6 bg-white/20 rounded-md w-5/6 animate-pulse"></div>
+                <div className="flex flex-col gap-4 w-full items-center mt-6">
+                  <div className="h-4 bg-white/10 rounded-md w-3/4 animate-pulse"></div>
+                  <div className="h-4 bg-white/10 rounded-md w-full animate-pulse"></div>
+                  <div className="h-4 bg-white/10 rounded-md w-5/6 animate-pulse"></div>
                 </div>
               ) : (
-                <div className="overflow-y-auto w-full max-h-full px-2 custom-scrollbar">
-                  <h3 className="text-xl md:text-3xl font-bold text-white leading-snug drop-shadow-md py-4">
+                <div className="overflow-y-auto w-full max-h-[40vh] md:max-h-[50vh] px-2 mt-4 custom-scrollbar">
+                  <h3 className="text-lg md:text-2xl lg:text-[1.6rem] font-bold text-white leading-relaxed drop-shadow-md py-2">
                     {currentAIQuestion}
                   </h3>
                 </div>
