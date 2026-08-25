@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Mic, MicOff, Send, Loader2, PlayCircle, StopCircle, ArrowLeft, CheckCircle2, AlertTriangle, ArrowRight, BarChart, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -42,6 +42,8 @@ export default function MockInterviewPage() {
   const [resume, setResume] = useState("");
   const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   const [avatarVariant, setAvatarVariant] = useState<"robot" | "minion" | "human">("robot");
+  const [timeLimit, setTimeLimit] = useState<number>(0); // 0 = No limit
+  const [timeRemaining, setTimeRemaining] = useState<number>(0);
   
   // Voice State
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -59,6 +61,39 @@ export default function MockInterviewPage() {
 
   // Report State
   const [report, setReport] = useState<EvaluationReport | null>(null);
+
+  // Timer Ref & Logic
+  const textInputRef = useRef(textInput);
+  useEffect(() => { textInputRef.current = textInput; }, [textInput]);
+
+  useEffect(() => {
+    if (uiState === "interview" && !isLoading && !isSpeaking && timeLimit > 0) {
+      setTimeRemaining(timeLimit);
+    }
+  }, [isSpeaking, isLoading, uiState, timeLimit]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (uiState === "interview" && !isLoading && !isSpeaking && timeLimit > 0) {
+      interval = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            handleTimeUp();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [uiState, isLoading, isSpeaking, timeLimit]);
+
+  const handleTimeUp = () => {
+    handleSendMessage(textInputRef.current || "Time is up! I could not answer in time.");
+  };
 
   useEffect(() => {
     // Load voices
@@ -184,11 +219,16 @@ export default function MockInterviewPage() {
     }
   };
 
-  const handleSendMessage = async () => {
-    if (!textInput.trim()) return;
-    stopSpeaking();
+  const handleSendMessage = async (autoText?: string) => {
+    const userMsg = typeof autoText === "string" ? autoText : textInput.trim();
+    if (!userMsg) return;
     
-    const userMsg = textInput.trim();
+    stopSpeaking();
+    if (isRecording && recognition) {
+      recognition.stop();
+      setIsRecording(false);
+    }
+    
     setTextInput("");
     
     const updatedMessages: Message[] = [...messages, { role: "candidate", content: userMsg }];
@@ -302,6 +342,15 @@ export default function MockInterviewPage() {
                     </select>
                   </div>
                   <div>
+                    <label className="block text-sm font-bold text-slate-600 mb-1">Time Per Question</label>
+                    <select value={timeLimit} onChange={e => setTimeLimit(Number(e.target.value))} className="w-full bg-slate-50 border rounded-xl p-3 text-slate-800 outline-none focus:ring-2 focus:ring-purple-500">
+                      <option value={0}>No Limit</option>
+                      <option value={30}>30 Seconds</option>
+                      <option value={60}>60 Seconds</option>
+                      <option value={120}>120 Seconds</option>
+                    </select>
+                  </div>
+                  <div>
                     <label className="block text-sm font-bold text-slate-600 mb-1">Difficulty</label>
                     <select value={difficulty} onChange={e => setDifficulty(e.target.value)} className="w-full bg-slate-50 border rounded-xl p-3 text-slate-800 outline-none focus:ring-2 focus:ring-purple-500">
                       <option>Basic</option>
@@ -369,9 +418,17 @@ export default function MockInterviewPage() {
           
           {/* Header */}
           <div className="flex justify-between items-center mb-4 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 mt-4 md:mt-0 flex-shrink-0">
-            <div>
-              <h2 className="text-xl font-black text-white">{role} Interview</h2>
-              <p className="text-sm font-medium text-purple-200">{company ? `${company} • ` : ''}{round} Round • {difficulty}</p>
+            <div className="flex items-center gap-4">
+              <div>
+                <h2 className="text-xl font-black text-white">{role} Interview</h2>
+                <p className="text-sm font-medium text-purple-200">{company ? `${company} • ` : ''}{round} Round • {difficulty}</p>
+              </div>
+              {timeLimit > 0 && !isLoading && !isSpeaking && (
+                <div className={`px-3 py-1.5 rounded-lg flex items-center gap-2 border ${timeRemaining <= 10 ? 'bg-red-500/20 text-red-100 border-red-500/50 animate-pulse' : 'bg-white/10 text-white border-white/20'}`}>
+                  <div className={`w-2 h-2 rounded-full animate-pulse ${timeRemaining <= 10 ? 'bg-red-500' : 'bg-green-400'}`}></div>
+                  <span className="font-mono font-bold">{timeRemaining}s</span>
+                </div>
+              )}
             </div>
             <div className="flex gap-2 md:gap-3">
               <button 

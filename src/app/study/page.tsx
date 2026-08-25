@@ -15,8 +15,8 @@ import Image from "next/image";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 export default function StudyHubPage() {
-  // Main Tab State: Default is "interview-prep" as requested
-  const [activeTab, setActiveTab] = useState<"interview-prep" | "ai-roadmap">("interview-prep");
+  // Main Tab State
+  const [activeTab, setActiveTab] = useState<"interview-prep" | "ai-roadmap" | "syllabus">("interview-prep");
 
   // --- AI Career Guidance State ---
   const [goal, setGoal] = useState("");
@@ -253,25 +253,43 @@ export default function StudyHubPage() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={() => setActiveTab("interview-prep")}
-              className={`h-14 px-8 text-base font-extrabold rounded-2xl transition-all duration-200 flex items-center gap-3 shadow-lg cursor-pointer ${
+              className={`h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg cursor-pointer ${
                 activeTab === "interview-prep"
                   ? "bg-amber-400 text-slate-950 ring-4 ring-amber-400/30 scale-105"
                   : "bg-white/15 text-white hover:bg-white/25 border border-white/30 backdrop-blur-md"
               }`}
             >
-              <BookOpen className="h-5 w-5" /> Premium Interview Question Banks ({docs.length})
+              <BookOpen className="h-4 w-4 md:h-5 md:w-5" /> Question Banks ({docs.length})
             </button>
 
             <button
               onClick={() => setActiveTab("ai-roadmap")}
-              className={`h-14 px-8 text-base font-extrabold rounded-2xl transition-all duration-200 flex items-center gap-3 shadow-lg cursor-pointer ${
+              className={`h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg cursor-pointer ${
                 activeTab === "ai-roadmap"
-                  ? "bg-purple-600 text-white ring-4 ring-purple-500/30 scale-105"
+                  ? "bg-blue-500 text-white ring-4 ring-blue-500/30 scale-105"
                   : "bg-white/15 text-white hover:bg-white/25 border border-white/30 backdrop-blur-md"
               }`}
             >
-              <Sparkles className="h-5 w-5" /> AI Career Roadmap Generator
+              <Sparkles className="h-4 w-4 md:h-5 md:w-5" /> AI Roadmap
             </button>
+
+            <button
+              onClick={() => setActiveTab("syllabus")}
+              className={`h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg cursor-pointer ${
+                activeTab === "syllabus"
+                  ? "bg-teal-500 text-white ring-4 ring-teal-500/30 scale-105"
+                  : "bg-white/15 text-white hover:bg-white/25 border border-white/30 backdrop-blur-md"
+              }`}
+            >
+              <Layers className="h-4 w-4 md:h-5 md:w-5" /> Syllabuses
+            </button>
+
+            {/* Always visible Mock Interview Link */}
+            <Link href="/study/interview-prep/mock-interview">
+              <Button size="lg" className="h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl bg-purple-600 hover:bg-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all flex items-center gap-2 md:gap-3">
+                <Mic className="h-4 w-4 md:h-5 md:w-5" /> Voice Mock Interview
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -611,6 +629,49 @@ export default function StudyHubPage() {
                   )}
                 </div>
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* DOMAIN SYLLABUSES TAB */}
+        {activeTab === "syllabus" && (
+          <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+              <div>
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                  <Layers className="h-8 w-8 text-teal-600" />
+                  Domain Syllabuses
+                </h2>
+                <p className="text-muted-foreground mt-2">Comprehensive curriculum outlines for top tech roles.</p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                { title: "Frontend Engineering", icon: "⚛️", topics: ["HTML/CSS Core", "JavaScript Deep Dive", "React & Next.js", "State Management", "Performance Optimization", "System Design (UI)"] },
+                { title: "Backend Engineering", icon: "⚙️", topics: ["Data Structures & Algos", "Database Design (SQL/NoSQL)", "API Design (REST/GraphQL)", "System Architecture", "Microservices", "Security & Auth"] },
+                { title: "Full Stack Development", icon: "🌐", topics: ["Frontend Mastery", "Backend Architecture", "DevOps & Deployment", "Cloud (AWS/GCP)", "Testing (E2E/Unit)", "Agile Workflow"] },
+                { title: "Data Science & AI", icon: "🧠", topics: ["Python Programming", "Statistics & Probability", "Machine Learning Models", "Deep Learning", "Data Visualization", "MLOps"] },
+                { title: "DevOps & Cloud", icon: "☁️", topics: ["Linux Fundamentals", "Docker & Kubernetes", "CI/CD Pipelines", "Infrastructure as Code", "Monitoring & Logging", "Cloud Security"] },
+                { title: "HR & Behavioral", icon: "🤝", topics: ["Introduction & Background", "Strengths & Weaknesses", "Conflict Resolution", "Leadership & Impact", "Culture Fit", "Future Goals"] }
+              ].map((syllabus, idx) => (
+                <div key={idx} className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-3xl">{syllabus.icon}</span>
+                    <h3 className="text-xl font-bold">{syllabus.title}</h3>
+                  </div>
+                  <ul className="space-y-2 mt-4">
+                    {syllabus.topics.map((topic, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <CheckCircle className="h-4 w-4 text-teal-500" /> {topic}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button className="w-full mt-6 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/50">
+                    View Full Syllabus
+                  </Button>
+                </div>
+              ))}
             </div>
           </section>
         )}

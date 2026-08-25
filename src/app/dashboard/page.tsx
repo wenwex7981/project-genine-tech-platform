@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Package, User, Building2, GraduationCap, Phone, ExternalLink } from "lucide-react";
+import { Package, User, Building2, GraduationCap, Phone, ExternalLink, Flame, Trophy, Award } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -46,6 +46,42 @@ export default function DashboardPage() {
       
       if (userProfile) {
         setProfile(userProfile);
+        
+        // Gamification Logic: Update Streak on login
+        try {
+          const today = new Date().toISOString().split('T')[0];
+          const lastActivityDate = userProfile.last_activity ? new Date(userProfile.last_activity).toISOString().split('T')[0] : null;
+          
+          let newStreak = userProfile.current_streak || 0;
+          let shouldUpdate = false;
+          
+          if (!lastActivityDate) {
+            newStreak = 1;
+            shouldUpdate = true;
+          } else if (lastActivityDate !== today) {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toISOString().split('T')[0];
+            
+            if (lastActivityDate === yesterdayStr) {
+              newStreak += 1; // Maintained streak
+            } else {
+              newStreak = 1; // Broken streak
+            }
+            shouldUpdate = true;
+          }
+          
+          if (shouldUpdate) {
+            await supabase.from('user_profiles').update({
+              current_streak: newStreak,
+              last_activity: new Date().toISOString()
+            }).eq('email', session.user.email);
+            setProfile((prev: any) => ({ ...prev, current_streak: newStreak }));
+          }
+        } catch (e) {
+          console.error("Streak logic error (columns might not exist yet):", e);
+        }
+
       } else {
         setProfile((prev: any) => ({ ...prev, full_name: session.user.user_metadata?.full_name || "" }));
       }
@@ -104,12 +140,45 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl min-h-screen">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-4">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-4xl font-black tracking-tight mb-2">My Dashboard</h1>
           <p className="text-muted-foreground text-lg">Welcome back, {user?.user_metadata?.full_name || user?.email}</p>
         </div>
         <Button variant="outline" onClick={() => { supabase.auth.signOut(); window.location.href="/"; }}>Sign Out</Button>
+      </div>
+
+      {/* Gamification Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="bg-gradient-to-br from-orange-500 to-red-600 rounded-3xl p-6 text-white shadow-lg flex items-center gap-6 transform hover:scale-105 transition-all">
+          <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md">
+            <Flame className="w-8 h-8 text-yellow-300" />
+          </div>
+          <div>
+            <p className="text-white/80 font-semibold text-sm uppercase tracking-wider mb-1">Current Streak</p>
+            <h3 className="text-3xl font-black">{profile?.current_streak || 0} Days</h3>
+          </div>
+        </div>
+        
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white shadow-lg flex items-center gap-6 transform hover:scale-105 transition-all">
+          <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md">
+            <Trophy className="w-8 h-8 text-amber-300" />
+          </div>
+          <div>
+            <p className="text-white/80 font-semibold text-sm uppercase tracking-wider mb-1">Total Score</p>
+            <h3 className="text-3xl font-black">{profile?.total_score || 0} Pts</h3>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl p-6 text-white shadow-lg flex items-center gap-6 transform hover:scale-105 transition-all">
+          <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md">
+            <Award className="w-8 h-8 text-emerald-100" />
+          </div>
+          <div>
+            <p className="text-white/80 font-semibold text-sm uppercase tracking-wider mb-1">Badges Earned</p>
+            <h3 className="text-3xl font-black">{(profile?.badges || []).length}</h3>
+          </div>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-10">
