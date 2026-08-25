@@ -329,77 +329,75 @@ export default function MockInterviewPage() {
 
   if (uiState === "interview") {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col items-center justify-center relative p-4 overflow-hidden">
-        {/* Background blobs for aesthetics */}
-        <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+      <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden">
+        {/* Fullscreen Background Avatar */}
+        <div className={`absolute inset-0 z-0 transition-transform duration-500 ease-in-out ${isSpeaking ? 'scale-105' : 'scale-100'}`}>
+          <Image 
+            src="/images/talking_tom.jpg" 
+            alt="Talking Tom Fullscreen" 
+            fill 
+            className="object-cover object-top"
+            priority
+          />
+          {/* Dark overlay so text remains readable */}
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
 
         <div className="w-full max-w-4xl flex flex-col h-[85vh] z-10">
           
           {/* Header */}
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-8 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10">
             <div>
-              <h2 className="text-xl font-black text-slate-800">{role} Interview</h2>
-              <p className="text-sm font-medium text-slate-500">{company ? `${company} • ` : ''}{round} Round • {difficulty}</p>
+              <h2 className="text-xl font-black text-white">{role} Interview</h2>
+              <p className="text-sm font-medium text-purple-200">{company ? `${company} • ` : ''}{round} Round • {difficulty}</p>
             </div>
             <div className="flex gap-3">
               {isSpeaking && (
-                <button onClick={stopSpeaking} className="px-4 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-rose-200 transition">
+                <button onClick={stopSpeaking} className="px-4 py-2 bg-rose-500/80 text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-rose-500 transition backdrop-blur-md">
                   <StopCircle className="w-4 h-4" /> Stop Audio
                 </button>
               )}
-              <button onClick={endInterview} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-bold hover:bg-slate-800 transition">
+              <button onClick={endInterview} className="px-4 py-2 bg-white/20 text-white rounded-lg text-sm font-bold hover:bg-white/30 transition backdrop-blur-md border border-white/20">
                 End & Evaluate
               </button>
             </div>
           </div>
 
-          {/* Floating Question Card */}
+          {/* Floating Question Card (Glassmorphism) */}
           <div className="flex-1 flex flex-col items-center justify-center w-full relative">
-            <div className={`w-full max-w-3xl bg-white rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border p-8 md:p-12 transition-all duration-500 text-center flex flex-col items-center ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+            <div className={`w-full max-w-3xl bg-white/10 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/20 p-8 md:p-12 transition-all duration-500 text-center flex flex-col items-center ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
               
-              {/* Animated Avatar */}
-              <div className={`relative mb-8 transition-all duration-300 ${isSpeaking ? 'scale-110' : 'scale-100'}`}>
-                <div className={`absolute inset-0 bg-purple-500 rounded-full blur-xl transition-all duration-500 ${isSpeaking ? 'opacity-40 animate-ping' : 'opacity-0'}`}></div>
-                <div className={`absolute inset-0 bg-indigo-500 rounded-full blur-2xl transition-all duration-700 ${isSpeaking ? 'opacity-30 animate-pulse' : 'opacity-0'}`}></div>
-                <div className={`relative z-10 w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 ${isSpeaking ? 'border-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.5)] animate-bounce' : 'border-slate-100 shadow-sm'}`}>
-                  <Image 
-                    src="/images/talking_tom.jpg" 
-                    alt="Talking Tom Interviewer" 
-                    fill 
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-                {/* Speaking Indicator Badge */}
-                {isSpeaking && (
-                  <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white shadow-md flex items-center gap-1 z-20">
+              {/* Speaking Indicator Badge (Moved to card top) */}
+              {isSpeaking && (
+                <div className="absolute -top-4 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full border border-white/20 shadow-md flex items-center gap-2 z-20">
+                  <span>TOM IS SPEAKING</span>
+                  <div className="flex gap-1">
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {isLoading ? (
-                <div className="flex flex-col gap-4">
-                  <div className="h-6 bg-slate-200 rounded-md w-3/4 animate-pulse"></div>
-                  <div className="h-6 bg-slate-200 rounded-md w-full animate-pulse"></div>
-                  <div className="h-6 bg-slate-200 rounded-md w-5/6 animate-pulse"></div>
+                <div className="flex flex-col gap-4 w-full items-center">
+                  <div className="h-6 bg-white/20 rounded-md w-3/4 animate-pulse"></div>
+                  <div className="h-6 bg-white/20 rounded-md w-full animate-pulse"></div>
+                  <div className="h-6 bg-white/20 rounded-md w-5/6 animate-pulse"></div>
                 </div>
               ) : (
-                <h3 className="text-2xl md:text-3xl font-bold text-slate-800 leading-snug">
+                <h3 className="text-2xl md:text-4xl font-bold text-white leading-snug drop-shadow-md">
                   {currentAIQuestion}
                 </h3>
               )}
             </div>
           </div>
 
-          {/* Input Area */}
-          <div className="mt-8 bg-white p-2 rounded-2xl shadow-xl border flex flex-col md:flex-row gap-2 items-stretch max-w-3xl w-full mx-auto">
+          {/* Input Area (Glassmorphism) */}
+          <div className="mt-8 bg-black/40 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-white/20 flex flex-col md:flex-row gap-2 items-stretch max-w-3xl w-full mx-auto">
             <button 
               onClick={toggleRecording}
-              className={`md:w-32 flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse shadow-lg' : 'bg-purple-50 text-purple-700 hover:bg-purple-100'}`}
+              className={`md:w-32 flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_20px_rgba(244,63,94,0.5)]' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
               {isRecording ? <MicOff className="w-6 h-6 mb-1" /> : <Mic className="w-6 h-6 mb-1" />}
               <span className="text-xs font-bold text-center leading-tight">{isRecording ? "Stop\nListening" : "Tap to\nSpeak"}</span>
@@ -409,13 +407,13 @@ export default function MockInterviewPage() {
               value={textInput}
               onChange={e => setTextInput(e.target.value)}
               placeholder="Or type your answer here..."
-              className="flex-1 p-4 bg-slate-50 border rounded-xl resize-none outline-none focus:ring-2 focus:ring-purple-500 text-slate-800 min-h-[80px]"
+              className="flex-1 p-4 bg-white/10 text-white placeholder-white/50 border border-white/10 rounded-xl resize-none outline-none focus:ring-2 focus:ring-purple-400 min-h-[80px]"
             />
             
             <button 
               onClick={handleSendMessage}
               disabled={!textInput.trim() || isLoading}
-              className="md:w-20 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center rounded-xl text-white transition-all shadow-md"
+              className="md:w-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 flex items-center justify-center rounded-xl text-white transition-all shadow-md"
             >
               <Send className="w-6 h-6" />
             </button>
