@@ -38,7 +38,7 @@ Evaluate their code based on the current context:
 You MUST return your response as a raw JSON object with exactly these fields:
 {
   "terminal": "The simulated output of the user's code. If no code was run, make this empty.",
-  "story": "The narrative, feedback, hint, and/or the next challenge.",
+  "story": "A SINGLE STRING containing the narrative, feedback, hint, and/or the next challenge. DO NOT return an object here, it MUST be a single markdown string.",
   "completed": true or false (true ONLY if they passed the current challenge and should progress to the next task)
 }`;
 
@@ -73,6 +73,11 @@ You MUST return your response as a raw JSON object with exactly these fields:
         story: responseContent,
         completed: false
       };
+    }
+
+    // Safeguard: If the AI returns an object for the story, convert it to a string
+    if (parsedResponse.story && typeof parsedResponse.story === 'object') {
+      parsedResponse.story = Object.values(parsedResponse.story).join('\n\n');
     }
 
     return NextResponse.json(parsedResponse);
