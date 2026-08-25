@@ -52,8 +52,8 @@ useGLTF.preload('/models/Minion.glb');
 
 export const Avatar3D: React.FC<Avatar3DProps> = ({ isSpeaking, modelUrl }) => {
   return (
-    <div className="w-full h-full relative">
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+    <div className="absolute inset-0 w-full h-full pointer-events-auto">
+      <Canvas camera={{ position: [0, 0, 5], fov: 50 }} style={{ width: '100%', height: '100%' }}>
         <ambientLight intensity={1} />
         <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
         <directionalLight position={[-10, 10, -5]} intensity={0.5} />

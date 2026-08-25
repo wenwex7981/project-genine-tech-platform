@@ -357,21 +357,21 @@ export default function MockInterviewPage() {
         
         {/* Animated Graphic Avatar Background - Unblurred per request */}
         <div className="absolute inset-0 z-0 flex items-center justify-center opacity-60 md:opacity-80 pointer-events-none">
-          {avatarVariant === 'minion' ? (
-            <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
-          ) : (
+          {avatarVariant === 'minion' ? null : (
             <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-[120%] h-[120%] max-w-none max-h-none opacity-100" />
           )}
         </div>
         
         {/* We also put a clear animated avatar on top of the card so it feels like a real character */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-0 hidden md:block">
-          {avatarVariant === 'minion' ? null : (
-            <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-64 h-64 opacity-100 drop-shadow-2xl" />
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 w-64 h-64 md:w-80 md:h-80 pointer-events-none">
+          {avatarVariant === 'minion' ? (
+            <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
+          ) : (
+            <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-full h-full opacity-100 drop-shadow-2xl" />
           )}
         </div>
 
-        <div className="w-full max-w-4xl flex flex-col h-[90vh] max-h-[900px] z-10 mt-20 md:mt-0 relative">
+        <div className="w-full max-w-4xl flex flex-col h-[90vh] max-h-[900px] z-20 mt-20 md:mt-10 relative">
           
           {/* Header */}
           <div className="flex justify-between items-center mb-8 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 mt-10 md:mt-0">
