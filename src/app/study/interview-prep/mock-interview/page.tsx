@@ -40,7 +40,7 @@ export default function MockInterviewPage() {
   const [difficulty, setDifficulty] = useState("Medium");
   const [jd, setJd] = useState("");
   const [resume, setResume] = useState("");
-  const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
+  const [preferredModel, setPreferredModel] = useState<AIModel>("groq");
   const [avatarVariant, setAvatarVariant] = useState<"robot" | "minion" | "human">("robot");
   const [timeLimit, setTimeLimit] = useState<number>(0); // 0 = No limit
   const [timeRemaining, setTimeRemaining] = useState<number>(0);

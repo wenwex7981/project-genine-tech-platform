@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateAIResponse, AIModel } from '@/lib/ai-service';
 
+export const maxDuration = 60;
+
 const EVALUATION_PROMPT = `You are an elite technical interview coach and evaluator.
 Your task is to analyze the candidate's answers from a mock interview and provide a comprehensive evaluation report.
 
