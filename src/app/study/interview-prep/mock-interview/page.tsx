@@ -83,7 +83,7 @@ export default function MockInterviewPage() {
       if (SpeechRecognition) {
         const rec = new SpeechRecognition();
         rec.continuous = true;
-        rec.interimResults = true;
+        rec.interimResults = false; // Set to false for much higher final accuracy, especially from a distance
         rec.lang = "en-US";
         
         rec.onresult = (event: any) => {
@@ -195,6 +195,13 @@ export default function MockInterviewPage() {
     setMessages(updatedMessages);
     setCurrentAIQuestion(""); // Clear question while loading
     setIsLoading(true);
+
+    const questionsAsked = messages.filter(m => m.role === "interviewer").length;
+    if (questionsAsked >= 20) {
+      // Reached 20 questions, automatically end and evaluate
+      endInterview(updatedMessages);
+      return;
+    }
     
     try {
       const payload = { history: updatedMessages, role, company, experienceLevel, round, difficulty, jd, resume, preferredModel };
@@ -217,9 +224,11 @@ export default function MockInterviewPage() {
     }
   };
 
-  const endInterview = async () => {
+  const endInterview = async (finalHistory?: Message[]) => {
     stopSpeaking();
-    if (messages.length < 2) {
+    const historyToEvaluate = finalHistory || messages;
+    
+    if (historyToEvaluate.length < 2) {
       alert("Not enough interview data to evaluate. Please answer at least one question.");
       setUiState("setup");
       return;
@@ -229,7 +238,7 @@ export default function MockInterviewPage() {
     setUiState("report");
     
     try {
-      const payload = { history: messages, role, company, experienceLevel, round, difficulty, jd, resume, preferredModel };
+      const payload = { history: historyToEvaluate, role, company, experienceLevel, round, difficulty, jd, resume, preferredModel };
       const response = await fetch('/api/mock-interview/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
