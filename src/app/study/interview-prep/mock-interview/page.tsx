@@ -379,22 +379,23 @@ export default function MockInterviewPage() {
             </div>
           </div>
 
-          {/* Floating Question Card (Frosted Glass, Scrollable, Extra Top Padding to avoid Avatar) */}
-          <div className="flex-1 flex flex-col items-center justify-center w-full relative min-h-0 pt-24 mt-24 md:mt-32">
+          {/* Floating Question Card Section */}
+          <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0 pt-4 md:pt-10">
             
-            {/* The Top Avatar is now relative to the card container, pulled up with negative margin so it sits on the top edge */}
-            <div className="absolute -top-32 left-1/2 -translate-x-1/2 z-30 w-64 h-64 md:w-72 md:h-72 pointer-events-none">
+            {/* The Top Avatar - structurally placed above the card, pulled down slightly with negative margin */}
+            <div className="z-30 w-48 h-48 md:w-64 md:h-64 -mb-12 pointer-events-none drop-shadow-2xl flex-shrink-0">
               {avatarVariant === 'minion' ? (
                 <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
               ) : (
-                <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-full h-full opacity-100 drop-shadow-2xl" />
+                <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-full h-full" />
               )}
             </div>
 
-            <div className={`w-full max-w-3xl max-h-full bg-white/10 backdrop-blur-2xl rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] border border-white/20 p-6 md:p-10 pt-32 md:pt-40 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+            {/* Solid White Card */}
+            <div className={`w-full max-w-3xl max-h-[50vh] md:max-h-[60vh] bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 md:p-10 pt-16 md:pt-20 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative z-20 ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
               
               {/* Left Hand Holding Card */}
-              <div className="absolute top-1/2 -left-12 -translate-y-1/2 z-40 hidden md:block w-16 h-24">
+              <div className="absolute top-1/2 -left-10 md:-left-12 -translate-y-1/2 z-40 hidden md:block w-14 h-20 md:w-16 md:h-24">
                 <svg viewBox="0 0 100 150" className="w-full h-full drop-shadow-lg">
                   <path d="M 90 20 Q 50 10 30 40 Q 10 70 30 110 Q 50 140 90 130 Q 100 130 100 100 Q 80 100 80 75 Q 100 50 100 20 Z" fill={avatarVariant === 'minion' ? '#2563eb' : (avatarVariant === 'human' ? '#fbcfe8' : '#6366f1')} />
                   <path d="M 95 30 Q 60 25 50 45" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
@@ -403,7 +404,7 @@ export default function MockInterviewPage() {
               </div>
 
               {/* Right Hand Holding Card */}
-              <div className="absolute top-1/2 -right-12 -translate-y-1/2 z-40 hidden md:block w-16 h-24 transform scale-x-[-1]">
+              <div className="absolute top-1/2 -right-10 md:-right-12 -translate-y-1/2 z-40 hidden md:block w-14 h-20 md:w-16 md:h-24 transform scale-x-[-1]">
                 <svg viewBox="0 0 100 150" className="w-full h-full drop-shadow-lg">
                   <path d="M 90 20 Q 50 10 30 40 Q 10 70 30 110 Q 50 140 90 130 Q 100 130 100 100 Q 80 100 80 75 Q 100 50 100 20 Z" fill={avatarVariant === 'minion' ? '#2563eb' : (avatarVariant === 'human' ? '#fbcfe8' : '#6366f1')} />
                   <path d="M 95 30 Q 60 25 50 45" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
@@ -411,9 +412,9 @@ export default function MockInterviewPage() {
                 </svg>
               </div>
               
-              {/* Speaking Indicator Badge (Moved to card top) */}
+              {/* Speaking Indicator Badge */}
               {isSpeaking && (
-                <div className="absolute top-0 -translate-y-1/2 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full border border-white/20 shadow-md flex items-center gap-2 z-20">
+                <div className="absolute top-0 -translate-y-1/2 bg-emerald-500 text-white text-[10px] md:text-xs font-black px-4 py-1.5 md:py-2 rounded-full shadow-md flex items-center gap-2 z-20">
                   <span>AI IS SPEAKING</span>
                   <div className="flex gap-1">
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
@@ -424,14 +425,14 @@ export default function MockInterviewPage() {
               )}
 
               {isLoading ? (
-                <div className="flex flex-col gap-4 w-full items-center mt-6">
-                  <div className="h-4 bg-white/10 rounded-md w-3/4 animate-pulse"></div>
-                  <div className="h-4 bg-white/10 rounded-md w-full animate-pulse"></div>
-                  <div className="h-4 bg-white/10 rounded-md w-5/6 animate-pulse"></div>
+                <div className="flex flex-col gap-4 w-full items-center mt-2">
+                  <div className="h-4 bg-slate-200 rounded-md w-3/4 animate-pulse"></div>
+                  <div className="h-4 bg-slate-200 rounded-md w-full animate-pulse"></div>
+                  <div className="h-4 bg-slate-200 rounded-md w-5/6 animate-pulse"></div>
                 </div>
               ) : (
-                <div className="overflow-y-auto w-full max-h-[40vh] md:max-h-[50vh] px-2 mt-4 custom-scrollbar">
-                  <h3 className="text-lg md:text-2xl lg:text-[1.6rem] font-bold text-white leading-relaxed drop-shadow-md py-2">
+                <div className="overflow-y-auto w-full h-full px-4 custom-scrollbar flex items-center justify-center">
+                  <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-slate-800 leading-relaxed text-center">
                     {currentAIQuestion}
                   </h3>
                 </div>
