@@ -388,7 +388,7 @@ export default function MockInterviewPage() {
                   <StopCircle className="w-4 h-4" /> <span className="hidden md:inline">Stop</span>
                 </button>
               )}
-              <button onClick={endInterview} className="px-3 md:px-4 py-2 bg-white/20 text-white rounded-lg text-sm font-bold hover:bg-white/30 transition backdrop-blur-md border border-white/20">
+              <button onClick={() => endInterview()} className="px-3 md:px-4 py-2 bg-white/20 text-white rounded-lg text-sm font-bold hover:bg-white/30 transition backdrop-blur-md border border-white/20">
                 End & Evaluate
               </button>
             </div>
