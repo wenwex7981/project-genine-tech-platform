@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
+import { AnimatedAvatar } from "@/components/AnimatedAvatar";
 
 type Message = {
   role: "interviewer" | "candidate";
@@ -329,24 +330,22 @@ export default function MockInterviewPage() {
 
   if (uiState === "interview") {
     return (
-      <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden">
-        {/* Fullscreen Background Avatar */}
-        <div className={`absolute inset-0 z-0 transition-transform duration-500 ease-in-out ${isSpeaking ? 'scale-105' : 'scale-100'}`}>
-          <Image 
-            src="/images/talking_tom.jpg" 
-            alt="Talking Tom Fullscreen" 
-            fill 
-            className="object-cover object-top"
-            priority
-          />
-          {/* Dark overlay so text remains readable */}
-          <div className="absolute inset-0 bg-black/40"></div>
+      <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-900">
+        
+        {/* Animated Graphic Avatar Background */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-40 md:opacity-60 pointer-events-none">
+          <AnimatedAvatar isSpeaking={isSpeaking} className="w-[120%] h-[120%] max-w-none max-h-none opacity-50 blur-[2px]" />
+        </div>
+        
+        {/* We also put a clear animated avatar on top of the card so it feels like a real character */}
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-0 hidden md:block">
+           <AnimatedAvatar isSpeaking={isSpeaking} className="w-64 h-64 opacity-80 drop-shadow-2xl" />
         </div>
 
-        <div className="w-full max-w-4xl flex flex-col h-[85vh] z-10">
+        <div className="w-full max-w-4xl flex flex-col h-[85vh] z-10 mt-20 md:mt-0">
           
           {/* Header */}
-          <div className="flex justify-between items-center mb-8 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+          <div className="flex justify-between items-center mb-8 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 mt-10 md:mt-0">
             <div>
               <h2 className="text-xl font-black text-white">{role} Interview</h2>
               <p className="text-sm font-medium text-purple-200">{company ? `${company} • ` : ''}{round} Round • {difficulty}</p>
