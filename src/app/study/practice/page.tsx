@@ -15,6 +15,7 @@ function PracticeArena() {
   const [history, setHistory] = useState<{ role: string, content: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [tasksCompleted, setTasksCompleted] = useState(0);
 
   // Initialize the first task
   useEffect(() => {
@@ -22,7 +23,7 @@ function PracticeArena() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchNextTask = async (submittedCode?: string) => {
+  const fetchNextTask = async (submittedCode?: string, isFixRequest: boolean = false) => {
     setIsLoading(true);
     setTerminalOutput(""); // Clear previous terminal while loading
     try {
@@ -32,7 +33,8 @@ function PracticeArena() {
         body: JSON.stringify({
           topic,
           code: submittedCode || "",
-          history
+          history,
+          isFixRequest
         }),
       });
       
@@ -45,7 +47,7 @@ function PracticeArena() {
       
       // If code was submitted, append the user's action to history
       if (submittedCode) {
-        newHistory.push({ role: "user", content: `Submitted code:\n\`\`\`\n${submittedCode}\n\`\`\`` });
+        newHistory.push({ role: "user", content: isFixRequest ? `Asked for AI Help with code:\n\`\`\`\n${submittedCode}\n\`\`\`` : `Submitted code:\n\`\`\`\n${submittedCode}\n\`\`\`` });
       }
       
       // Append AI's story to history
@@ -59,9 +61,9 @@ function PracticeArena() {
         setTerminalOutput(data.terminal);
       }
       
-      if (data.completed) {
+      if (data.completed && !isFixRequest) {
         setIsCompleted(true);
-        // We can keep it completed for a moment, then reset if they want to move on.
+        setTasksCompleted(prev => prev + 1);
         setTimeout(() => setIsCompleted(false), 3000);
       }
 
@@ -77,7 +79,15 @@ function PracticeArena() {
       setTerminalOutput("Error: No code to execute.");
       return;
     }
-    fetchNextTask(code);
+    fetchNextTask(code, false);
+  };
+
+  const handleFixWithAI = () => {
+    if (!code.trim()) {
+      setTerminalOutput("Error: No code to fix.");
+      return;
+    }
+    fetchNextTask(code, true);
   };
 
   return (
@@ -92,6 +102,9 @@ function PracticeArena() {
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-indigo-400" />
             <h1 className="font-bold text-white text-lg">{topic} Arena</h1>
+            <span className="ml-4 px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded text-xs font-bold uppercase tracking-widest">
+              Task {tasksCompleted + 1}
+            </span>
           </div>
         </div>
         <div className="flex gap-2">
@@ -176,9 +189,18 @@ function PracticeArena() {
 
           {/* Terminal Area */}
           <div className="h-64 border-t border-white/10 bg-black flex flex-col flex-shrink-0">
-            <div className="h-10 bg-slate-900 border-b border-white/5 flex items-center px-4 gap-2">
-              <TerminalSquare className="w-4 h-4 text-slate-400" />
-              <span className="text-xs font-mono text-slate-400">Terminal Output</span>
+            <div className="h-10 bg-slate-900 border-b border-white/5 flex items-center justify-between px-4">
+              <div className="flex items-center gap-2">
+                <TerminalSquare className="w-4 h-4 text-slate-400" />
+                <span className="text-xs font-mono text-slate-400">Terminal Output</span>
+              </div>
+              <button 
+                onClick={handleFixWithAI}
+                disabled={isLoading || !code.trim()}
+                className="text-xs font-bold bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-600/40 px-2 py-1 rounded transition flex items-center gap-1 disabled:opacity-50"
+              >
+                <Sparkles className="w-3 h-3" /> Fix with AI
+              </button>
             </div>
             <div className="flex-1 p-4 font-mono text-sm overflow-y-auto custom-scrollbar text-green-400 bg-black">
               {isLoading ? (

@@ -5,37 +5,46 @@ export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    const { topic, code, history } = await req.json();
+    const { topic, code, history, isFixRequest } = await req.json();
 
     if (!topic) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    const systemPrompt = `You are an interactive, game-like AI coding tutor.
-The user is currently learning the topic: "${topic}".
+    const systemPrompt = `You are an elite, interactive AI coding tutor. The user has 0 prior knowledge and is learning the topic: "${topic}".
+Your goal is to take them from absolute beginner ("Zero") to advanced ("Hero").
 
-Your goal is to guide the user through a storyline where they must solve small coding challenges to progress.
+You must guide the user through a storyline/curriculum consisting of 5 to 10 sequential, practical coding tasks.
+CRITICAL RULES:
+1. DO NOT write the final code for the user. Force them to write the code themselves.
+2. Start from the absolute basics if this is the first task.
+3. Keep your explanations concise, engaging, and story-driven.
 
 The user has just submitted this code:
 \`\`\`
 ${code || '(No code submitted yet)'}
 \`\`\`
 
-Evaluate their code based on the current context of the conversation.
-1. If this is the start of the conversation (no history), introduce the story, explain the first concept, and give them their first coding challenge.
-2. If they submitted code, act as a compiler/interpreter. Simulate the EXACT terminal output of their code. If there are syntax errors, simulate the error.
-3. If they solved the challenge correctly, congratulate them, progress the story, and give the next challenge. If incorrect, give a small hint.
+Evaluate their code based on the current context:
+1. If this is the start of the conversation, introduce the story and give Task 1.
+2. Act as a compiler/interpreter. Simulate the EXACT terminal output of their code. If there are syntax errors, simulate the error.
+3. If this is a "Fix with AI" request (isFixRequest=true), DO NOT progress the story. Just provide a gentle hint about what's wrong with their code.
+4. If they solved the challenge correctly (and it's not a fix request), congratulate them, progress the story, and give the next numbered task (e.g., Task 2). If incorrect, give a small hint.
 
 You MUST return your response as a raw JSON object with exactly these fields:
 {
   "terminal": "The simulated output of the user's code. If no code was run, make this empty.",
-  "story": "The narrative, feedback, and the next challenge.",
-  "completed": true or false (true if they passed the current challenge, false if they need to try again or if this is the start)
+  "story": "The narrative, feedback, hint, and/or the next challenge.",
+  "completed": true or false (true ONLY if they passed the current challenge and should progress to the next task)
 }`;
 
     let prompt = "";
     if (!history || history.length === 0) {
-      prompt = "Start the adventure! Give me my first task.";
+      prompt = "Start the adventure! Give me my first task (Task 1).";
+    } else if (isFixRequest) {
+      prompt = "Here is the conversation history so far:\n" + 
+               history.map((h: any) => `${h.role}: ${h.content}`).join("\n") +
+               `\n\nI just clicked 'Fix with AI'. I am stuck on this code:\n${code}\nPlease give me a hint to fix the error in the story field. DO NOT progress the task.`;
     } else {
       prompt = "Here is the conversation history so far:\n" + 
                history.map((h: any) => `${h.role}: ${h.content}`).join("\n") +

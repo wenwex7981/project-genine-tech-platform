@@ -648,28 +648,65 @@ export default function StudyHubPage() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { title: "Frontend Engineering", icon: "⚛️", topics: ["HTML/CSS Core", "JavaScript Deep Dive", "React & Next.js", "State Management", "Performance Optimization", "System Design (UI)"] },
-                { title: "Backend Engineering", icon: "⚙️", topics: ["Data Structures & Algos", "Database Design (SQL/NoSQL)", "API Design (REST/GraphQL)", "System Architecture", "Microservices", "Security & Auth"] },
-                { title: "Full Stack Development", icon: "🌐", topics: ["Frontend Mastery", "Backend Architecture", "DevOps & Deployment", "Cloud (AWS/GCP)", "Testing (E2E/Unit)", "Agile Workflow"] },
-                { title: "Data Science & AI", icon: "🧠", topics: ["Python Programming", "Statistics & Probability", "Machine Learning Models", "Deep Learning", "Data Visualization", "MLOps"] },
-                { title: "DevOps & Cloud", icon: "☁️", topics: ["Linux Fundamentals", "Docker & Kubernetes", "CI/CD Pipelines", "Infrastructure as Code", "Monitoring & Logging", "Cloud Security"] },
-                { title: "HR & Behavioral", icon: "🤝", topics: ["Introduction & Background", "Strengths & Weaknesses", "Conflict Resolution", "Leadership & Impact", "Culture Fit", "Future Goals"] }
+                { 
+                  title: "Python Mastery", 
+                  icon: "🐍", 
+                  description: "From print('Hello') to Advanced OOP & APIs.",
+                  topics: ["Introduction to Python", "Variables & Data Types", "Control Flow (If/Else)", "Loops (For/While)", "Functions", "Data Structures (Lists, Dicts, Tuples)", "File Handling", "OOP Basics", "Advanced OOP", "Error Handling", "Decorators", "Web Basics (APIs)"] 
+                },
+                { 
+                  title: "Java Developer", 
+                  icon: "☕", 
+                  description: "Zero to Hero in Java & Spring Boot basics.",
+                  topics: ["Setup & Syntax", "Primitive Types", "Operators", "Control Flow", "Methods", "Classes & Objects", "Inheritance & Polymorphism", "Interfaces & Abstract Classes", "Collections Framework", "Exception Handling", "File I/O", "Multithreading", "Spring Boot Basics"] 
+                },
+                { 
+                  title: "Data Structures & Algorithms", 
+                  icon: "🧩", 
+                  description: "Master algorithms from Arrays to Dynamic Programming.",
+                  topics: ["Big O Notation", "Arrays & Strings", "Linked Lists", "Stacks & Queues", "Hash Tables", "Trees & Graphs", "Recursion", "Sorting Algorithms", "Searching Algorithms", "Dynamic Programming", "Greedy Algorithms", "Advanced Graphs"] 
+                },
+                { 
+                  title: "Cyber Security", 
+                  icon: "🛡️", 
+                  description: "Blue Team defense to Red Team offense.",
+                  topics: ["Networking Basics (TCP/IP)", "Intro to Linux CLI", "Cryptography Basics", "Web Vulnerabilities (OWASP Top 10)", "Blue Team (Defensive Sec, SIEM)", "Red Team (Offensive Sec, Nmap)", "Incident Response", "Malware Analysis", "Ethical Hacking"] 
+                },
+                { 
+                  title: "Frontend Architecture", 
+                  icon: "✨", 
+                  description: "HTML/CSS to React & Tailwind Mastery.",
+                  topics: ["HTML5 Deep Dive", "CSS3 Fundamentals", "CSS Flexbox & Grid", "JavaScript Basics", "DOM Manipulation", "ES6+ Features", "Tailwind CSS Mastery", "React Basics", "React Hooks & State", "Advanced React Patterns", "Next.js & SSR", "Performance Tuning"] 
+                },
+                { 
+                  title: "SQL Database Mastery", 
+                  icon: "🗄️", 
+                  description: "From basic SELECTs to Advanced Triggers.",
+                  topics: ["Intro to Databases", "SELECT & Filtering", "Sorting & Grouping", "Joins (INNER, LEFT, RIGHT)", "Subqueries", "Database Design & Normalization", "Constraints", "Views", "Stored Procedures", "Triggers", "Transactions & Locks"] 
+                }
               ].map((syllabus, idx) => (
-                <div key={idx} className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
+                <div key={idx} className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                  <div className="flex items-center gap-3 mb-2">
                     <span className="text-3xl">{syllabus.icon}</span>
                     <h3 className="text-xl font-bold">{syllabus.title}</h3>
                   </div>
-                  <ul className="space-y-2 mt-4">
-                    {syllabus.topics.map((topic, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <CheckCircle className="h-4 w-4 text-teal-500" /> {topic}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm text-muted-foreground mb-4">{syllabus.description}</p>
+                  
+                  <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 mb-6 border border-slate-100 dark:border-slate-700 overflow-y-auto max-h-48 custom-scrollbar">
+                    <p className="text-xs font-bold text-slate-500 uppercase mb-3 tracking-wider">Zero to Hero Concepts:</p>
+                    <ul className="space-y-2">
+                      {syllabus.topics.map((topic, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                          <span className="w-5 h-5 rounded-full bg-teal-100 dark:bg-teal-900/50 text-teal-600 dark:text-teal-400 flex items-center justify-center text-[10px] font-bold shrink-0">{i + 1}</span> 
+                          {topic}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
                   <Link href={`/study/practice?topic=${encodeURIComponent(syllabus.title)}`}>
-                    <Button className="w-full mt-6 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/50">
-                      Start Interactive Practice
+                    <Button className="w-full bg-teal-600 text-white hover:bg-teal-700">
+                      Start Learning
                     </Button>
                   </Link>
                 </div>
