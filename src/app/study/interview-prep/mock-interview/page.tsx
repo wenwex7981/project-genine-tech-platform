@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mic, MicOff, Send, Loader2, PlayCircle, StopCircle, ArrowLeft, CheckCircle2, AlertTriangle, ArrowRight, BarChart } from "lucide-react";
+import { Mic, MicOff, Send, Loader2, PlayCircle, StopCircle, ArrowLeft, CheckCircle2, AlertTriangle, ArrowRight, BarChart, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -367,13 +367,22 @@ export default function MockInterviewPage() {
               <h2 className="text-xl font-black text-white">{role} Interview</h2>
               <p className="text-sm font-medium text-purple-200">{company ? `${company} • ` : ''}{round} Round • {difficulty}</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 md:gap-3">
+              <button 
+                onClick={() => speakText(currentAIQuestion)} 
+                disabled={isSpeaking || !currentAIQuestion}
+                className="px-3 md:px-4 py-2 bg-blue-500/80 text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-blue-500 transition backdrop-blur-md disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Repeat Question"
+              >
+                <Volume2 className="w-4 h-4" /> <span className="hidden md:inline">Repeat</span>
+              </button>
+              
               {isSpeaking && (
-                <button onClick={stopSpeaking} className="px-4 py-2 bg-rose-500/80 text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-rose-500 transition backdrop-blur-md">
-                  <StopCircle className="w-4 h-4" /> Stop Audio
+                <button onClick={stopSpeaking} className="px-3 md:px-4 py-2 bg-rose-500/80 text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-rose-500 transition backdrop-blur-md">
+                  <StopCircle className="w-4 h-4" /> <span className="hidden md:inline">Stop</span>
                 </button>
               )}
-              <button onClick={endInterview} className="px-4 py-2 bg-white/20 text-white rounded-lg text-sm font-bold hover:bg-white/30 transition backdrop-blur-md border border-white/20">
+              <button onClick={endInterview} className="px-3 md:px-4 py-2 bg-white/20 text-white rounded-lg text-sm font-bold hover:bg-white/30 transition backdrop-blur-md border border-white/20">
                 End & Evaluate
               </button>
             </div>
