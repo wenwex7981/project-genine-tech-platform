@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Mic, MicOff, Send, Loader2, PlayCircle, StopCircle, ArrowLeft, CheckCircle2, AlertTriangle, ArrowRight, BarChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 type Message = {
@@ -351,10 +352,29 @@ export default function MockInterviewPage() {
 
           {/* Floating Question Card */}
           <div className="flex-1 flex flex-col items-center justify-center w-full relative">
-            <div className={`w-full max-w-3xl bg-white rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border p-8 md:p-12 transition-all duration-500 ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+            <div className={`w-full max-w-3xl bg-white rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border p-8 md:p-12 transition-all duration-500 text-center flex flex-col items-center ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
               
-              <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-purple-200">
-                <Mic className="w-6 h-6 text-purple-700" />
+              {/* Animated Avatar */}
+              <div className={`relative mb-8 transition-all duration-300 ${isSpeaking ? 'scale-110' : 'scale-100'}`}>
+                <div className={`absolute inset-0 bg-purple-500 rounded-full blur-xl transition-all duration-500 ${isSpeaking ? 'opacity-40 animate-ping' : 'opacity-0'}`}></div>
+                <div className={`absolute inset-0 bg-indigo-500 rounded-full blur-2xl transition-all duration-700 ${isSpeaking ? 'opacity-30 animate-pulse' : 'opacity-0'}`}></div>
+                <div className={`relative z-10 w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 ${isSpeaking ? 'border-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.5)]' : 'border-slate-100 shadow-sm'}`}>
+                  <Image 
+                    src="/images/ai_avatar.png" 
+                    alt="AI Interviewer" 
+                    fill 
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+                {/* Speaking Indicator Badge */}
+                {isSpeaking && (
+                  <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white shadow-md flex items-center gap-1 z-20">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
+                )}
               </div>
 
               {isLoading ? (
