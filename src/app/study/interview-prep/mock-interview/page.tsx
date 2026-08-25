@@ -355,12 +355,9 @@ export default function MockInterviewPage() {
     return (
       <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-900">
         
-        {/* Animated Graphic Avatar Background - Unblurred per request */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-60 md:opacity-80 pointer-events-none">
-          {avatarVariant === 'minion' ? null : (
-            <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-[120%] h-[120%] max-w-none max-h-none opacity-100" />
-          )}
-        </div>
+        {/* Animated Graphic Avatar Background - Removed per user request */}
+        {/* <div className="absolute inset-0 z-0 flex items-center justify-center opacity-60 md:opacity-80 pointer-events-none">
+        </div> */}
 
         <div className="w-full max-w-4xl flex flex-col h-[90vh] max-h-[900px] z-20 mt-10 md:mt-16 relative">
           
@@ -382,11 +379,11 @@ export default function MockInterviewPage() {
             </div>
           </div>
 
-          {/* Floating Question Card (Solid bg to prevent blurring background, plus scrollable) */}
-          <div className="flex-1 flex flex-col items-center justify-center w-full relative min-h-0 pt-20 mt-24 md:mt-32">
+          {/* Floating Question Card (Frosted Glass, Scrollable, Extra Top Padding to avoid Avatar) */}
+          <div className="flex-1 flex flex-col items-center justify-center w-full relative min-h-0 pt-24 mt-24 md:mt-32">
             
             {/* The Top Avatar is now relative to the card container, pulled up with negative margin so it sits on the top edge */}
-            <div className="absolute -top-32 left-1/2 -translate-x-1/2 z-30 w-64 h-64 md:w-80 md:h-80 pointer-events-none">
+            <div className="absolute -top-32 left-1/2 -translate-x-1/2 z-30 w-64 h-64 md:w-72 md:h-72 pointer-events-none">
               {avatarVariant === 'minion' ? (
                 <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
               ) : (
@@ -394,7 +391,7 @@ export default function MockInterviewPage() {
               )}
             </div>
 
-            <div className={`w-full max-w-3xl max-h-full bg-slate-900 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] border border-white/10 p-6 md:p-10 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+            <div className={`w-full max-w-3xl max-h-full bg-white/10 backdrop-blur-2xl rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] border border-white/20 p-6 md:p-10 pt-32 md:pt-40 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
               
               {/* Left Hand Holding Card */}
               <div className="absolute top-1/2 -left-12 -translate-y-1/2 z-40 hidden md:block w-16 h-24">
