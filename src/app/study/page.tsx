@@ -667,9 +667,11 @@ export default function StudyHubPage() {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full mt-6 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/50">
-                    View Full Syllabus
-                  </Button>
+                  <Link href={`/study/practice?topic=${encodeURIComponent(syllabus.title)}`}>
+                    <Button className="w-full mt-6 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/50">
+                      Start Interactive Practice
+                    </Button>
+                  </Link>
                 </div>
               ))}
             </div>
