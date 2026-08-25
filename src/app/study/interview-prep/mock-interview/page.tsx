@@ -78,12 +78,16 @@ export default function MockInterviewPage() {
       if (SpeechRecognition) {
         const rec = new SpeechRecognition();
         rec.continuous = true;
-        rec.interimResults = false;
+        rec.interimResults = true;
         rec.lang = "en-US";
         
         rec.onresult = (event: any) => {
-          const transcript = event.results[event.resultIndex][0].transcript;
-          setTextInput(prev => prev + (prev ? " " : "") + transcript);
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              const transcript = event.results[i][0].transcript;
+              setTextInput(prev => prev + (prev ? " " : "") + transcript);
+            }
+          }
         };
         
         rec.onend = () => {
@@ -358,10 +362,10 @@ export default function MockInterviewPage() {
               <div className={`relative mb-8 transition-all duration-300 ${isSpeaking ? 'scale-110' : 'scale-100'}`}>
                 <div className={`absolute inset-0 bg-purple-500 rounded-full blur-xl transition-all duration-500 ${isSpeaking ? 'opacity-40 animate-ping' : 'opacity-0'}`}></div>
                 <div className={`absolute inset-0 bg-indigo-500 rounded-full blur-2xl transition-all duration-700 ${isSpeaking ? 'opacity-30 animate-pulse' : 'opacity-0'}`}></div>
-                <div className={`relative z-10 w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 ${isSpeaking ? 'border-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.5)]' : 'border-slate-100 shadow-sm'}`}>
+                <div className={`relative z-10 w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 ${isSpeaking ? 'border-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.5)] animate-bounce' : 'border-slate-100 shadow-sm'}`}>
                   <Image 
-                    src="/images/ai_avatar.png" 
-                    alt="AI Interviewer" 
+                    src="/images/talking_tom.jpg" 
+                    alt="Talking Tom Interviewer" 
                     fill 
                     className="object-cover"
                     priority
