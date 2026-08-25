@@ -8,6 +8,7 @@ import Image from "next/image";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 import { AnimatedAvatar } from "@/components/AnimatedAvatar";
 import { Avatar3D } from "@/components/Avatar3D";
+import { AudioMeter } from "@/components/AudioMeter";
 
 type Message = {
   role: "interviewer" | "candidate";
@@ -355,10 +356,6 @@ export default function MockInterviewPage() {
     return (
       <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-900">
         
-        {/* Animated Graphic Avatar Background - Removed per user request */}
-        {/* <div className="absolute inset-0 z-0 flex items-center justify-center opacity-60 md:opacity-80 pointer-events-none">
-        </div> */}
-
         <div className="w-full max-w-4xl flex flex-col min-h-[90vh] z-20 mt-4 md:mt-6 relative">
           
           {/* Header */}
@@ -450,29 +447,34 @@ export default function MockInterviewPage() {
           </div>
 
           {/* Input Area (Glassmorphism) */}
-          <div className="mt-8 mb-4 bg-black/40 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-white/20 flex flex-col md:flex-row gap-2 items-stretch max-w-3xl w-full mx-auto flex-shrink-0">
-            <button 
-              onClick={toggleRecording}
-              className={`md:w-32 flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_20px_rgba(244,63,94,0.5)]' : 'bg-white/10 text-white hover:bg-white/20'}`}
-            >
-              {isRecording ? <MicOff className="w-6 h-6 mb-1" /> : <Mic className="w-6 h-6 mb-1" />}
-              <span className="text-xs font-bold text-center leading-tight">{isRecording ? "Stop\nListening" : "Tap to\nSpeak"}</span>
-            </button>
-            
-            <textarea 
-              value={textInput}
-              onChange={e => setTextInput(e.target.value)}
-              placeholder="Or type your answer here..."
-              className="flex-1 p-4 bg-white/10 text-white placeholder-white/50 border border-white/10 rounded-xl resize-none outline-none focus:ring-2 focus:ring-purple-400 min-h-[80px]"
-            />
-            
-            <button 
-              onClick={handleSendMessage}
-              disabled={!textInput.trim() || isLoading}
-              className="md:w-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 flex items-center justify-center rounded-xl text-white transition-all shadow-md"
-            >
-              <Send className="w-6 h-6" />
-            </button>
+          <div className="mt-4 bg-black/40 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-white/20 flex flex-col max-w-3xl w-full mx-auto flex-shrink-0">
+            <div className="flex flex-col md:flex-row gap-2 items-stretch w-full">
+              <button 
+                onClick={toggleRecording}
+                className={`md:w-32 flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_20px_rgba(244,63,94,0.5)]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              >
+                {isRecording ? <MicOff className="w-6 h-6 mb-1" /> : <Mic className="w-6 h-6 mb-1" />}
+                <span className="text-xs font-bold text-center leading-tight">{isRecording ? "Stop\nListening" : "Tap to\nSpeak"}</span>
+              </button>
+              
+              <div className="flex-1 flex flex-col gap-2">
+                <textarea 
+                  value={textInput}
+                  onChange={e => setTextInput(e.target.value)}
+                  placeholder="Or type your answer here..."
+                  className="flex-1 p-4 bg-white/10 text-white placeholder-white/50 border border-white/10 rounded-xl resize-none outline-none focus:ring-2 focus:ring-purple-400 min-h-[80px]"
+                />
+                <AudioMeter isRecording={isRecording} />
+              </div>
+              
+              <button 
+                onClick={handleSendMessage}
+                disabled={!textInput.trim() || isLoading}
+                className="md:w-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 flex items-center justify-center rounded-xl text-white transition-all shadow-md"
+              >
+                <Send className="w-6 h-6" />
+              </button>
+            </div>
           </div>
 
         </div>
