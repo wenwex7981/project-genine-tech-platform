@@ -4,26 +4,28 @@ import { generateAIResponse, AIModel } from '@/lib/ai-service';
 export async function POST(req: NextRequest) {
   try {
     const { 
-      history, role, company, round, difficulty, jd, resume, preferredModel = 'deepseek' 
+      history, role, company, experienceLevel, round, difficulty, jd, resume, preferredModel = 'deepseek' 
     } = await req.json();
 
     if (!history || !role || !difficulty) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const systemPrompt = `You are an expert, professional, and slightly strict technical interviewer. 
-You are conducting a mock interview for a ${role} position${company ? ` at ${company}` : ''}.
-This is a ${round || 'Technical'} round. The difficulty level is set to ${difficulty}.
+    const systemPrompt = `You are a professional technical interviewer for the position of ${role}${company ? ` at ${company}` : ''}.
+This is the ${round} round, and the target difficulty is ${difficulty}.
+The candidate's experience level is: ${experienceLevel || 'Not specified (assume mid-level)'}.
 
-${jd ? `\nHere is the Job Description:\n${jd}\n` : ''}
-${resume ? `\nHere is the Candidate's Resume:\n${resume}\n` : ''}
+${jd ? `Job Description:\n${jd}\n` : ''}
+${resume ? `Candidate Resume:\n${resume}\n` : ''}
 
-Rules for your responses:
-1. Speak naturally as a human interviewer would.
-2. DO NOT output markdown, bold text, bullet points, or complex formatting. Output ONLY plain conversational text, because your response will be directly fed into a Text-to-Speech engine.
-3. If this is the start of the interview (no prior conversation), introduce yourself briefly and ask the first question. Target the question specifically to the role, difficulty, and provided resume/JD context.
-4. If the candidate just answered, briefly evaluate their answer (e.g. saying "Good point" or "You missed X"), then ask the next relevant follow-up question.
-5. Keep your responses concise (under 4 sentences) so the candidate can answer quickly.`;
+Your instructions:
+1. Act exclusively as the interviewer. Never break character.
+2. If this is the very first message in the history, briefly welcome the candidate to the ${company || ''} ${role} interview and ask the first question.
+3. Keep your responses short and spoken conversational style. Do NOT provide lists or long explanations. Only ask one question at a time.
+4. Base your questions strictly on the specified Experience Level (${experienceLevel || 'mid-level'}). If they are a fresher, ask foundational questions. If they are senior, ask architectural/scaling questions.
+5. You MUST sequentially number your questions starting from "Question 1:", "Question 2:", etc., at the beginning of your response so the candidate knows how far along they are.
+6. React briefly to their previous answer (e.g. "That makes sense", "Good point") before asking the next numbered question.
+7. If they don't know the answer, do not give them the full answer. Give a tiny hint or move on to the next question.`;
 
     // Construct the user prompt from the history
     let prompt = "";

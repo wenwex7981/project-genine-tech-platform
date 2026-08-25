@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 import { AnimatedAvatar } from "@/components/AnimatedAvatar";
+import { Avatar3D } from "@/components/Avatar3D";
 
 type Message = {
   role: "interviewer" | "candidate";
@@ -33,11 +34,13 @@ export default function MockInterviewPage() {
   // Setup State
   const [role, setRole] = useState("Software Engineer");
   const [company, setCompany] = useState("");
+  const [experienceLevel, setExperienceLevel] = useState("");
   const [round, setRound] = useState("Technical");
   const [difficulty, setDifficulty] = useState("Medium");
   const [jd, setJd] = useState("");
   const [resume, setResume] = useState("");
   const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
+  const [avatarVariant, setAvatarVariant] = useState<"robot" | "minion" | "human">("robot");
   
   // Voice State
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -115,9 +118,15 @@ export default function MockInterviewPage() {
     window.speechSynthesis.cancel();
     
     const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Fetch live voices directly from the browser rather than relying on state
+    // This fixes the bug on Windows where the selected voice might not be applied correctly
+    const liveVoices = window.speechSynthesis.getVoices();
     if (selectedVoiceURI) {
-      const selectedVoice = voices.find(v => v.voiceURI === selectedVoiceURI);
-      if (selectedVoice) utterance.voice = selectedVoice;
+      const selectedVoice = liveVoices.find(v => v.voiceURI === selectedVoiceURI);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
     }
 
     utterance.onstart = () => setIsSpeaking(true);
@@ -153,7 +162,7 @@ export default function MockInterviewPage() {
     setUiState("interview");
     setIsLoading(true);
     try {
-      const payload = { history: [], role, company, round, difficulty, jd, resume, preferredModel };
+      const payload = { history: [], role, company, experienceLevel, round, difficulty, jd, resume, preferredModel };
       const response = await fetch('/api/mock-interview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -187,7 +196,7 @@ export default function MockInterviewPage() {
     setIsLoading(true);
     
     try {
-      const payload = { history: updatedMessages, role, company, round, difficulty, jd, resume, preferredModel };
+      const payload = { history: updatedMessages, role, company, experienceLevel, round, difficulty, jd, resume, preferredModel };
       const response = await fetch('/api/mock-interview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -219,7 +228,7 @@ export default function MockInterviewPage() {
     setUiState("report");
     
     try {
-      const payload = { history: messages, role, company, round, difficulty, jd, resume, preferredModel };
+      const payload = { history: messages, role, company, experienceLevel, round, difficulty, jd, resume, preferredModel };
       const response = await fetch('/api/mock-interview/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -262,9 +271,15 @@ export default function MockInterviewPage() {
                   <label className="block text-sm font-bold text-slate-600 mb-1">Job Role</label>
                   <input type="text" value={role} onChange={e => setRole(e.target.value)} className="w-full bg-slate-50 border rounded-xl p-3 text-slate-800 outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Frontend Engineer" />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-600 mb-1">Company (Optional)</label>
-                  <input type="text" value={company} onChange={e => setCompany(e.target.value)} className="w-full bg-slate-50 border rounded-xl p-3 text-slate-800 outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Google, Amazon" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-bold text-slate-600 mb-1">Company (Optional)</label>
+                    <input type="text" value={company} onChange={e => setCompany(e.target.value)} className="w-full bg-slate-50 border rounded-xl p-3 text-slate-800 outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Google" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-600 mb-1">Experience Level</label>
+                    <input type="text" value={experienceLevel} onChange={e => setExperienceLevel(e.target.value)} className="w-full bg-slate-50 border rounded-xl p-3 text-slate-800 outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Fresher, 1 Year" />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -296,6 +311,14 @@ export default function MockInterviewPage() {
                     {voices.map(v => (
                       <option key={v.voiceURI} value={v.voiceURI}>{v.name} ({v.lang})</option>
                     ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-600 mb-1">Avatar Graphic</label>
+                  <select value={avatarVariant} onChange={e => setAvatarVariant(e.target.value as any)} className="w-full bg-slate-50 border rounded-xl p-3 text-slate-800 outline-none focus:ring-2 focus:ring-purple-500">
+                    <option value="robot">High-Tech Robot</option>
+                    <option value="minion">Minion</option>
+                    <option value="human">Human</option>
                   </select>
                 </div>
                 <div>
@@ -332,17 +355,23 @@ export default function MockInterviewPage() {
     return (
       <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-900">
         
-        {/* Animated Graphic Avatar Background */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-40 md:opacity-60 pointer-events-none">
-          <AnimatedAvatar isSpeaking={isSpeaking} className="w-[120%] h-[120%] max-w-none max-h-none opacity-50 blur-[2px]" />
+        {/* Animated Graphic Avatar Background - Unblurred per request */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-60 md:opacity-80 pointer-events-none">
+          {avatarVariant === 'minion' ? (
+            <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
+          ) : (
+            <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-[120%] h-[120%] max-w-none max-h-none opacity-100" />
+          )}
         </div>
         
         {/* We also put a clear animated avatar on top of the card so it feels like a real character */}
         <div className="absolute top-10 left-1/2 -translate-x-1/2 z-0 hidden md:block">
-           <AnimatedAvatar isSpeaking={isSpeaking} className="w-64 h-64 opacity-80 drop-shadow-2xl" />
+          {avatarVariant === 'minion' ? null : (
+            <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-64 h-64 opacity-100 drop-shadow-2xl" />
+          )}
         </div>
 
-        <div className="w-full max-w-4xl flex flex-col h-[85vh] z-10 mt-20 md:mt-0">
+        <div className="w-full max-w-4xl flex flex-col h-[90vh] max-h-[900px] z-10 mt-20 md:mt-0 relative">
           
           {/* Header */}
           <div className="flex justify-between items-center mb-8 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 mt-10 md:mt-0">
@@ -362,14 +391,14 @@ export default function MockInterviewPage() {
             </div>
           </div>
 
-          {/* Floating Question Card (Glassmorphism) */}
-          <div className="flex-1 flex flex-col items-center justify-center w-full relative">
-            <div className={`w-full max-w-3xl bg-white/10 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/20 p-8 md:p-12 transition-all duration-500 text-center flex flex-col items-center ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+          {/* Floating Question Card (Glassmorphism & Scrollable) */}
+          <div className="flex-1 flex flex-col items-center justify-center w-full relative min-h-0">
+            <div className={`w-full max-w-3xl max-h-full bg-white/10 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-white/20 p-6 md:p-10 transition-all duration-500 text-center flex flex-col items-center overflow-hidden ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
               
               {/* Speaking Indicator Badge (Moved to card top) */}
               {isSpeaking && (
-                <div className="absolute -top-4 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full border border-white/20 shadow-md flex items-center gap-2 z-20">
-                  <span>TOM IS SPEAKING</span>
+                <div className="absolute top-0 -translate-y-1/2 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full border border-white/20 shadow-md flex items-center gap-2 z-20">
+                  <span>AI IS SPEAKING</span>
                   <div className="flex gap-1">
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
@@ -385,9 +414,11 @@ export default function MockInterviewPage() {
                   <div className="h-6 bg-white/20 rounded-md w-5/6 animate-pulse"></div>
                 </div>
               ) : (
-                <h3 className="text-2xl md:text-4xl font-bold text-white leading-snug drop-shadow-md">
-                  {currentAIQuestion}
-                </h3>
+                <div className="overflow-y-auto w-full max-h-full px-2 custom-scrollbar">
+                  <h3 className="text-xl md:text-3xl font-bold text-white leading-snug drop-shadow-md py-4">
+                    {currentAIQuestion}
+                  </h3>
+                </div>
               )}
             </div>
           </div>
