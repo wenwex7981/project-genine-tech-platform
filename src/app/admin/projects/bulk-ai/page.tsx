@@ -69,29 +69,53 @@ export default function BulkAIProjectPublisher() {
 
         addLog(`AI successfully generated ${projects.length} projects. Parsing and uploading...`);
 
-        // 2. Prepare for Supabase
-        const dbPayload = projects.map(p => ({
-          title: p.title || "Untitled Project",
-          type: p.type || "Major",
-          sub_domain: p.sub_domain || "",
-          description: p.description || "",
-          features: Array.isArray(p.features) ? p.features : [],
-          education: education,
-          branch: branch,
-          price: price,
-          image_url: null, // AI doesn't generate real images, fallback logic in UI
-        }));
+        // 2. Prepare and filter for Supabase
+        const generatedTitles = projects.map((p: any) => p.title || "Untitled Project");
+        
+        addLog(`Checking database to prevent duplicates...`);
+        const { data: existingProjects, error: fetchError } = await supabase
+          .from("projects")
+          .select("title")
+          .in("title", generatedTitles);
+
+        if (fetchError) throw fetchError;
+
+        const existingTitles = new Set(existingProjects?.map(ep => ep.title) || []);
+        const newProjects = projects.filter((p: any) => !existingTitles.has(p.title));
+        
+        const duplicatesCount = projects.length - newProjects.length;
+        if (duplicatesCount > 0) {
+          addLog(`Skipped ${duplicatesCount} duplicate projects that already exist in the database.`);
+        }
+
+        let dbPayload: any[] = [];
+        if (newProjects.length > 0) {
+          dbPayload = newProjects.map((p: any) => {
+            const projectTitle = p.title || "Untitled Project";
+            const encodedTitle = encodeURIComponent(projectTitle + " technology high quality illustration");
+            return {
+              title: projectTitle,
+              type: p.type || "Major",
+              sub_domain: p.sub_domain || "",
+              description: p.description || "",
+              features: Array.isArray(p.features) ? p.features : [],
+              education: education,
+              branch: branch,
+              price: price,
+              image_url: `https://image.pollinations.ai/prompt/${encodedTitle}?width=800&height=600&nologo=true`, 
+            };
+          });
+        }
 
         // 3. Insert into Supabase
-        const { error } = await supabase.from("projects").insert(dbPayload);
-
-        if (error) {
-          throw error;
+        if (dbPayload.length > 0) {
+          const { error } = await supabase.from("projects").insert(dbPayload);
+          if (error) throw error;
         }
 
         generatedCount += projects.length;
         setProgress({ current: generatedCount, total: totalCount });
-        addLog(`Inserted ${projects.length} projects into database. Total: ${generatedCount}/${totalCount}`);
+        addLog(`Processed ${projects.length} projects (Inserted: ${dbPayload.length}). Total: ${generatedCount}/${totalCount}`);
       }
 
       setStatusText("Complete!");
