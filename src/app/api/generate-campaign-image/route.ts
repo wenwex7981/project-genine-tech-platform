@@ -94,6 +94,31 @@ export async function POST(req: NextRequest) {
       
       buffer = Buffer.from(base64Data, 'base64');
     }
+    else if (imageModel === 'getimg') {
+      const prompt = `A professional digital marketing illustration for a tech product titled "${project.title}". Core themes: ${keywords}. Clean, vibrant aesthetic. No text.`;
+      
+      const res = await fetch('https://api.getimg.ai/v1/essential/text-to-image', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.GETIMG_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt, output_format: "png" })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok || data.error) {
+        throw new Error(data.error?.message || "GetImg API failed to generate image.");
+      }
+      
+      const base64Data = data.image;
+      if (!base64Data) {
+        throw new Error("GetImg failed to return valid image data.");
+      }
+      
+      buffer = Buffer.from(base64Data, 'base64');
+    }
     else {
       throw new Error("Unsupported image model selected.");
     }

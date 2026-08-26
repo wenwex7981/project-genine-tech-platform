@@ -305,6 +305,7 @@ export default function MarketingEngine() {
                         >
                           <option value="dall-e-3">DALL-E 3 (High Quality)</option>
                           <option value="dall-e-2">DALL-E 2 (Fast/Standard)</option>
+                          <option value="getimg">GetImg.ai (Fast Stable Diffusion)</option>
                           <option value="gemini">Imagen 3 (Google Gemini)</option>
                         </select>
                         {!campaign.imageUrl && (
