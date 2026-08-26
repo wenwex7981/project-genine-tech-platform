@@ -102,7 +102,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
           });
           const completion = await openai.chat.completions.create({
             messages: messages as any,
-            model: 'llama-3.1-8b',
+            model: 'gpt-oss-120b',
             temperature,
             max_tokens: maxTokens,
             ...(jsonMode && { response_format: { type: 'json_object' } }),
@@ -138,7 +138,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
           const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
           const completion = await groq.chat.completions.create({
             messages: messages as any,
-            model: 'llama-3.3-70b-versatile',
+            model: 'groq/compound-mini',
             temperature,
             max_tokens: maxTokens,
             ...(jsonMode && { response_format: { type: 'json_object' } }),
@@ -193,7 +193,16 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
 
         // Validate JSON if jsonMode is true
         if (jsonMode) {
-          JSON.parse(content);
+          // Strip markdown code blocks if present
+          let cleanContent = content.trim();
+          if (cleanContent.startsWith('```json')) {
+            cleanContent = cleanContent.replace(/^```json\\n?/, '').replace(/\\n?```$/, '');
+          } else if (cleanContent.startsWith('```')) {
+            cleanContent = cleanContent.replace(/^```\\n?/, '').replace(/\\n?```$/, '');
+          }
+          JSON.parse(cleanContent);
+          // Overwrite the content with the cleaned version so the frontend doesn't have to deal with backticks
+          content = cleanContent;
         }
         console.log(`Success with ${model}`);
         
