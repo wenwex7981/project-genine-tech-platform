@@ -32,7 +32,7 @@ export default function MarketingEngine() {
   }, [activeTab]);
 
   const fetchProjectsAndCampaigns = async () => {
-    const { data: projData } = await supabase.from('projects').select('id, title, domain, created_at').order('created_at', { ascending: false });
+    const { data: projData } = await supabase.from('projects').select('id, title, sub_domain, created_at').order('created_at', { ascending: false });
     const { data: campData } = await supabase.from('project_marketing_campaigns').select('project_id, campaign_data');
     
     if (projData) setProjects(projData);
@@ -328,7 +328,7 @@ export default function MarketingEngine() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-sm truncate">{p.title}</p>
-                        <p className="text-xs text-muted-foreground">{p.domain}</p>
+                        <p className="text-xs text-muted-foreground">{p.sub_domain}</p>
                       </div>
                       <div>
                         {hasCampaign ? (

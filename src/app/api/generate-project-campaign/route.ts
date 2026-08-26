@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     // 2. Generate Marketing Campaign
     const prompt = `Generate a complete marketing campaign for this product:
 Title: ${project.title}
-Domain: ${project.domain}
+Branch: ${project.branch}
 Education: ${project.education}
 Sub-domain: ${project.sub_domain}
 Description: ${project.description}
