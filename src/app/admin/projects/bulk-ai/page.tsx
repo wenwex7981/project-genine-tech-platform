@@ -24,9 +24,9 @@ export default function BulkAIProjectPublisher() {
   const [statusText, setStatusText] = useState("");
   const [logs, setLogs] = useState<string[]>([]);
 
-  // Reduce batch size to 2 to strictly prevent Vercel 10s/60s Serverless Timeouts 
-  // since we are generating massive 10+ paragraph descriptions per project.
-  const BATCH_SIZE = 2;
+  // Reduce batch size to 1 to guarantee we stay under Vercel's strict timeout limit.
+  // We will auto-retry if it fails.
+  const BATCH_SIZE = 1;
 
   const addLog = (msg: string) => {
     setLogs(prev => [...prev, msg]);
@@ -50,86 +50,91 @@ export default function BulkAIProjectPublisher() {
 
         setStatusText(`Generating batch of ${countToFetch} projects via AI...`);
         
-        // 1. Fetch AI projects
-        const res = await fetch("/api/bulk-generate-projects", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic, count: countToFetch, preferredModel }),
-        });
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          let errorMessage = "Failed to fetch from AI";
-          try {
-            const errorJson = JSON.parse(errorText);
-            errorMessage = errorJson.error || errorMessage;
-          } catch (e) {
-            // If Vercel throws a 504 Gateway Timeout or 500 HTML error, it won't be valid JSON
-            errorMessage = `Server Error (${res.status}): ${errorText.substring(0, 100)}...`;
-          }
-          throw new Error(errorMessage);
-        }
-
-        const data = await res.json();
-        const projects = data.projects;
-
-        if (!Array.isArray(projects) || projects.length === 0) {
-          throw new Error("AI returned empty or invalid data format.");
-        }
-
-        addLog(`AI successfully generated ${projects.length} projects. Parsing and uploading...`);
-
-        // 2. Prepare and filter for Supabase
-        const generatedTitles = projects.map((p: any) => p.title || "Untitled Project");
-        
-        addLog(`Checking database to prevent duplicates...`);
-        const { data: existingProjects, error: fetchError } = await supabase
-          .from("projects")
-          .select("title")
-          .in("title", generatedTitles);
-
-        if (fetchError) throw fetchError;
-
-        const existingTitles = new Set(existingProjects?.map(ep => ep.title) || []);
-        const newProjects = projects.filter((p: any) => !existingTitles.has(p.title));
-        
-        const duplicatesCount = projects.length - newProjects.length;
-        if (duplicatesCount > 0) {
-          addLog(`Skipped ${duplicatesCount} duplicate projects that already exist in the database.`);
-        }
-
-        let dbPayload: any[] = [];
-        if (newProjects.length > 0) {
-          dbPayload = newProjects.map((p: any) => {
-            const projectTitle = p.title || "Untitled Project";
-            const encodedTitle = encodeURIComponent(projectTitle + " technology high quality illustration");
-            
-            // Safeguard: Ensure type strictly matches the DB check constraint
-            let normalizedType = p.type === "Mini" ? "Mini" : "Major";
-
-            return {
-              title: projectTitle,
-              type: normalizedType,
-              sub_domain: p.sub_domain || "",
-              description: p.description || "",
-              features: Array.isArray(p.features) ? p.features : [],
-              education: education,
-              branch: branch,
-              price: price,
-              image_url: `https://image.pollinations.ai/prompt/${encodedTitle}?width=800&height=600&nologo=true`, 
-            };
+        try {
+          // 1. Fetch AI projects
+          const res = await fetch("/api/bulk-generate-projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ topic, count: countToFetch, preferredModel }),
           });
-        }
 
-        // 3. Insert into Supabase
-        if (dbPayload.length > 0) {
-          const { error } = await supabase.from("projects").insert(dbPayload);
-          if (error) throw error;
-        }
+          if (!res.ok) {
+            const errorText = await res.text();
+            let errorMessage = "Failed to fetch from AI";
+            try {
+              const errorJson = JSON.parse(errorText);
+              errorMessage = errorJson.error || errorMessage;
+            } catch (e) {
+              errorMessage = `Server Error (${res.status}): ${errorText.substring(0, 100)}...`;
+            }
+            throw new Error(errorMessage);
+          }
 
-        generatedCount += projects.length;
-        setProgress({ current: generatedCount, total: totalCount });
-        addLog(`Processed ${projects.length} projects (Inserted: ${dbPayload.length}). Total: ${generatedCount}/${totalCount}`);
+          const data = await res.json();
+          const projects = data.projects;
+
+          if (!Array.isArray(projects) || projects.length === 0) {
+            throw new Error("AI returned empty or invalid data format.");
+          }
+
+          addLog(`AI successfully generated ${projects.length} projects. Parsing and uploading...`);
+
+          // 2. Prepare and filter for Supabase
+          const generatedTitles = projects.map((p: any) => p.title || "Untitled Project");
+          
+          const { data: existingProjects, error: fetchError } = await supabase
+            .from("projects")
+            .select("title")
+            .in("title", generatedTitles);
+
+          if (fetchError) throw fetchError;
+
+          const existingTitles = new Set(existingProjects?.map(ep => ep.title) || []);
+          const newProjects = projects.filter((p: any) => !existingTitles.has(p.title));
+          
+          const duplicatesCount = projects.length - newProjects.length;
+          if (duplicatesCount > 0) {
+            addLog(`Skipped ${duplicatesCount} duplicate projects that already exist in the database.`);
+          }
+
+          let dbPayload: any[] = [];
+          if (newProjects.length > 0) {
+            dbPayload = newProjects.map((p: any) => {
+              const projectTitle = p.title || "Untitled Project";
+              const encodedTitle = encodeURIComponent(projectTitle + " technology high quality illustration");
+              
+              let normalizedType = p.type === "Mini" ? "Mini" : "Major";
+
+              return {
+                title: projectTitle,
+                type: normalizedType,
+                sub_domain: p.sub_domain || "",
+                description: p.description || "",
+                features: Array.isArray(p.features) ? p.features : [],
+                education: education,
+                branch: branch,
+                price: price,
+                image_url: `https://image.pollinations.ai/prompt/${encodedTitle}?width=800&height=600&nologo=true`, 
+              };
+            });
+          }
+
+          // 3. Insert into Supabase
+          if (dbPayload.length > 0) {
+            const { error } = await supabase.from("projects").insert(dbPayload);
+            if (error) throw error;
+          }
+
+          generatedCount += projects.length;
+          setProgress({ current: generatedCount, total: totalCount });
+          addLog(`Processed ${projects.length} projects (Inserted: ${dbPayload.length}). Total: ${generatedCount}/${totalCount}`);
+          
+        } catch (batchError: any) {
+          console.error("Batch Error:", batchError);
+          addLog(`⚠️ Warning: Batch failed due to AI timeout/error (${batchError.message.substring(0, 50)}). Auto-retrying in 3 seconds...`);
+          // Sleep for 3 seconds before retrying the exact same batch to prevent spamming
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
       }
 
       setStatusText("Complete!");
