@@ -18,6 +18,7 @@ export default function MarketingEngine() {
   const [copiedSection, setCopiedSection] = useState("");
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [imageModel, setImageModel] = useState("dall-e-3");
 
   // Bulk State
   const [projects, setProjects] = useState<any[]>([]);
@@ -101,7 +102,7 @@ export default function MarketingEngine() {
       const res = await fetch("/api/generate-campaign-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId: activeProjectId }),
+        body: JSON.stringify({ projectId: activeProjectId, imageModel: imageModel }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -296,17 +297,28 @@ export default function MarketingEngine() {
                   <div className="bg-white dark:bg-zinc-900 border rounded-2xl overflow-hidden shadow-sm flex flex-col">
                     <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 border-b">
                       <h3 className="font-bold flex items-center gap-2"><ImageIcon className="w-5 h-5 text-indigo-500" /> Visual Assets</h3>
-                      {!campaign.imageUrl && (
-                        <Button 
-                          size="sm" 
-                          onClick={handleGenerateImage} 
-                          disabled={isGeneratingImage}
-                          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                      <div className="flex items-center gap-3">
+                        <select 
+                          value={imageModel} 
+                          onChange={(e) => setImageModel(e.target.value)}
+                          className="text-sm border rounded-md px-2 py-1 bg-white dark:bg-zinc-800"
                         >
-                          {isGeneratingImage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-                          Generate AI Image (DALL-E 3)
-                        </Button>
-                      )}
+                          <option value="dall-e-3">DALL-E 3 (High Quality)</option>
+                          <option value="dall-e-2">DALL-E 2 (Fast/Standard)</option>
+                          <option value="gemini">Imagen 3 (Google Gemini)</option>
+                        </select>
+                        {!campaign.imageUrl && (
+                          <Button 
+                            size="sm" 
+                            onClick={handleGenerateImage} 
+                            disabled={isGeneratingImage}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                          >
+                            {isGeneratingImage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                            Generate AI Image
+                          </Button>
+                        )}
+                      </div>
                     </div>
                     <div className="p-6 flex justify-center bg-gray-100 dark:bg-zinc-950/50">
                       {campaign.imageUrl ? (

@@ -12,7 +12,7 @@ export const maxDuration = 60; // DALL-E generation can take 10-15s
 
 export async function POST(req: NextRequest) {
   try {
-    const { projectId } = await req.json();
+    const { projectId, imageModel = 'dall-e-3' } = await req.json();
 
     if (!projectId) {
       return NextResponse.json({ error: 'Project ID is required' }, { status: 400 });
@@ -43,27 +43,60 @@ export async function POST(req: NextRequest) {
     const campaign = campaignRow.campaign_data;
     const keywords = campaign.seoKeywords || campaign.hashtags || project.title;
 
-    // 3. Generate Image with DALL-E 3
-    const prompt = `A hyper-realistic, professional, modern digital marketing illustration for a tech/educational product titled "${project.title}". Core themes: ${keywords}. Clean, vibrant, tech-startup aesthetic. No text or words in the image.`;
+    // 3. Generate Image based on selected model
+    let buffer: Buffer;
+    
+    if (imageModel === 'dall-e-3' || imageModel === 'dall-e-2') {
+      const prompt = `A hyper-realistic, professional, modern digital marketing illustration for a tech/educational product titled "${project.title}". Core themes: ${keywords}. Clean, vibrant, tech-startup aesthetic. No text or words in the image.`;
+      
+      const response = await openai.images.generate({
+        model: imageModel,
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard",
+      });
 
-    const response = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: prompt,
-      n: 1,
-      size: "1024x1024",
-      quality: "standard",
-    });
+      const imageUrl = response.data?.[0]?.url;
 
-    const imageUrl = response.data?.[0]?.url;
+      if (!imageUrl) {
+        throw new Error("OpenAI failed to return an image URL");
+      }
 
-    if (!imageUrl) {
-      throw new Error("OpenAI failed to return an image URL");
+      // 4. Download Image Buffer
+      const imageRes = await fetch(imageUrl);
+      const arrayBuffer = await imageRes.arrayBuffer();
+      buffer = Buffer.from(arrayBuffer);
+    } 
+    else if (imageModel === 'gemini') {
+      const prompt = `A professional digital marketing illustration for a tech product titled "${project.title}". Core themes: ${keywords}. Clean, vibrant aesthetic. No text.`;
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${process.env.GEMINI_API_KEY}`;
+      
+      const res = await fetch(geminiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          instances: [{ prompt }],
+          parameters: { sampleCount: 1 }
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok || data.error) {
+        throw new Error(data.error?.message || "Gemini API failed to generate image.");
+      }
+      
+      const base64Data = data.predictions?.[0]?.bytesBase64Encoded;
+      if (!base64Data) {
+        throw new Error("Gemini failed to return valid image data.");
+      }
+      
+      buffer = Buffer.from(base64Data, 'base64');
     }
-
-    // 4. Download Image Buffer
-    const imageRes = await fetch(imageUrl);
-    const arrayBuffer = await imageRes.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    else {
+      throw new Error("Unsupported image model selected.");
+    }
 
     // 5. Upload to Cloudflare R2
     const fileName = `campaigns/${projectId}-${Date.now()}.png`;
