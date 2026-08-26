@@ -260,41 +260,39 @@ export default function MarketingEngine() {
 
             {campaign && !isGenerating && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                {renderContentCard("LinkedIn Post", <Briefcase className="w-5 h-5 text-blue-600" />, campaign.linkedin, "linkedin")}
-                {renderContentCard("Twitter Thread", <Send className="w-5 h-5 text-sky-500" />, campaign.twitter, "twitter")}
-                {renderContentCard("Facebook / Instagram Ad", <MessageSquare className="w-5 h-5 text-purple-600" />, campaign.facebookAd, "fb")}
+                {renderContentCard("LinkedIn Post", <Briefcase className="w-5 h-5 text-blue-600" />, campaign.linkedinPost || campaign.linkedin, "linkedin")}
+                {renderContentCard("X (Twitter) Post", <Send className="w-5 h-5 text-sky-500" />, campaign.xPost || campaign.twitter, "twitter")}
+                {renderContentCard("Facebook Post", <MessageSquare className="w-5 h-5 text-purple-600" />, campaign.facebookPost || campaign.facebookAd, "fb")}
+                {campaign.instagramCaption && renderContentCard("Instagram Caption", <Target className="w-5 h-5 text-pink-600" />, campaign.instagramCaption, "insta")}
+                {campaign.whatsappMessage && renderContentCard("WhatsApp Message", <MessageSquare className="w-5 h-5 text-green-500" />, campaign.whatsappMessage, "wa")}
+                {campaign.redditPost && renderContentCard("Reddit Post", <MessageSquare className="w-5 h-5 text-orange-600" />, campaign.redditPost, "reddit")}
                 
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="bg-white dark:bg-zinc-900 border rounded-2xl overflow-hidden shadow-sm flex flex-col">
                     <div className="flex items-center justify-between p-4 bg-gray-50 border-b">
-                      <h3 className="font-bold flex items-center gap-2"><Mail className="w-5 h-5 text-rose-500" /> Email Subject</h3>
-                      <Button variant="ghost" size="icon" onClick={() => copyToClipboard(campaign.emailSubject, "sub")} className="h-8 w-8">
-                        {copiedSection === "sub" ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                      </Button>
+                      <h3 className="font-bold flex items-center gap-2"><Mail className="w-5 h-5 text-rose-500" /> SEO / Meta</h3>
                     </div>
-                    <div className="p-6 font-medium text-zinc-800 dark:text-zinc-200">{campaign.emailSubject}</div>
+                    <div className="p-6 font-medium text-zinc-800 dark:text-zinc-200 text-sm space-y-4">
+                      <div><strong className="text-orange-600">Title:</strong> {campaign.seoTitle || campaign.headline}</div>
+                      <div><strong className="text-orange-600">Meta:</strong> {campaign.seoMetaDescription || campaign.valueProposition}</div>
+                    </div>
                   </div>
                   
                   <div className="bg-white dark:bg-zinc-900 border rounded-2xl overflow-hidden shadow-sm flex flex-col">
                     <div className="flex items-center justify-between p-4 bg-gray-50 border-b">
-                      <h3 className="font-bold flex items-center gap-2"><Hash className="w-5 h-5 text-emerald-500" /> SEO Tags</h3>
-                      <Button variant="ghost" size="icon" onClick={() => copyToClipboard(campaign.seoTags?.join(", ") || "", "seo")} className="h-8 w-8">
+                      <h3 className="font-bold flex items-center gap-2"><Hash className="w-5 h-5 text-emerald-500" /> Keywords & Tags</h3>
+                      <Button variant="ghost" size="icon" onClick={() => copyToClipboard(campaign.seoKeywords || campaign.hashtags || "", "seo")} className="h-8 w-8">
                         {copiedSection === "seo" ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                       </Button>
                     </div>
-                    <div className="p-6">
-                      <div className="flex flex-wrap gap-2">
-                        {campaign.seoTags?.map((tag: string, i: number) => (
-                          <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-md">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                    <div className="p-6 text-sm">
+                      <div className="text-emerald-700 font-medium">{campaign.seoKeywords}</div>
+                      <div className="mt-2 text-blue-600 font-medium">{campaign.hashtags}</div>
                     </div>
                   </div>
                 </div>
 
-                {renderContentCard("Email Newsletter Body", <Mail className="w-5 h-5 text-rose-500" />, campaign.emailBody, "email")}
+                {(campaign.emailBody || campaign.benefits) && renderContentCard("Benefits / Body", <Mail className="w-5 h-5 text-rose-500" />, campaign.emailBody || campaign.benefits, "email")}
               </div>
             )}
           </div>
