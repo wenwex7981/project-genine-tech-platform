@@ -93,9 +93,13 @@ export default function BulkAIProjectPublisher() {
           dbPayload = newProjects.map((p: any) => {
             const projectTitle = p.title || "Untitled Project";
             const encodedTitle = encodeURIComponent(projectTitle + " technology high quality illustration");
+            
+            // Safeguard: Ensure type strictly matches the DB check constraint
+            let normalizedType = p.type === "Mini" ? "Mini" : "Major";
+
             return {
               title: projectTitle,
-              type: p.type || "Major",
+              type: normalizedType,
               sub_domain: p.sub_domain || "",
               description: p.description || "",
               features: Array.isArray(p.features) ? p.features : [],

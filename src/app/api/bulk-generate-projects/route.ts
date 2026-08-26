@@ -16,7 +16,7 @@ Your task is to generate ${count} unique, high-quality final year engineering pr
 You MUST return ONLY a JSON array of objects. Do not include markdown formatting or extra text outside the JSON.
 Each object in the array must have the following fields:
 - "title" (string): A catchy, academic project title. It MUST explicitly sound like a "Final Year Project" or include the term if appropriate.
-- "type" (string): Always "Major" or "Final Year".
+- "type" (string): Either "Major" or "Mini". (DO NOT use any other string).
 - "sub_domain" (string): E.g., AI/ML, Blockchain, Web Dev, IoT.
 - "description" (string): A very lengthy, detailed markdown-formatted description (at least 8 to 12 paragraphs). 
   It MUST include the following specific markdown headers:
