@@ -32,14 +32,27 @@ export default function MarketingEngine() {
   }, [activeTab]);
 
   const fetchProjectsAndCampaigns = async () => {
-    const { data: projData } = await supabase.from('projects').select('id, title, sub_domain, created_at').order('created_at', { ascending: false });
-    const { data: campData } = await supabase.from('project_marketing_campaigns').select('project_id, campaign_data');
+    setBulkLogs(prev => [...prev, "Fetching projects from database..."]);
     
-    if (projData) setProjects(projData);
-    if (campData) {
+    const { data: projData, error: projError } = await supabase.from('projects').select('id, title, sub_domain, created_at').order('created_at', { ascending: false });
+    const { data: campData, error: campError } = await supabase.from('project_marketing_campaigns').select('project_id, campaign_data');
+    
+    if (projError) {
+      console.error("ProjError:", projError);
+      setBulkLogs(prev => [...prev, `❌ Error fetching projects: ${projError.message}`]);
+    } else if (projData) {
+      setProjects(projData);
+      setBulkLogs(prev => [...prev, `✅ Loaded ${projData.length} projects.`]);
+    }
+
+    if (campError) {
+      console.error("CampError:", campError);
+      setBulkLogs(prev => [...prev, `⚠️ Warning: Campaigns table error (Did you run the SQL?): ${campError.message}`]);
+    } else if (campData) {
       const campMap: Record<string, any> = {};
       campData.forEach(c => campMap[c.project_id] = c.campaign_data);
       setCampaigns(campMap);
+      setBulkLogs(prev => [...prev, `✅ Loaded ${campData.length} existing campaigns.`]);
     }
   };
 
