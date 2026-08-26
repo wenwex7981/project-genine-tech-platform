@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Megaphone, Copy, CheckCircle2, Loader2, Target, Hash, Mail, Linkedin, Twitter, MessageSquare } from "lucide-react";
+import { Megaphone, Copy, CheckCircle2, Loader2, Target, Hash, Mail, Briefcase, Send, MessageSquare } from "lucide-react";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 
 export default function MarketingEngine() {
@@ -164,8 +164,8 @@ export default function MarketingEngine() {
 
           {campaign && !isGenerating && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              {renderContentCard("LinkedIn Post", <Linkedin className="w-5 h-5 text-blue-600" />, campaign.linkedin, "linkedin")}
-              {renderContentCard("Twitter Thread", <Twitter className="w-5 h-5 text-sky-500" />, campaign.twitter, "twitter")}
+              {renderContentCard("LinkedIn Post", <Briefcase className="w-5 h-5 text-blue-600" />, campaign.linkedin, "linkedin")}
+              {renderContentCard("Twitter Thread", <Send className="w-5 h-5 text-sky-500" />, campaign.twitter, "twitter")}
               {renderContentCard("Facebook / Instagram Ad", <MessageSquare className="w-5 h-5 text-purple-600" />, campaign.facebookAd, "fb")}
               
               <div className="grid sm:grid-cols-2 gap-6">
