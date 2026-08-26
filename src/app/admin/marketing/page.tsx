@@ -120,7 +120,7 @@ export default function MarketingEngine() {
                 <label className="text-sm font-semibold mb-2 block text-zinc-800 dark:text-zinc-200">
                   Select AI Brain
                 </label>
-                <ModelSelector selectedModel={preferredModel} onSelect={setPreferredModel} />
+                <ModelSelector value={preferredModel} onChange={setPreferredModel} className="w-full" />
               </div>
 
               {error && (
