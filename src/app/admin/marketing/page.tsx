@@ -345,7 +345,18 @@ export default function MarketingEngine() {
                       </div>
                       <div>
                         {hasCampaign ? (
-                          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Done</span>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 text-xs bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCampaign(campaigns[p.id]);
+                              setActiveTab("manual");
+                            }}
+                          >
+                            View
+                          </Button>
                         ) : (
                           <span className="px-2 py-1 bg-zinc-100 text-zinc-600 text-xs font-bold rounded-md">Missing</span>
                         )}
