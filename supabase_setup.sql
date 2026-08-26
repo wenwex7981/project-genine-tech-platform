@@ -61,3 +61,19 @@ ON public.project_requests FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Allow public read access on project_requests" 
 ON public.project_requests FOR SELECT USING (true);
+
+-- 6. Project Marketing Campaigns (Automated Bulk Engine)
+CREATE TABLE IF NOT EXISTS public.project_marketing_campaigns (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    project_id UUID REFERENCES public.projects(id) ON DELETE CASCADE,
+    campaign_data JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.project_marketing_campaigns ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public insert on project_marketing_campaigns" 
+ON public.project_marketing_campaigns FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow public read access on project_marketing_campaigns" 
+ON public.project_marketing_campaigns FOR SELECT USING (true);
