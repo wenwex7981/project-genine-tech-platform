@@ -8,9 +8,10 @@ interface ModelSelectorProps {
   value: AIModel;
   onChange: (value: AIModel) => void;
   className?: string;
+  disabled?: boolean;
 }
 
-export function ModelSelector({ value, onChange, className = "" }: ModelSelectorProps) {
+export function ModelSelector({ value, onChange, className = "", disabled = false }: ModelSelectorProps) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <BrainCircuit className="h-4 w-4 text-muted-foreground" />
@@ -18,7 +19,8 @@ export function ModelSelector({ value, onChange, className = "" }: ModelSelector
       <select 
         value={value} 
         onChange={(e) => onChange(e.target.value as AIModel)}
-        className="w-[180px] h-9 text-xs px-2 py-1 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+        disabled={disabled}
+        className="w-[180px] h-9 text-xs px-2 py-1 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <option value="gemini">Gemini 3.6 Flash</option>
         <option value="deepseek">DeepSeek V3 (Primary)</option>
