@@ -19,7 +19,7 @@ export default function ProjectsHub() {
 
   useEffect(() => {
     async function fetchProjects() {
-      const { data, error } = await supabase.from('projects').select('*');
+      const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
       if (data) setProjects(data);
       setIsLoading(false);
     }
@@ -30,8 +30,8 @@ export default function ProjectsHub() {
   const domains = ["All", "Artificial Intelligence", "Machine Learning", "IoT", "Blockchain", "Cybersecurity", "App Development"];
 
   const filteredProjects = projects.filter(project => {
-    const matchDegree = selectedDegree === "All" || project.education === selectedDegree;
-    const matchDomain = selectedDomain === "All" || project.sub_domain === selectedDomain;
+    const matchDegree = selectedDegree === "All" || (project.education && project.education.toLowerCase().includes(selectedDegree.toLowerCase()));
+    const matchDomain = selectedDomain === "All" || (project.sub_domain && project.sub_domain.toLowerCase().includes(selectedDomain.toLowerCase()));
     return matchDegree && matchDomain;
   });
 
