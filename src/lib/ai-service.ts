@@ -176,11 +176,11 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         else if (model === 'meta' && process.env.META_API_KEY) {
           const openai = new OpenAI({ 
             apiKey: process.env.META_API_KEY,
-            baseURL: 'https://api.llama-api.com' // Adjust if user is using a different Meta/Llama API provider
+            baseURL: process.env.META_API_BASE_URL || 'https://api.llama-api.com'
           });
           const completion = await openai.chat.completions.create({
             messages: messages as any,
-            model: 'llama3.1-405b',
+            model: process.env.META_API_MODEL || 'llama3.1-405b',
             temperature,
             max_tokens: maxTokens,
             ...(jsonMode && { response_format: { type: 'json_object' } }),
