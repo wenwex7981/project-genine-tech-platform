@@ -26,6 +26,9 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
     jsonMode = false,
   } = options;
 
+  const ATTEMPT_TIMEOUT_MS = 8000; // 8 seconds before falling back
+
+
   const fallbackOrder: AIModel[] = [preferredModel];
   const allModels: AIModel[] = ['gemini', 'deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq', 'kimi', 'xai'];
   
@@ -48,134 +51,146 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
       console.log(`Attempting AI generation with model: ${model}`);
       let content = '';
 
-      if (model === 'gemini' && process.env.GEMINI_API_KEY) {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        let geminiSystem = systemPrompt;
-        if (jsonMode) {
-          geminiSystem += "\n\nIMPORTANT: Return ONLY raw, valid JSON. No markdown backticks (```json), no extra text. Just the JSON object or array.";
-        }
-        const response = await ai.models.generateContent({
-          model: 'gemini-3.6-flash',
-          contents: prompt,
-          config: {
-            systemInstruction: geminiSystem,
-            temperature,
-            responseMimeType: jsonMode ? "application/json" : "text/plain",
+      const aiCallPromise = (async () => {
+        let generatedContent = '';
+        if (model === 'gemini' && process.env.GEMINI_API_KEY) {
+          const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+          let geminiSystem = systemPrompt;
+          if (jsonMode) {
+            geminiSystem += "\\n\\nIMPORTANT: Return ONLY raw, valid JSON. No markdown backticks (```json), no extra text. Just the JSON object or array.";
           }
-        });
-        content = response.text || '';
-      }
-      else if (model === 'deepseek' && process.env.DEEPSEEK_API_KEY) {
-        // DeepSeek is OpenAI compatible
-        const openai = new OpenAI({ 
-          apiKey: process.env.DEEPSEEK_API_KEY,
-          baseURL: 'https://api.deepseek.com/v1' 
-        });
-        const completion = await openai.chat.completions.create({
-          messages: messages as any,
-          model: 'deepseek-chat',
-          temperature,
-          max_tokens: maxTokens,
-          ...(jsonMode && { response_format: { type: 'json_object' } }),
-        });
-        content = completion.choices[0]?.message?.content || '';
-      } 
-      else if (model === 'openai' && process.env.OPENAI_API_KEY) {
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-        const completion = await openai.chat.completions.create({
-          messages: messages as any,
-          model: 'gpt-4o-mini',
-          temperature,
-          max_tokens: maxTokens,
-          ...(jsonMode && { response_format: { type: 'json_object' } }),
-        });
-        content = completion.choices[0]?.message?.content || '';
-      }
-      else if (model === 'cerebras' && process.env.CEREBRAS_API_KEY) {
-        const openai = new OpenAI({ 
-          apiKey: process.env.CEREBRAS_API_KEY,
-          baseURL: 'https://api.cerebras.ai/v1' 
-        });
-        const completion = await openai.chat.completions.create({
-          messages: messages as any,
-          model: 'llama3.1-8b',
-          temperature,
-          max_tokens: maxTokens,
-          ...(jsonMode && { response_format: { type: 'json_object' } }),
-        });
-        content = completion.choices[0]?.message?.content || '';
-      }
-      else if (model === 'fireworks' && process.env.FIREWORKS_API_KEY) {
-        const openai = new OpenAI({ 
-          apiKey: process.env.FIREWORKS_API_KEY,
-          baseURL: 'https://api.fireworks.ai/inference/v1' 
-        });
-        const completion = await openai.chat.completions.create({
-          messages: messages as any,
-          model: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
-          temperature,
-          max_tokens: maxTokens,
-          ...(jsonMode && { response_format: { type: 'json_object' } }),
-        });
-        content = completion.choices[0]?.message?.content || '';
-      }
-      else if (model === 'mistral' && process.env.MISTRAL_API_KEY) {
-        const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
-        const completion = await mistral.chat.complete({
-          messages: messages as any,
-          model: 'mistral-large-latest',
-          temperature,
-          maxTokens: maxTokens,
-          ...(jsonMode && { responseFormat: { type: 'json_object' } }),
-        });
-        content = (completion.choices?.[0]?.message?.content as string) || '';
-      }
-      else if (model === 'groq' && process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'dummy_key_for_build') {
-        const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-        const completion = await groq.chat.completions.create({
-          messages: messages as any,
-          model: 'mixtral-8x7b-32768',
-          temperature,
-          max_tokens: maxTokens,
-          ...(jsonMode && { response_format: { type: 'json_object' } }),
-        });
-        content = completion.choices[0]?.message?.content || '';
-      }
-      else if (model === 'kimi' && process.env.KIMI_API_KEY) {
-        const openai = new OpenAI({ 
-          apiKey: process.env.KIMI_API_KEY,
-          baseURL: 'https://api.moonshot.cn/v1' 
-        });
-        const completion = await openai.chat.completions.create({
-          messages: messages as any,
-          model: 'moonshot-v1-8k',
-          temperature,
-          max_tokens: maxTokens,
-          ...(jsonMode && { response_format: { type: 'json_object' } }),
-        });
-        content = completion.choices[0]?.message?.content || '';
-      }
-      else if (model === 'xai' && process.env.XAI_API_KEY) {
-        const openai = new OpenAI({ 
-          apiKey: process.env.XAI_API_KEY,
-          baseURL: 'https://api.x.ai/v1' 
-        });
-        const completion = await openai.chat.completions.create({
-          messages: messages as any,
-          model: 'grok-2-latest',
-          temperature,
-          max_tokens: maxTokens,
-          ...(jsonMode && { response_format: { type: 'json_object' } }),
-        });
-        content = completion.choices[0]?.message?.content || '';
-      }
-      else {
-        console.warn(`Skipping ${model} - No API key found`);
-        errors.push(`${model}: No API key configured`);
-        continue; // Skip if no API key
-      }
+          const response = await ai.models.generateContent({
+            model: 'gemini-3.6-flash',
+            contents: prompt,
+            config: {
+              systemInstruction: geminiSystem,
+              temperature,
+              responseMimeType: jsonMode ? "application/json" : "text/plain",
+            }
+          });
+          generatedContent = response.text || '';
+        }
+        else if (model === 'deepseek' && process.env.DEEPSEEK_API_KEY) {
+          const openai = new OpenAI({ 
+            apiKey: process.env.DEEPSEEK_API_KEY,
+            baseURL: 'https://api.deepseek.com/v1' 
+          });
+          const completion = await openai.chat.completions.create({
+            messages: messages as any,
+            model: 'deepseek-chat',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        } 
+        else if (model === 'openai' && process.env.OPENAI_API_KEY) {
+          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          const completion = await openai.chat.completions.create({
+            messages: messages as any,
+            model: 'gpt-4o-mini',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        }
+        else if (model === 'cerebras' && process.env.CEREBRAS_API_KEY) {
+          const openai = new OpenAI({ 
+            apiKey: process.env.CEREBRAS_API_KEY,
+            baseURL: 'https://api.cerebras.ai/v1' 
+          });
+          const completion = await openai.chat.completions.create({
+            messages: messages as any,
+            model: 'llama3.1-8b',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        }
+        else if (model === 'fireworks' && process.env.FIREWORKS_API_KEY) {
+          const openai = new OpenAI({ 
+            apiKey: process.env.FIREWORKS_API_KEY,
+            baseURL: 'https://api.fireworks.ai/inference/v1' 
+          });
+          const completion = await openai.chat.completions.create({
+            messages: messages as any,
+            model: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        }
+        else if (model === 'mistral' && process.env.MISTRAL_API_KEY) {
+          const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+          const completion = await mistral.chat.complete({
+            messages: messages as any,
+            model: 'mistral-large-latest',
+            temperature,
+            maxTokens: maxTokens,
+            ...(jsonMode && { responseFormat: { type: 'json_object' } }),
+          });
+          generatedContent = (completion.choices?.[0]?.message?.content as string) || '';
+        }
+        else if (model === 'groq' && process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'dummy_key_for_build') {
+          const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+          const completion = await groq.chat.completions.create({
+            messages: messages as any,
+            model: 'mixtral-8x7b-32768',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        }
+        else if (model === 'kimi' && process.env.KIMI_API_KEY) {
+          const openai = new OpenAI({ 
+            apiKey: process.env.KIMI_API_KEY,
+            baseURL: 'https://api.moonshot.cn/v1' 
+          });
+          const completion = await openai.chat.completions.create({
+            messages: messages as any,
+            model: 'moonshot-v1-8k',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        }
+        else if (model === 'xai' && process.env.XAI_API_KEY) {
+          const openai = new OpenAI({ 
+            apiKey: process.env.XAI_API_KEY,
+            baseURL: 'https://api.x.ai/v1' 
+          });
+          const completion = await openai.chat.completions.create({
+            messages: messages as any,
+            model: 'grok-2-latest',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        }
+        else {
+          console.warn(`Skipping ${model} - No API key found`);
+          errors.push(`${model}: No API key configured`);
+          throw new Error('NO_API_KEY');
+        }
+        return generatedContent;
+      })();
 
-      if (content) {
+      const timeoutPromise = new Promise<string>((_, reject) => {
+        setTimeout(() => reject(new Error('AI Provider Request Timed Out (> 8 seconds)')), ATTEMPT_TIMEOUT_MS);
+      });
+
+      content = await Promise.race([
+        aiCallPromise,
+        timeoutPromise
+      ]);
+
+
         // Validate JSON if jsonMode is true
         if (jsonMode) {
           JSON.parse(content);
@@ -200,8 +215,6 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
         });
 
         return content;
-      }
-
     } catch (error: any) {
       console.warn(`Model ${model} failed:`, error.message);
       errors.push(`${model} error: ${error.message}`);
