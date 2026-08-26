@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 
 import { GoogleGenAI } from '@google/genai';
 
-export type AIModel = 'gemini' | 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai';
+export type AIModel = 'gemini' | 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai' | 'meta';
 
 interface AIGenerateOptions {
   prompt: string;
@@ -30,7 +30,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
 
 
   const fallbackOrder: AIModel[] = [preferredModel];
-  const allModels: AIModel[] = ['gemini', 'deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq', 'kimi', 'xai'];
+  const allModels: AIModel[] = ['gemini', 'deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq', 'kimi', 'xai', 'meta'];
   
   // Add remaining models as fallbacks in order
   for (const m of allModels) {
@@ -166,7 +166,21 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
           });
           const completion = await openai.chat.completions.create({
             messages: messages as any,
-            model: 'grok-beta',
+            model: 'grok-2-latest',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        }
+        else if (model === 'meta' && process.env.META_API_KEY) {
+          const openai = new OpenAI({ 
+            apiKey: process.env.META_API_KEY,
+            baseURL: 'https://api.llama-api.com' // Adjust if user is using a different Meta/Llama API provider
+          });
+          const completion = await openai.chat.completions.create({
+            messages: messages as any,
+            model: 'llama3.1-405b',
             temperature,
             max_tokens: maxTokens,
             ...(jsonMode && { response_format: { type: 'json_object' } }),
