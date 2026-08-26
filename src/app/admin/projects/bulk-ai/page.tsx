@@ -24,7 +24,9 @@ export default function BulkAIProjectPublisher() {
   const [statusText, setStatusText] = useState("");
   const [logs, setLogs] = useState<string[]>([]);
 
-  const BATCH_SIZE = 10;
+  // Reduce batch size to 2 to strictly prevent Vercel 10s/60s Serverless Timeouts 
+  // since we are generating massive 10+ paragraph descriptions per project.
+  const BATCH_SIZE = 2;
 
   const addLog = (msg: string) => {
     setLogs(prev => [...prev, msg]);
@@ -56,8 +58,16 @@ export default function BulkAIProjectPublisher() {
         });
 
         if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.error || "Failed to fetch from AI");
+          const errorText = await res.text();
+          let errorMessage = "Failed to fetch from AI";
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.error || errorMessage;
+          } catch (e) {
+            // If Vercel throws a 504 Gateway Timeout or 500 HTML error, it won't be valid JSON
+            errorMessage = `Server Error (${res.status}): ${errorText.substring(0, 100)}...`;
+          }
+          throw new Error(errorMessage);
         }
 
         const data = await res.json();
