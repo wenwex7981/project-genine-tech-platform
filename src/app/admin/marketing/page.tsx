@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Megaphone, Copy, CheckCircle2, Loader2, Target, Hash, Mail, Briefcase, Send, MessageSquare, PlayCircle, Database, CheckSquare, Settings } from "lucide-react";
+import { Megaphone, Copy, CheckCircle2, Loader2, Target, Hash, Mail, Briefcase, Send, MessageSquare, PlayCircle, Database, CheckSquare, Settings, Image as ImageIcon, Sparkles } from "lucide-react";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 import { supabase } from "@/lib/supabase";
 
@@ -16,6 +16,8 @@ export default function MarketingEngine() {
   const [campaign, setCampaign] = useState<any>(null);
   const [error, setError] = useState("");
   const [copiedSection, setCopiedSection] = useState("");
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Bulk State
   const [projects, setProjects] = useState<any[]>([]);
@@ -89,6 +91,36 @@ export default function MarketingEngine() {
       setError(err.message || "An unexpected error occurred.");
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleGenerateImage = async () => {
+    if (!activeProjectId) return;
+    setIsGeneratingImage(true);
+    try {
+      const res = await fetch("/api/generate-campaign-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectId: activeProjectId }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to generate image");
+      }
+      const data = await res.json();
+      
+      // Update local state
+      setCampaign(data.campaign);
+      
+      // Update bulk campaigns state if it exists
+      setCampaigns(prev => ({
+        ...prev,
+        [activeProjectId]: data.campaign
+      }));
+    } catch (err: any) {
+      alert("Image Generation Error: " + err.message);
+    } finally {
+      setIsGeneratingImage(false);
     }
   };
 
@@ -260,6 +292,40 @@ export default function MarketingEngine() {
 
             {campaign && !isGenerating && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {activeProjectId && (
+                  <div className="bg-white dark:bg-zinc-900 border rounded-2xl overflow-hidden shadow-sm flex flex-col">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 border-b">
+                      <h3 className="font-bold flex items-center gap-2"><ImageIcon className="w-5 h-5 text-indigo-500" /> Visual Assets</h3>
+                      {!campaign.imageUrl && (
+                        <Button 
+                          size="sm" 
+                          onClick={handleGenerateImage} 
+                          disabled={isGeneratingImage}
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                        >
+                          {isGeneratingImage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                          Generate AI Image (DALL-E 3)
+                        </Button>
+                      )}
+                    </div>
+                    <div className="p-6 flex justify-center bg-gray-100 dark:bg-zinc-950/50">
+                      {campaign.imageUrl ? (
+                        <div className="relative group">
+                          <img src={campaign.imageUrl} alt="Campaign Asset" className="rounded-xl shadow-md max-h-[400px] w-auto object-cover border" />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
+                            <Button variant="secondary" onClick={() => window.open(campaign.imageUrl, "_blank")}><Copy className="w-4 h-4 mr-2"/> Open Original</Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="py-12 text-zinc-400 text-center flex flex-col items-center">
+                          <ImageIcon className="w-12 h-12 mb-3 opacity-20" />
+                          <p>No image generated for this campaign yet.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {renderContentCard("LinkedIn Post", <Briefcase className="w-5 h-5 text-blue-600" />, campaign.linkedinPost || campaign.linkedin, "linkedin")}
                 {renderContentCard("X (Twitter) Post", <Send className="w-5 h-5 text-sky-500" />, campaign.xPost || campaign.twitter, "twitter")}
                 {renderContentCard("Facebook Post", <MessageSquare className="w-5 h-5 text-purple-600" />, campaign.facebookPost || campaign.facebookAd, "fb")}
@@ -349,6 +415,7 @@ export default function MarketingEngine() {
                             className="h-7 text-xs bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
                             onClick={(e) => {
                               e.stopPropagation();
+                              setActiveProjectId(p.id);
                               setCampaign(campaigns[p.id]);
                               setActiveTab("manual");
                             }}
