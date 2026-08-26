@@ -28,6 +28,19 @@ export default function BulkAIProjectPublisher() {
   // We will auto-retry if it fails.
   const BATCH_SIZE = 1;
 
+  const UNSPLASH_IMAGES = [
+    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop"
+  ];
+
   const addLog = (msg: string) => {
     setLogs(prev => [...prev, msg]);
   };
@@ -101,9 +114,9 @@ export default function BulkAIProjectPublisher() {
           if (newProjects.length > 0) {
             dbPayload = newProjects.map((p: any) => {
               const projectTitle = p.title || "Untitled Project";
-              const encodedTitle = encodeURIComponent(projectTitle + " technology high quality illustration");
               
               let normalizedType = p.type === "Mini" ? "Mini" : "Major";
+              const randomImage = UNSPLASH_IMAGES[Math.floor(Math.random() * UNSPLASH_IMAGES.length)];
 
               return {
                 title: projectTitle,
@@ -114,7 +127,7 @@ export default function BulkAIProjectPublisher() {
                 education: education,
                 branch: branch,
                 price: price,
-                image_url: `https://image.pollinations.ai/prompt/${encodedTitle}?width=800&height=600&nologo=true`, 
+                image_url: randomImage, 
               };
             });
           }
