@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 
 import { GoogleGenAI } from '@google/genai';
 
-export type AIModel = 'gemini' | 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai' | 'meta';
+export type AIModel = 'gemini' | 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai' | 'meta' | 'openrouter';
 
 interface AIGenerateOptions {
   prompt: string;
@@ -30,7 +30,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
 
 
   const fallbackOrder: AIModel[] = [preferredModel];
-  const allModels: AIModel[] = ['gemini', 'deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq', 'kimi', 'xai', 'meta'];
+  const allModels: AIModel[] = ['gemini', 'deepseek', 'cerebras', 'fireworks', 'openai', 'mistral', 'groq', 'kimi', 'xai', 'meta', 'openrouter'];
   
   // Add remaining models as fallbacks in order
   for (const m of allModels) {
@@ -181,6 +181,20 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
           const completion = await openai.chat.completions.create({
             messages: messages as any,
             model: process.env.META_API_MODEL || 'llama3.1-405b',
+            temperature,
+            max_tokens: maxTokens,
+            ...(jsonMode && { response_format: { type: 'json_object' } }),
+          });
+          generatedContent = completion.choices[0]?.message?.content || '';
+        }
+        else if (model === 'openrouter' && process.env.OPENROUTER_API_KEY) {
+          const openai = new OpenAI({ 
+            apiKey: process.env.OPENROUTER_API_KEY,
+            baseURL: 'https://openrouter.ai/api/v1' 
+          });
+          const completion = await openai.chat.completions.create({
+            messages: messages as any,
+            model: process.env.OPENROUTER_MODEL || 'mistralai/mistral-7b-instruct:free',
             temperature,
             max_tokens: maxTokens,
             ...(jsonMode && { response_format: { type: 'json_object' } }),

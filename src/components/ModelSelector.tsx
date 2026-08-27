@@ -2,7 +2,7 @@
 
 import { BrainCircuit } from "lucide-react";
 
-export type AIModel = 'gemini' | 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai' | 'meta';
+export type AIModel = 'gemini' | 'deepseek' | 'openai' | 'mistral' | 'groq' | 'cerebras' | 'fireworks' | 'kimi' | 'xai' | 'meta' | 'openrouter';
 
 interface ModelSelectorProps {
   value: AIModel;
@@ -32,6 +32,7 @@ export function ModelSelector({ value, onChange, className = "", disabled = fals
         <option value="kimi">Kimi AI (Moonshot)</option>
         <option value="xai">xAI (Grok)</option>
         <option value="meta">Meta Llama (Llama 3.1 405B)</option>
+        <option value="openrouter">OpenRouter (Auto)</option>
       </select>
     </div>
   );

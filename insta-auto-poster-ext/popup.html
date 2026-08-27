@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Insta AI Poster</title>
+  <style>
+    body { font-family: Arial, sans-serif; width: 350px; padding: 15px; margin: 0; background: #fafafa; }
+    h2 { font-size: 18px; color: #262626; margin-top: 0; margin-bottom: 20px; text-align: center; }
+    .input-group { margin-bottom: 15px; }
+    label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #262626; }
+    input[type="file"] { display: block; width: 100%; font-size: 13px; padding: 5px; border: 1px solid #dbdbdb; border-radius: 4px; background: white; }
+    textarea { width: 100%; height: 80px; padding: 8px; font-size: 13px; border: 1px solid #dbdbdb; border-radius: 4px; resize: none; box-sizing: border-box; font-family: inherit; }
+    button { width: 100%; padding: 10px; background-color: #0095f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; margin-top: 10px; transition: 0.2s; }
+    button:hover { background-color: #1877f2; }
+    button:disabled { background-color: #b2dffc; cursor: not-allowed; }
+    #status { margin-top: 15px; font-size: 12px; color: #555; text-align: center; min-height: 15px; }
+  </style>
+</head>
+<body>
+  <h2>AI Insta Poster 🚀</h2>
+  
+  <div class="input-group">
+    <label for="imageUpload">1. Select an Image</label>
+    <input type="file" id="imageUpload" accept="image/jpeg,image/png,image/heic,image/heif" />
+  </div>
+  
+  <div class="input-group">
+    <label for="topicText">2. What should the caption be about?</label>
+    <textarea id="topicText" placeholder="e.g., A promotional post for our new ATS Resume Builder tool"></textarea>
+  </div>
+  
+  <button id="postBtn">Generate & Auto-Post</button>
+  
+  <div id="status"></div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
