@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { 
   GraduationCap, BookOpen, Map, CheckCircle, CheckCircle2, Loader2, 
   FileText, Lock, ShoppingCart, ExternalLink, Target, Cpu, Layers, 
-  Download, Copy, BarChart3, Search, Sparkles, Filter, Mic
+  Download, Copy, BarChart3, Search, Sparkles, Filter, Mic, MessageCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
@@ -293,6 +293,11 @@ export default function StudyHubPage() {
             <Link href="/study/interview-prep/communication-builder">
               <Button size="lg" className="h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all flex items-center gap-2 md:gap-3">
                 <Sparkles className="h-4 w-4 md:h-5 md:w-5" /> Self-Intro Builder
+              </Button>
+            </Link>
+            <Link href="/study/interview-prep/english-friend">
+              <Button size="lg" className="h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-xl shadow-emerald-900/50 hover:scale-105 transition-all flex items-center gap-2 md:gap-3">
+                <MessageCircle className="h-4 w-4 md:h-5 md:w-5" /> English Friend Alex
               </Button>
             </Link>
           </div>

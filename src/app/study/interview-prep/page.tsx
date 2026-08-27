@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Loader2, FileText, Lock, ShoppingCart, CheckCircle, ExternalLink, Eye, Mic, Sparkles } from "lucide-react";
+import { Loader2, FileText, Lock, ShoppingCart, CheckCircle, ExternalLink, Eye, Mic, Sparkles, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
@@ -101,7 +101,12 @@ export default function InterviewPrepPage() {
             </Link>
             <Link href="/study/interview-prep/communication-builder">
               <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all">
-                <Sparkles className="mr-2 h-5 w-5" /> Self-Intro & Communication Builder
+                <Sparkles className="mr-2 h-5 w-5" /> Self-Intro Builder
+              </Button>
+            </Link>
+            <Link href="/study/interview-prep/english-friend">
+              <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-xl shadow-emerald-900/50 hover:scale-105 transition-all">
+                <MessageCircle className="mr-2 h-5 w-5" /> AI English Friend "Alex"
               </Button>
             </Link>
           </div>
