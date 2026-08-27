@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-});
+import { generateAIContent } from '@/lib/ai-service';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,19 +9,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'user',
-          content: `Write a short, engaging Instagram caption with emojis and hashtags about: ${topic}. Do not include quotes around the caption.`
-        }
-      ],
+    const systemPrompt = "You are an expert social media manager. Write a short, engaging Instagram caption with emojis and hashtags based on the user's topic. Do not include quotes around the caption.";
+    
+    // Using the robust AI service which will automatically fallback to other providers
+    // if one (like OpenAI) hits a quota limit.
+    const caption = await generateAIContent(topic, systemPrompt, { 
+      fallbackMode: true,
+      temperature: 0.7 
     });
 
-    const caption = completion.choices[0]?.message?.content?.trim() || "";
-
-    return NextResponse.json({ caption }, {
+    return NextResponse.json({ caption: caption.trim() }, {
       headers: {
         'Access-Control-Allow-Origin': '*', // Allow Chrome Extension to hit this API
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
