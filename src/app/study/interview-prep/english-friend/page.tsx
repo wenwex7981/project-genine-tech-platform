@@ -75,6 +75,21 @@ export default function EnglishFriendPage() {
     };
   }, [isWebcamOn, uiState]);
 
+  // Lock body scroll when in chat mode so only message list scrolls
+  useEffect(() => {
+    if (uiState === "chat") {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [uiState]);
+
   useEffect(() => {
     if (videoRef.current && webcamStream) videoRef.current.srcObject = webcamStream;
   }, [webcamStream]);
@@ -308,7 +323,7 @@ export default function EnglishFriendPage() {
   const topicLabel = CONVERSATION_TOPICS.find(t => t.id === selectedTopic)?.label || "Chat";
 
   return (
-    <div className="h-screen bg-slate-950 flex flex-col overflow-hidden" style={{ position: 'fixed', inset: 0 }}>
+    <div className="bg-slate-950 flex flex-col overflow-hidden" style={{ height: 'calc(100vh - 4rem)' }}>
       {/* Header */}
       <div className="bg-slate-900/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -562,15 +577,15 @@ export default function EnglishFriendPage() {
 
         {/* Webcam Column */}
         {isWebcamOn && (
-          <div className="w-72 xl:w-80 border-l border-white/10 bg-slate-900 flex flex-col p-4 gap-3 flex-shrink-0">
-            <div className="flex items-center justify-between">
+          <div className="w-64 xl:w-72 border-l border-white/10 bg-slate-900 flex flex-col p-3 gap-3 flex-shrink-0 overflow-hidden">
+            <div className="flex items-center justify-between flex-shrink-0">
               <span className="text-xs font-bold text-slate-400 flex items-center gap-2"><Video className="w-3.5 h-3.5 text-emerald-400" /> Your Camera</span>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                 <span className="text-[10px] text-slate-400 font-mono font-bold">LIVE</span>
               </div>
             </div>
-            <div className="flex-1 bg-black rounded-2xl overflow-hidden border border-white/5 relative flex items-center justify-center min-h-[200px]">
+            <div className="bg-black rounded-2xl overflow-hidden border border-white/5 relative flex items-center justify-center flex-shrink-0" style={{ height: '180px' }}>
               {webcamStream ? (
                 <video ref={videoRef} autoPlay playsInline muted style={{ transform: "scaleX(-1)" }} className="w-full h-full object-cover" />
               ) : (
@@ -580,8 +595,8 @@ export default function EnglishFriendPage() {
                 </div>
               )}
             </div>
-            <div className="bg-slate-800/60 rounded-xl p-3 text-xs text-slate-400 border border-slate-700">
-              💡 <strong className="text-slate-300">Tip:</strong> Practice looking at the camera when you speak. It helps build confidence for real interviews!
+            <div className="bg-slate-800/60 rounded-xl p-3 text-xs text-slate-400 border border-slate-700 flex-shrink-0">
+              💡 <strong className="text-slate-300">Tip:</strong> Look at the camera when you speak — builds real confidence!
             </div>
           </div>
         )}
