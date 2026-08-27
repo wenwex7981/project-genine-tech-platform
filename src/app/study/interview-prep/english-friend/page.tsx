@@ -308,7 +308,7 @@ export default function EnglishFriendPage() {
   const topicLabel = CONVERSATION_TOPICS.find(t => t.id === selectedTopic)?.label || "Chat";
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col overflow-hidden">
+    <div className="h-screen bg-slate-950 flex flex-col overflow-hidden" style={{ position: 'fixed', inset: 0 }}>
       {/* Header */}
       <div className="bg-slate-900/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -344,10 +344,104 @@ export default function EnglishFriendPage() {
       </div>
 
       {/* Main Area */}
-      <div className={`flex-1 flex ${isWebcamOn ? "flex-row" : "flex-col"} overflow-hidden`}>
+      <div className="flex-1 flex flex-row overflow-hidden min-h-0">
+
+        {/* LEFT: Robot Avatar Panel */}
+        <div className="hidden md:flex w-56 xl:w-64 flex-shrink-0 flex-col items-center justify-center gap-5 bg-gradient-to-b from-slate-900 to-slate-950 border-r border-white/10 p-5">
+          {/* Robot SVG Avatar */}
+          <div className="relative">
+            {/* Glow ring when speaking */}
+            <div className={`absolute inset-0 rounded-full transition-all duration-500 ${isSpeaking ? "scale-125 opacity-100" : "scale-100 opacity-0"}`}
+              style={{ background: "radial-gradient(circle, rgba(52,211,153,0.35) 0%, transparent 70%)" }}
+            />
+            <div className={`relative w-28 h-28 rounded-full flex items-center justify-center border-4 transition-all duration-300 shadow-2xl ${
+              isSpeaking
+                ? "border-emerald-400 shadow-emerald-400/40 bg-gradient-to-br from-emerald-900 to-teal-900"
+                : isLoading
+                ? "border-amber-400/60 shadow-amber-400/20 bg-gradient-to-br from-slate-800 to-slate-900"
+                : "border-emerald-600/50 shadow-emerald-500/10 bg-gradient-to-br from-slate-800 to-slate-900"
+            }`}>
+              {/* Robot Face SVG */}
+              <svg viewBox="0 0 80 80" className="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Head */}
+                <rect x="15" y="18" width="50" height="40" rx="10" fill="#1e293b" stroke="#34d399" strokeWidth="2"/>
+                {/* Antenna */}
+                <line x1="40" y1="18" x2="40" y2="8" stroke="#34d399" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="40" cy="6" r="3" fill={isSpeaking ? "#34d399" : "#475569"} className={isSpeaking ? "" : ""}/>
+                {/* Eyes */}
+                <rect x="22" y="28" width="12" height="8" rx="3" fill={isSpeaking ? "#34d399" : "#64748b"} className="transition-colors duration-300"/>
+                <rect x="46" y="28" width="12" height="8" rx="3" fill={isSpeaking ? "#34d399" : "#64748b"} className="transition-colors duration-300"/>
+                {/* Eye shine */}
+                <rect x="25" y="30" width="3" height="2" rx="1" fill="white" opacity="0.5"/>
+                <rect x="49" y="30" width="3" height="2" rx="1" fill="white" opacity="0.5"/>
+                {/* Mouth - animates when speaking */}
+                {isSpeaking ? (
+                  <>
+                    <rect x="28" y="44" width="24" height="6" rx="3" fill="#34d399" opacity="0.9"/>
+                    <rect x="31" y="45" width="4" height="4" rx="1" fill="#065f46"/>
+                    <rect x="38" y="45" width="4" height="4" rx="1" fill="#065f46"/>
+                    <rect x="45" y="45" width="4" height="4" rx="1" fill="#065f46"/>
+                  </>
+                ) : (
+                  <rect x="28" y="46" width="24" height="4" rx="2" fill="#475569"/>
+                )}
+                {/* Cheeks */}
+                <circle cx="20" cy="40" r="4" fill="#be185d" opacity="0.3"/>
+                <circle cx="60" cy="40" r="4" fill="#be185d" opacity="0.3"/>
+                {/* Ears / side bolts */}
+                <rect x="11" y="30" width="4" height="10" rx="2" fill="#334155" stroke="#475569" strokeWidth="1"/>
+                <rect x="65" y="30" width="4" height="10" rx="2" fill="#334155" stroke="#475569" strokeWidth="1"/>
+              </svg>
+            </div>
+            {/* Speaking wave rings */}
+            {isSpeaking && (
+              <>
+                <div className="absolute inset-0 rounded-full border-2 border-emerald-400/40 animate-ping" style={{ animationDuration: "1s" }} />
+                <div className="absolute inset-0 rounded-full border border-emerald-400/20 animate-ping" style={{ animationDuration: "1.5s" }} />
+              </>
+            )}
+          </div>
+
+          {/* Status label */}
+          <div className="text-center space-y-1">
+            <p className="text-white font-black text-sm tracking-wide">Alex</p>
+            <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all ${
+              isSpeaking
+                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                : isLoading
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                : "bg-slate-700/60 text-slate-400 border border-slate-600"
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                isSpeaking ? "bg-emerald-400 animate-pulse" : isLoading ? "bg-amber-400 animate-pulse" : "bg-slate-500"
+              }`} />
+              {isSpeaking ? "Speaking" : isLoading ? "Thinking..." : "Listening"}
+            </div>
+          </div>
+
+          {/* Sound waves visual */}
+          <div className="flex items-center gap-1 h-8">
+            {[1,2,3,4,5].map(i => (
+              <div
+                key={i}
+                className={`w-1 rounded-full transition-all duration-150 ${
+                  isSpeaking ? "bg-emerald-400" : "bg-slate-600"
+                }`}
+                style={{
+                  height: isSpeaking ? `${Math.random() * 20 + 6}px` : "6px",
+                  animationDelay: `${i * 100}ms`,
+                }}
+              />
+            ))}
+          </div>
+
+          <p className="text-[10px] text-slate-500 text-center leading-relaxed px-2">
+            Your English AI friend who corrects you like a real buddy 💚
+          </p>
+        </div>
 
         {/* Chat Column */}
-        <div className={`${isWebcamOn ? "flex-1" : "w-full"} flex flex-col overflow-hidden`}>
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
