@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Mic, MicOff, Send, Loader2, ArrowLeft, Volume2, StopCircle, Sparkles, RefreshCw, Video, VideoOff, CheckCircle, AlertCircle, MessageCircle, Zap, Heart } from "lucide-react";
+import { Mic, MicOff, Send, Loader2, ArrowLeft, Volume2, StopCircle, Sparkles, RefreshCw, Video, VideoOff, CheckCircle, MessageCircle, Zap, Heart } from "lucide-react";
 import Link from "next/link";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 import { AnimatedAvatar } from "@/components/AnimatedAvatar";
@@ -39,12 +39,29 @@ export default function EnglishFriendPage() {
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [availableVoices, setAvailableVoices] = useState<{ voice: SpeechSynthesisVoice; label: string; region: string; gender: string }[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [showVoicePicker, setShowVoicePicker] = useState(false);
   const [isWebcamOn, setIsWebcamOn] = useState(false);
   const [webcamStream, setWebcamStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const webcamStreamRef = useRef<MediaStream | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const classifyVoice = (v: SpeechSynthesisVoice) => {
+    const lang = v.lang.toLowerCase();
+    const name = v.name.toLowerCase();
+    let region = "Other";
+    if (lang.includes("-in") || name.includes("india") || name.includes("heera") || name.includes("ravi") || name.includes("kalpana")) region = "🇮🇳 India";
+    else if (lang.includes("-gb") || lang.includes("-uk") || name.includes("hazel") || name.includes("george") || name.includes("susan") || name.includes("ryan")) region = "🇬🇧 UK";
+    else if (lang.startsWith("en-us") || name.includes("zira") || name.includes("david") || name.includes("mark") || name.includes("jenny") || name.includes("aria") || lang === "en") region = "🇺🇸 US";
+    const femaleKeys = ["female","woman","zira","heera","kalpana","hazel","susan","jenny","aria","sonia","libby","maisie","samantha","victoria","natasha","clara"];
+    const maleKeys = ["male","man","david","ravi","george","mark","ryan","thomas","reed","guy"];
+    let gender = "";
+    if (femaleKeys.some(k => name.includes(k))) gender = "♀ Female";
+    else if (maleKeys.some(k => name.includes(k))) gender = "♂ Male";
+    return { voice: v, label: v.name.replace("Microsoft ","").replace(" Online (Natural)","").replace("Google ",""), region, gender };
+  };
 
   useEffect(() => {
     webcamStreamRef.current = webcamStream;
@@ -95,16 +112,20 @@ export default function EnglishFriendPage() {
   }, [webcamStream]);
 
   useEffect(() => {
-    // Load voices
     const loadVoices = () => {
-      const v = window.speechSynthesis.getVoices();
-      setVoices(v);
+      const all = window.speechSynthesis.getVoices();
+      const english = all.filter(v => v.lang.startsWith("en") || v.lang === "en");
+      const classified = english.map(classifyVoice);
+      setAvailableVoices(classified);
+      if (!selectedVoice && classified.length > 0) {
+        const preferred = classified.find(v => v.region.includes("India")) || classified.find(v => v.region.includes("US")) || classified[0];
+        if (preferred) setSelectedVoice(preferred.voice);
+      }
     };
     loadVoices();
     if (typeof window !== "undefined" && window.speechSynthesis.onvoiceschanged !== undefined) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
     }
-
     // Speech recognition
     if (typeof window !== "undefined") {
       const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -112,12 +133,10 @@ export default function EnglishFriendPage() {
         const rec = new SR();
         rec.continuous = true;
         rec.interimResults = false;
-        rec.lang = "en-US";
+        rec.lang = "en-IN";
         rec.onresult = (e: any) => {
           for (let i = e.resultIndex; i < e.results.length; ++i) {
-            if (e.results[i].isFinal) {
-              setTextInput(prev => prev + (prev ? " " : "") + e.results[i][0].transcript);
-            }
+            if (e.results[i].isFinal) setTextInput(prev => prev + (prev ? " " : "") + e.results[i][0].transcript);
           }
         };
         rec.onend = () => setIsRecording(false);
@@ -136,9 +155,7 @@ export default function EnglishFriendPage() {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    const liveVoices = window.speechSynthesis.getVoices();
-    const preferred = liveVoices.find(v => v.lang === "en-US" && v.name.includes("Google")) || liveVoices.find(v => v.lang.startsWith("en"));
-    if (preferred) utterance.voice = preferred;
+    if (selectedVoice) utterance.voice = selectedVoice;
     utterance.rate = 0.95;
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
@@ -313,6 +330,17 @@ export default function EnglishFriendPage() {
               <Sparkles className="w-5 h-5" /> Start Chatting with Alex!
             </button>
 
+            {/* English Course Banner */}
+            <Link href="/study/interview-prep/english-course"
+              className="w-full flex items-center gap-4 p-4 bg-indigo-950/50 border border-indigo-500/30 rounded-2xl hover:bg-indigo-950/70 transition group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-xl flex-shrink-0">🎓</div>
+              <div className="flex-1 text-left">
+                <p className="font-black text-white text-sm group-hover:text-indigo-300 transition">Learn English from Scratch — Course by Alex</p>
+                <p className="text-xs text-slate-400">Tenses · Vocabulary · Sentence Structure · Fluency · 40 lessons</p>
+              </div>
+              <span className="text-indigo-400 font-bold text-xs flex-shrink-0">Start →</span>
+            </Link>
+
           </div>
         </div>
       </div>
@@ -339,12 +367,50 @@ export default function EnglishFriendPage() {
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           {isSpeaking && (
             <button onClick={stopSpeaking} className="px-3 py-2 bg-rose-600/80 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 hover:bg-rose-600 transition">
               <StopCircle className="w-4 h-4" /> Stop
             </button>
           )}
+          {/* Voice Picker */}
+          <div className="relative">
+            <button onClick={() => setShowVoicePicker(!showVoicePicker)}
+              className="px-3 py-2 bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg hover:bg-slate-700 transition flex items-center gap-1.5">
+              <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden sm:inline max-w-[100px] truncate">{selectedVoice ? selectedVoice.name.replace("Microsoft ","").replace(" Online (Natural)","").replace("Google ","") : "Voice"}</span>
+            </button>
+            {showVoicePicker && (
+              <div className="absolute right-0 top-full mt-2 w-72 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                <div className="p-3 border-b border-slate-700 flex justify-between">
+                  <p className="text-xs font-black text-white">🎙️ Alex's Voice</p>
+                  <button onClick={() => setShowVoicePicker(false)} className="text-slate-500 hover:text-white text-xs">✕</button>
+                </div>
+                <div className="overflow-y-auto max-h-64">
+                  {["🇮🇳 India","🇺🇸 US","🇬🇧 UK","Other"].map(region => {
+                    const regionVoices = availableVoices.filter(v => v.region === region);
+                    if (regionVoices.length === 0) return null;
+                    return (
+                      <div key={region}>
+                        <div className="px-3 py-1.5 bg-slate-800/60 text-[10px] font-black text-slate-400 uppercase tracking-widest">{region} English</div>
+                        {regionVoices.map((v, i) => (
+                          <button key={i} onClick={() => { setSelectedVoice(v.voice); setShowVoicePicker(false); }}
+                            className={`w-full px-3 py-2.5 text-left flex justify-between items-center hover:bg-slate-800 transition ${selectedVoice?.name === v.voice.name ? "bg-emerald-900/30 border-l-2 border-emerald-400" : ""}`}>
+                            <span className="text-sm text-white font-medium">{v.label}</span>
+                            <div className="flex items-center gap-1.5">
+                              {v.gender && <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${v.gender.includes("Female") ? "bg-pink-900/60 text-pink-300" : "bg-blue-900/60 text-blue-300"}`}>{v.gender}</span>}
+                              {selectedVoice?.name === v.voice.name && <CheckCircle className="w-4 h-4 text-emerald-400" />}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })}
+                  {availableVoices.length === 0 && <p className="p-4 text-xs text-slate-400 text-center">No English voices found. Try Chrome or Edge.</p>}
+                </div>
+              </div>
+            )}
+          </div>
           <button
             onClick={() => setIsWebcamOn(!isWebcamOn)}
             className={`px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition border ${isWebcamOn ? "bg-emerald-600 text-white border-emerald-500" : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"}`}
