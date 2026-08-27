@@ -15,34 +15,52 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+async function waitForElement(selector, timeout = 10000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    const el = document.querySelector(selector);
+    if (el) return el;
+    await sleep(500);
+  }
+  return null;
+}
+
 function findButtonByText(text) {
   const elements = Array.from(document.querySelectorAll('div[role="button"], button, a[role="link"]'));
   return elements.find(el => el.textContent.trim().toLowerCase() === text.toLowerCase());
+}
+
+function findSidebarCreateButton() {
+  // Instagram has a span with text "Create" in the sidebar
+  const spans = Array.from(document.querySelectorAll('span'));
+  const createSpan = spans.find(span => span.textContent.trim() === 'Create');
+  if (createSpan) {
+    return createSpan.closest('a') || createSpan.closest('div[role="button"]') || createSpan.closest('div[role="link"]') || createSpan.parentElement;
+  }
+  // Fallback to SVG
+  const createSvg = document.querySelector('svg[aria-label="New post"], svg[aria-label="Create"]');
+  if (createSvg) {
+    return createSvg.closest('a') || createSvg.closest('div[role="button"]') || createSvg.closest('div[role="link"]') || createSvg.parentElement;
+  }
+  return null;
 }
 
 async function startAutomation(base64Data, caption, filename, filetype) {
   console.log("Instagram Auto-Poster: Starting automation...");
   
   // Step 1: Find and click the "Create" (New post) button
-  const createSvg = document.querySelector('svg[aria-label="New post"]');
-  if (!createSvg) {
-    alert("Insta Auto Poster: Could not find the 'New post' button. Make sure you are on the desktop version of Instagram and logged in.");
+  const createBtn = findSidebarCreateButton();
+  if (!createBtn) {
+    alert("Insta Auto Poster: Could not find the 'Create' button. Make sure you are on the desktop version of Instagram and logged in.");
     return;
   }
   
-  // Find the closest clickable container
-  let createBtn = createSvg.closest('a') || createSvg.closest('div[role="button"]') || createSvg.closest('div[role="link"]');
-  if (createBtn) {
-    createBtn.click();
-  } else {
-    createSvg.parentElement.click();
-  }
-  
+  createBtn.click();
   console.log("Clicked Create");
-  await sleep(2500); // Wait for modal to open
   
-  // Step 2: Upload the image
-  const fileInput = document.querySelector('input[type="file"][accept*="image"]');
+  // Step 2: Wait for modal and Upload the image
+  // Instead of a hard sleep, wait up to 10 seconds for the file input to exist in the DOM
+  const fileInput = await waitForElement('input[type="file"]');
   if (!fileInput) {
     alert("Insta Auto Poster: Could not find file input. Please try again.");
     return;

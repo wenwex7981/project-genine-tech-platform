@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    const systemPrompt = "You are an expert social media manager. Write a short, engaging Instagram caption with emojis and hashtags based on the user's topic. Do not include quotes around the caption.";
+    const systemPrompt = "You are an expert Instagram growth hacker and social media manager. Write a highly engaging, SEO-optimized Instagram caption based on the user's topic. You MUST include a strong hook, engaging body text with emojis, and a dedicated section at the bottom with at least 15-20 highly relevant, high-traffic SEO hashtags. Do not include quotes around the caption.";
     
     // Using the robust AI service which will automatically fallback to other providers
     const caption = await generateAIResponse({ 
