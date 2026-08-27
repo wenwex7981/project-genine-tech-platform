@@ -165,7 +165,8 @@ export default function Home() {
       />
       <AuthRedirect />
       {/* ── HERO SECTION ── */}
-      <section className="relative w-full min-h-[92vh] flex flex-col justify-center bg-zinc-950 bg-[url('/images/hero-bg.png')] bg-cover bg-center bg-no-repeat overflow-hidden text-white">
+      <section className="relative w-full min-h-[92vh] flex flex-col justify-center bg-zinc-950 overflow-hidden text-white">
+        <Image src="/images/hero-bg.png" alt="Hero Background" fill priority className="object-cover object-center opacity-40 z-0" sizes="100vw" />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-zinc-950/75 backdrop-blur-[2px] z-0"></div>
         
@@ -245,7 +246,7 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {SERVICES.map((svc) => (
-              <div key={svc.title} className="group relative bg-white dark:bg-zinc-900 rounded-3xl border hover:border-primary/40 shadow-sm hover:shadow-2xl transition-all duration-300 p-8 flex flex-col overflow-hidden">
+              <Link href="/login" key={svc.title} className="group relative bg-white dark:bg-zinc-900 rounded-3xl border hover:border-primary/40 shadow-sm hover:shadow-2xl transition-all duration-300 p-8 flex flex-col overflow-hidden">
                 <div className="absolute top-5 right-5">
                   <span className={`text-xs font-bold px-3 py-1 rounded-full ${badgeColorMap[svc.badge]}`}>{svc.badge}</span>
                 </div>
@@ -262,12 +263,12 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/login">
-                  <Button className="w-full gap-2" variant="outline">
-                    Get Started <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
+                <div className="mt-auto">
+                  <div className="w-full gap-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    Get Started <ChevronRight className="h-4 w-4 ml-2" />
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -352,20 +353,18 @@ export default function Home() {
               { name: "Project Documentation", price: "₹149", desc: "Instant IEEE/SRS documentation templates." },
               { name: "Final Year Projects", price: "From ₹6,000", desc: "Complete source code, setup, and support." },
             ].map((plan) => (
-              <div key={plan.name} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
+              <Link href="/services" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
                 <div>
-                  <h3 className="font-bold text-xl mb-2">{plan.name}</h3>
+                  <h3 className="font-bold text-xl mb-2 group-hover:text-primary transition-colors">{plan.name}</h3>
                   <p className="text-muted-foreground text-sm mb-6 h-10">{plan.desc}</p>
                 </div>
                 <div>
                   <div className="text-3xl font-black text-primary mb-6">{plan.price}</div>
-                  <Link href="/services">
-                    <Button variant="outline" className="w-full h-12 font-bold rounded-xl hover:bg-primary hover:text-white transition-colors">
-                      View Details
-                    </Button>
-                  </Link>
+                  <div className="w-full gap-2 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-primary hover:text-white h-12 px-4 py-2">
+                    View Details
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

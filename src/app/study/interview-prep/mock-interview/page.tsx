@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Mic, MicOff, Send, Loader2, PlayCircle, StopCircle, ArrowLeft, CheckCircle2, AlertTriangle, ArrowRight, BarChart, Volume2 } from "lucide-react";
+import { Mic, MicOff, Send, Loader2, PlayCircle, StopCircle, ArrowLeft, CheckCircle2, AlertTriangle, ArrowRight, BarChart, Volume2, Video, VideoOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -61,6 +61,55 @@ export default function MockInterviewPage() {
 
   // Report State
   const [report, setReport] = useState<EvaluationReport | null>(null);
+
+  // Webcam State
+  const [isWebcamOn, setIsWebcamOn] = useState(false);
+  const [webcamStream, setWebcamStream] = useState<MediaStream | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const webcamStreamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    webcamStreamRef.current = webcamStream;
+  }, [webcamStream]);
+
+  const startWebcam = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      setWebcamStream(stream);
+    } catch (err) {
+      console.error("Error accessing webcam:", err);
+      alert("Could not access webcam. Please check your camera permissions.");
+      setIsWebcamOn(false);
+    }
+  };
+
+  const stopWebcam = () => {
+    if (webcamStreamRef.current) {
+      webcamStreamRef.current.getTracks().forEach(track => track.stop());
+      setWebcamStream(null);
+    }
+  };
+
+  // Manage webcam lifecycle based on state changes
+  useEffect(() => {
+    if (uiState === "interview" && isWebcamOn) {
+      startWebcam();
+    } else {
+      stopWebcam();
+    }
+    return () => {
+      if (webcamStreamRef.current) {
+        webcamStreamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [isWebcamOn, uiState]);
+
+  // Bind webcam stream to video element
+  useEffect(() => {
+    if (videoRef.current && webcamStream) {
+      videoRef.current.srcObject = webcamStream;
+    }
+  }, [webcamStream]);
 
   // Timer Ref & Logic
   const textInputRef = useRef(textInput);
@@ -384,6 +433,25 @@ export default function MockInterviewPage() {
                   <label className="block text-sm font-bold text-slate-600 mb-1">AI Engine</label>
                   <ModelSelector value={preferredModel} onChange={setPreferredModel} />
                 </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-600 mb-2">Webcam Mode</label>
+                  <div className="flex gap-2">
+                    <button 
+                      type="button"
+                      onClick={() => setIsWebcamOn(true)}
+                      className={`flex-1 py-2.5 px-4 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-2 ${isWebcamOn ? 'bg-purple-600 text-white border-purple-600 shadow-md' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'}`}
+                    >
+                      <Video className="w-4 h-4" /> Camera On
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setIsWebcamOn(false)}
+                      className={`flex-1 py-2.5 px-4 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-2 ${!isWebcamOn ? 'bg-purple-600 text-white border-purple-600 shadow-md' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'}`}
+                    >
+                      <VideoOff className="w-4 h-4" /> Camera Off
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -414,7 +482,7 @@ export default function MockInterviewPage() {
     return (
       <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-900">
         
-        <div className="w-full max-w-4xl flex flex-col min-h-[90vh] z-20 mt-4 md:mt-6 relative">
+        <div className={`w-full ${isWebcamOn ? 'max-w-6xl' : 'max-w-4xl'} flex flex-col min-h-[90vh] z-20 mt-4 md:mt-6 relative`}>
           
           {/* Header */}
           <div className="flex justify-between items-center mb-4 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 mt-4 md:mt-0 flex-shrink-0">
@@ -445,102 +513,151 @@ export default function MockInterviewPage() {
                   <StopCircle className="w-4 h-4" /> <span className="hidden md:inline">Stop</span>
                 </button>
               )}
-              <button onClick={() => endInterview()} className="px-3 md:px-4 py-2 bg-white/20 text-white rounded-lg text-sm font-bold hover:bg-white/30 transition backdrop-blur-md border border-white/20">
+
+              <button 
+                onClick={() => setIsWebcamOn(!isWebcamOn)} 
+                className={`px-3 md:px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition backdrop-blur-md border ${isWebcamOn ? 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-500 shadow-lg' : 'bg-purple-600 hover:bg-purple-500 text-white border-purple-400 shadow-lg'}`}
+                title={isWebcamOn ? "Turn Camera Off" : "Turn Camera On"}
+              >
+                {isWebcamOn ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4 text-purple-200" />}
+                <span>{isWebcamOn ? "Camera On" : "Camera Off"}</span>
+              </button>
+
+              <button onClick={() => endInterview()} className="px-3 md:px-4 py-2 bg-white/25 text-white border-2 border-white text-white rounded-lg text-sm font-bold hover:bg-white/35 hover:scale-105 transition backdrop-blur-md">
                 End & Evaluate
               </button>
             </div>
           </div>
 
-          {/* Floating Question Card Section */}
-          <div className="flex-1 flex flex-col items-center justify-start w-full min-h-0 pt-4 md:pt-10">
+          {/* Main Interview Workspace Grid */}
+          <div className={`flex-1 grid grid-cols-1 ${isWebcamOn ? 'lg:grid-cols-2' : ''} gap-6 w-full min-h-0`}>
             
-            {/* The Top Avatar - structurally placed completely above the card with no negative margin */}
-            <div className="z-30 w-48 h-48 md:w-64 md:h-64 mb-0 pointer-events-none drop-shadow-2xl flex-shrink-0">
-              {avatarVariant === 'minion' ? (
-                <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
-              ) : (
-                <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-full h-full" />
-              )}
+            {/* Left Column: AI Interviewer */}
+            <div className="flex flex-col h-full justify-between gap-4">
+              {/* Floating Question Card Section */}
+              <div className="flex-1 flex flex-col items-center justify-start w-full min-h-0 pt-4 md:pt-10">
+                
+                {/* The Top Avatar - structurally placed completely above the card with no negative margin */}
+                <div className="z-30 w-48 h-48 md:w-64 md:h-64 mb-0 pointer-events-none drop-shadow-2xl flex-shrink-0">
+                  {avatarVariant === 'minion' ? (
+                    <Avatar3D isSpeaking={isSpeaking} modelUrl="/models/Minion.glb" />
+                  ) : (
+                    <AnimatedAvatar isSpeaking={isSpeaking} variant={avatarVariant} className="w-full h-full" />
+                  )}
+                </div>
+
+                {/* Solid White Card */}
+                <div className={`w-full max-w-3xl max-h-[40vh] bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 md:p-10 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative z-20 flex-1 min-h-0 ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
+                  
+                  {/* Left Hand Holding Card */}
+                  <div className="absolute top-1/2 -left-10 md:-left-12 -translate-y-1/2 z-40 hidden md:block w-14 h-20 md:w-16 md:h-24">
+                    <svg viewBox="0 0 100 150" className="w-full h-full drop-shadow-lg">
+                      <path d="M 90 20 Q 50 10 30 40 Q 10 70 30 110 Q 50 140 90 130 Q 100 130 100 100 Q 80 100 80 75 Q 100 50 100 20 Z" fill={avatarVariant === 'minion' ? '#2563eb' : (avatarVariant === 'human' ? '#fbcfe8' : '#6366f1')} />
+                      <path d="M 95 30 Q 60 25 50 45" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
+                      <path d="M 95 120 Q 60 125 50 105" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
+                    </svg>
+                  </div>
+
+                  {/* Right Hand Holding Card */}
+                  <div className="absolute top-1/2 -right-10 md:-right-12 -translate-y-1/2 z-40 hidden md:block w-14 h-20 md:w-16 md:h-24 transform scale-x-[-1]">
+                    <svg viewBox="0 0 100 150" className="w-full h-full drop-shadow-lg">
+                      <path d="M 90 20 Q 50 10 30 40 Q 10 70 30 110 Q 50 140 90 130 Q 100 130 100 100 Q 80 100 80 75 Q 100 50 100 20 Z" fill={avatarVariant === 'minion' ? '#2563eb' : (avatarVariant === 'human' ? '#fbcfe8' : '#6366f1')} />
+                      <path d="M 95 30 Q 60 25 50 45" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
+                      <path d="M 95 120 Q 60 125 50 105" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
+                    </svg>
+                  </div>
+                  
+                  {/* Speaking Indicator Badge */}
+                  {isSpeaking && (
+                    <div className="absolute top-0 -translate-y-1/2 bg-emerald-500 text-white text-[10px] md:text-xs font-black px-4 py-1.5 md:py-2 rounded-full shadow-md flex items-center gap-2 z-20">
+                      <span>AI IS SPEAKING</span>
+                      <div className="flex gap-1">
+                        <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {isLoading ? (
+                    <div className="flex flex-col gap-4 w-full items-center mt-2">
+                      <div className="h-4 bg-slate-200 rounded-md w-3/4 animate-pulse"></div>
+                      <div className="h-4 bg-slate-200 rounded-md w-full animate-pulse"></div>
+                      <div className="h-4 bg-slate-200 rounded-md w-5/6 animate-pulse"></div>
+                    </div>
+                  ) : (
+                    <div className="overflow-y-auto w-full h-full px-4 custom-scrollbar flex items-center justify-center">
+                      <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-slate-800 leading-relaxed text-center">
+                        {currentAIQuestion}
+                      </h3>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Input Area (Glassmorphism) */}
+              <div className="mt-4 bg-black/40 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-white/20 flex flex-col w-full flex-shrink-0">
+                <div className="flex flex-col md:flex-row gap-2 items-stretch w-full">
+                  <button 
+                    onClick={toggleRecording}
+                    className={`md:w-32 flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_20px_rgba(244,63,94,0.5)]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                  >
+                    {isRecording ? <MicOff className="w-6 h-6 mb-1" /> : <Mic className="w-6 h-6 mb-1" />}
+                    <span className="text-xs font-bold text-center leading-tight">{isRecording ? "Stop\nListening" : "Tap to\nSpeak"}</span>
+                  </button>
+                  
+                  <div className="flex-1 flex flex-col gap-2">
+                    <textarea 
+                      value={textInput}
+                      onChange={e => setTextInput(e.target.value)}
+                      placeholder="Or type your answer here..."
+                      className="flex-1 p-4 bg-white/10 text-white placeholder-white/50 border border-white/10 rounded-xl resize-none outline-none focus:ring-2 focus:ring-purple-400 min-h-[80px]"
+                    />
+                    <AudioMeter isRecording={isRecording} />
+                  </div>
+                  
+                  <button 
+                    onClick={() => handleSendMessage()}
+                    disabled={!textInput.trim() || isLoading}
+                    className="md:w-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 flex items-center justify-center rounded-xl text-white transition-all shadow-md"
+                  >
+                    <Send className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Solid White Card */}
-            <div className={`w-full max-w-3xl max-h-[40vh] bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 md:p-10 transition-all duration-500 text-center flex flex-col items-center overflow-visible relative z-20 ${isLoading ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
-              
-              {/* Left Hand Holding Card */}
-              <div className="absolute top-1/2 -left-10 md:-left-12 -translate-y-1/2 z-40 hidden md:block w-14 h-20 md:w-16 md:h-24">
-                <svg viewBox="0 0 100 150" className="w-full h-full drop-shadow-lg">
-                  <path d="M 90 20 Q 50 10 30 40 Q 10 70 30 110 Q 50 140 90 130 Q 100 130 100 100 Q 80 100 80 75 Q 100 50 100 20 Z" fill={avatarVariant === 'minion' ? '#2563eb' : (avatarVariant === 'human' ? '#fbcfe8' : '#6366f1')} />
-                  <path d="M 95 30 Q 60 25 50 45" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
-                  <path d="M 95 120 Q 60 125 50 105" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
-                </svg>
-              </div>
-
-              {/* Right Hand Holding Card */}
-              <div className="absolute top-1/2 -right-10 md:-right-12 -translate-y-1/2 z-40 hidden md:block w-14 h-20 md:w-16 md:h-24 transform scale-x-[-1]">
-                <svg viewBox="0 0 100 150" className="w-full h-full drop-shadow-lg">
-                  <path d="M 90 20 Q 50 10 30 40 Q 10 70 30 110 Q 50 140 90 130 Q 100 130 100 100 Q 80 100 80 75 Q 100 50 100 20 Z" fill={avatarVariant === 'minion' ? '#2563eb' : (avatarVariant === 'human' ? '#fbcfe8' : '#6366f1')} />
-                  <path d="M 95 30 Q 60 25 50 45" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
-                  <path d="M 95 120 Q 60 125 50 105" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.3" />
-                </svg>
-              </div>
-              
-              {/* Speaking Indicator Badge */}
-              {isSpeaking && (
-                <div className="absolute top-0 -translate-y-1/2 bg-emerald-500 text-white text-[10px] md:text-xs font-black px-4 py-1.5 md:py-2 rounded-full shadow-md flex items-center gap-2 z-20">
-                  <span>AI IS SPEAKING</span>
-                  <div className="flex gap-1">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+            {/* Right Column: Webcam Feed (Only visible if isWebcamOn is true) */}
+            {isWebcamOn && (
+              <div className="flex flex-col bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-6 overflow-hidden relative shadow-2xl h-[350px] lg:h-full lg:min-h-[450px]">
+                <div className="text-sm font-bold text-purple-200 mb-4 flex items-center justify-between">
+                  <span className="flex items-center gap-2"><Video className="w-4 h-4 text-purple-400" /> Webcam Feed</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <span className="text-xs text-slate-400 font-mono font-bold">LIVE</span>
                   </div>
                 </div>
-              )}
-
-              {isLoading ? (
-                <div className="flex flex-col gap-4 w-full items-center mt-2">
-                  <div className="h-4 bg-slate-200 rounded-md w-3/4 animate-pulse"></div>
-                  <div className="h-4 bg-slate-200 rounded-md w-full animate-pulse"></div>
-                  <div className="h-4 bg-slate-200 rounded-md w-5/6 animate-pulse"></div>
+                
+                <div className="flex-1 relative bg-black/60 rounded-2xl overflow-hidden border border-white/5 flex items-center justify-center min-h-[220px]">
+                  {webcamStream ? (
+                    <video 
+                      ref={videoRef} 
+                      autoPlay 
+                      playsInline 
+                      muted 
+                      style={{ transform: "scaleX(-1)" }}
+                      className="absolute inset-0 w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-3 text-slate-400">
+                      <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                      <p className="text-sm font-medium">Requesting camera access...</p>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="overflow-y-auto w-full h-full px-4 custom-scrollbar flex items-center justify-center">
-                  <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-slate-800 leading-relaxed text-center">
-                    {currentAIQuestion}
-                  </h3>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Input Area (Glassmorphism) */}
-          <div className="mt-4 bg-black/40 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-white/20 flex flex-col max-w-3xl w-full mx-auto flex-shrink-0">
-            <div className="flex flex-col md:flex-row gap-2 items-stretch w-full">
-              <button 
-                onClick={toggleRecording}
-                className={`md:w-32 flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_20px_rgba(244,63,94,0.5)]' : 'bg-white/10 text-white hover:bg-white/20'}`}
-              >
-                {isRecording ? <MicOff className="w-6 h-6 mb-1" /> : <Mic className="w-6 h-6 mb-1" />}
-                <span className="text-xs font-bold text-center leading-tight">{isRecording ? "Stop\nListening" : "Tap to\nSpeak"}</span>
-              </button>
-              
-              <div className="flex-1 flex flex-col gap-2">
-                <textarea 
-                  value={textInput}
-                  onChange={e => setTextInput(e.target.value)}
-                  placeholder="Or type your answer here..."
-                  className="flex-1 p-4 bg-white/10 text-white placeholder-white/50 border border-white/10 rounded-xl resize-none outline-none focus:ring-2 focus:ring-purple-400 min-h-[80px]"
-                />
-                <AudioMeter isRecording={isRecording} />
               </div>
-              
-              <button 
-                onClick={() => handleSendMessage()}
-                disabled={!textInput.trim() || isLoading}
-                className="md:w-20 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 flex items-center justify-center rounded-xl text-white transition-all shadow-md"
-              >
-                <Send className="w-6 h-6" />
-              </button>
-            </div>
+            )}
+
           </div>
 
         </div>
