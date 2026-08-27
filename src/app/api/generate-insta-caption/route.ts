@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAIContent } from '@/lib/ai-service';
+import { generateAIResponse } from '@/lib/ai-service';
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,9 +12,9 @@ export async function POST(req: NextRequest) {
     const systemPrompt = "You are an expert social media manager. Write a short, engaging Instagram caption with emojis and hashtags based on the user's topic. Do not include quotes around the caption.";
     
     // Using the robust AI service which will automatically fallback to other providers
-    // if one (like OpenAI) hits a quota limit.
-    const caption = await generateAIContent(topic, systemPrompt, { 
-      fallbackMode: true,
+    const caption = await generateAIResponse({ 
+      prompt: topic,
+      systemPrompt: systemPrompt,
       temperature: 0.7 
     });
 
