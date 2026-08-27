@@ -284,10 +284,15 @@ export default function StudyHubPage() {
               <Layers className="h-4 w-4 md:h-5 md:w-5" /> Syllabuses
             </button>
 
-            {/* Always visible Mock Interview Link */}
+            {/* Always visible Links */}
             <Link href="/study/interview-prep/mock-interview">
               <Button size="lg" className="h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl bg-purple-600 hover:bg-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all flex items-center gap-2 md:gap-3">
                 <Mic className="h-4 w-4 md:h-5 md:w-5" /> Voice Mock Interview
+              </Button>
+            </Link>
+            <Link href="/study/interview-prep/communication-builder">
+              <Button size="lg" className="h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all flex items-center gap-2 md:gap-3">
+                <Sparkles className="h-4 w-4 md:h-5 md:w-5" /> Self-Intro Builder
               </Button>
             </Link>
           </div>

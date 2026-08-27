@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Loader2, FileText, Lock, ShoppingCart, CheckCircle, ExternalLink, Eye, Mic } from "lucide-react";
+import { Loader2, FileText, Lock, ShoppingCart, CheckCircle, ExternalLink, Eye, Mic, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
@@ -93,11 +93,18 @@ export default function InterviewPrepPage() {
           <p className="text-xl text-indigo-100 mb-8 leading-relaxed">
             Real interview questions from Deloitte, LinkedIn, FAANG startups & MNCs. Preview first half free — unlock full access after purchase.
           </p>
-          <Link href="/study/interview-prep/mock-interview">
-            <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-purple-600 hover:bg-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all">
-              <Mic className="mr-2 h-5 w-5" /> Try AI Voice Mock Interviewer
-            </Button>
-          </Link>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link href="/study/interview-prep/mock-interview">
+              <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-purple-600 hover:bg-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all">
+                <Mic className="mr-2 h-5 w-5" /> AI Voice Mock Interview
+              </Button>
+            </Link>
+            <Link href="/study/interview-prep/communication-builder">
+              <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all">
+                <Sparkles className="mr-2 h-5 w-5" /> Self-Intro & Communication Builder
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
