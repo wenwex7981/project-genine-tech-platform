@@ -302,7 +302,7 @@ export default function EnglishCoursePage() {
   // ─── LESSON VIEW ─────────────────────────────────────────────────────────────
   if (selectedLesson && currentMod) {
     return (
-      <div className="bg-slate-950 flex flex-col overflow-hidden" style={{ height: "calc(100vh - 4rem)" }}>
+      <div className="bg-slate-950 flex flex-col" style={{ height: '100dvh', paddingTop: '4rem' }}>
         {/* Header */}
         <div className="bg-slate-900/95 border-b border-white/10 px-4 py-3 flex justify-between items-center flex-shrink-0">
           <div className="flex items-center gap-3">
