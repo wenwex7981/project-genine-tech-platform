@@ -42,13 +42,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
   
-  // Programmatic SEO Locations
-  const locationEntries: MetadataRoute.Sitemap = seoLocations.map((loc) => ({
-    url: `${baseUrl}/locations/${loc.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }));
+  // Programmatic SEO Hubs
+  const locationEntries: MetadataRoute.Sitemap = seoLocations
+    .filter(loc => ['state', 'city', 'university'].includes(loc.type))
+    .map((loc) => ({
+      url: `${baseUrl}/locations/${loc.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
+
+  const roleEntries: MetadataRoute.Sitemap = seoLocations
+    .filter(loc => loc.type === 'role')
+    .map((loc) => ({
+      url: `${baseUrl}/resume/role/${loc.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
+
+  const companyEntries: MetadataRoute.Sitemap = seoLocations
+    .filter(loc => loc.type === 'company')
+    .map((loc) => ({
+      url: `${baseUrl}/study/interview/${loc.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
 
   return [
     // Core Pages
@@ -204,5 +224,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...projectEntries,
     ...hackathonEntries,
     ...locationEntries,
+    ...roleEntries,
+    ...companyEntries,
   ];
 }

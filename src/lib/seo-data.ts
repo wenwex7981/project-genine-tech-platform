@@ -1,7 +1,7 @@
 export type SEOLocation = {
   slug: string;
   name: string;
-  type: 'state' | 'university' | 'city';
+  type: 'state' | 'university' | 'city' | 'role' | 'company';
 };
 
 export const seoLocations: SEOLocation[] = [
@@ -71,5 +71,32 @@ export const seoLocations: SEOLocation[] = [
   { slug: 'gitam', name: 'Gitam University', type: 'university' },
   { slug: 'kiit', name: 'KIIT Bhubaneswar', type: 'university' },
   { slug: 'pes-university', name: 'PES University', type: 'university' },
-  { slug: 'christ-university', name: 'Christ University', type: 'university' }
+  { slug: 'christ-university', name: 'Christ University', type: 'university' },
+
+  // Engineering Job Roles
+  { slug: 'software-engineer', name: 'Software Engineer', type: 'role' },
+  { slug: 'data-scientist', name: 'Data Scientist', type: 'role' },
+  { slug: 'frontend-developer', name: 'Frontend Developer', type: 'role' },
+  { slug: 'backend-developer', name: 'Backend Developer', type: 'role' },
+  { slug: 'full-stack-developer', name: 'Full Stack Developer', type: 'role' },
+  { slug: 'machine-learning-engineer', name: 'Machine Learning Engineer', type: 'role' },
+  { slug: 'data-analyst', name: 'Data Analyst', type: 'role' },
+  { slug: 'devops-engineer', name: 'DevOps Engineer', type: 'role' },
+  { slug: 'cybersecurity-analyst', name: 'Cybersecurity Analyst', type: 'role' },
+  { slug: 'cloud-engineer', name: 'Cloud Engineer', type: 'role' },
+
+  // Target Companies for Interviews
+  { slug: 'tcs', name: 'TCS (Tata Consultancy Services)', type: 'company' },
+  { slug: 'infosys', name: 'Infosys', type: 'company' },
+  { slug: 'wipro', name: 'Wipro', type: 'company' },
+  { slug: 'cognizant', name: 'Cognizant', type: 'company' },
+  { slug: 'accenture', name: 'Accenture', type: 'company' },
+  { slug: 'capgemini', name: 'Capgemini', type: 'company' },
+  { slug: 'tech-mahindra', name: 'Tech Mahindra', type: 'company' },
+  { slug: 'ibm', name: 'IBM', type: 'company' },
+  { slug: 'amazon', name: 'Amazon', type: 'company' },
+  { slug: 'google', name: 'Google', type: 'company' },
+  { slug: 'microsoft', name: 'Microsoft', type: 'company' },
+  { slug: 'zoho', name: 'Zoho', type: 'company' },
+  { slug: 'deloitte', name: 'Deloitte', type: 'company' }
 ];
