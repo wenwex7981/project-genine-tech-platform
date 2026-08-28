@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GraduateNex Job Crawler</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; width: 380px; background: #f8f9fa; color: #1a1a2e; }
+    .header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+    .header-title { color: white; font-size: 14px; font-weight: 800; }
+    .header-sub { color: rgba(255,255,255,0.5); font-size: 10px; }
+    .badge { background: #10b981; color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+    .body { padding: 14px; }
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+    .stat-box { background: white; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 10px; text-align: center; }
+    .stat-num { font-size: 20px; font-weight: 900; color: #4F46E5; }
+    .stat-label { font-size: 10px; color: #9ca3af; font-weight: 600; margin-top: 2px; }
+    .status { padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+    .status.success { background: #d1fae5; color: #065f46; }
+    .status.error { background: #fee2e2; color: #991b1b; }
+    .status.info { background: #ede9fe; color: #4c1d95; }
+    label { display: block; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    input { width: 100%; padding: 9px 12px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 13px; margin-bottom: 10px; outline: none; }
+    input:focus { border-color: #4F46E5; }
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; margin-bottom: 8px; }
+    .btn-primary { background: linear-gradient(135deg, #4F46E5, #7C3AED); color: white; box-shadow: 0 4px 15px rgba(79,70,229,0.3); }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-secondary { background: white; color: #374151; border: 1.5px solid #e5e7eb; }
+    .btn-danger { background: linear-gradient(135deg, #ef4444,#dc2626); color: white; }
+    .log-box { background: #0f172a; border-radius: 10px; padding: 10px; height: 120px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #94a3b8; margin-bottom: 12px; }
+    .log-entry { padding: 2px 0; }
+    .log-entry.success { color: #34d399; }
+    .log-entry.error { color: #f87171; }
+    .log-entry.info { color: #60a5fa; }
+    .source-chip { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 8px; background: white; border: 1.5px solid #e5e7eb; font-size: 11px; font-weight: 600; color: #374151; cursor: pointer; transition: all 0.15s; margin: 3px; }
+    .source-chip.selected { background: #EDE9FE; border-color: #6C63FF; color: #6C63FF; }
+    .section-title { font-size: 12px; font-weight: 800; color: #1a1a2e; margin-bottom: 8px; }
+    .sources-wrap { margin-bottom: 12px; }
+    .divider { height: 1px; background: #f3f4f6; margin: 10px 0; }
+    .last-run { font-size: 11px; color: #9ca3af; text-align: center; padding: 4px 0; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="header-title">🔍 GraduateNex Job Crawler <span class="badge">v1.0</span></div>
+      <div class="header-sub">Scrapes fresh jobs, internships & AI news every hour</div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="stats">
+      <div class="stat-box"><div class="stat-num" id="stat-jobs">0</div><div class="stat-label">Jobs Found</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-intern">0</div><div class="stat-label">Internships</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-news">0</div><div class="stat-label">AI Updates</div></div>
+    </div>
+
+    <div id="main-status" class="status info">Ready to crawl fresh opportunities...</div>
+
+    <div class="sources-wrap">
+      <div class="section-title">📡 Data Sources</div>
+      <div>
+        <span class="source-chip selected" data-source="remotive">💼 Remotive (Remote Jobs)</span>
+        <span class="source-chip selected" data-source="arbeitnow">🌍 Arbeitnow (Remote)</span>
+        <span class="source-chip selected" data-source="devto">📰 Dev.to (AI News)</span>
+        <span class="source-chip selected" data-source="hn">🔶 Hacker News</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <label>Backend URL</label>
+    <input type="text" id="backendUrl" value="https://www.graduatenex.online" placeholder="https://www.graduatenex.online" />
+
+    <label>Auth Secret (from .env CRAWLER_SECRET)</label>
+    <input type="text" id="crawlerSecret" placeholder="your-secret-key" />
+
+    <div class="log-box" id="crawl-log">
+      <div class="log-entry info">[ Ready ] GraduateNex Job Crawler v1.0 loaded</div>
+    </div>
+
+    <button class="btn btn-primary" id="crawl-now">🚀 Crawl Now & Push to Site</button>
+    <button class="btn btn-secondary" id="save-config">💾 Save Config (Auto-crawl every hour)</button>
+
+    <div class="last-run" id="last-run-time">Last crawl: Never</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

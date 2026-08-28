@@ -77,6 +77,9 @@ export default function Navbar() {
       <Link href="/study" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/study")}`}>
         Study Hub
       </Link>
+      <Link href="/jobs-updates" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${isActive("/jobs-updates")}`}>
+        Jobs <span style={{ fontSize: 10, background: '#ef4444', color: 'white', padding: '1px 5px', borderRadius: 4, fontWeight: 700 }}>LIVE</span>
+      </Link>
       <Link href="/ai-services" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/ai-services")}`}>
         AI Tools
       </Link>

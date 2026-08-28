@@ -42,11 +42,14 @@ export default function EnglishFriendPage() {
   const [availableVoices, setAvailableVoices] = useState<{ voice: SpeechSynthesisVoice; label: string; region: string; gender: string }[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [showVoicePicker, setShowVoicePicker] = useState(false);
+  const [openaiVoice, setOpenaiVoice] = useState<'nova' | 'alloy' | 'echo' | 'onyx' | 'shimmer'>('nova');
+  const [useAIVoice, setUseAIVoice] = useState(true);
   const [isWebcamOn, setIsWebcamOn] = useState(false);
   const [webcamStream, setWebcamStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const webcamStreamRef = useRef<MediaStream | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const classifyVoice = (v: SpeechSynthesisVoice) => {
     const lang = v.lang.toLowerCase();
@@ -151,19 +154,51 @@ export default function EnglishFriendPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const speakText = (text: string) => {
+  const speakBrowser = (text: string) => {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     if (selectedVoice) utterance.voice = selectedVoice;
     utterance.rate = 0.95;
     utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
+    utterance.onend   = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
     window.speechSynthesis.speak(utterance);
   };
 
-  const stopSpeaking = () => { window.speechSynthesis.cancel(); setIsSpeaking(false); };
+  const speakText = async (text: string) => {
+    // Stop any current audio
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+    window.speechSynthesis.cancel();
+
+    if (!useAIVoice) { speakBrowser(text); return; }
+
+    setIsSpeaking(true);
+    try {
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text.slice(0, 2000), voice: openaiVoice }),
+      });
+      const data = await res.json();
+      if (!data.audio) throw new Error('No audio returned');
+
+      const audio = new Audio(`data:audio/mp3;base64,${data.audio}`);
+      audioRef.current = audio;
+      audio.onended = () => { setIsSpeaking(false); audioRef.current = null; };
+      audio.onerror = () => { setIsSpeaking(false); audioRef.current = null; };
+      await audio.play();
+    } catch (err) {
+      console.warn('OpenAI TTS failed, falling back to browser:', err);
+      speakBrowser(text);
+    }
+  };
+
+  const stopSpeaking = () => {
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  };
 
   const toggleRecording = () => {
     if (!recognition) { alert("Voice recognition not supported. Please type."); return; }
@@ -373,40 +408,49 @@ export default function EnglishFriendPage() {
               <StopCircle className="w-4 h-4" /> Stop
             </button>
           )}
-          {/* Voice Picker */}
+          {/* AI Voice Picker */}
           <div className="relative">
             <button onClick={() => setShowVoicePicker(!showVoicePicker)}
               className="px-3 py-2 bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg hover:bg-slate-700 transition flex items-center gap-1.5">
               <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="hidden sm:inline max-w-[100px] truncate">{selectedVoice ? selectedVoice.name.replace("Microsoft ","").replace(" Online (Natural)","").replace("Google ","") : "Voice"}</span>
+              <span className="hidden sm:inline">{useAIVoice ? `🤖 ${openaiVoice}` : '🔊 Browser'}</span>
             </button>
             {showVoicePicker && (
-              <div className="absolute right-0 top-full mt-2 w-72 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl z-50 overflow-hidden">
-                <div className="p-3 border-b border-slate-700 flex justify-between">
-                  <p className="text-xs font-black text-white">🎙️ Alex's Voice</p>
+              <div className="absolute right-0 top-full mt-2 w-64 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                <div className="p-3 border-b border-slate-700 flex justify-between items-center">
+                  <p className="text-xs font-black text-white">🎙️ Alex&apos;s Voice</p>
                   <button onClick={() => setShowVoicePicker(false)} className="text-slate-500 hover:text-white text-xs">✕</button>
                 </div>
-                <div className="overflow-y-auto max-h-64">
-                  {["🇮🇳 India","🇺🇸 US","🇬🇧 UK","Other"].map(region => {
-                    const regionVoices = availableVoices.filter(v => v.region === region);
-                    if (regionVoices.length === 0) return null;
-                    return (
-                      <div key={region}>
-                        <div className="px-3 py-1.5 bg-slate-800/60 text-[10px] font-black text-slate-400 uppercase tracking-widest">{region} English</div>
-                        {regionVoices.map((v, i) => (
-                          <button key={i} onClick={() => { setSelectedVoice(v.voice); setShowVoicePicker(false); }}
-                            className={`w-full px-3 py-2.5 text-left flex justify-between items-center hover:bg-slate-800 transition ${selectedVoice?.name === v.voice.name ? "bg-emerald-900/30 border-l-2 border-emerald-400" : ""}`}>
-                            <span className="text-sm text-white font-medium">{v.label}</span>
-                            <div className="flex items-center gap-1.5">
-                              {v.gender && <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${v.gender.includes("Female") ? "bg-pink-900/60 text-pink-300" : "bg-blue-900/60 text-blue-300"}`}>{v.gender}</span>}
-                              {selectedVoice?.name === v.voice.name && <CheckCircle className="w-4 h-4 text-emerald-400" />}
-                            </div>
-                          </button>
-                        ))}
+                {/* AI voices */}
+                <div className="p-2 border-b border-slate-700">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 py-1">🤖 OpenAI AI Voices (Premium)</p>
+                  {([
+                    { id: 'nova',    label: 'Nova',    desc: 'Female · Warm & Natural' },
+                    { id: 'shimmer', label: 'Shimmer', desc: 'Female · Soft & Clear' },
+                    { id: 'alloy',   label: 'Alloy',   desc: 'Neutral · Professional' },
+                    { id: 'echo',    label: 'Echo',    desc: 'Male · Smooth' },
+                    { id: 'onyx',    label: 'Onyx',    desc: 'Male · Deep & Rich' },
+                  ] as const).map(v => (
+                    <button key={v.id}
+                      onClick={() => { setOpenaiVoice(v.id); setUseAIVoice(true); setShowVoicePicker(false); }}
+                      className={`w-full px-3 py-2 text-left flex justify-between items-center hover:bg-slate-800 rounded-lg transition ${useAIVoice && openaiVoice === v.id ? 'bg-emerald-900/30 border-l-2 border-emerald-400' : ''}`}>
+                      <div>
+                        <span className="text-sm text-white font-semibold">{v.label}</span>
+                        <span className="text-[11px] text-slate-400 ml-2">{v.desc}</span>
                       </div>
-                    );
-                  })}
-                  {availableVoices.length === 0 && <p className="p-4 text-xs text-slate-400 text-center">No English voices found. Try Chrome or Edge.</p>}
+                      {useAIVoice && openaiVoice === v.id && <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />}
+                    </button>
+                  ))}
+                </div>
+                {/* Browser fallback */}
+                <div className="p-2">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 py-1">🔊 Browser Fallback</p>
+                  <button
+                    onClick={() => { setUseAIVoice(false); setShowVoicePicker(false); }}
+                    className={`w-full px-3 py-2 text-left flex justify-between items-center hover:bg-slate-800 rounded-lg transition ${!useAIVoice ? 'bg-emerald-900/30 border-l-2 border-emerald-400' : ''}`}>
+                    <span className="text-sm text-white font-semibold">System Voice</span>
+                    {!useAIVoice && <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />}
+                  </button>
                 </div>
               </div>
             )}
