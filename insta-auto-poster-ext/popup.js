@@ -282,20 +282,23 @@ chrome.runtime.onMessage.addListener((msg) => {
     if (msg.type === 'commented') {
       commentedCount++;
       document.getElementById('comment-preview').textContent = msg.comment;
-      addLog(`✅ Commented: ${msg.comment.substring(0, 60)}...`, 'success');
+      addLog(`✅ Commented: ${msg.comment.substring(0, 65)}...`, 'success');
     } else if (msg.type === 'skipped') {
       skippedCount++;
-      addLog(`⏭ Skipped (no topic match): ${msg.reason || ''}`, 'info');
+      addLog(`⏭ Skipped: ${msg.reason || ''}`, 'info');
     } else if (msg.type === 'error') {
-      addLog(`❌ Error: ${msg.error}`, 'error');
+      addLog(`❌ ${msg.error}`, 'error');
     } else if (msg.type === 'scrolled') {
-      addLog('↕️ Scrolled to next reel...', 'info');
+      addLog(`🔍 ${msg.reason || 'Navigating...'}`, 'info');
+    } else if (msg.type === 'info') {
+      addLog(`ℹ️ ${msg.reason || ''}`, 'info');
     } else if (msg.type === 'stopped') {
       stopCommenter();
-      addLog('✅ Blaster completed its run!', 'success');
+      addLog('✅ All hashtags processed! Blaster complete.', 'success');
     }
-    document.getElementById('stat-queue').textContent = msg.queue || 0;
-    updateStats();
+    document.getElementById('stat-commented').textContent = commentedCount;
+    document.getElementById('stat-skipped').textContent = skippedCount;
+    if (msg.queue !== undefined) document.getElementById('stat-queue').textContent = msg.queue;
   }
 });
 
