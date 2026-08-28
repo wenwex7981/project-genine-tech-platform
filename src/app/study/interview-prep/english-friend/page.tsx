@@ -386,7 +386,7 @@ export default function EnglishFriendPage() {
   const topicLabel = CONVERSATION_TOPICS.find(t => t.id === selectedTopic)?.label || "Chat";
 
   return (
-    <div style={{ position: 'fixed', inset: 0, top: '64px', background: '#0f172a', display: 'flex', flexDirection: 'column', zIndex: 40 }}>
+    <div className="fixed inset-x-0 top-[64px] bottom-16 md:bottom-0 bg-[#0f172a] flex flex-col z-40">
       {/* Header */}
       <div className="bg-slate-900/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center flex-shrink-0">
         <div className="flex items-center gap-3">

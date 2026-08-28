@@ -480,7 +480,7 @@ export default function MockInterviewPage() {
 
   if (uiState === "interview") {
     return (
-      <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-900">
+      <div className="min-h-screen relative flex flex-col items-center justify-center p-4 pb-20 md:pb-4 overflow-hidden bg-slate-900">
         
         <div className={`w-full ${isWebcamOn ? 'max-w-6xl' : 'max-w-4xl'} flex flex-col min-h-[90vh] z-20 mt-4 md:mt-6 relative`}>
           

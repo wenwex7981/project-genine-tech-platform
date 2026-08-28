@@ -24,14 +24,14 @@ export default function MobileBottomNav() {
   const navItems = [
     { icon: Home, label: "Home", href: "/" },
     { icon: FolderOpen, label: "Projects", href: "/projects" },
-    { icon: Sparkles, label: "AI Tools", href: "/ai-services" },
-    { icon: Rocket, label: "Services", href: "/services" },
+    { icon: Sparkles, label: "Resume Hub", href: "/resume" },
+    { icon: Rocket, label: "Study Hub", href: "/study" },
   ];
 
   const secondaryLinks = [
-    { label: "Resume Hub", href: "/resume" },
+    { label: "AI Tools", href: "/ai-services" },
+    { label: "Services", href: "/services" },
     { label: "Hackathons", href: "/hackathons" },
-    { label: "Study Hub", href: "/study" },
     { label: "Jobs Updates", href: "/jobs-updates" },
     { label: "Pricing", href: "/pricing" },
     { label: "Blog", href: "/blog" },

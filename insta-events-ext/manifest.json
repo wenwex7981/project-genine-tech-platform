@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "GraduateNex Events & Hackathon Scout",
+  "version": "1.0",
+  "description": "Scrapes Instagram for events and hackathons and auto-pushes them to the GraduateNex Events page.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*.instagram.com/*",
+    "https://projectgenietechsolutions.vercel.app/*",
+    "https://graduatenex.online/*",
+    "https://www.graduatenex.online/*",
+    "http://localhost:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.instagram.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

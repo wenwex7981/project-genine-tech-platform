@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events Scout — GraduateNex</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --bg: #0f0f1a;
+      --surface: #1a1a2e;
+      --border: #2a2a4a;
+      --accent: #7c3aed;
+      --accent2: #ec4899;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 400px;
+      min-height: 560px;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    /* ── HEADER */
+    .header {
+      background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+      padding: 16px 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-logo {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .header-title { font-weight: 800; font-size: 15px; color: #fff; }
+    .header-sub { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* ── STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .stat-num.green { color: var(--green); }
+    .stat-num.yellow { color: var(--yellow); }
+    .stat-num.purple { color: var(--accent); }
+    .stat-label { font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+    /* ── SECTION */
+    .section { padding: 12px 14px; }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    /* ── HASHTAG INPUT */
+    .hashtag-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+      max-height: 70px;
+      overflow-y: auto;
+    }
+    .hashtag-tag {
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.4);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: #a78bfa;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .hashtag-tag:hover { background: rgba(124,58,237,0.35); }
+    .hashtag-tag.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── API INPUT */
+    .input-group { margin-bottom: 10px; }
+    .input-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; display: block; }
+    .input-field {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input-field:focus { border-color: var(--accent); }
+
+    /* ── BUTTONS */
+    .btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(124,58,237,0.35);
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-danger {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid var(--red);
+      color: var(--red);
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.25); }
+    .btn-success {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+    }
+    .btn-success:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-success:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+    .btn + .btn { margin-top: 6px; }
+
+    /* ── LOG */
+    .log-wrap {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      height: 110px;
+      overflow-y: auto;
+      padding: 8px 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+    }
+    .log-entry { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 4px; line-height: 1.4; }
+    .log-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+    .log-dot.info  { background: #60a5fa; }
+    .log-dot.found { background: var(--green); }
+    .log-dot.skip  { background: var(--yellow); }
+    .log-dot.warn  { background: var(--yellow); }
+    .log-dot.done  { background: var(--accent); }
+    .log-dot.navigate { background: #818cf8; }
+    .log-dot.push  { background: var(--green); }
+    .log-dot.error { background: var(--red); }
+    .log-text { color: var(--muted); word-break: break-all; }
+    .log-text strong { color: var(--text); }
+
+    /* ── EVENTS LIST */
+    .events-list {
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .event-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 6px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .event-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .event-info { flex: 1; min-width: 0; }
+    .event-title {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .event-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .event-link {
+      font-size: 10px;
+      color: #a78bfa;
+      text-decoration: none;
+    }
+    .event-link:hover { text-decoration: underline; }
+    .event-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    /* ── DIVIDER */
+    .divider { height: 1px; background: var(--border); margin: 0; }
+
+    /* ── STATUS PILL */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-pill.idle { background: rgba(148,163,184,0.1); border: 1px solid var(--border); color: var(--muted); }
+    .status-pill.running { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); color: #a78bfa; }
+    .status-pill.done { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.4); color: var(--green); }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .status-dot.idle { background: var(--muted); }
+    .status-dot.running { background: var(--accent); animation: pulse 1s infinite; }
+    .status-dot.done { background: var(--green); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 20px 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .empty-emoji { font-size: 28px; margin-bottom: 6px; }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+    .spacer { height: 8px; }
+    .flex-row { display: flex; gap: 6px; }
+    .flex-row .btn { flex: 1; }
+
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .tab.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">🔍</div>
+  <div>
+    <div class="header-title">Events Scout</div>
+    <div class="header-sub">Instagram → GraduateNex Hackathons</div>
+  </div>
+  <div class="header-badge" id="total-badge">0 found</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-box">
+    <div class="stat-num green" id="stat-found">0</div>
+    <div class="stat-label">Events Found</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num yellow" id="stat-scanned">0</div>
+    <div class="stat-label">Posts Scanned</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num purple" id="stat-pushed">0</div>
+    <div class="stat-label">Pushed to DB</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" data-tab="scraper">🕷 Scraper</div>
+  <div class="tab" data-tab="events">📋 Events</div>
+  <div class="tab" data-tab="settings">⚙ Settings</div>
+</div>
+
+<!-- TAB: SCRAPER -->
+<div class="tab-panel active" id="tab-scraper">
+  <div class="section">
+    <div class="section-title">Hashtags to Scan</div>
+    <div class="hashtag-tags" id="hashtag-tags">
+      <!-- filled by JS -->
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+      <span class="status-pill idle" id="status-pill">
+        <span class="status-dot idle" id="status-dot"></span>
+        <span id="status-text">Idle</span>
+      </span>
+      <span style="font-size:10px;color:var(--muted);" id="current-hashtag"></span>
+    </div>
+
+    <div class="flex-row">
+      <button class="btn btn-primary" id="btn-start">
+        ▶ Start Scraping
+      </button>
+      <button class="btn btn-danger" id="btn-stop" style="display:none; flex:none; width:auto; padding:10px 14px;">
+        ■ Stop
+      </button>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-success" id="btn-push" disabled>
+      🚀 Push to GraduateNex DB
+    </button>
+    <div class="spacer"></div>
+    <button class="btn btn-ghost" id="btn-clear">
+      🗑 Clear Scraped Data
+    </button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">Activity Log</div>
+    <div class="log-wrap" id="log"></div>
+  </div>
+</div>
+
+<!-- TAB: EVENTS -->
+<div class="tab-panel" id="tab-events">
+  <div class="section">
+    <div class="section-title">Scraped Events Preview</div>
+    <div id="events-list">
+      <div class="empty-state">
+        <div class="empty-emoji">🔍</div>
+        <div>No events scraped yet.<br>Run the scraper first.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: SETTINGS -->
+<div class="tab-panel" id="tab-settings">
+  <div class="section">
+    <div class="section-title">API Configuration</div>
+    <div class="input-group">
+      <label class="input-label">GraduateNex API URL</label>
+      <input class="input-field" id="api-url" type="text"
+        placeholder="https://graduatenex.online/api/insta-events"
+        value="http://localhost:3000/api/insta-events" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">API Secret Key (optional)</label>
+      <input class="input-field" id="api-key" type="password"
+        placeholder="your-secret-key" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">Max Posts per Hashtag</label>
+      <input class="input-field" id="max-posts" type="number"
+        min="3" max="30" value="10" />
+    </div>
+    <button class="btn btn-ghost" id="btn-save-settings">💾 Save Settings</button>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted);" id="settings-msg"></div>
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

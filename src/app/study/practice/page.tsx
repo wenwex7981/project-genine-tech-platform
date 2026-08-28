@@ -102,7 +102,7 @@ function PracticeArena() {
   const progressPercentage = Math.min((tasksCompleted / totalTasks) * 100, 100);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-950 flex flex-col font-sans pb-20 md:pb-0">
       
       {/* Navbar */}
       <header className="h-16 border-b border-white/10 bg-slate-900 flex items-center px-6 justify-between flex-shrink-0">
