@@ -41,6 +41,7 @@ export default function Footer() {
               <li><Link href="/resume" className="text-sm hover:text-primary transition-colors">Resume Hub</Link></li>
               <li><Link href="/hackathons" className="text-sm hover:text-primary transition-colors">Hackathons</Link></li>
               <li><Link href="/blog" className="text-sm hover:text-primary transition-colors">Blog & Guides</Link></li>
+              <li><Link href="/locations" className="text-sm hover:text-primary transition-colors">Locations & Universities</Link></li>
             </ul>
           </div>
 

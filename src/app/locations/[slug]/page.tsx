@@ -1,8 +1,10 @@
 import { seoLocations } from '@/lib/seo-data';
 import { notFound } from 'next/navigation';
 import Link from "next/link";
-import { ArrowRight, CheckCircle, GraduationCap, Code, FileText, Briefcase, Star, MapPin, Users, BookOpen } from "lucide-react";
+import { ArrowRight, CheckCircle, GraduationCap, Code, FileText, Briefcase, Star, MapPin, Users, BookOpen, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
+import Image from "next/image";
 
 export async function generateStaticParams() {
   return seoLocations.map((location) => ({
@@ -130,6 +132,13 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
   const relatedLocations = seoLocations
     .filter(l => l.type === location.type && l.slug !== location.slug)
     .slice(0, 6);
+
+  // Fetch some popular projects dynamically to make the page unique and valuable for SEO
+  const { data: popularProjects } = await supabase
+    .from('projects')
+    .select('id, title, education, sub_domain, image_url, price')
+    .order('created_at', { ascending: false })
+    .limit(4);
 
   // Breadcrumb JSON-LD
   const breadcrumbJsonLd = {
@@ -335,6 +344,62 @@ export default async function LocationPage({ params }: { params: Promise<{ slug:
           </div>
         </div>
       </section>
+
+      {/* Popular Projects Section */}
+      {popularProjects && popularProjects.length > 0 && (
+        <section className="w-full py-20 bg-muted/30 border-t">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+                Top Final Year Projects for {location.name}
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Explore the most downloaded projects by engineering students in your region.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+              {popularProjects.map(project => (
+                <div key={project.id} className="group flex flex-col bg-white dark:bg-zinc-900 border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                  <Link href={`/projects/${project.id}`} className="block relative aspect-video bg-muted overflow-hidden">
+                    {project.image_url ? (
+                      <Image src={project.image_url} alt={project.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">No Preview</div>
+                    )}
+                  </Link>
+                  
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-extrabold uppercase tracking-wider rounded-md">{project.education}</span>
+                      {project.sub_domain && <span className="px-2 py-1 bg-blue-500/10 text-blue-500 text-[10px] font-extrabold uppercase tracking-wider rounded-md">{project.sub_domain}</span>}
+                    </div>
+                    
+                    <Link href={`/projects/${project.id}`} className="hover:text-primary transition-colors">
+                      <h3 className="text-sm font-bold leading-tight mb-2 line-clamp-2">{project.title}</h3>
+                    </Link>
+                    
+                    <div className="mt-auto pt-4 flex items-center justify-between border-t mt-4">
+                      <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">₹{project.price}</p>
+                      <Link href={`/projects/${project.id}`}>
+                        <Button size="icon" className="rounded-xl shadow-md h-8 w-8 bg-indigo-600 hover:bg-indigo-700 text-white">
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="text-center mt-10">
+              <Link href="/projects">
+                <Button variant="outline" size="lg" className="rounded-xl font-bold">
+                  View All Projects in {location.name}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQ Section */}
       <section className="w-full py-20 bg-muted/30">
