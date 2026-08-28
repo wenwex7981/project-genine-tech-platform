@@ -22,7 +22,7 @@ const STATS = [
 
 const SERVICES = [
   {
-    icon: Code2, color: "from-blue-500 to-indigo-500",
+    icon: Code2, color: "bg-blue-50 text-blue-600",
     title: "Final Year Projects",
     description: "Complete, deployable source code for B.Tech, M.Tech, BCA, MCA. Covers AI/ML, IoT, Web3 with full documentation.",
     features: ["Source Code", "Base Paper", "SRS Document"],
@@ -30,7 +30,7 @@ const SERVICES = [
     colSpan: "md:col-span-2 lg:col-span-2",
   },
   {
-    icon: FileText, color: "from-orange-400 to-rose-500",
+    icon: FileText, color: "bg-orange-50 text-orange-600",
     title: "ATS Resume Builder",
     description: "Our intelligent Resume Hub grades your CV against a 17-point ATS scoring rubric to bypass HR filters.",
     features: ["17-Point ATS Scoring", "JD Matching"],
@@ -38,7 +38,7 @@ const SERVICES = [
     colSpan: "md:col-span-1 lg:col-span-1",
   },
   {
-    icon: Brain, color: "from-violet-500 to-fuchsia-500",
+    icon: Brain, color: "bg-violet-50 text-violet-600",
     title: "AI Stealth Humanizer",
     description: "Refine AI-generated text into natural, human-quality academic writing with proper style.",
     features: ["Natural Tone", "Zero Plagiarism"],
@@ -46,7 +46,7 @@ const SERVICES = [
     colSpan: "md:col-span-1 lg:col-span-1",
   },
   {
-    icon: ShieldCheck, color: "from-emerald-400 to-teal-500",
+    icon: ShieldCheck, color: "bg-emerald-50 text-emerald-600",
     title: "0% Plagiarism Docs",
     description: "Expertly crafted IEEE Research Papers and SRS documents with rigorous originality checks.",
     features: ["IEEE Format", "Originality Verified"],
@@ -54,7 +54,7 @@ const SERVICES = [
     colSpan: "md:col-span-2 lg:col-span-2",
   },
   {
-    icon: Rocket, color: "from-rose-500 to-pink-600",
+    icon: Rocket, color: "bg-rose-50 text-rose-600",
     title: "Live Hackathons",
     description: "Real-time directory of national and international coding contests and ideathons.",
     features: ["Real-Time Listings", "Team Formation"],
@@ -62,7 +62,7 @@ const SERVICES = [
     colSpan: "md:col-span-1 lg:col-span-1",
   },
   {
-    icon: PenTool, color: "from-cyan-400 to-blue-500",
+    icon: PenTool, color: "bg-cyan-50 text-cyan-600",
     title: "Custom Projects",
     description: "Have a unique base paper? We will architect and code the entire project from scratch.",
     features: ["End-to-End Dev", "Viva Prep"],
@@ -91,15 +91,10 @@ const TESTIMONIALS = [
   { name: "Megha Jain", college: "Delhi University", text: "Saved me months of coding. The documentation was thorough, and the viva prep guide helped me answer confidently." },
 ];
 
-const LOCATIONS = [
-  "Hyderabad", "Bengaluru", "Chennai", "Mumbai", "Delhi NCR",
-  "Pune", "Kolkata", "Ahmedabad", "Jaipur", "Lucknow"
-];
-
 // ── ANIMATION VARIANTS ──
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
 };
 
 const staggerContainer = {
@@ -110,7 +105,7 @@ const staggerContainer = {
 export default function Home() {
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const opacityText = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
   const jsonLd = {
@@ -136,77 +131,66 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950 font-sans text-zinc-100 selection:bg-indigo-500/30 overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-white font-sans text-slate-900 selection:bg-indigo-100 overflow-hidden">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <AuthRedirect />
 
-      {/* ── HERO SECTION ── */}
-      <section ref={heroRef} className="relative w-full min-h-[95vh] flex flex-col justify-center items-center overflow-hidden pt-20">
-        {/* Dynamic Background */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-zinc-950 z-10 opacity-60 mix-blend-multiply" />
-          <motion.div style={{ y: yBg }} className="absolute inset-0">
-            <Image src="/images/hero-bg.png" alt="Hero" fill priority className="object-cover object-center opacity-40" />
-          </motion.div>
-          {/* Glowing Orbs */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-emerald-500/10 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: "2s" }} />
+      {/* ── LUXURY HERO SECTION ── */}
+      <section ref={heroRef} className="relative w-full min-h-[90vh] flex flex-col justify-center items-center overflow-hidden pt-20 bg-slate-50">
+        {/* Soft elegant background */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-50/50 rounded-full blur-[100px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
         </div>
 
         <motion.div 
-          style={{ opacity: opacityText }}
+          style={{ opacity: opacityText, y: yBg }}
           className="container mx-auto px-4 relative z-20"
         >
-          <div className="max-w-5xl mx-auto text-center space-y-8">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-sm font-bold backdrop-blur-md"
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-sm font-semibold shadow-sm"
             >
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </span>
-              India's #1 Academic Success Platform
+              <Globe className="h-4 w-4 text-indigo-500" /> India's Premier Academic Success Platform
             </motion.div>
 
             <motion.h1 
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
-              className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05]"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-5xl md:text-7xl lg:text-[5rem] font-extrabold tracking-tight leading-[1.05] text-slate-900"
             >
-              Engineer Your<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400">
+              Engineer Your <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
                 Future Today.
               </span>
             </motion.h1>
 
             <motion.p 
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl mx-auto font-medium"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-medium"
             >
               From ready-to-deploy final year projects to AI-powered ATS resumes — GraduateNex is the complete ecosystem helping 2,500+ students graduate with distinction.
             </motion.p>
 
             <motion.div 
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6"
             >
               <Link href="/login" className="w-full sm:w-auto group">
-                <div className="relative px-8 py-4 bg-white text-zinc-950 font-black text-lg rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.25)] transition-all transform hover:-translate-y-1">
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <span className="relative flex items-center justify-center gap-2">
-                    Start Free Today <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
+                <div className="px-8 py-4 bg-slate-900 text-white font-semibold text-lg rounded-2xl shadow-[0_8px_30px_rgb(15,23,42,0.12)] hover:shadow-[0_8px_30px_rgb(15,23,42,0.2)] hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
+                  Start Free Today <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
               <Link href="#services" className="w-full sm:w-auto">
-                <div className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-lg rounded-2xl backdrop-blur-md transition-all">
+                <div className="px-8 py-4 bg-white border border-slate-200 text-slate-700 font-semibold text-lg rounded-2xl hover:bg-slate-50 transition-all flex items-center justify-center">
                   Explore Services
                 </div>
               </Link>
             </motion.div>
 
             <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 1 }}
               className="flex flex-wrap items-center justify-center gap-6 pt-12"
             >
               {[
@@ -214,8 +198,8 @@ export default function Home() {
                 { icon: Shield, text: "24/7 Expert Support" },
                 { icon: MapPin, text: "50+ Cities Served" }
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-zinc-400 font-semibold">
-                  <item.icon className="h-4 w-4 text-emerald-400" /> {item.text}
+                <div key={i} className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                  <item.icon className="h-4 w-4 text-emerald-500" /> {item.text}
                 </div>
               ))}
             </motion.div>
@@ -224,43 +208,37 @@ export default function Home() {
       </section>
 
       {/* ── STATS SECTION ── */}
-      <section className="relative py-12 border-y border-white/5 bg-zinc-950/50 backdrop-blur-xl z-20">
+      <section className="relative py-16 bg-white border-b border-slate-100 z-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100">
             {STATS.map((s, i) => (
               <motion.div 
                 key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
                 className="text-center px-4"
               >
-                <div className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">{s.value}</div>
-                <div className="text-sm font-bold text-zinc-500 uppercase tracking-wider">{s.label}</div>
+                <div className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2 tracking-tight">{s.value}</div>
+                <div className="text-sm font-semibold text-slate-500 uppercase tracking-wide">{s.label}</div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── SERVICES (BENTO GRID) ── */}
-      <section id="services" className="py-24 relative overflow-hidden bg-zinc-950">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
-        
+      {/* ── SERVICES (LUXURY BENTO GRID) ── */}
+      <section id="services" className="py-32 relative bg-slate-50">
         <div className="container mx-auto px-4">
           <motion.div 
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-            className="text-center max-w-3xl mx-auto mb-16 space-y-6"
+            className="text-center max-w-3xl mx-auto mb-20 space-y-6"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-bold">
-              <Layers className="h-4 w-4" /> Our Product Suite
-            </div>
-            <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white">
-              Everything You Need to <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Succeed.</span>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
+              Everything You Need to <span className="text-indigo-600">Succeed.</span>
             </h2>
-            <p className="text-xl text-zinc-400 font-medium">
+            <p className="text-xl text-slate-600 font-medium">
               We're a full-stack academic success platform covering projects, documentation, AI tools, and career launch.
             </p>
           </motion.div>
@@ -272,33 +250,31 @@ export default function Home() {
             {SERVICES.map((svc, i) => (
               <motion.div 
                 key={i} variants={fadeUp}
-                className={`group relative p-8 rounded-[2rem] bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 transition-all overflow-hidden ${svc.colSpan}`}
+                className={`group relative p-8 md:p-10 rounded-[2rem] bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all overflow-hidden ${svc.colSpan}`}
               >
-                <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${svc.color} opacity-0 group-hover:opacity-10 blur-[80px] transition-opacity duration-500`} />
-                
                 <div className="flex justify-between items-start mb-8">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${svc.color} flex items-center justify-center shadow-lg`}>
-                    <svc.icon className="w-6 h-6 text-white" />
+                  <div className={`w-14 h-14 rounded-2xl ${svc.color} flex items-center justify-center`}>
+                    <svc.icon className="w-6 h-6" />
                   </div>
-                  <span className="text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300">
+                  <span className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full bg-slate-50 text-slate-500 border border-slate-100">
                     {svc.badge}
                   </span>
                 </div>
                 
-                <h3 className="text-2xl font-black text-white mb-4">{svc.title}</h3>
-                <p className="text-zinc-400 font-medium leading-relaxed mb-8">
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">{svc.title}</h3>
+                <p className="text-slate-600 font-medium leading-relaxed mb-8">
                   {svc.description}
                 </p>
                 
                 <div className="flex flex-wrap gap-2 mb-8">
                   {svc.features.map(f => (
-                    <span key={f} className="text-xs font-bold px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300">
+                    <span key={f} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 border border-slate-100">
                       {f}
                     </span>
                   ))}
                 </div>
                 
-                <Link href="/login" className="inline-flex items-center gap-2 text-sm font-bold text-white group/btn">
+                <Link href="/login" className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 group/btn">
                   Explore Feature <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                 </Link>
               </motion.div>
@@ -308,14 +284,14 @@ export default function Home() {
       </section>
 
       {/* ── PROJECT CATEGORIES ── */}
-      <section className="py-24 bg-zinc-900 border-y border-zinc-800">
+      <section className="py-24 bg-white border-y border-slate-100">
         <div className="container mx-auto px-4">
           <motion.div 
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
             className="text-center max-w-3xl mx-auto mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Explore by Domain</h2>
-            <p className="text-xl text-zinc-400">Browse our deep catalogue of ready-made projects across every major engineering domain.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6">Explore by Domain</h2>
+            <p className="text-lg text-slate-600 font-medium">Browse our deep catalogue of ready-made projects across every major engineering domain.</p>
           </motion.div>
 
           <motion.div 
@@ -324,13 +300,13 @@ export default function Home() {
           >
             {CATEGORIES.map((cat, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <Link href="/login" className="group flex items-center gap-4 p-5 rounded-2xl bg-zinc-950 border border-zinc-800 hover:border-indigo-500/50 transition-all cursor-pointer">
-                  <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center text-zinc-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors shrink-0">
+                <Link href="/login" className="group flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all cursor-pointer">
+                  <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors shrink-0">
                     <cat.icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-zinc-200 group-hover:text-white transition-colors">{cat.name}</h4>
-                    <p className="text-sm font-medium text-zinc-500">{cat.count} Projects</p>
+                    <h4 className="font-bold text-slate-900">{cat.name}</h4>
+                    <p className="text-sm font-medium text-slate-500">{cat.count} Projects</p>
                   </div>
                 </Link>
               </motion.div>
@@ -340,40 +316,40 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-24 bg-zinc-950">
+      <section className="py-32 bg-slate-50">
         <div className="container mx-auto px-4">
           <motion.div 
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
             className="text-center max-w-3xl mx-auto mb-20"
           >
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-              From Order to Delivery in <span className="text-emerald-400">3 Steps</span>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6">
+              From Order to Delivery in <span className="text-indigo-600">3 Steps</span>
             </h2>
-            <p className="text-xl text-zinc-400">We've streamlined the entire process so you can focus on your viva.</p>
+            <p className="text-xl text-slate-600 font-medium">We've streamlined the entire process so you can focus on your viva.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto relative">
             {/* Connecting line for desktop */}
-            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-zinc-800 via-emerald-500/50 to-zinc-800 -z-10" />
+            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-[2px] bg-slate-200 -z-10" />
 
             {[
-              { step: "01", icon: Search, title: "Browse & Select", desc: "Explore our marketplace. Filter by tech stack. View detailed specs and demo videos." },
-              { step: "02", icon: Zap, title: "Checkout & Customize", desc: "Place your order and upload your professor's base paper or specific rubric requirements." },
-              { step: "03", icon: Code2, title: "Receive & Deploy", desc: "Get your complete package: source code, SRS, IEEE paper, PPT, and deployment guide." }
+              { step: "1", icon: Search, title: "Browse & Select", desc: "Explore our marketplace. Filter by tech stack. View detailed specs and demo videos." },
+              { step: "2", icon: Zap, title: "Checkout & Customize", desc: "Place your order and upload your professor's base paper or specific rubric requirements." },
+              { step: "3", icon: Code2, title: "Receive & Deploy", desc: "Get your complete package: source code, SRS, IEEE paper, PPT, and deployment guide." }
             ].map((s, i) => (
               <motion.div 
                 key={i} 
-                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.2 }}
+                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.2, duration: 0.6 }}
                 className="flex flex-col items-center text-center relative"
               >
-                <div className="w-24 h-24 rounded-full bg-zinc-900 border-4 border-zinc-950 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.15)] mb-6 z-10">
-                  <s.icon className="w-10 h-10 text-emerald-400" />
+                <div className="w-24 h-24 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-md mb-8 z-10">
+                  <s.icon className="w-8 h-8 text-indigo-600" />
                 </div>
-                <div className="absolute top-0 right-[calc(50%-3rem)] bg-white text-zinc-950 text-sm font-black w-8 h-8 rounded-full flex items-center justify-center z-20">
+                <div className="absolute top-0 right-[calc(50%-3rem)] bg-slate-900 text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center z-20 shadow-lg">
                   {s.step}
                 </div>
-                <h3 className="text-2xl font-black text-white mb-4">{s.title}</h3>
-                <p className="text-zinc-400 font-medium leading-relaxed">{s.desc}</p>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">{s.title}</h3>
+                <p className="text-slate-600 font-medium leading-relaxed">{s.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -381,14 +357,14 @@ export default function Home() {
       </section>
 
       {/* ── PRICING ── */}
-      <section className="py-24 bg-zinc-900 border-y border-zinc-800">
+      <section className="py-32 bg-white border-y border-slate-100">
         <div className="container mx-auto px-4">
           <motion.div 
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-            className="text-center max-w-3xl mx-auto mb-16"
+            className="text-center max-w-3xl mx-auto mb-20"
           >
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Transparent Pricing</h2>
-            <p className="text-xl text-zinc-400">No hidden fees. No "Contact us for price". Immediate access.</p>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6">Transparent Pricing</h2>
+            <p className="text-xl text-slate-600 font-medium">No hidden fees. No "Contact us for price". Immediate access.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
@@ -400,16 +376,16 @@ export default function Home() {
             ].map((plan, i) => (
               <motion.div 
                 key={i} 
-                initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className={`flex flex-col justify-between p-8 rounded-3xl ${plan.featured ? 'bg-indigo-600 border-indigo-500 shadow-xl shadow-indigo-500/20' : 'bg-zinc-950 border-zinc-800' } border transition-transform hover:-translate-y-2`}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}
+                className={`flex flex-col justify-between p-8 rounded-[2rem] ${plan.featured ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200 border-indigo-600' : 'bg-white border-slate-200 text-slate-900 hover:shadow-lg' } border transition-shadow`}
               >
                 <div>
-                  <h3 className={`text-xl font-bold mb-3 ${plan.featured ? 'text-white' : 'text-zinc-100'}`}>{plan.name}</h3>
-                  <p className={`text-sm mb-8 font-medium ${plan.featured ? 'text-indigo-100' : 'text-zinc-400'}`}>{plan.desc}</p>
+                  <h3 className={`text-xl font-bold mb-3 ${plan.featured ? 'text-white' : 'text-slate-900'}`}>{plan.name}</h3>
+                  <p className={`text-sm mb-8 font-medium ${plan.featured ? 'text-indigo-100' : 'text-slate-500'}`}>{plan.desc}</p>
                 </div>
                 <div>
-                  <div className={`text-4xl font-black mb-8 ${plan.featured ? 'text-white' : 'text-emerald-400'}`}>{plan.price}</div>
-                  <Link href="/services" className={`block w-full py-4 text-center rounded-xl font-bold transition-colors ${plan.featured ? 'bg-white text-indigo-600 hover:bg-zinc-50' : 'bg-zinc-800 text-white hover:bg-zinc-700'}`}>
+                  <div className={`text-4xl font-extrabold mb-8 ${plan.featured ? 'text-white' : 'text-slate-900'}`}>{plan.price}</div>
+                  <Link href="/services" className={`block w-full py-4 text-center rounded-xl font-semibold transition-colors ${plan.featured ? 'bg-white text-indigo-600 hover:bg-slate-50' : 'bg-slate-50 text-slate-900 hover:bg-slate-100'}`}>
                     Get Started
                   </Link>
                 </div>
@@ -420,15 +396,15 @@ export default function Home() {
       </section>
 
       {/* ── TESTIMONIALS (MARQUEE) ── */}
-      <section className="py-24 bg-zinc-950 overflow-hidden">
+      <section className="py-32 bg-slate-50 overflow-hidden">
         <div className="container mx-auto px-4 mb-16 text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-white">Trusted by 2,500+ Students</h2>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900">Trusted by 2,500+ Students</h2>
         </div>
         
         {/* Infinite Marquee */}
         <div className="relative w-full flex overflow-hidden">
-          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-zinc-950 to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-zinc-950 to-transparent z-10" />
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
           
           <motion.div 
             animate={{ x: ["0%", "-50%"] }}
@@ -436,20 +412,20 @@ export default function Home() {
             className="flex gap-6 w-max px-4"
           >
             {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-              <div key={i} className="w-80 md:w-96 p-8 rounded-3xl bg-zinc-900 border border-zinc-800 flex flex-col justify-between shrink-0">
+              <div key={i} className="w-80 md:w-96 p-8 rounded-[2rem] bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between shrink-0">
                 <div>
                   <div className="flex gap-1 mb-6">
                     {[1,2,3,4,5].map(s => <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
                   </div>
-                  <p className="text-zinc-300 font-medium leading-relaxed mb-6">"{t.text}"</p>
+                  <p className="text-slate-600 font-medium leading-relaxed mb-6">"{t.text}"</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-black text-white">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold">
                     {t.name[0]}
                   </div>
                   <div>
-                    <h4 className="font-bold text-white">{t.name}</h4>
-                    <p className="text-xs text-zinc-500 font-medium">{t.college}</p>
+                    <h4 className="font-bold text-slate-900">{t.name}</h4>
+                    <p className="text-xs text-slate-500 font-medium">{t.college}</p>
                   </div>
                 </div>
               </div>
@@ -458,54 +434,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FOUNDER SECTION ── */}
-      <section className="py-24 bg-zinc-900 border-y border-zinc-800">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-20 bg-zinc-950 p-8 md:p-16 rounded-[3rem] border border-zinc-800 shadow-2xl">
-            <div className="w-48 h-48 md:w-72 md:h-72 shrink-0 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-emerald-400 p-2 shadow-[0_0_50px_rgba(99,102,241,0.2)]">
-              <div className="w-full h-full rounded-full overflow-hidden relative border-4 border-zinc-950">
-                <Image src="/founder_nithin.jpg" alt="Appala Nithin" fill className="object-cover object-top" />
-              </div>
-            </div>
-            <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex px-4 py-2 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold uppercase tracking-wider">
-                Founder & CEO
-              </div>
-              <h3 className="text-4xl md:text-5xl font-black text-white">Appala Nithin</h3>
-              <p className="text-lg md:text-xl text-zinc-400 font-medium leading-relaxed">
-                "I built GraduateNex because I saw brilliant students failing not due to a lack of intelligence, but because of a broken system. We provide the tools, the code, and the documents so you can focus on building your career, not fighting red tape."
-              </p>
-              <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
-                <span className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300">EdTech Visionary</span>
-                <span className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300">2,500+ Students Helped</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ── FINAL CTA ── */}
-      <section className="relative py-32 bg-zinc-950 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/20 rounded-full blur-[150px]" />
-        </div>
-        
-        <div className="container mx-auto px-4 relative z-10 text-center">
+      <section className="py-32 bg-white">
+        <div className="container mx-auto px-4 text-center">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
-            className="max-w-4xl mx-auto space-y-10"
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto space-y-10 bg-slate-900 rounded-[3rem] p-12 md:p-20 shadow-2xl relative overflow-hidden"
           >
-            <h2 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-tight">
-              Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Graduate?</span>
+            {/* Subtle glow inside CTA */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none" />
+
+            <h2 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight relative z-10">
+              Ready to <span className="text-indigo-400">Graduate?</span>
             </h2>
-            <p className="text-xl text-zinc-400 font-medium">
+            <p className="text-xl text-slate-300 font-medium relative z-10">
               Join 2,500+ students who secured top grades and landed their dream jobs.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Link href="/login" className="px-10 py-5 rounded-2xl bg-white text-zinc-950 font-black text-xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 relative z-10">
+              <Link href="/login" className="px-10 py-5 rounded-2xl bg-white text-slate-900 font-bold text-lg hover:bg-slate-50 transition-colors shadow-lg">
                 Start For Free
               </Link>
-              <a href="tel:+917981994870" className="px-10 py-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white font-bold text-xl hover:bg-zinc-800 transition-colors flex items-center justify-center gap-3">
+              <a href="tel:+917981994870" className="px-10 py-5 rounded-2xl bg-slate-800 text-white font-bold text-lg hover:bg-slate-700 transition-colors flex items-center justify-center gap-3">
                 <Phone className="w-5 h-5" /> Call Sales
               </a>
             </div>
