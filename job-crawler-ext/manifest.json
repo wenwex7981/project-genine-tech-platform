@@ -1,14 +1,19 @@
 {
   "manifest_version": 3,
   "name": "GraduateNex Job Crawler",
-  "version": "1.0",
-  "description": "Auto-crawls fresh software jobs, internships & AI updates every hour and pushes to GraduateNex.",
-  "permissions": ["storage", "alarms"],
+  "version": "2.0",
+  "description": "Scrapes fresh jobs from LinkedIn, Naukri, Internshala, Indeed + remote APIs. Pushes to GraduateNex hourly.",
+  "permissions": ["storage", "alarms", "tabs", "scripting"],
   "host_permissions": [
     "https://remotive.com/*",
     "https://www.arbeitnow.com/*",
     "https://dev.to/*",
     "https://hacker-news.firebaseio.com/*",
+    "https://www.linkedin.com/*",
+    "https://www.naukri.com/*",
+    "https://internshala.com/*",
+    "https://in.indeed.com/*",
+    "https://www.indeed.com/*",
     "https://www.graduatenex.online/*",
     "https://graduatenex.online/*"
   ],

@@ -5,87 +5,63 @@
 <title>GraduateNex Job Crawler</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-  body { width: 400px; min-height: 500px; background: #f8f9fa; color: #1a1a2e; }
+  body { width: 420px; background: #f8f9fa; color: #1a1a2e; }
 
-  .header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%);
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .header-icon { font-size: 28px; }
-  .header-title { color: #fff; font-size: 15px; font-weight: 800; }
-  .header-sub { color: rgba(255,255,255,0.55); font-size: 11px; margin-top: 2px; }
-  .badge { display: inline-block; background: #10b981; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%); padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .header-icon { font-size: 26px; }
+  .header-title { color: #fff; font-size: 14px; font-weight: 800; }
+  .header-sub { color: rgba(255,255,255,0.5); font-size: 10px; margin-top: 2px; }
+  .badge { display: inline-block; background: #10b981; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; margin-left: 5px; }
 
-  .content { padding: 16px; }
+  .body { padding: 14px; }
 
-  /* Stats */
-  .stats-row { display: flex; gap: 8px; margin-bottom: 14px; }
-  .stat { flex: 1; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 12px 8px; text-align: center; }
-  .stat-num { font-size: 22px; font-weight: 900; color: #4f46e5; display: block; }
-  .stat-label { font-size: 10px; color: #9ca3af; font-weight: 600; margin-top: 2px; display: block; }
+  .stats-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .stat { flex: 1; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 10px 6px; text-align: center; }
+  .stat-num { font-size: 20px; font-weight: 900; color: #4f46e5; display: block; }
+  .stat-label { font-size: 10px; color: #9ca3af; font-weight: 600; margin-top: 1px; display: block; }
 
-  /* Status bar */
-  .status-bar {
-    padding: 10px 12px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 14px;
-    border: 1.5px solid transparent;
-  }
+  .status-bar { padding: 9px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; margin-bottom: 12px; border: 1.5px solid transparent; }
   .status-bar.info    { background: #ede9fe; color: #4c1d95; border-color: #c4b5fd; }
   .status-bar.success { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
   .status-bar.error   { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
   .status-bar.warning { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
 
-  /* Source checkboxes */
-  .section-title { font-size: 11px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-  .sources-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; }
-  .source-item {
-    display: flex; align-items: center; gap: 8px;
-    background: #fff; border: 1.5px solid #e5e7eb; border-radius: 10px;
-    padding: 9px 12px; cursor: pointer; transition: all 0.15s;
-    user-select: none;
-  }
+  .section-title { font-size: 10px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 7px; }
+
+  .sources-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+  .source-item { display: flex; align-items: center; gap: 7px; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 8px 10px; cursor: pointer; transition: all 0.15s; user-select: none; }
   .source-item:hover { border-color: #4f46e5; background: #f5f3ff; }
   .source-item.checked { border-color: #4f46e5; background: #ede9fe; }
-  .source-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: #4f46e5; cursor: pointer; }
-  .source-item-label { font-size: 12px; font-weight: 700; color: #374151; }
-  .source-item.checked .source-item-label { color: #3730a3; }
-  .source-item-desc { font-size: 10px; color: #9ca3af; }
+  .source-item input[type="checkbox"] { width: 13px; height: 13px; accent-color: #4f46e5; cursor: pointer; flex-shrink: 0; }
+  .src-name { font-size: 11px; font-weight: 700; color: #374151; }
+  .src-desc { font-size: 9px; color: #9ca3af; margin-top: 1px; }
+  .source-item.checked .src-name { color: #3730a3; }
 
-  /* Form inputs */
-  .form-group { margin-bottom: 12px; }
-  .form-label { display: block; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5px; }
-  .form-input {
-    width: 100%; padding: 10px 12px; border: 1.5px solid #e5e7eb; border-radius: 10px;
-    font-size: 13px; color: #111; background: #fff; outline: none; transition: border-color 0.2s;
-  }
+  .src-tag { font-size: 8px; font-weight: 800; padding: 1px 5px; border-radius: 4px; margin-left: 3px; vertical-align: middle; }
+  .tag-api  { background: #d1fae5; color: #065f46; }
+  .tag-live { background: #fee2e2; color: #991b1b; }
+
+  .form-group { margin-bottom: 10px; }
+  .form-label { display: block; font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .form-input { width: 100%; padding: 9px 11px; border: 1.5px solid #e5e7eb; border-radius: 9px; font-size: 12px; color: #111; background: #fff; outline: none; transition: border-color 0.2s; }
   .form-input:focus { border-color: #4f46e5; }
 
-  /* Buttons */
-  .btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-  .btn-primary { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; box-shadow: 0 4px 14px rgba(79,70,229,0.35); }
-  .btn-primary:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,70,229,0.45); }
-  .btn-secondary { background: #fff; color: #374151; border: 1.5px solid #e5e7eb; }
-  .btn-secondary:hover { background: #f9fafb; border-color: #d1d5db; }
+  .btn { width: 100%; padding: 11px; border: none; border-radius: 11px; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 7px; display: flex; align-items: center; justify-content: center; gap: 7px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; box-shadow: 0 4px 14px rgba(79,70,229,0.3); }
+  .btn-primary:not(:disabled):hover { transform: translateY(-1px); }
+  .btn-secondary { background: #fff; color: #374151; border: 1.5px solid #e5e7eb; font-size: 12px; }
 
-  /* Activity log */
-  .log-wrap { background: #0f172a; border-radius: 10px; padding: 10px; height: 110px; overflow-y: auto; margin-bottom: 12px; }
-  .log-line { font-family: 'Courier New', monospace; font-size: 11px; padding: 1px 0; }
+  .log-wrap { background: #0f172a; border-radius: 9px; padding: 8px; height: 100px; overflow-y: auto; margin-bottom: 10px; }
+  .log-line { font-family: monospace; font-size: 10px; padding: 1px 0; }
   .log-line.info    { color: #60a5fa; }
   .log-line.success { color: #34d399; }
   .log-line.error   { color: #f87171; }
   .log-line.warn    { color: #fbbf24; }
 
-  /* Footer */
-  .footer-note { font-size: 10px; color: #9ca3af; text-align: center; padding: 4px 0; }
-
-  hr { border: none; border-top: 1px solid #f3f4f6; margin: 12px 0; }
+  .footer-note { font-size: 10px; color: #9ca3af; text-align: center; padding: 3px 0; }
+  hr { border: none; border-top: 1px solid #f3f4f6; margin: 10px 0; }
+  .note { font-size: 10px; color: #6b7280; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 7px 10px; margin-bottom: 10px; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -93,95 +69,83 @@
 <div class="header">
   <div class="header-icon">🔍</div>
   <div>
-    <div class="header-title">GraduateNex Job Crawler <span class="badge">v1.0</span></div>
-    <div class="header-sub">Auto-scrapes fresh jobs, internships &amp; AI news every hour</div>
+    <div class="header-title">GraduateNex Job Crawler <span class="badge">v2.0</span></div>
+    <div class="header-sub">LinkedIn · Naukri · Internshala · Indeed · Remotive · HN</div>
   </div>
 </div>
 
-<div class="content">
+<div class="body">
 
-  <!-- Stats -->
   <div class="stats-row">
-    <div class="stat">
-      <span class="stat-num" id="stat-jobs">0</span>
-      <span class="stat-label">Jobs</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num" id="stat-intern">0</span>
-      <span class="stat-label">Internships</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num" id="stat-news">0</span>
-      <span class="stat-label">AI News</span>
-    </div>
+    <div class="stat"><span class="stat-num" id="stat-jobs">0</span><span class="stat-label">Jobs</span></div>
+    <div class="stat"><span class="stat-num" id="stat-intern">0</span><span class="stat-label">Internships</span></div>
+    <div class="stat"><span class="stat-num" id="stat-news">0</span><span class="stat-label">AI News</span></div>
   </div>
 
-  <!-- Status -->
-  <div class="status-bar info" id="main-status">
-    Ready to crawl — click <strong>Crawl Now</strong> to fetch fresh data
-  </div>
+  <div class="status-bar info" id="main-status">Ready — select sources and click Crawl Now</div>
 
-  <!-- Sources -->
   <div class="section-title">📡 Crawl Sources</div>
+
+  <div class="note">
+    ⚡ <strong>LIVE scrapers</strong> open a background tab briefly to extract jobs.<br>
+    🔌 <strong>API sources</strong> fetch directly (no extra tabs needed).
+  </div>
+
   <div class="sources-grid">
+    <label class="source-item checked" id="lbl-linkedin">
+      <input type="checkbox" id="src-linkedin" checked>
+      <div><div class="src-name">💼 LinkedIn <span class="src-tag tag-live">LIVE</span></div><div class="src-desc">India fresher jobs</div></div>
+    </label>
+    <label class="source-item checked" id="lbl-naukri">
+      <input type="checkbox" id="src-naukri" checked>
+      <div><div class="src-name">🇮🇳 Naukri <span class="src-tag tag-live">LIVE</span></div><div class="src-desc">Software jobs India</div></div>
+    </label>
+    <label class="source-item checked" id="lbl-internshala">
+      <input type="checkbox" id="src-internshala" checked>
+      <div><div class="src-name">🎓 Internshala <span class="src-tag tag-live">LIVE</span></div><div class="src-desc">CS/IT internships</div></div>
+    </label>
+    <label class="source-item checked" id="lbl-indeed">
+      <input type="checkbox" id="src-indeed" checked>
+      <div><div class="src-name">🔍 Indeed India <span class="src-tag tag-live">LIVE</span></div><div class="src-desc">Fresher roles</div></div>
+    </label>
     <label class="source-item checked" id="lbl-remotive">
       <input type="checkbox" id="src-remotive" checked>
-      <div>
-        <div class="source-item-label">💼 Remotive</div>
-        <div class="source-item-desc">Remote tech jobs</div>
-      </div>
+      <div><div class="src-name">🌐 Remotive <span class="src-tag tag-api">API</span></div><div class="src-desc">Remote tech jobs</div></div>
     </label>
     <label class="source-item checked" id="lbl-arbeitnow">
       <input type="checkbox" id="src-arbeitnow" checked>
-      <div>
-        <div class="source-item-label">🌍 Arbeitnow</div>
-        <div class="source-item-desc">Global remote jobs</div>
-      </div>
+      <div><div class="src-name">🌍 Arbeitnow <span class="src-tag tag-api">API</span></div><div class="src-desc">Global remote jobs</div></div>
     </label>
     <label class="source-item checked" id="lbl-devto">
       <input type="checkbox" id="src-devto" checked>
-      <div>
-        <div class="source-item-label">📰 Dev.to</div>
-        <div class="source-item-desc">AI &amp; tech articles</div>
-      </div>
+      <div><div class="src-name">📰 Dev.to <span class="src-tag tag-api">API</span></div><div class="src-desc">AI tech articles</div></div>
     </label>
     <label class="source-item checked" id="lbl-hn">
       <input type="checkbox" id="src-hn" checked>
-      <div>
-        <div class="source-item-label">🔶 Hacker News</div>
-        <div class="source-item-desc">Top tech stories</div>
-      </div>
+      <div><div class="src-name">🔶 Hacker News <span class="src-tag tag-api">API</span></div><div class="src-desc">Top tech stories</div></div>
     </label>
   </div>
 
   <hr>
 
-  <!-- Config -->
   <div class="form-group">
     <label class="form-label" for="backendUrl">🌐 Backend URL</label>
     <input class="form-input" type="text" id="backendUrl" value="https://www.graduatenex.online" placeholder="https://www.graduatenex.online">
   </div>
   <div class="form-group">
-    <label class="form-label" for="crawlerSecret">🔑 Crawler Secret Key</label>
+    <label class="form-label" for="crawlerSecret">🔑 Crawler Secret</label>
     <input class="form-input" type="password" id="crawlerSecret" placeholder="Set CRAWLER_SECRET in .env">
   </div>
 
-  <!-- Activity Log -->
   <div class="section-title">📋 Activity Log</div>
   <div class="log-wrap" id="log-box">
-    <div class="log-line info">[Ready] GraduateNex Job Crawler v1.0 loaded ✅</div>
+    <div class="log-line info">[Ready] GraduateNex Job Crawler v2.0 — 8 sources available</div>
   </div>
 
-  <!-- Buttons -->
-  <button class="btn btn-primary" id="btn-crawl">
-    🚀 Crawl Now &amp; Push to Site
-  </button>
-  <button class="btn btn-secondary" id="btn-save">
-    💾 Save Config + Enable Hourly Auto-Crawl
-  </button>
+  <button class="btn btn-primary" id="btn-crawl">🚀 Crawl Now &amp; Push to Site</button>
+  <button class="btn btn-secondary" id="btn-save">💾 Save + Enable Hourly Auto-Crawl</button>
 
   <div class="footer-note" id="last-run">Last crawl: Never</div>
-
 </div>
 
 <script src="popup.js"></script>

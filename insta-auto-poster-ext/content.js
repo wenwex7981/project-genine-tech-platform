@@ -66,57 +66,128 @@ function robustClick(el) {
 }
 
 // ─────────────────────────────────────────────────────
-// FIND COMMENT BOX — works on /p/ and /reel/ pages
+// FIND + ACTIVATE COMMENT BOX
 // ─────────────────────────────────────────────────────
-async function findCommentBox(timeout = 6000) {
-  const selectors = [
-    'textarea[placeholder*="Add a comment"]',
-    'textarea[placeholder*="comment"]',
-    'div[aria-label*="Add a comment"][contenteditable]',
-    'div[aria-label*="comment"][contenteditable]',
-    'form textarea',
-    'textarea',
-  ];
+async function findCommentBox(timeout = 10000) {
   const start = Date.now();
+
   while (Date.now() - start < timeout) {
-    for (const sel of selectors) {
+    // Step 1: Scroll to bottom so comment box is in view
+    window.scrollTo(0, document.body.scrollHeight);
+    await sleep(300);
+
+    // Step 2: Try to find existing active textarea/contenteditable
+    const directSelectors = [
+      'textarea[placeholder="Add a comment\u2026"]',   // Unicode ellipsis
+      'textarea[placeholder="Add a comment..."]',
+      'textarea[placeholder*="Add a comment"]',
+      'textarea[placeholder*="comment"]',
+      'div[role="textbox"][aria-label*="comment"]',
+      'div[contenteditable="true"][aria-label*="comment"]',
+      'form textarea',
+    ];
+    for (const sel of directSelectors) {
       const el = document.querySelector(sel);
-      if (el && el.offsetHeight > 0) return el;
+      if (el && el.offsetParent !== null) return el;
     }
-    // Try clicking "Add a comment..." text to reveal textarea
-    const clickTarget = Array.from(document.querySelectorAll('span, div, p')).find(
-      el => /add a comment/i.test(el.textContent.trim()) && el.offsetHeight > 0
-    );
-    if (clickTarget) { robustClick(clickTarget); await sleep(400); }
+
+    // Step 3: Click the "Add a comment…" placeholder to reveal the real input
+    const all = Array.from(document.querySelectorAll('*'));
+    const placeholder = all.find(el => {
+      const t = el.textContent.trim();
+      return (
+        (t === 'Add a comment\u2026' || t === 'Add a comment...' || t === 'Add a comment') &&
+        el.children.length === 0 &&
+        el.offsetParent !== null
+      );
+    });
+    if (placeholder) {
+      placeholder.scrollIntoView({ block: 'center' });
+      await sleep(200);
+      placeholder.click();
+      await sleep(600);
+      // re-check after click
+      for (const sel of directSelectors) {
+        const el = document.querySelector(sel);
+        if (el && el.offsetParent !== null) return el;
+      }
+    }
+
+    // Step 4: Try clicking inside the comment form/section
+    const form = document.querySelector('form[method="post"], section form, article ~ section');
+    if (form) { form.click(); await sleep(400); }
+
     await sleep(400);
   }
   return null;
 }
 
 // ─────────────────────────────────────────────────────
-// TYPE COMMENT — React-safe (textarea + contenteditable)
+// TYPE COMMENT — 4 methods for React/Lexical textarea
 // ─────────────────────────────────────────────────────
 async function typeComment(box, text) {
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  await sleep(300);
   box.focus();
-  await sleep(200);
-  box.click();
+  await sleep(300);
 
-  // Method 1: execCommand (works for textarea)
-  document.execCommand('selectAll', false, null);
-  document.execCommand('delete', false, null);
-  document.execCommand('insertText', false, text);
-  box.dispatchEvent(new Event('input',  { bubbles: true }));
-  box.dispatchEvent(new Event('change', { bubbles: true }));
-  await sleep(250);
+  // ── Method 1: React native textarea value setter (most reliable)
+  const isTextarea = box.tagName === 'TEXTAREA';
+  if (isTextarea) {
+    try {
+      const nativeSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLTextAreaElement.prototype, 'value'
+      )?.set;
+      if (nativeSetter) {
+        nativeSetter.call(box, text);
+        box.dispatchEvent(new Event('input',  { bubbles: true }));
+        box.dispatchEvent(new Event('change', { bubbles: true }));
+        await sleep(300);
+        if ((box.value || '').trim()) return true;
+      }
+    } catch(e) {}
+  }
 
-  // Method 2: ClipboardEvent paste (works for Lexical/Draft.js contenteditable)
-  const val = box.value || box.textContent || '';
-  if (!val.trim()) {
+  // ── Method 2: execCommand insertText (works when element is focused)
+  try {
+    box.focus();
+    document.execCommand('selectAll', false, null);
+    document.execCommand('delete',     false, null);
+    document.execCommand('insertText', false, text);
+    await sleep(300);
+    const val2 = (box.value || box.textContent || '').trim();
+    if (val2) return true;
+  } catch(e) {}
+
+  // ── Method 3: ClipboardEvent paste (works for Lexical/Draft.js)
+  try {
     const dt = new DataTransfer();
     dt.setData('text/plain', text);
-    box.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
-    await sleep(250);
-  }
+    box.dispatchEvent(new ClipboardEvent('paste', {
+      clipboardData: dt, bubbles: true, cancelable: true
+    }));
+    await sleep(400);
+    const val3 = (box.value || box.textContent || '').trim();
+    if (val3) return true;
+  } catch(e) {}
+
+  // ── Method 4: Simulate keyboard input character by character
+  try {
+    box.focus();
+    const chars = text.slice(0, 120); // enough for a GN comment
+    for (const char of chars) {
+      box.dispatchEvent(new KeyboardEvent('keydown', { key: char, bubbles: true }));
+      document.execCommand('insertText', false, char);
+      box.dispatchEvent(new KeyboardEvent('keyup',   { key: char, bubbles: true }));
+      await sleep(10);
+    }
+    await sleep(300);
+    const val4 = (box.value || box.textContent || '').trim();
+    if (val4) return true;
+  } catch(e) {}
+
+  // Check final state
+  return !!(box.value || box.textContent || '').trim();
 }
 
 // ─────────────────────────────────────────────────────
@@ -141,22 +212,24 @@ async function submitComment(box) {
 }
 
 // ─────────────────────────────────────────────────────
-// COMMENT ON CURRENT POST PAGE (/p/xxx or /reel/xxx)
+// COMMENT ON CURRENT POST PAGE
 // ─────────────────────────────────────────────────────
 async function commentOnCurrentPost(topic) {
-  const box = await findCommentBox(7000);
-  if (!box) return false;
-
-  const comment = getComment(topic);
-  await typeComment(box, comment);
-
-  // Verify text was entered
-  const entered = box.value || box.textContent || '';
-  if (!entered.trim()) {
-    report('skipped', { reason: 'Could not type in comment box' });
+  const box = await findCommentBox(10000);
+  if (!box) {
+    report('skipped', { reason: 'Comment box not found on page' });
     return false;
   }
 
+  const comment = getComment(topic);
+  const typed   = await typeComment(box, comment);
+
+  if (!typed) {
+    report('skipped', { reason: 'Could not enter text — Instagram blocked input' });
+    return false;
+  }
+
+  await sleep(400);
   await submitComment(box);
   report('commented', { comment });
   return true;
