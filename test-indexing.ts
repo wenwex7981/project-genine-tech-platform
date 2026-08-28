@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
-import { pingGoogleIndexingAPI } from './src/lib/indexing-api.ts';
+import { pingGoogleIndexingAPI } from './src/lib/indexing-api';
 
 async function test() {
   const url = 'https://www.graduatenex.online/locations/hyderabad';

@@ -15,9 +15,25 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ResumeEditor from "@/components/ResumeEditor";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
+import { motion, AnimatePresence } from "framer-motion";
+
+const LIVE_NOTIFICATIONS = [
+  "Rahul from Hyderabad just tailored a TCS resume 🚀",
+  "Priya from Bangalore boosted her ATS score to 92% ✨",
+  "Ankit landed an interview after using the JD Analyzer 💼",
+  "Sneha just published a top-tier Frontend Engineer template 🔥",
+];
 
 export default function ResumeHub() {
   const router = useRouter();
+  const [notificationIndex, setNotificationIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNotificationIndex((prev) => (prev + 1) % LIVE_NOTIFICATIONS.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
   const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community" | "maker">("community");
   const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -292,41 +308,91 @@ export default function ResumeHub() {
 
   return (
     <div className="w-full min-h-screen bg-muted/10 pb-20">
-      {/* Premium Hero Banner */}
-      <div className="relative min-h-[450px] flex items-center text-white py-20 px-4 md:px-8 border-b border-zinc-800 mb-12 overflow-hidden shadow-2xl">
-        <div className="absolute inset-0">
-          <Image 
-            src="/images/resume-banner.png" 
-            alt="The Resume Hub Banner" 
-            fill 
-            className="object-cover"
-            priority
+      {/* Premium Glassmorphic Hero Banner */}
+      <div className="relative min-h-[500px] flex items-center text-white py-20 px-4 md:px-8 border-b border-zinc-800/50 mb-12 overflow-hidden">
+        {/* Dynamic Background */}
+        <div className="absolute inset-0 bg-zinc-950">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+          <motion.div 
+            animate={{ 
+              backgroundPosition: ["0% 0%", "100% 100%"],
+              opacity: [0.1, 0.3, 0.1]
+            }}
+            transition={{ duration: 10, repeat: Infinity, repeatType: "reverse" }}
+            className="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 via-purple-500/20 to-emerald-500/20 blur-3xl"
           />
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
         </div>
+        
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10 w-full">
-          <div className="space-y-6 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 border border-white/30 text-sm font-semibold backdrop-blur-md">
-              <Briefcase className="h-4 w-4 text-blue-200" />
-              <span className="text-blue-50">AI-Powered Career Engine</span>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8 max-w-2xl"
+          >
+            {/* Live Notification Ticker */}
+            <div className="h-8 overflow-hidden inline-flex">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={notificationIndex}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold backdrop-blur-xl shadow-2xl"
+                >
+                  <Sparkles className="h-3 w-3 text-amber-400" />
+                  <span className="text-gray-300">{LIVE_NOTIFICATIONS[notificationIndex]}</span>
+                </motion.div>
+              </AnimatePresence>
             </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg">The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Resume Hub</span></h1>
-            <p className="text-lg md:text-xl text-gray-200 leading-relaxed font-medium drop-shadow-md">
-              Maximize your callback rate. Deeply analyze your resume against a staggering 17-point ATS checklist and an exhaustive 20-point JD matching system.
+
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter drop-shadow-2xl">
+              The <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400">Resume Hub</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-400 leading-relaxed font-medium">
+              Don't leave your career to chance. Our Silicon Valley-grade AI engine analyzes your resume against 10,000+ real tech interviews and beats ATS systems guaranteed.
             </p>
-          </div>
-          <div className="hidden md:flex p-8 bg-white/10 border border-white/20 rounded-3xl backdrop-blur-lg shadow-2xl">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col items-center p-4 bg-white/20 rounded-xl backdrop-blur-md shadow-inner">
-                <CheckCircle className="h-8 w-8 text-blue-300 mb-2 drop-shadow" />
-                <span className="text-sm font-bold text-white drop-shadow">17-Pt ATS</span>
+
+            <div className="flex items-center gap-4 text-sm font-semibold text-gray-300">
+              <div className="flex -space-x-3">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="w-8 h-8 rounded-full border-2 border-zinc-900 bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center overflow-hidden">
+                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
+                  </div>
+                ))}
               </div>
-              <div className="flex flex-col items-center p-4 bg-white/20 rounded-xl backdrop-blur-md shadow-inner">
-                <Search className="h-8 w-8 text-indigo-300 mb-2 drop-shadow" />
-                <span className="text-sm font-bold text-white drop-shadow">20-Pt Match</span>
+              <span>Trusted by 10,000+ Freshers in India</span>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="hidden md:flex p-1 bg-gradient-to-b from-white/10 to-transparent rounded-3xl"
+          >
+            <div className="p-8 bg-zinc-950/80 rounded-[22px] backdrop-blur-2xl shadow-2xl border border-white/5 flex flex-col gap-6">
+              <div className="flex items-center gap-4 pb-6 border-b border-white/10">
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+                  <CheckCircle className="h-6 w-6 text-indigo-400" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-lg">17-Pt ATS Audit</h4>
+                  <p className="text-xs text-gray-400">Deep structural analysis</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                  <Search className="h-6 w-6 text-emerald-400" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-lg">20-Pt JD Match</h4>
+                  <p className="text-xs text-gray-400">Hyper-targeted tailoring</p>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -356,44 +422,108 @@ export default function ResumeHub() {
 
       {/* -------------------- ANALYZER INPUTS -------------------- */}
       {(activeTab === "ats" || activeTab === "jd") && !result && (
-        <div className="max-w-2xl mx-auto space-y-6 bg-white dark:bg-zinc-900 p-8 rounded-2xl border shadow-sm">
-          <div>
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <FileText className="h-5 w-5 text-indigo-500" /> 
-              1. Upload Your Resume
-            </h3>
-            <div onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/50">
-              <Upload className="h-8 w-8 text-gray-400 mx-auto mb-3" />
-              <p className="text-sm font-semibold">{file ? file.name : "Click to upload PDF or DOCX"}</p>
-              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf,.docx" className="hidden" />
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-3xl mx-auto"
+        >
+          <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] border border-white/20 shadow-2xl relative overflow-hidden">
+            {/* Glowing orb background effect */}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-indigo-500/10 blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl"></div>
+
+            <div className="relative z-10 space-y-10">
+              {/* Step 1: Upload */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 font-bold">1</div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Upload Your Resume</h3>
+                </div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => fileInputRef.current?.click()} 
+                  className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors ${file ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-500/10' : 'border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-zinc-800/50'}`}
+                >
+                  <Upload className={`h-10 w-10 mx-auto mb-4 ${file ? 'text-indigo-500' : 'text-gray-400'}`} />
+                  <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                    {file ? file.name : "Drag & Drop or Click to Upload"}
+                  </p>
+                  <p className="text-sm text-gray-500">Supports PDF & DOCX (Max 5MB)</p>
+                  <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf,.docx" className="hidden" />
+                </motion.div>
+              </div>
+
+              {/* Step 2: JD (Only if activeTab === jd) */}
+              <AnimatePresence>
+                {activeTab === "jd" && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-4"
+                  >
+                    <div className="flex items-center gap-3 mt-8">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 font-bold">2</div>
+                      <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Paste Job Description</h3>
+                    </div>
+                    <textarea 
+                      value={jd} 
+                      onChange={(e) => setJd(e.target.value)} 
+                      placeholder="Paste the full job description here. Our AI will extract all 20 hidden parameters..." 
+                      className="w-full min-h-[220px] p-6 rounded-2xl border-2 border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-zinc-950/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all resize-none text-base shadow-inner" 
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Step 3: Action Buttons */}
+              <div className="pt-4">
+                {isProcessing || isTailoring ? (
+                  <motion.div 
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                    className="w-full h-16 rounded-2xl bg-zinc-900 flex items-center justify-center gap-4 text-white shadow-xl overflow-hidden relative"
+                  >
+                    <motion.div 
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+                    />
+                    <Loader2 className="h-6 w-6 animate-spin text-indigo-400" />
+                    <span className="font-bold text-lg tracking-wide">
+                      {isTailoring ? "AI IS REWRITING YOUR RESUME..." : "DEEP SCANNING RESUME..."}
+                    </span>
+                  </motion.div>
+                ) : (
+                  activeTab === "ats" ? (
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button onClick={handleAnalyze} disabled={!file} className="w-full h-16 text-xl font-bold rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-xl shadow-indigo-500/20">
+                        <CheckCircle className="mr-2 h-6 w-6" /> 
+                        Run 17-Point ATS Audit
+                      </Button>
+                    </motion.div>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+                        <Button onClick={handleAnalyze} disabled={!file || !jd} variant="outline" className="w-full h-16 text-lg font-bold rounded-2xl border-2 border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-900/50 dark:text-indigo-300 dark:hover:bg-indigo-900/20">
+                          <Search className="mr-2 h-5 w-5" /> 
+                          Check Match Score
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+                        <Button onClick={handleTailor} disabled={!file || !jd} className="w-full h-16 text-lg font-bold rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-xl shadow-emerald-500/20">
+                          <Sparkles className="mr-2 h-5 w-5" /> 
+                          Auto-Tailor Resume
+                        </Button>
+                      </motion.div>
+                    </div>
+                  )
+                )}
+              </div>
             </div>
           </div>
-
-          {activeTab === "jd" && (
-            <div className="animate-in slide-in-from-top-4 fade-in duration-300">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-indigo-500" /> 
-                2. Paste Job Description
-              </h3>
-              <textarea value={jd} onChange={(e) => setJd(e.target.value)} placeholder="Paste the full job description here..." className="w-full min-h-[200px] p-4 rounded-xl border bg-background resize-none" />
-            </div>
-          )}
-
-          {activeTab === "ats" ? (
-            <Button onClick={handleAnalyze} disabled={!file || isProcessing} size="lg" className="w-full h-14 text-lg bg-indigo-600 hover:bg-indigo-700 text-white">
-              {isProcessing ? <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Deep Scanning...</> : <><Percent className="mr-2 h-6 w-6" /> Run Full Analysis</>}
-            </Button>
-          ) : (
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button onClick={handleAnalyze} disabled={!file || !jd || isProcessing || isTailoring} size="lg" className="flex-1 h-14 text-lg bg-indigo-600 hover:bg-indigo-700 text-white">
-                {isProcessing ? <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Deep Scanning...</> : <><Percent className="mr-2 h-6 w-6" /> JD Match Analyzer</>}
-              </Button>
-              <Button onClick={handleTailor} disabled={!file || !jd || isProcessing || isTailoring} size="lg" className="flex-1 h-14 text-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20">
-                {isTailoring ? <><Loader2 className="mr-2 h-6 w-6 animate-spin" /> Tailoring Resume...</> : <><Sparkles className="mr-2 h-6 w-6" /> Tailor My Resume (AI Rewrite)</>}
-              </Button>
-            </div>
-          )}
-        </div>
+        </motion.div>
       )}
 
       {/* -------------------- 17-POINT ATS REPORT -------------------- */}
@@ -1068,59 +1198,142 @@ export default function ResumeHub() {
       )}
 
       {/* POST MODAL */}
-      {showPostModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-900 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden border">
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-2xl font-bold flex items-center gap-2"><PlusCircle className="text-indigo-600" /> Publish Resume</h2>
-              <button onClick={() => setShowPostModal(false)} className="text-gray-400 hover:text-gray-800"><X className="h-6 w-6" /></button>
-            </div>
-            <form onSubmit={handlePostResume} className="p-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Candidate Name</label>
-                  <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800" />
+      <AnimatePresence>
+        {showPostModal && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white dark:bg-zinc-900 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden border"
+            >
+              <div className="flex justify-between items-center p-6 border-b">
+                <h2 className="text-2xl font-bold flex items-center gap-2"><PlusCircle className="text-indigo-600" /> Publish Resume</h2>
+                <button onClick={() => setShowPostModal(false)} className="text-gray-400 hover:text-gray-800"><X className="h-6 w-6" /></button>
+              </div>
+              <form onSubmit={handlePostResume} className="p-6 space-y-5">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Candidate Name</label>
+                    <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Contact Number</label>
+                    <input required value={formData.contactNumber} onChange={e => setFormData({...formData, contactNumber: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800" />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Contact Number</label>
-                  <input required value={formData.contactNumber} onChange={e => setFormData({...formData, contactNumber: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800" />
+                  <label className="block text-sm font-semibold mb-2">Shortlisted By (Company)</label>
+                  <input required value={formData.shortlistedBy} onChange={e => setFormData({...formData, shortlistedBy: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800" />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2">Shortlisted By (Company)</label>
-                <input required value={formData.shortlistedBy} onChange={e => setFormData({...formData, shortlistedBy: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Domain</label>
+                    <select value={formData.domain} onChange={e => setFormData({...formData, domain: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800">
+                      <option>Software Engineering</option>
+                      <option>Data Science</option>
+                      <option>Product Management</option>
+                      <option>Design</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">Experience Level</label>
+                    <select value={formData.experienceLevel} onChange={e => setFormData({...formData, experienceLevel: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800">
+                      <option>Fresher</option>
+                      <option>Experienced</option>
+                    </select>
+                  </div>
+                </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Domain</label>
-                  <select value={formData.domain} onChange={e => setFormData({...formData, domain: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800">
-                    <option>Software Engineering</option>
-                    <option>Data Science</option>
-                    <option>Product Management</option>
-                    <option>Design</option>
-                  </select>
+                  <label className="block text-sm font-semibold mb-2">Upload Resume Document</label>
+                  <input type="file" accept=".pdf,.docx" required className="w-full p-3 rounded-xl border bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700" />
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-2">Experience Level</label>
-                  <select value={formData.experienceLevel} onChange={e => setFormData({...formData, experienceLevel: e.target.value})} className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-zinc-800">
-                    <option>Fresher</option>
-                    <option>Experienced</option>
-                  </select>
+                <div className="pt-4 mt-2 border-t">
+                  <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg bg-indigo-600 hover:bg-indigo-700 text-white">
+                    {isSubmitting ? <Loader2 className="animate-spin mr-2" /> : "Publish to Community"}
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* PREMIUM PAYWALL MODAL */}
+      <AnimatePresence>
+        {showPaywall && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-y-auto"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }} 
+              animate={{ scale: 1, y: 0 }} 
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-zinc-950 rounded-[2rem] w-full max-w-2xl border border-indigo-500/30 relative overflow-hidden my-8 shadow-[0_0_100px_rgba(79,70,229,0.2)]"
+            >
+              {/* Glowing Background FX */}
+              <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-indigo-500/20 to-transparent"></div>
+              <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-500/20 rounded-full blur-[100px]"></div>
+              <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-[100px]"></div>
+
+              <div className="relative z-10 p-8 md:p-12 flex flex-col items-center text-center">
+                <button onClick={() => setShowPaywall(null)} className="absolute top-6 right-6 text-gray-500 hover:text-white bg-zinc-900 rounded-full p-2 transition-colors">
+                  <X className="h-5 w-5" />
+                </button>
+
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/30 border border-white/10">
+                  <Lock className="h-8 w-8 text-white" />
+                </div>
+                
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
+                  Unlock Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Dream Career</span>
+                </h2>
+                
+                <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto">
+                  Your resume has massive potential. Get the exact ATS keywords and structural changes needed to bypass recruiters.
+                </p>
+
+                <div className="grid md:grid-cols-2 gap-4 w-full mb-8">
+                  <div className="bg-zinc-900/80 border border-white/5 rounded-2xl p-6 text-left hover:border-indigo-500/30 transition-colors">
+                    <h3 className="text-indigo-400 font-bold mb-1">ATS Scanner</h3>
+                    <div className="text-3xl font-black text-white mb-2">₹49</div>
+                    <ul className="space-y-2 text-sm text-gray-400 mb-6">
+                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> 17-Point Structure Check</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> Action Verb Analysis</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> Formatting Audit</li>
+                    </ul>
+                    <Button onClick={() => handlePayPerUse("ats")} className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold h-12">
+                      Unlock ATS Audit
+                    </Button>
+                  </div>
+                  
+                  <div className="bg-gradient-to-b from-indigo-900/40 to-zinc-900/80 border border-indigo-500/50 rounded-2xl p-6 text-left relative overflow-hidden shadow-[0_0_30px_rgba(79,70,229,0.15)]">
+                    <div className="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">MOST POPULAR</div>
+                    <h3 className="text-purple-400 font-bold mb-1">JD Tailor</h3>
+                    <div className="text-3xl font-black text-white mb-2">₹99</div>
+                    <ul className="space-y-2 text-sm text-gray-300 mb-6">
+                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> 20-Point Keyword Match</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> AI Resume Rewrite</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> 95%+ Interview Chance</li>
+                    </ul>
+                    <Button onClick={() => handlePayPerUse("jd")} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold h-12 shadow-lg shadow-indigo-500/25">
+                      Auto-Tailor Resume
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+                  <Lock className="h-3 w-3" /> Secure Razorpay Checkout • 100% Satisfaction Guarantee
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2">Upload Resume Document</label>
-                <input type="file" accept=".pdf,.docx" required className="w-full p-3 rounded-xl border bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700" />
-              </div>
-              <div className="pt-4 mt-2 border-t">
-                <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg bg-indigo-600 hover:bg-indigo-700 text-white">
-                  {isSubmitting ? <Loader2 className="animate-spin mr-2" /> : "Publish to Community"}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
     </div>
   );
