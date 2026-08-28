@@ -8,7 +8,7 @@ import {
   ArrowRight, Globe, ShieldCheck, Zap, MapPin, Star, CheckCircle,
   BookOpen, Brain, FileText, Cpu, Users, Award, Rocket, Code2,
   Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, 
-  ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield
+  ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield, Search
 } from "lucide-react";
 import AuthRedirect from "@/components/AuthRedirect";
 
