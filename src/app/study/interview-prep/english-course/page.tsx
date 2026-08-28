@@ -111,6 +111,22 @@ type VoiceOption = {
   gender: "Female" | "Male" | "Unknown";
 };
 
+// Module-level pure function — no stale closure risk
+function classifyVoice(v: SpeechSynthesisVoice): VoiceOption {
+  const lang = v.lang.toLowerCase();
+  const name = v.name.toLowerCase();
+  let region: VoiceOption["region"] = "Other";
+  if (lang.includes("-in") || name.includes("india") || name.includes("heera") || name.includes("ravi") || name.includes("kalpana")) region = "India";
+  else if (lang.includes("-gb") || lang.includes("-uk") || name.includes("hazel") || name.includes("george") || name.includes("ryan")) region = "UK";
+  else if (lang.startsWith("en-us") || name.includes("zira") || name.includes("david") || name.includes("mark") || name.includes("jenny") || name.includes("aria") || lang === "en") region = "US";
+  const femaleKeys = ["female","woman","zira","heera","kalpana","hazel","susan","jenny","aria","sonia","libby","maisie","clara","natasha","samantha","victoria"];
+  const maleKeys = ["male","man","david","ravi","george","mark","ryan","thomas","reed","guy"];
+  let gender: VoiceOption["gender"] = "Unknown";
+  if (femaleKeys.some(k => name.includes(k))) gender = "Female";
+  else if (maleKeys.some(k => name.includes(k))) gender = "Male";
+  return { voice: v, label: v.name.replace("Microsoft ","").replace(" Online (Natural)","").replace("Google ",""), region, gender };
+}
+
 export default function EnglishCoursePage() {
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<{ id: string; title: string; moduleTitle: string } | null>(null);
@@ -122,48 +138,34 @@ export default function EnglishCoursePage() {
   const [recognition, setRecognition] = useState<any>(null);
   const [preferredModel, setPreferredModel] = useState<AIModel>("groq");
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
-  // Voice selector
   const [availableVoices, setAvailableVoices] = useState<VoiceOption[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [showVoicePicker, setShowVoicePicker] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Classify voices
-  const classifyVoice = (v: SpeechSynthesisVoice): VoiceOption => {
-    const lang = v.lang.toLowerCase();
-    const name = v.name.toLowerCase();
-    let region: VoiceOption["region"] = "Other";
-    if (lang.includes("in") || name.includes("india") || name.includes("heera") || name.includes("ravi") || name.includes("kalpana")) region = "India";
-    else if (lang.includes("gb") || lang.includes("uk") || name.includes("hazel") || name.includes("george") || name.includes("susan")) region = "UK";
-    else if (lang.startsWith("en-us") || name.includes("zira") || name.includes("david") || name.includes("mark") || name.includes("jenny") || lang === "en") region = "US";
-
-    const femaleKeywords = ["female", "woman", "zira", "heera", "kalpana", "hazel", "susan", "jenny", "aria", "sonia", "libby", "maisie", "clara", "natasha", "samantha", "victoria"];
-    const maleKeywords = ["male", "man", "david", "ravi", "george", "mark", "ryan", "guy", "thomas", "reed"];
-    let gender: VoiceOption["gender"] = "Unknown";
-    if (femaleKeywords.some(k => name.includes(k))) gender = "Female";
-    else if (maleKeywords.some(k => name.includes(k))) gender = "Male";
-
-    return {
-      voice: v,
-      label: v.name.replace("Microsoft ", "").replace(" Online (Natural)", "").replace("Google ", ""),
-      region,
-      gender,
-    };
-  };
+  const hasSetVoiceRef = useRef(false); // prevent stale-closure re-render loop
 
   useEffect(() => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
     const load = () => {
       const all = window.speechSynthesis.getVoices();
       const english = all.filter(v => v.lang.startsWith("en") || v.lang === "en");
       const classified = english.map(classifyVoice);
       setAvailableVoices(classified);
-      // Auto-select first good voice
-      const preferred = classified.find(v => v.region === "India") || classified.find(v => v.region === "US") || classified[0];
-      if (preferred && !selectedVoice) setSelectedVoice(preferred.voice);
+      // Only auto-select once — use ref to avoid stale closure re-render loop
+      if (!hasSetVoiceRef.current && classified.length > 0) {
+        const preferred = classified.find(v => v.region === "India") || classified.find(v => v.region === "US") || classified[0];
+        if (preferred) {
+          setSelectedVoice(preferred.voice);
+          hasSetVoiceRef.current = true;
+        }
+      }
     };
     load();
-    if (typeof window !== "undefined") window.speechSynthesis.onvoiceschanged = load;
-    return () => { window.speechSynthesis.cancel(); };
+    window.speechSynthesis.onvoiceschanged = load;
+    return () => {
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.onvoiceschanged = null;
+    };
   }, []);
 
   useEffect(() => {
