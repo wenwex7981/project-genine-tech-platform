@@ -150,39 +150,8 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button 
-            className="md:hidden p-2 hover:bg-muted rounded-full"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
         </div>
       </div>
-
-      {/* Mobile Menu Dropdown */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b shadow-xl animate-in slide-in-from-top-2 p-6 flex flex-col gap-6">
-          <nav className="flex flex-col gap-4">
-            <NavLinks />
-          </nav>
-          
-          <div className="flex flex-col gap-3 pt-4 border-t">
-            {user ? (
-              <Button variant="outline" onClick={() => { handleSignOut(); setIsMobileMenuOpen(false); }} className="w-full">Sign Out</Button>
-            ) : (
-              <>
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full">Sign In</Button>
-                </Link>
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full font-bold">Get Started Free</Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Modern Admin Login Modal */}
       {showLoginModal && (

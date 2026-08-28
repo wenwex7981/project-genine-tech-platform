@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import { CartProvider } from "@/context/CartContext";
 import { GoogleAnalytics } from '@next/third-parties/google';
 
@@ -77,13 +78,14 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="min-h-full flex flex-col bg-background text-foreground pb-20 md:pb-0">
         <CartProvider>
           <Navbar />
           <main className="flex-1">
             {children}
           </main>
           <Footer />
+          <MobileBottomNav />
         </CartProvider>
         
         {/* Global Organization JSON-LD Schema */}

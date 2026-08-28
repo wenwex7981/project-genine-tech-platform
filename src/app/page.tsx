@@ -175,30 +175,30 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none z-0" />
 
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-8 py-20">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-bold tracking-wide">
+          <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 py-10 md:py-20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-bold tracking-wide">
               <Globe className="h-4 w-4" /> India&apos;s #1 Academic Project Platform
             </div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05]">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] md:leading-[1.05]">
               Your Academic<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-400 to-yellow-400">
                 Success Partner
               </span>
             </h1>
 
-            <p className="text-xl text-zinc-300 leading-relaxed max-w-2xl mx-auto font-medium">
+            <p className="text-lg md:text-xl text-zinc-300 leading-relaxed max-w-2xl mx-auto font-medium">
               From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — GraduateNex is the complete ecosystem that helps over <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/login">
-                <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:scale-105 transition-all">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center w-full">
+              <Link href="/login" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-xl shadow-primary/30 hover:shadow-primary/50 hover:scale-[1.02] transition-all">
                   Start Free Today <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="#services">
-                <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all backdrop-blur-md">
+              <Link href="#services" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full h-14 px-8 text-lg font-bold rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all backdrop-blur-md">
                   Explore Services
                 </Button>
               </Link>
@@ -230,9 +230,9 @@ export default function Home() {
       </section>
 
       {/* ── SERVICES ── */}
-      <section id="services" className="w-full py-28 bg-background">
+      <section id="services" className="w-full py-12 md:py-28 bg-background">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-20 space-y-4 max-w-3xl mx-auto">
+          <div className="text-center mb-10 md:mb-20 space-y-4 max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-bold">
               <Layers className="h-4 w-4" /> Our Complete Product Suite
             </div>
@@ -244,9 +244,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 xl:grid-cols-3 md:gap-8 max-w-7xl mx-auto pb-6 md:pb-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {SERVICES.map((svc) => (
-              <Link href="/login" key={svc.title} className="group relative bg-white dark:bg-zinc-900 rounded-3xl border hover:border-primary/40 shadow-sm hover:shadow-2xl transition-all duration-300 p-8 flex flex-col overflow-hidden">
+              <Link href="/login" key={svc.title} className="min-w-[85vw] snap-center md:min-w-0 group relative bg-white dark:bg-zinc-900 rounded-3xl border hover:border-primary/40 shadow-sm hover:shadow-2xl transition-all duration-300 p-6 md:p-8 flex flex-col overflow-hidden">
                 <div className="absolute top-5 right-5">
                   <span className={`text-xs font-bold px-3 py-1 rounded-full ${badgeColorMap[svc.badge]}`}>{svc.badge}</span>
                 </div>
@@ -275,18 +275,18 @@ export default function Home() {
       </section>
 
       {/* ── PROJECT CATEGORIES ── */}
-      <section className="w-full py-24 bg-muted/30 border-y">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Explore by Domain</h2>
+      <section className="w-full py-12 md:py-24 bg-muted/30 border-y">
+        <div className="container mx-auto pl-4 pr-0 md:px-6">
+          <div className="text-center mb-10 md:mb-16 space-y-4 pr-4 md:pr-0">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">Explore by Domain</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Browse our deep catalogue of ready-made projects across every major engineering and management domain.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:grid sm:grid-cols-2 lg:grid-cols-4 md:gap-5 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {CATEGORIES.map((cat) => (
-              <Link href="/login" key={cat.name}>
-                <div className="group bg-white dark:bg-zinc-900 border rounded-2xl p-6 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex items-start gap-4">
+              <Link href="/login" key={cat.name} className="min-w-[75vw] snap-center md:min-w-0">
+                <div className="group bg-white dark:bg-zinc-900 border rounded-2xl p-5 md:p-6 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex items-center md:items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors flex-shrink-0">
                     {cat.icon}
                   </div>
@@ -302,10 +302,10 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="w-full py-28 bg-white dark:bg-zinc-950">
+      <section className="w-full py-12 md:py-28 bg-white dark:bg-zinc-950">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-20 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+          <div className="text-center mb-10 md:mb-20 space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
               From Order to Delivery in <span className="text-primary">3 Simple Steps</span>
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -336,10 +336,10 @@ export default function Home() {
       </section>
 
       {/* ── TRANSPARENT PRICING ── */}
-      <section className="w-full py-24 bg-zinc-50 border-y dark:bg-zinc-900/50">
+      <section className="w-full py-12 md:py-24 bg-zinc-50 border-y dark:bg-zinc-900/50">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+          <div className="text-center mb-10 md:mb-16 space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
               Transparent & Upfront <span className="text-primary">Pricing</span>
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -353,7 +353,7 @@ export default function Home() {
               { name: "Project Documentation", price: "₹149", desc: "Instant IEEE/SRS documentation templates." },
               { name: "Final Year Projects", price: "From ₹6,000", desc: "Complete source code, setup, and support." },
             ].map((plan) => (
-              <Link href="/services" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
+              <Link href="/services" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
                 <div>
                   <h3 className="font-bold text-xl mb-2 group-hover:text-primary transition-colors">{plan.name}</h3>
                   <p className="text-muted-foreground text-sm mb-6 h-10">{plan.desc}</p>
@@ -371,20 +371,20 @@ export default function Home() {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section className="w-full py-24 bg-zinc-950 text-white">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-bold">
+      <section className="w-full py-12 md:py-24 bg-zinc-950 text-white">
+        <div className="container mx-auto pl-4 pr-0 md:px-6">
+          <div className="text-center mb-10 md:mb-16 space-y-4 pr-4 md:pr-0">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-bold">
               <Star className="h-4 w-4 fill-primary" /> Trusted by Students Nationwide
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Real Results from Real Students</h2>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">Real Results from Real Students</h2>
             <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
               Over 2,500 students across India have used GraduateNex to score top grades and land their dream jobs.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-3xl p-8 space-y-4 transition-colors">
+              <div key={t.name} className="min-w-[85vw] snap-center md:min-w-0 bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-3xl p-6 md:p-8 space-y-4 transition-colors">
                 <div className="flex gap-1">
                   {Array.from({ length: t.rating }).map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -407,13 +407,13 @@ export default function Home() {
       </section>
 
       {/* ── LOCATIONS ── */}
-      <section className="w-full py-24 bg-background border-y">
+      <section className="w-full py-12 md:py-24 bg-background border-y">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-bold">
+          <div className="text-center mb-10 md:mb-16 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-bold">
               <MapPin className="h-4 w-4" /> Pan-India Reach
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
               Serving Students Across <span className="text-primary">50+ Cities in India</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -437,19 +437,19 @@ export default function Home() {
       </section>
 
       {/* ── FOUNDER ── */}
-      <section className="w-full py-24 bg-muted/20">
+      <section className="w-full py-12 md:py-24 bg-muted/20">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12 bg-white dark:bg-zinc-900 p-10 md:p-14 rounded-[3rem] border shadow-2xl">
-            <div className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-tr from-primary via-orange-400 to-yellow-300 p-1.5 flex-shrink-0 shadow-xl">
+          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-white dark:bg-zinc-900 p-8 md:p-14 rounded-[2.5rem] md:rounded-[3rem] border shadow-2xl">
+            <div className="w-40 h-40 md:w-64 md:h-64 rounded-full bg-gradient-to-tr from-primary via-orange-400 to-yellow-300 p-1.5 flex-shrink-0 shadow-xl">
               <div className="w-full h-full rounded-full overflow-hidden relative border-4 border-white dark:border-zinc-900">
                 <Image src="/founder_nithin.jpg" alt="Appala Nithin" fill className="object-cover object-top" />
               </div>
             </div>
-            <div className="text-center md:text-left space-y-5">
-              <div className="inline-flex px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-bold uppercase tracking-widest">
+            <div className="text-center md:text-left space-y-4 md:space-y-5">
+              <div className="inline-flex px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-bold uppercase tracking-widest">
                 Founder & CEO
               </div>
-              <h3 className="text-4xl md:text-5xl font-black tracking-tight">Appala Nithin</h3>
+              <h3 className="text-3xl md:text-5xl font-black tracking-tight">Appala Nithin</h3>
               <div className="space-y-3 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
                   <strong className="text-foreground">Appala Nithin</strong> is the visionary founder behind <strong className="text-primary">GraduateNex</strong> — a platform built from the ground up to solve the real academic struggles that millions of Indian students face every year.
@@ -469,10 +469,10 @@ export default function Home() {
       </section>
 
       {/* ── FAQ SECTION ── */}
-      <section className="w-full py-24 bg-background">
+      <section className="w-full py-12 md:py-24 bg-background">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+          <div className="text-center mb-10 md:mb-16 space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
               Frequently Asked <span className="text-primary">Questions</span>
             </h2>
             <p className="text-lg text-muted-foreground">Quick answers to common queries about our services.</p>
@@ -496,10 +496,10 @@ export default function Home() {
       </section>
 
       {/* ── TRUST SIGNALS ── */}
-      <section className="w-full py-16 bg-zinc-950 border-y border-zinc-800">
+      <section className="w-full py-10 md:py-16 bg-zinc-950 border-y border-zinc-800">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-            <div className="flex items-center gap-3 text-zinc-400">
+          <div className="flex flex-col md:flex-row flex-wrap justify-center items-start md:items-center gap-6 md:gap-16 max-w-xl mx-auto md:max-w-none pl-6 md:pl-0">
+            <div className="flex items-center gap-4 md:gap-3 text-zinc-400">
               <Shield className="h-8 w-8 text-emerald-400" />
               <div>
                 <p className="text-sm font-bold text-white">Secure Payments</p>
@@ -532,14 +532,14 @@ export default function Home() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="w-full py-32 bg-gradient-to-br from-primary via-orange-500 to-yellow-500 relative overflow-hidden">
+      <section className="w-full py-20 md:py-32 bg-gradient-to-br from-primary via-orange-500 to-yellow-500 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-black/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2" />
         </div>
-        <div className="container mx-auto px-4 md:px-6 text-center relative z-10 space-y-8">
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white">
-            Your Final Year Project is<br />One Click Away.
+        <div className="container mx-auto px-4 md:px-6 text-center relative z-10 space-y-6 md:space-y-8">
+          <h2 className="text-3xl md:text-6xl font-black tracking-tight text-white">
+            Your Final Year Project is<br className="hidden md:block"/> One Click Away.
           </h2>
           <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
             Join 2,500+ students who have already secured top grades, submitted original documentation, and advanced their careers using GraduateNex.
