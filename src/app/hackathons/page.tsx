@@ -111,49 +111,116 @@ export default function HackathonsDirectory() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {hackathons.map((hackathon) => (
-            <div key={hackathon.id} className="bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col group">
-              <div className="h-48 w-full relative overflow-hidden bg-gray-100">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={hackathon.banner_url || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80"} 
-                  alt={hackathon.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-6 flex-grow flex flex-col">
-                <h3 className="text-xl font-bold mb-3 line-clamp-2">{hackathon.title}</h3>
-                
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                    <Calendar className="h-4 w-4 text-indigo-500" />
-                    <span>{hackathon.event_date || hackathon.date || 'TBA'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                    <MapPin className="h-4 w-4 text-indigo-500" />
-                    <span>{hackathon.city ? `${hackathon.city}${hackathon.state ? ', ' + hackathon.state : ''}` : hackathon.location || hackathon.mode || 'Online'}</span>
+          {hackathons.map((hackathon) => {
+            // ── Strip Instagram OG meta format from title
+            // Instagram og:title looks like: "username on Date: actual caption"
+            // Instagram og:desc looks like: "X likes, Y comments - username on Date: actual caption"
+            const cleanTitle = (hackathon.title || 'Untitled Event')
+              .replace(/^\d[\d,]*\s+likes?,\s*\d[\d,]*\s+comments?\s*[-–]\s*/i, '') // strip "811 likes, 2,622 comments -"
+              .replace(/^[\w.\-_]+\s+on\s+\w+\s+\d+,?\s+\d{4}:\s*/i, '')           // strip "username on Aug 14, 2026:"
+              .replace(/^"?(.+?)"?\s*$/, '$1')                                        // strip surrounding quotes
+              .replace(/#\w+/g, '').replace(/@\w+/g, '')                              // strip hashtags/mentions
+              .trim()
+              .slice(0, 80) || 'Untitled Event';
+
+            // ── Clean description the same way
+            const cleanDesc = (hackathon.description || '')
+              .replace(/^\d[\d,]*\s+likes?,\s*\d[\d,]*\s+comments?\s*[-–]\s*/i, '')
+              .replace(/^[\w.\-_]+\s+on\s+\w+\s+\d+,?\s+\d{4}:\s*/i, '')
+              .replace(/^"/, '')
+              .trim()
+              .slice(0, 200);
+
+            // ── Generate unique gradient per event (based on title chars — no same image!)
+            const gradients = [
+              'from-violet-600 to-indigo-600',
+              'from-pink-600 to-rose-600',
+              'from-orange-500 to-amber-500',
+              'from-emerald-500 to-teal-600',
+              'from-blue-600 to-cyan-500',
+              'from-purple-600 to-pink-600',
+              'from-red-500 to-orange-500',
+              'from-indigo-600 to-blue-500',
+              'from-teal-500 to-green-500',
+              'from-yellow-500 to-orange-600',
+            ];
+            const gradIndex = (hackathon.title || '').split('').reduce((a: number, c: string) => a + c.charCodeAt(0), 0) % gradients.length;
+            const gradient = gradients[gradIndex];
+
+            const isInstagram = hackathon.org_name?.startsWith('@') || hackathon.org_name === 'Instagram Scout';
+            const instagramProfileUrl = hackathon.contact_person && hackathon.contact_person !== 'Scout Bot'
+              ? `https://www.instagram.com/${hackathon.contact_person}/`
+              : hackathon.website || null;
+
+            return (
+              <div key={hackathon.id} className="bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col group">
+                {/* Banner — unique gradient + event title overlay (no same image problem) */}
+                <div className={`h-44 w-full relative overflow-hidden bg-gradient-to-br ${gradient} flex items-end`}>
+                  {/* Decorative circles */}
+                  <div className="absolute top-4 right-4 w-24 h-24 rounded-full bg-white/10" />
+                  <div className="absolute -top-4 -left-4 w-32 h-32 rounded-full bg-white/10" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/10" />
+                  {/* Title overlay */}
+                  <div className="relative z-10 p-4 w-full">
+                    <div className="flex items-center gap-2 mb-1">
+                      {isInstagram && (
+                        <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full font-semibold backdrop-blur-sm">
+                          📸 Instagram
+                        </span>
+                      )}
+                      <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full font-semibold backdrop-blur-sm">
+                        {hackathon.mode || 'Online'}
+                      </span>
+                    </div>
+                    <h3 className="text-white font-bold text-base leading-snug line-clamp-2 drop-shadow">
+                      {cleanTitle}
+                    </h3>
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-500 line-clamp-3 mb-6 flex-grow">{hackathon.description}</p>
-                
-                <div className="flex gap-3 mt-auto">
-                  <Link href={`/hackathons/${hackathon.id}`} className="flex-1">
-                    <Button variant="outline" className="w-full">Details</Button>
-                  </Link>
-                  {hackathon.registration_link ? (
-                    <a href={hackathon.registration_link} target="_blank" rel="noreferrer" className="flex-1">
-                      <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">Join <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                    </a>
-                  ) : (
-                    <Link href={`/hackathons/${hackathon.id}`} className="flex-1">
-                      <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">Join <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                    </Link>
-                  )}
+                <div className="p-5 flex-grow flex flex-col">
+                  <div className="space-y-1.5 mb-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      <Calendar className="h-3.5 w-3.5 text-indigo-500 flex-shrink-0" />
+                      <span>{hackathon.event_date || 'TBA'}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      <MapPin className="h-3.5 w-3.5 text-indigo-500 flex-shrink-0" />
+                      <span>{hackathon.city || hackathon.mode || 'Online'}</span>
+                    </div>
+                    {hackathon.total_prize_pool && (
+                      <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 font-semibold">
+                        <Trophy className="h-3.5 w-3.5 flex-shrink-0" />
+                        <span>Prize: {hackathon.total_prize_pool}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 flex-grow">{cleanDesc || 'Click to see full details.'}</p>
+
+                  <div className="flex gap-2 mt-auto flex-wrap">
+                    {/* Organizer Instagram link */}
+                    {isInstagram && instagramProfileUrl && (
+                      <a href={instagramProfileUrl} target="_blank" rel="noreferrer"
+                        className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 text-white font-semibold hover:opacity-90 transition-opacity">
+                        <ExternalLink className="h-3 w-3" /> {hackathon.org_name || 'Instagram'}
+                      </a>
+                    )}
+                    {/* Register / Join */}
+                    {hackathon.registration_link ? (
+                      <a href={hackathon.registration_link} target="_blank" rel="noreferrer" className="flex-1">
+                        <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm">Register <ArrowRight className="ml-1 h-3.5 w-3.5" /></Button>
+                      </a>
+                    ) : (
+                      <Link href={`/hackathons/${hackathon.id}`} className="flex-1">
+                        <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm">Details <ArrowRight className="ml-1 h-3.5 w-3.5" /></Button>
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

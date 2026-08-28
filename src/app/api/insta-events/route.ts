@@ -93,6 +93,9 @@ interface ScrapedEvent {
   tags: string[];
   source: string;
   scraped_at: string;
+  instagram_username?: string | null;
+  instagram_profile_url?: string | null;
+  category?: string | null;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -118,12 +121,21 @@ export async function POST(req: NextRequest) {
     // (no migration needed — these are original NOT NULL + nullable fields)
     const rows = valid.map(evt => {
       const regLink = extractRegLink(evt.registration_link, evt.description);
+      // Real Instagram username — fallback to generic
+      const orgName = evt.instagram_username
+        ? `@${evt.instagram_username}`
+        : 'Instagram Scout';
+      // Organizer link: their Instagram profile if we have username, else the post URL
+      const orgLink = evt.instagram_profile_url || evt.instagram_url || null;
+
       return {
-        // Required NOT NULL fields
-        org_name: 'Instagram Scout',
+        // Organizer = actual Instagram account
+        org_name: orgName,
         org_type: 'Community',
-        contact_person: 'Auto Scout',
-        contact_email: 'scout@graduatenex.online',
+        contact_person: evt.instagram_username || 'Scout Bot',
+        contact_email: `${evt.instagram_username || 'scout'}@instagram.com`,
+        // website = registration link OR Instagram profile (so "Contact Organizer" goes to their profile)
+        website: regLink || orgLink,
 
         // Core event fields
         title: parseTitle(evt.title),
@@ -135,9 +147,8 @@ export async function POST(req: NextRequest) {
           : null,
         event_date: parseDate(evt.date),
         total_prize_pool: extractPrize(evt.description),
-        website: (regLink ?? evt.instagram_url ?? null),
 
-        // ✅ APPROVED so it shows on the page (RLS allows status='approved')
+        // ✅ APPROVED so it shows on the page
         status: 'approved',
         payment_status: 'unpaid',
       };

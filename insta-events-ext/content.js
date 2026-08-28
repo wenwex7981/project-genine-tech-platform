@@ -163,6 +163,17 @@ async function extractEventFromPostPage() {
 
     event.description = captionText.slice(0, 1000);
 
+    // ── Extract Instagram username from OG description format:
+    // Format: "X likes, Y comments - USERNAME on DATE: caption"
+    // Also try OG title: "USERNAME on Instagram: \"caption\""
+    const usernameFromDesc = captionText.match(/^\d[\d,]*\s+likes?,\s*\d[\d,]*\s+comments?\s*[-–]\s*([\w.]+)\s+on\s+/i);
+    const usernameFromTitle = document.querySelector('meta[property="og:title"]')?.content?.match(/^([\w.]+)\s+on\s+Instagram/i);
+    const instagramUsername = usernameFromDesc?.[1] || usernameFromTitle?.[1] || null;
+    if (instagramUsername) {
+      event.instagram_username = instagramUsername;
+      event.instagram_profile_url = `https://www.instagram.com/${instagramUsername}/`;
+    }
+
     // ── Title: first meaningful non-emoji line
     if (captionText) {
       const lines = captionText.split('\n').map(l => l.trim()).filter(l => l.length > 3);
