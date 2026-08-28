@@ -47,7 +47,8 @@ Return ONLY the JSON object, nothing else.`;
       preferredModel: preferredModel as AIModel,
       maxTokens: 4000,
       temperature: 0.4,
-      jsonMode: true
+      jsonMode: true,
+      timeoutMs: 55000
     });
 
     const parsed = JSON.parse(rawContent);

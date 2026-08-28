@@ -14,6 +14,7 @@ interface AIGenerateOptions {
   maxTokens?: number;
   temperature?: number;
   jsonMode?: boolean;
+  timeoutMs?: number;
 }
 
 export async function generateAIResponse(options: AIGenerateOptions): Promise<string> {
@@ -24,9 +25,10 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
     maxTokens = 8000,
     temperature = 0.4,
     jsonMode = false,
+    timeoutMs = 30000,
   } = options;
 
-  const ATTEMPT_TIMEOUT_MS = 8000; // 8 seconds before falling back
+  const ATTEMPT_TIMEOUT_MS = timeoutMs; // Configurable timeout before falling back
 
 
   const fallbackOrder: AIModel[] = [preferredModel];
@@ -210,7 +212,7 @@ export async function generateAIResponse(options: AIGenerateOptions): Promise<st
       })();
 
       const timeoutPromise = new Promise<string>((_, reject) => {
-        setTimeout(() => reject(new Error('AI Provider Request Timed Out (> 8 seconds)')), ATTEMPT_TIMEOUT_MS);
+        setTimeout(() => reject(new Error(`AI Provider Request Timed Out (> ${ATTEMPT_TIMEOUT_MS / 1000} seconds)`)), ATTEMPT_TIMEOUT_MS);
       });
 
       content = await Promise.race([

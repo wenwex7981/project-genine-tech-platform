@@ -140,6 +140,7 @@ ${templateText ? `Sample Template to extract styling/base layout/inspiration fro
       preferredModel: preferredModel as AIModel,
       jsonMode: true,
       temperature: 0.5,
+      timeoutMs: 55000
     });
 
     if (!resultStr) throw new Error("No response from AI");

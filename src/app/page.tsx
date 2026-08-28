@@ -1,14 +1,18 @@
+"use client";
+
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import {
   ArrowRight, Globe, ShieldCheck, Zap, MapPin, Star, CheckCircle,
   BookOpen, Brain, FileText, Cpu, Users, Award, Rocket, Code2,
-  Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, Mail,
+  Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, 
   ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield
 } from "lucide-react";
 import AuthRedirect from "@/components/AuthRedirect";
 
+// ── DATA CONSTANTS ──
 const STATS = [
   { value: "2,500+", label: "Projects Delivered" },
   { value: "98%", label: "Student Satisfaction" },
@@ -18,123 +22,97 @@ const STATS = [
 
 const SERVICES = [
   {
-    icon: <Code2 className="h-8 w-8" />,
-    color: "blue",
+    icon: Code2, color: "from-blue-500 to-indigo-500",
     title: "Final Year Projects",
-    description: "Complete, deployable source code for B.Tech, M.Tech, BCA, MCA, MBA final year projects. Covers AI/ML, IoT, Blockchain, Web & Mobile development with full documentation.",
-    features: ["Source Code + Setup Guide", "IEEE Base Paper", "SRS Document", "Presentation PPT"],
+    description: "Complete, deployable source code for B.Tech, M.Tech, BCA, MCA. Covers AI/ML, IoT, Web3 with full documentation.",
+    features: ["Source Code", "Base Paper", "SRS Document"],
     badge: "Most Popular",
+    colSpan: "md:col-span-2 lg:col-span-2",
   },
   {
-    icon: <ShieldCheck className="h-8 w-8" />,
-    color: "emerald",
-    title: "0% Plagiarism Documents",
-    description: "Our expert team crafts completely original IEEE Research Papers, SRS documents, and project reports with rigorous originality checks and proper academic citations.",
-    features: ["IEEE Format Research Papers", "SRS & System Design Docs", "Originality Verified", "University-Specific Formatting"],
-    badge: "High Demand",
-  },
-  {
-    icon: <Brain className="h-8 w-8" />,
-    color: "violet",
-    title: "AI Stealth Humanizer",
-    description: "Advanced AI content enhancement tool that refines and paraphrases AI-generated text into natural, human-quality academic writing with proper style and tone.",
-    features: ["Natural Language Refinement", "Semantic Preservation", "Academic Tone Maintained", "Bulk Text Processing"],
-    badge: "Exclusive",
-  },
-  {
-    icon: <FileText className="h-8 w-8" />,
-    color: "orange",
+    icon: FileText, color: "from-orange-400 to-rose-500",
     title: "ATS Resume Builder",
-    description: "Our intelligent Resume Hub grades your CV against a 17-point ATS scoring rubric and generates tailored resumes that beat Applicant Tracking Systems at top companies like TCS, Infosys, and Wipro.",
-    features: ["17-Point ATS Scoring", "Job Description Matching", "Cover Letter Generator", "Multiple Export Formats"],
+    description: "Our intelligent Resume Hub grades your CV against a 17-point ATS scoring rubric to bypass HR filters.",
+    features: ["17-Point ATS Scoring", "JD Matching"],
     badge: "Career Tool",
+    colSpan: "md:col-span-1 lg:col-span-1",
   },
   {
-    icon: <Rocket className="h-8 w-8" />,
-    color: "rose",
-    title: "Hackathon Directory",
-    description: "Stay ahead with our curated, real-time directory of national and international hackathons, coding contests, and ideathons. Filter by domain, prize pool, and deadline.",
-    features: ["Real-Time Hackathon Listings", "Filter by Domain & Date", "Team Formation Help", "Submission Guides"],
+    icon: Brain, color: "from-violet-500 to-fuchsia-500",
+    title: "AI Stealth Humanizer",
+    description: "Refine AI-generated text into natural, human-quality academic writing with proper style.",
+    features: ["Natural Tone", "Zero Plagiarism"],
+    badge: "Exclusive",
+    colSpan: "md:col-span-1 lg:col-span-1",
+  },
+  {
+    icon: ShieldCheck, color: "from-emerald-400 to-teal-500",
+    title: "0% Plagiarism Docs",
+    description: "Expertly crafted IEEE Research Papers and SRS documents with rigorous originality checks.",
+    features: ["IEEE Format", "Originality Verified"],
+    badge: "High Demand",
+    colSpan: "md:col-span-2 lg:col-span-2",
+  },
+  {
+    icon: Rocket, color: "from-rose-500 to-pink-600",
+    title: "Live Hackathons",
+    description: "Real-time directory of national and international coding contests and ideathons.",
+    features: ["Real-Time Listings", "Team Formation"],
     badge: "Live",
+    colSpan: "md:col-span-1 lg:col-span-1",
   },
   {
-    icon: <PenTool className="h-8 w-8" />,
-    color: "cyan",
-    title: "Custom Project Development",
-    description: "Have a unique base paper from your professor? Upload your abstract and our team will architect and code the entire project from scratch, tailored to your college rubric and viva requirements.",
-    features: ["Requirement Analysis", "Custom Architecture Design", "End-to-End Development", "Viva Preparation Support"],
+    icon: PenTool, color: "from-cyan-400 to-blue-500",
+    title: "Custom Projects",
+    description: "Have a unique base paper? We will architect and code the entire project from scratch.",
+    features: ["End-to-End Dev", "Viva Prep"],
     badge: "Premium",
+    colSpan: "md:col-span-2 lg:col-span-2",
   },
 ];
 
 const CATEGORIES = [
-  { icon: <Cpu className="h-6 w-6" />, name: "Artificial Intelligence & ML", count: "120+ Projects" },
-  { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Projects" },
-  { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Projects" },
-  { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Projects" },
-  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Projects" },
-  { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Projects" },
-  { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Projects" },
-  { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Projects" },
+  { icon: Cpu, name: "AI & Machine Learning", count: "120+" },
+  { icon: Globe, name: "Internet of Things", count: "85+" },
+  { icon: Database, name: "Blockchain & Web3", count: "60+" },
+  { icon: Cloud, name: "Cloud Computing", count: "45+" },
+  { icon: Bot, name: "Deep Learning & NLP", count: "95+" },
+  { icon: Layers, name: "Full Stack Web & Mobile", count: "150+" },
+  { icon: Lock, name: "Cybersecurity", count: "40+" },
+  { icon: BarChart3, name: "Data Science", count: "75+" },
+];
+
+const TESTIMONIALS = [
+  { name: "Sai Kiran Reddy", college: "JNTUH, Hyderabad", text: "Ordered a crop prediction system 2 months before submission. Got 98/100 from my guide. Absolutely life-saving!" },
+  { name: "Priya Sharma", college: "VIT, Vellore", text: "The AI Writing Enhancer refined my 40-page thesis perfectly. The tone reads beautifully. Essential tool." },
+  { name: "Rahul Nair", college: "Anna University", text: "Their ATS Resume Builder got me shortlisted at 4 MNCs. The JD matching is insanely accurate. Landed Infosys!" },
+  { name: "Ananya Gupta", college: "Amity University", text: "Ordered a custom Blockchain project. They built a decentralized voting system from scratch. Got an A grade." },
+  { name: "Vikram Singh", college: "SRM Institute", text: "The Zero Plagiarism IEEE paper they wrote for me was accepted in a major conference. Flawless work." },
+  { name: "Megha Jain", college: "Delhi University", text: "Saved me months of coding. The documentation was thorough, and the viva prep guide helped me answer confidently." },
 ];
 
 const LOCATIONS = [
   "Hyderabad", "Bengaluru", "Chennai", "Mumbai", "Delhi NCR",
-  "Pune", "Kolkata", "Ahmedabad", "Jaipur", "Lucknow",
-  "Coimbatore", "Vizag", "Nagpur", "Indore", "Bhubaneswar",
-  "Kochi", "Chandigarh", "Thiruvananthapuram", "Bhopal", "Patna",
+  "Pune", "Kolkata", "Ahmedabad", "Jaipur", "Lucknow"
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Sai Kiran Reddy",
-    college: "JNTUH, Hyderabad",
-    branch: "B.Tech CSE, 2024",
-    text: "I was panicking two months before submission. GraduateNex delivered a complete ML-based crop prediction system with IEEE paper, SRS, and PPT. Got 98/100 from my guide. Absolutely life-saving!",
-    rating: 5,
-  },
-  {
-    name: "Priya Sharma",
-    college: "VIT, Vellore",
-    branch: "M.Tech AI, 2024",
-    text: "The AI Writing Enhancer refined my entire 40-page thesis into natural, polished academic language. The tone was perfectly preserved and it reads beautifully now. Absolutely essential tool.",
-    rating: 5,
-  },
-  {
-    name: "Rahul Nair",
-    college: "Anna University, Chennai",
-    branch: "B.Tech IT, 2023",
-    text: "Their ATS Resume Builder got me shortlisted at 4 MNC companies in my campus drive. The job description matching feature is insanely accurate. Landed a role at Infosys!",
-    rating: 5,
-  },
-  {
-    name: "Ananya Gupta",
-    college: "Amity University, Noida",
-    branch: "MCA, 2024",
-    text: "Ordered a custom Blockchain project. The team analysed my professor's exact rubric and built a decentralized voting system from scratch. Got an A grade and my guide was thoroughly impressed.",
-    rating: 5,
-  },
-];
-
-const colorMap: Record<string, string> = {
-  blue: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-  emerald: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
-  violet: "bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400",
-  orange: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
-  rose: "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400",
-  cyan: "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400",
+// ── ANIMATION VARIANTS ──
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
 
-const badgeColorMap: Record<string, string> = {
-  "Most Popular": "bg-blue-600 text-white",
-  "High Demand": "bg-emerald-600 text-white",
-  "Exclusive": "bg-violet-600 text-white",
-  "Career Tool": "bg-orange-600 text-white",
-  "Live": "bg-rose-600 text-white",
-  "Premium": "bg-cyan-600 text-white",
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
 export default function Home() {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacityText = useTransform(scrollYProgress, [0, 1], [1, 0]);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -158,373 +136,348 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans selection:bg-primary/30">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+    <div className="flex flex-col min-h-screen bg-zinc-950 font-sans text-zinc-100 selection:bg-indigo-500/30 overflow-hidden">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <AuthRedirect />
+
       {/* ── HERO SECTION ── */}
-      <section className="relative w-full min-h-[92vh] flex flex-col justify-center bg-zinc-950 overflow-hidden text-white">
-        <Image src="/images/hero-bg.png" alt="Hero Background" fill priority className="object-cover object-center opacity-40 z-0" sizes="100vw" />
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-zinc-950/75 backdrop-blur-[2px] z-0"></div>
-        
-        {/* Background gradient orbs */}
-        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3 pointer-events-none z-0" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none z-0" />
+      <section ref={heroRef} className="relative w-full min-h-[95vh] flex flex-col justify-center items-center overflow-hidden pt-20">
+        {/* Dynamic Background */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-zinc-950 z-10 opacity-60 mix-blend-multiply" />
+          <motion.div style={{ y: yBg }} className="absolute inset-0">
+            <Image src="/images/hero-bg.png" alt="Hero" fill priority className="object-cover object-center opacity-40" />
+          </motion.div>
+          {/* Glowing Orbs */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-emerald-500/10 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: "2s" }} />
+        </div>
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 py-10 md:py-20">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-bold tracking-wide">
-              <Globe className="h-4 w-4" /> India&apos;s #1 Academic Project Platform
-            </div>
-
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] md:leading-[1.05]">
-              Your Academic<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-400 to-yellow-400">
-                Success Partner
+        <motion.div 
+          style={{ opacity: opacityText }}
+          className="container mx-auto px-4 relative z-20"
+        >
+          <div className="max-w-5xl mx-auto text-center space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-sm font-bold backdrop-blur-md"
+            >
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
-            </h1>
+              India's #1 Academic Success Platform
+            </motion.div>
 
-            <p className="text-lg md:text-xl text-zinc-300 leading-relaxed max-w-2xl mx-auto font-medium">
-              From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — GraduateNex is the complete ecosystem that helps over <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
-            </p>
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
+              className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05]"
+            >
+              Engineer Your<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400">
+                Future Today.
+              </span>
+            </motion.h1>
 
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center w-full">
-              <Link href="/login" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-xl shadow-primary/30 hover:shadow-primary/50 hover:scale-[1.02] transition-all">
-                  Start Free Today <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+            <motion.p 
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl mx-auto font-medium"
+            >
+              From ready-to-deploy final year projects to AI-powered ATS resumes — GraduateNex is the complete ecosystem helping 2,500+ students graduate with distinction.
+            </motion.p>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
+            >
+              <Link href="/login" className="w-full sm:w-auto group">
+                <div className="relative px-8 py-4 bg-white text-zinc-950 font-black text-lg rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.25)] transition-all transform hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="relative flex items-center justify-center gap-2">
+                    Start Free Today <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </div>
               </Link>
               <Link href="#services" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full h-14 px-8 text-lg font-bold rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all backdrop-blur-md">
+                <div className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-lg rounded-2xl backdrop-blur-md transition-all">
                   Explore Services
-                </Button>
+                </div>
               </Link>
-            </div>
+            </motion.div>
 
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-6">
-              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> Original, Plagiarism-Free Work</div>
-              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 24/7 Expert Support</div>
-              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 50+ Cities Served</div>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+              className="flex flex-wrap items-center justify-center gap-6 pt-12"
+            >
+              {[
+                { icon: CheckCircle, text: "Zero Plagiarism" },
+                { icon: Shield, text: "24/7 Expert Support" },
+                { icon: MapPin, text: "50+ Cities Served" }
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm text-zinc-400 font-semibold">
+                  <item.icon className="h-4 w-4 text-emerald-400" /> {item.text}
+                </div>
+              ))}
+            </motion.div>
           </div>
-        </div>
-
-
+        </motion.div>
       </section>
 
-      {/* ── STATS TICKER ── */}
-      <section className="bg-primary py-5 border-y">
+      {/* ── STATS SECTION ── */}
+      <section className="relative py-12 border-y border-white/5 bg-zinc-950/50 backdrop-blur-xl z-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
-            {STATS.map((s) => (
-              <div key={s.label} className="space-y-1">
-                <p className="text-3xl md:text-4xl font-black">{s.value}</p>
-                <p className="text-sm font-medium text-primary-foreground/80">{s.label}</p>
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/5">
+            {STATS.map((s, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-center px-4"
+              >
+                <div className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">{s.value}</div>
+                <div className="text-sm font-bold text-zinc-500 uppercase tracking-wider">{s.label}</div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── SERVICES ── */}
-      <section id="services" className="w-full py-12 md:py-28 bg-background">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-20 space-y-4 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-bold">
-              <Layers className="h-4 w-4" /> Our Complete Product Suite
+      {/* ── SERVICES (BENTO GRID) ── */}
+      <section id="services" className="py-24 relative overflow-hidden bg-zinc-950">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
+        
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+            className="text-center max-w-3xl mx-auto mb-16 space-y-6"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-bold">
+              <Layers className="h-4 w-4" /> Our Product Suite
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-              Everything You Need to<br /><span className="text-primary">Graduate with Excellence</span>
+            <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white">
+              Everything You Need to <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Succeed.</span>
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              We are not just a project shop. We are a full-stack academic success platform covering projects, documentation, AI tools, and career launch — all under one roof.
+            <p className="text-xl text-zinc-400 font-medium">
+              We're a full-stack academic success platform covering projects, documentation, AI tools, and career launch.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 xl:grid-cols-3 md:gap-8 max-w-7xl mx-auto pb-6 md:pb-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {SERVICES.map((svc) => (
-              <Link href="/login" key={svc.title} className="min-w-[85vw] snap-center md:min-w-0 group relative bg-white dark:bg-zinc-900 rounded-3xl border hover:border-primary/40 shadow-sm hover:shadow-2xl transition-all duration-300 p-6 md:p-8 flex flex-col overflow-hidden">
-                <div className="absolute top-5 right-5">
-                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${badgeColorMap[svc.badge]}`}>{svc.badge}</span>
-                </div>
-                <div className={`w-16 h-16 rounded-2xl ${colorMap[svc.color]} flex items-center justify-center mb-6`}>
-                  {svc.icon}
-                </div>
-                <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">{svc.title}</h3>
-                <p className="text-muted-foreground leading-relaxed mb-6 flex-1">{svc.description}</p>
-                <ul className="space-y-2 mb-6">
-                  {svc.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm font-medium">
-                      <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-auto">
-                  <div className="w-full gap-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                    Get Started <ChevronRight className="h-4 w-4 ml-2" />
+          <motion.div 
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
+          >
+            {SERVICES.map((svc, i) => (
+              <motion.div 
+                key={i} variants={fadeUp}
+                className={`group relative p-8 rounded-[2rem] bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 transition-all overflow-hidden ${svc.colSpan}`}
+              >
+                <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${svc.color} opacity-0 group-hover:opacity-10 blur-[80px] transition-opacity duration-500`} />
+                
+                <div className="flex justify-between items-start mb-8">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${svc.color} flex items-center justify-center shadow-lg`}>
+                    <svc.icon className="w-6 h-6 text-white" />
                   </div>
+                  <span className="text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300">
+                    {svc.badge}
+                  </span>
                 </div>
-              </Link>
+                
+                <h3 className="text-2xl font-black text-white mb-4">{svc.title}</h3>
+                <p className="text-zinc-400 font-medium leading-relaxed mb-8">
+                  {svc.description}
+                </p>
+                
+                <div className="flex flex-wrap gap-2 mb-8">
+                  {svc.features.map(f => (
+                    <span key={f} className="text-xs font-bold px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300">
+                      {f}
+                    </span>
+                  ))}
+                </div>
+                
+                <Link href="/login" className="inline-flex items-center gap-2 text-sm font-bold text-white group/btn">
+                  Explore Feature <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── PROJECT CATEGORIES ── */}
-      <section className="w-full py-12 md:py-24 bg-muted/30 border-y">
-        <div className="container mx-auto pl-4 pr-0 md:px-6">
-          <div className="text-center mb-10 md:mb-16 space-y-4 pr-4 md:pr-0">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">Explore by Domain</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Browse our deep catalogue of ready-made projects across every major engineering and management domain.
-            </p>
-          </div>
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:grid sm:grid-cols-2 lg:grid-cols-4 md:gap-5 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {CATEGORIES.map((cat) => (
-              <Link href="/login" key={cat.name} className="min-w-[75vw] snap-center md:min-w-0">
-                <div className="group bg-white dark:bg-zinc-900 border rounded-2xl p-5 md:p-6 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex items-center md:items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors flex-shrink-0">
-                    {cat.icon}
+      <section className="py-24 bg-zinc-900 border-y border-zinc-800">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+            className="text-center max-w-3xl mx-auto mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Explore by Domain</h2>
+            <p className="text-xl text-zinc-400">Browse our deep catalogue of ready-made projects across every major engineering domain.</p>
+          </motion.div>
+
+          <motion.div 
+            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto"
+          >
+            {CATEGORIES.map((cat, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <Link href="/login" className="group flex items-center gap-4 p-5 rounded-2xl bg-zinc-950 border border-zinc-800 hover:border-indigo-500/50 transition-all cursor-pointer">
+                  <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center text-zinc-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors shrink-0">
+                    <cat.icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-bold leading-tight">{cat.name}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{cat.count}</p>
+                    <h4 className="font-bold text-zinc-200 group-hover:text-white transition-colors">{cat.name}</h4>
+                    <p className="text-sm font-medium text-zinc-500">{cat.count} Projects</p>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="w-full py-12 md:py-28 bg-white dark:bg-zinc-950">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-20 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-              From Order to Delivery in <span className="text-primary">3 Simple Steps</span>
+      <section className="py-24 bg-zinc-950">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+            className="text-center max-w-3xl mx-auto mb-20"
+          >
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+              From Order to Delivery in <span className="text-emerald-400">3 Steps</span>
             </h2>
-            <p className="text-lg text-muted-foreground">
-              We have streamlined the entire process so you can focus on what matters — your viva and your career.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+            <p className="text-xl text-zinc-400">We've streamlined the entire process so you can focus on your viva.</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto relative">
+            {/* Connecting line for desktop */}
+            <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-zinc-800 via-emerald-500/50 to-zinc-800 -z-10" />
+
             {[
-              { step: "01", icon: <BookOpen className="h-10 w-10" />, title: "Browse & Select", desc: "Explore our marketplace. Filter by domain, tech stack, or college level. Every listing includes detailed specs, images, and a demo video." },
-              { step: "02", icon: <Briefcase className="h-10 w-10" />, title: "Place Your Order", desc: "Add to cart, complete checkout, and share your specific college requirements via our custom request form. Upload your professor's base paper if needed." },
-              { step: "03", icon: <TrendingUp className="h-10 w-10" />, title: "Receive & Deploy", desc: "Get your complete project package — source code, SRS, IEEE paper, PPT — with a step-by-step deployment guide. Our team is on call for viva prep." },
-            ].map((step) => (
-              <div key={step.step} className="flex flex-col items-center text-center space-y-5">
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-primary">
-                    {step.icon}
-                  </div>
-                  <span className="absolute -top-2 -right-2 bg-primary text-white text-sm font-black w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
-                    {step.step}
-                  </span>
+              { step: "01", icon: Search, title: "Browse & Select", desc: "Explore our marketplace. Filter by tech stack. View detailed specs and demo videos." },
+              { step: "02", icon: Zap, title: "Checkout & Customize", desc: "Place your order and upload your professor's base paper or specific rubric requirements." },
+              { step: "03", icon: Code2, title: "Receive & Deploy", desc: "Get your complete package: source code, SRS, IEEE paper, PPT, and deployment guide." }
+            ].map((s, i) => (
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.2 }}
+                className="flex flex-col items-center text-center relative"
+              >
+                <div className="w-24 h-24 rounded-full bg-zinc-900 border-4 border-zinc-950 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.15)] mb-6 z-10">
+                  <s.icon className="w-10 h-10 text-emerald-400" />
                 </div>
-                <h3 className="text-2xl font-bold">{step.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
-              </div>
+                <div className="absolute top-0 right-[calc(50%-3rem)] bg-white text-zinc-950 text-sm font-black w-8 h-8 rounded-full flex items-center justify-center z-20">
+                  {s.step}
+                </div>
+                <h3 className="text-2xl font-black text-white mb-4">{s.title}</h3>
+                <p className="text-zinc-400 font-medium leading-relaxed">{s.desc}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── TRANSPARENT PRICING ── */}
-      <section className="w-full py-12 md:py-24 bg-zinc-50 border-y dark:bg-zinc-900/50">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-16 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-              Transparent & Upfront <span className="text-primary">Pricing</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              No hidden fees. No "Contact us for price". Get immediate access to what you need.
-            </p>
-          </div>
+      {/* ── PRICING ── */}
+      <section className="py-24 bg-zinc-900 border-y border-zinc-800">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+            className="text-center max-w-3xl mx-auto mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Transparent Pricing</h2>
+            <p className="text-xl text-zinc-400">No hidden fees. No "Contact us for price". Immediate access.</p>
+          </motion.div>
+
           <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {[
-              { name: "ATS Resume Builder", price: "₹199", desc: "AI-generated ATS-friendly resume." },
-              { name: "JD Match Analyzer", price: "₹299", desc: "Match your resume to specific job roles." },
-              { name: "Project Documentation", price: "₹149", desc: "Instant IEEE/SRS documentation templates." },
-              { name: "Final Year Projects", price: "From ₹6,000", desc: "Complete source code, setup, and support." },
-            ].map((plan) => (
-              <Link href="/services" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
+              { name: "ATS Resume Builder", price: "₹99", desc: "AI-generated ATS-friendly resume." },
+              { name: "JD Match Analyzer", price: "₹149", desc: "Match your resume to specific job roles." },
+              { name: "Project Documentation", price: "₹299", desc: "Instant IEEE/SRS documentation templates." },
+              { name: "Final Year Projects", price: "From ₹6k", desc: "Complete source code & support.", featured: true },
+            ].map((plan, i) => (
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className={`flex flex-col justify-between p-8 rounded-3xl ${plan.featured ? 'bg-indigo-600 border-indigo-500 shadow-xl shadow-indigo-500/20' : 'bg-zinc-950 border-zinc-800' } border transition-transform hover:-translate-y-2`}
+              >
                 <div>
-                  <h3 className="font-bold text-xl mb-2 group-hover:text-primary transition-colors">{plan.name}</h3>
-                  <p className="text-muted-foreground text-sm mb-6 h-10">{plan.desc}</p>
+                  <h3 className={`text-xl font-bold mb-3 ${plan.featured ? 'text-white' : 'text-zinc-100'}`}>{plan.name}</h3>
+                  <p className={`text-sm mb-8 font-medium ${plan.featured ? 'text-indigo-100' : 'text-zinc-400'}`}>{plan.desc}</p>
                 </div>
                 <div>
-                  <div className="text-3xl font-black text-primary mb-6">{plan.price}</div>
-                  <div className="w-full gap-2 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-primary hover:text-white h-12 px-4 py-2">
-                    View Details
-                  </div>
+                  <div className={`text-4xl font-black mb-8 ${plan.featured ? 'text-white' : 'text-emerald-400'}`}>{plan.price}</div>
+                  <Link href="/services" className={`block w-full py-4 text-center rounded-xl font-bold transition-colors ${plan.featured ? 'bg-white text-indigo-600 hover:bg-zinc-50' : 'bg-zinc-800 text-white hover:bg-zinc-700'}`}>
+                    Get Started
+                  </Link>
                 </div>
-              </Link>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
-      <section className="w-full py-12 md:py-24 bg-zinc-950 text-white">
-        <div className="container mx-auto pl-4 pr-0 md:px-6">
-          <div className="text-center mb-10 md:mb-16 space-y-4 pr-4 md:pr-0">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-bold">
-              <Star className="h-4 w-4 fill-primary" /> Trusted by Students Nationwide
-            </div>
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">Real Results from Real Students</h2>
-            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
-              Over 2,500 students across India have used GraduateNex to score top grades and land their dream jobs.
-            </p>
-          </div>
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="min-w-[85vw] snap-center md:min-w-0 bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-3xl p-6 md:p-8 space-y-4 transition-colors">
-                <div className="flex gap-1">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  ))}
+      {/* ── TESTIMONIALS (MARQUEE) ── */}
+      <section className="py-24 bg-zinc-950 overflow-hidden">
+        <div className="container mx-auto px-4 mb-16 text-center">
+          <h2 className="text-4xl md:text-5xl font-black text-white">Trusted by 2,500+ Students</h2>
+        </div>
+        
+        {/* Infinite Marquee */}
+        <div className="relative w-full flex overflow-hidden">
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-zinc-950 to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-zinc-950 to-transparent z-10" />
+          
+          <motion.div 
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ ease: "linear", duration: 40, repeat: Infinity }}
+            className="flex gap-6 w-max px-4"
+          >
+            {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
+              <div key={i} className="w-80 md:w-96 p-8 rounded-3xl bg-zinc-900 border border-zinc-800 flex flex-col justify-between shrink-0">
+                <div>
+                  <div className="flex gap-1 mb-6">
+                    {[1,2,3,4,5].map(s => <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
+                  </div>
+                  <p className="text-zinc-300 font-medium leading-relaxed mb-6">"{t.text}"</p>
                 </div>
-                <p className="text-zinc-300 leading-relaxed text-lg">"{t.text}"</p>
-                <div className="flex items-center gap-4 pt-2 border-t border-zinc-800">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-lg">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-black text-white">
                     {t.name[0]}
                   </div>
                   <div>
-                    <p className="font-bold">{t.name}</p>
-                    <p className="text-sm text-zinc-500">{t.branch} · {t.college}</p>
+                    <h4 className="font-bold text-white">{t.name}</h4>
+                    <p className="text-xs text-zinc-500 font-medium">{t.college}</p>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── LOCATIONS ── */}
-      <section className="w-full py-12 md:py-24 bg-background border-y">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-bold">
-              <MapPin className="h-4 w-4" /> Pan-India Reach
-            </div>
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-              Serving Students Across <span className="text-primary">50+ Cities in India</span>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Whether you are in a Tier-1 metro or a Tier-3 college town, our digital-first delivery model ensures you get premium project support wherever you are.
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-            {LOCATIONS.map((city) => (
-              <div key={city} className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-muted border hover:border-primary/50 hover:bg-primary/5 transition-colors text-sm font-semibold">
-                <MapPin className="h-3.5 w-3.5 text-primary" /> {city}
-              </div>
-            ))}
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-bold">
-              + 30 More Cities
-            </div>
-          </div>
-          <p className="text-center text-muted-foreground mt-8 text-base">
-            We deliver <strong>100% digitally</strong> — all files, code, and documents sent directly to your email and dashboard. No location barriers.
-          </p>
-        </div>
-      </section>
-
-      {/* ── FOUNDER ── */}
-      <section className="w-full py-12 md:py-24 bg-muted/20">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-white dark:bg-zinc-900 p-8 md:p-14 rounded-[2.5rem] md:rounded-[3rem] border shadow-2xl">
-            <div className="w-40 h-40 md:w-64 md:h-64 rounded-full bg-gradient-to-tr from-primary via-orange-400 to-yellow-300 p-1.5 flex-shrink-0 shadow-xl">
-              <div className="w-full h-full rounded-full overflow-hidden relative border-4 border-white dark:border-zinc-900">
+      {/* ── FOUNDER SECTION ── */}
+      <section className="py-24 bg-zinc-900 border-y border-zinc-800">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-20 bg-zinc-950 p-8 md:p-16 rounded-[3rem] border border-zinc-800 shadow-2xl">
+            <div className="w-48 h-48 md:w-72 md:h-72 shrink-0 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-emerald-400 p-2 shadow-[0_0_50px_rgba(99,102,241,0.2)]">
+              <div className="w-full h-full rounded-full overflow-hidden relative border-4 border-zinc-950">
                 <Image src="/founder_nithin.jpg" alt="Appala Nithin" fill className="object-cover object-top" />
               </div>
             </div>
-            <div className="text-center md:text-left space-y-4 md:space-y-5">
-              <div className="inline-flex px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-bold uppercase tracking-widest">
+            <div className="space-y-6 text-center lg:text-left">
+              <div className="inline-flex px-4 py-2 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold uppercase tracking-wider">
                 Founder & CEO
               </div>
-              <h3 className="text-3xl md:text-5xl font-black tracking-tight">Appala Nithin</h3>
-              <div className="space-y-3 text-base md:text-lg text-muted-foreground leading-relaxed">
-                <p>
-                  <strong className="text-foreground">Appala Nithin</strong> is the visionary founder behind <strong className="text-primary">GraduateNex</strong> — a platform built from the ground up to solve the real academic struggles that millions of Indian students face every year.
-                </p>
-                <p>
-                  Having seen firsthand how talented students were failing not because of intelligence, but because of a broken system of plagiarism-check barriers, outdated project repositories, and zero career support, Nithin built GraduateNex to be the definitive solution — combining a production-quality project marketplace, AI-powered document tools, and an intelligent career launch engine.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3 pt-2">
-                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><GraduationCap className="h-4 w-4 text-primary" /> EdTech Visionary</span>
-                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><Award className="h-4 w-4 text-primary" /> 2,500+ Students Helped</span>
-                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><Users className="h-4 w-4 text-primary" /> 50+ Cities Served</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ SECTION ── */}
-      <section className="w-full py-12 md:py-24 bg-background">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-16 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-              Frequently Asked <span className="text-primary">Questions</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">Quick answers to common queries about our services.</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {[
-              { q: "What is GraduateNex?", a: "GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India." },
-              { q: "Are the projects plagiarism-free?", a: "Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards." },
-              { q: "How are digital products delivered?", a: "All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address." },
-              { q: "What payment methods do you accept?", a: "We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway." },
-              { q: "Can I get a refund?", a: "Digital products are generally non-refundable once delivered. However, refunds are issued for technical payment failures, undelivered products, and custom projects that don't meet agreed specifications. See our Refund Policy for full details." },
-              { q: "Do you offer support after purchase?", a: "Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST." },
-            ].map((faq) => (
-              <div key={faq.q} className="bg-muted/30 border rounded-2xl p-6">
-                <h3 className="font-bold text-lg mb-2">{faq.q}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{faq.a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TRUST SIGNALS ── */}
-      <section className="w-full py-10 md:py-16 bg-zinc-950 border-y border-zinc-800">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row flex-wrap justify-center items-start md:items-center gap-6 md:gap-16 max-w-xl mx-auto md:max-w-none pl-6 md:pl-0">
-            <div className="flex items-center gap-4 md:gap-3 text-zinc-400">
-              <Shield className="h-8 w-8 text-emerald-400" />
-              <div>
-                <p className="text-sm font-bold text-white">Secure Payments</p>
-                <p className="text-xs text-zinc-500">256-bit SSL Encryption</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-zinc-400">
-              <CreditCard className="h-8 w-8 text-blue-400" />
-              <div>
-                <p className="text-sm font-bold text-white">Powered by Razorpay</p>
-                <p className="text-xs text-zinc-500">PCI-DSS Compliant</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-zinc-400">
-              <CheckCircle className="h-8 w-8 text-primary" />
-              <div>
-                <p className="text-sm font-bold text-white">2,500+ Orders</p>
-                <p className="text-xs text-zinc-500">Delivered Successfully</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-zinc-400">
-              <Phone className="h-8 w-8 text-violet-400" />
-              <div>
-                <p className="text-sm font-bold text-white">Dedicated Support</p>
-                <p className="text-xs text-zinc-500">Mon–Fri, 9AM–6PM IST</p>
+              <h3 className="text-4xl md:text-5xl font-black text-white">Appala Nithin</h3>
+              <p className="text-lg md:text-xl text-zinc-400 font-medium leading-relaxed">
+                "I built GraduateNex because I saw brilliant students failing not due to a lack of intelligence, but because of a broken system. We provide the tools, the code, and the documents so you can focus on building your career, not fighting red tape."
+              </p>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                <span className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300">EdTech Visionary</span>
+                <span className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm font-bold text-zinc-300">2,500+ Students Helped</span>
               </div>
             </div>
           </div>
@@ -532,96 +485,33 @@ export default function Home() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="w-full py-20 md:py-32 bg-gradient-to-br from-primary via-orange-500 to-yellow-500 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-black/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2" />
+      <section className="relative py-32 bg-zinc-950 overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/20 rounded-full blur-[150px]" />
         </div>
-        <div className="container mx-auto px-4 md:px-6 text-center relative z-10 space-y-6 md:space-y-8">
-          <h2 className="text-3xl md:text-6xl font-black tracking-tight text-white">
-            Your Final Year Project is<br className="hidden md:block"/> One Click Away.
-          </h2>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Join 2,500+ students who have already secured top grades, submitted original documentation, and advanced their careers using GraduateNex.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/login">
-              <Button size="lg" className="h-16 px-12 text-xl font-black rounded-xl bg-white text-primary hover:bg-zinc-50 shadow-2xl hover:scale-105 transition-all">
-                Get Started — It&apos;s Free <ArrowRight className="ml-2 h-6 w-6" />
-              </Button>
-            </Link>
-            <a href="tel:+917981994870">
-              <Button size="lg" className="h-16 px-10 text-xl font-bold rounded-xl bg-white/20 border-2 border-white text-white hover:bg-white/30 transition-all">
-                <Phone className="mr-2 h-5 w-5" /> Call Us Now
-              </Button>
-            </a>
-          </div>
-          <p className="text-white/60 text-sm">
-            📞 +91 79819 94870 &nbsp;|&nbsp; ✉️ support@graduatenex.online &nbsp;|&nbsp; 📍 T Hub, Hitech City, Hyderabad
-          </p>
+        
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+            className="max-w-4xl mx-auto space-y-10"
+          >
+            <h2 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-tight">
+              Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Graduate?</span>
+            </h2>
+            <p className="text-xl text-zinc-400 font-medium">
+              Join 2,500+ students who secured top grades and landed their dream jobs.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Link href="/login" className="px-10 py-5 rounded-2xl bg-white text-zinc-950 font-black text-xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+                Start For Free
+              </Link>
+              <a href="tel:+917981994870" className="px-10 py-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white font-bold text-xl hover:bg-zinc-800 transition-colors flex items-center justify-center gap-3">
+                <Phone className="w-5 h-5" /> Call Sales
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
-
-      {/* FAQPage Schema for Google Rich Results */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: [
-              {
-                '@type': 'Question',
-                name: 'What is GraduateNex?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India.'
-                }
-              },
-              {
-                '@type': 'Question',
-                name: 'Are the projects plagiarism-free?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards.'
-                }
-              },
-              {
-                '@type': 'Question',
-                name: 'How are digital products delivered?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address.'
-                }
-              },
-              {
-                '@type': 'Question',
-                name: 'What payment methods do you accept?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway.'
-                }
-              },
-              {
-                '@type': 'Question',
-                name: 'Can I get a refund?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: "Digital products are generally non-refundable once delivered. However, refunds are issued for technical payment failures, undelivered products, and custom projects that don't meet agreed specifications."
-                }
-              },
-              {
-                '@type': 'Question',
-                name: 'Do you offer support after purchase?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST.'
-                }
-              }
-            ]
-          })
-        }}
-      />
 
     </div>
   );
