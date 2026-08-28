@@ -305,58 +305,107 @@ export default function JobsUpdatesPage() {
     <div className="min-h-screen bg-[#FAFAF8] pb-20" style={{ fontFamily: "'Inter', sans-serif" }}>
       
       {/* ── HERO ── */}
-      <section className="relative bg-white border-b border-stone-200/70">
+      <section className="relative bg-white border-b border-stone-200/70 overflow-hidden">
         {/* Subtle warm gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 via-transparent to-rose-50/30 pointer-events-none" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-100/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         
-        <div className="max-w-5xl mx-auto px-6 pt-28 pb-16 relative z-10">
-          {/* Live badge */}
-          <motion.div 
-            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2.5 mb-8"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="text-xs font-semibold text-stone-500 uppercase tracking-widest">Live — Updated every 10 minutes</span>
-          </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-black text-stone-900 tracking-tight leading-[1.1] mb-5"
-          >
-            Opportunities, <br className="hidden sm:block" />
-            <span className="text-amber-600">curated for you.</span>
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-lg text-stone-500 max-w-xl leading-relaxed mb-10"
-          >
-            Handpicked roles and internships from 10+ premium sources. 
-            Zero noise, only high-quality opportunities from the last 48 hours.
-          </motion.p>
-          
-          {/* Trust indicators */}
-          <motion.div 
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-            className="flex flex-wrap gap-6"
-          >
-            {[
-              { icon: Building2, text: "500+ Companies", color: "text-amber-600" },
-              { icon: TrendingUp, text: "Real-time Feeds", color: "text-emerald-600" },
-              { icon: Sparkles, text: "AI-Curated", color: "text-violet-600" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-stone-50 border border-stone-200/80 flex items-center justify-center">
-                  <item.icon className={`w-4 h-4 ${item.color}`} />
+        <div className="max-w-6xl mx-auto px-6 pt-28 pb-16 relative z-10">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-12 lg:gap-16">
+            
+            {/* Left — Copy */}
+            <div className="flex-1 min-w-0">
+              {/* Live badge */}
+              <motion.div 
+                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2.5 mb-8"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span className="text-xs font-semibold text-stone-500 uppercase tracking-widest">Live — Updated every 10 minutes</span>
+              </motion.div>
+              
+              <motion.h1 
+                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+                className="text-4xl sm:text-5xl md:text-6xl font-black text-stone-900 tracking-tight leading-[1.1] mb-5"
+              >
+                Opportunities, <br className="hidden sm:block" />
+                <span className="text-amber-600">curated for you.</span>
+              </motion.h1>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                className="text-lg text-stone-500 max-w-xl leading-relaxed mb-10"
+              >
+                Handpicked roles and internships from 10+ premium sources. 
+                Zero noise, only high-quality opportunities from the last 48 hours.
+              </motion.p>
+              
+              {/* Trust indicators */}
+              <motion.div 
+                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+                className="flex flex-wrap gap-6"
+              >
+                {[
+                  { icon: Building2, text: "500+ Companies", color: "text-amber-600" },
+                  { icon: TrendingUp, text: "Real-time Feeds", color: "text-emerald-600" },
+                  { icon: Sparkles, text: "AI-Curated", color: "text-violet-600" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-stone-50 border border-stone-200/80 flex items-center justify-center">
+                      <item.icon className={`w-4 h-4 ${item.color}`} />
+                    </div>
+                    <span className="text-sm font-semibold text-stone-600">{item.text}</span>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Right — Stat Cards */}
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
+              className="w-full lg:w-[380px] shrink-0 grid grid-cols-2 gap-4"
+            >
+              {/* Card 1 */}
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 border border-amber-200/50">
+                <div className="w-10 h-10 rounded-xl bg-white border border-amber-200/80 flex items-center justify-center mb-4 shadow-sm">
+                  <Briefcase className="w-5 h-5 text-amber-600" />
                 </div>
-                <span className="text-sm font-semibold text-stone-600">{item.text}</span>
+                <div className="text-2xl font-black text-stone-900 mb-0.5">{totalCount > 0 ? totalCount.toLocaleString() : '500+'}</div>
+                <div className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Active Jobs</div>
               </div>
-            ))}
-          </motion.div>
+
+              {/* Card 2 */}
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-5 border border-emerald-200/50">
+                <div className="w-10 h-10 rounded-xl bg-white border border-emerald-200/80 flex items-center justify-center mb-4 shadow-sm">
+                  <GraduationCap className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div className="text-2xl font-black text-stone-900 mb-0.5">200+</div>
+                <div className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Internships</div>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-5 border border-violet-200/50">
+                <div className="w-10 h-10 rounded-xl bg-white border border-violet-200/80 flex items-center justify-center mb-4 shadow-sm">
+                  <Building2 className="w-5 h-5 text-violet-600" />
+                </div>
+                <div className="text-2xl font-black text-stone-900 mb-0.5">10+</div>
+                <div className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Sources</div>
+              </div>
+
+              {/* Card 4 */}
+              <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-5 border border-rose-200/50">
+                <div className="w-10 h-10 rounded-xl bg-white border border-rose-200/80 flex items-center justify-center mb-4 shadow-sm">
+                  <Zap className="w-5 h-5 text-rose-600" />
+                </div>
+                <div className="text-2xl font-black text-stone-900 mb-0.5">48h</div>
+                <div className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Fresh Listings</div>
+              </div>
+            </motion.div>
+
+          </div>
         </div>
       </section>
 
