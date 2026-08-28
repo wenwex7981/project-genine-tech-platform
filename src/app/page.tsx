@@ -1,175 +1,85 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  ArrowRight, Globe, ShieldCheck, Zap, MapPin, Star, CheckCircle,
-  BookOpen, Brain, FileText, Cpu, Users, Award, Rocket, Code2,
-  Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, Mail,
-  ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield
-} from 'lucide-react';
+import { ArrowRight, CheckCircle, Star, MapPin, Phone, ChevronRight, Shield, CreditCard, Users, Award, GraduationCap, Zap, Globe } from 'lucide-react';
 import AuthRedirect from '@/components/AuthRedirect';
 
 const STATS = [
-  { value: '2,500+', label: 'Projects Delivered' },
-  { value: '98%', label: 'Student Satisfaction' },
-  { value: '50+', label: 'Cities Across India' },
-  { value: '0%', label: 'Plagiarism Score' },
+  { value: '2,500+', label: 'Projects Delivered', icon: '🎓' },
+  { value: '98%', label: 'Student Satisfaction', icon: '⭐' },
+  { value: '50+', label: 'Cities Across India', icon: '🗺️' },
+  { value: '0%', label: 'Plagiarism Score', icon: '✅' },
 ];
 
 const SERVICES = [
-  {
-    icon: <Code2 className="h-8 w-8" />, color: 'blue',
-    title: 'Final Year Projects',
-    description: 'Complete, deployable source code for B.Tech, M.Tech, BCA, MCA, MBA final year projects. Covers AI/ML, IoT, Blockchain, Web & Mobile development with full documentation.',
-    features: ['Source Code + Setup Guide', 'IEEE Base Paper', 'SRS Document', 'Presentation PPT'],
-    badge: 'Most Popular', gradient: 'from-blue-500 to-cyan-500',
-  },
-  {
-    icon: <ShieldCheck className="h-8 w-8" />, color: 'emerald',
-    title: '0% Plagiarism Documents',
-    description: 'Our expert team crafts completely original IEEE Research Papers, SRS documents, and project reports with rigorous originality checks and proper academic citations.',
-    features: ['IEEE Format Research Papers', 'SRS & System Design Docs', 'Originality Verified', 'University-Specific Formatting'],
-    badge: 'High Demand', gradient: 'from-emerald-500 to-teal-500',
-  },
-  {
-    icon: <Brain className="h-8 w-8" />, color: 'violet',
-    title: 'AI Stealth Humanizer',
-    description: 'Advanced AI content enhancement tool that refines and paraphrases AI-generated text into natural, human-quality academic writing with proper style and tone.',
-    features: ['Natural Language Refinement', 'Semantic Preservation', 'Academic Tone Maintained', 'Bulk Text Processing'],
-    badge: 'Exclusive', gradient: 'from-violet-500 to-purple-500',
-  },
-  {
-    icon: <FileText className="h-8 w-8" />, color: 'orange',
-    title: 'ATS Resume Builder',
-    description: 'Our intelligent Resume Hub grades your CV against a 17-point ATS scoring rubric and generates tailored resumes that beat Applicant Tracking Systems at top companies.',
-    features: ['17-Point ATS Scoring', 'Job Description Matching', 'Cover Letter Generator', 'Multiple Export Formats'],
-    badge: 'Career Tool', gradient: 'from-orange-500 to-amber-500',
-  },
-  {
-    icon: <Rocket className="h-8 w-8" />, color: 'rose',
-    title: 'Hackathon Directory',
-    description: 'Stay ahead with our curated, real-time directory of national and international hackathons, coding contests, and ideathons. Filter by domain, prize pool, and deadline.',
-    features: ['Real-Time Hackathon Listings', 'Filter by Domain & Date', 'Team Formation Help', 'Submission Guides'],
-    badge: 'Live', gradient: 'from-rose-500 to-pink-500',
-  },
-  {
-    icon: <PenTool className="h-8 w-8" />, color: 'cyan',
-    title: 'Custom Project Development',
-    description: 'Have a unique base paper from your professor? Upload your abstract and our team will architect and code the entire project from scratch, tailored to your college rubric.',
-    features: ['Requirement Analysis', 'Custom Architecture Design', 'End-to-End Development', 'Viva Preparation Support'],
-    badge: 'Premium', gradient: 'from-cyan-500 to-sky-500',
-  },
-];
-
-const CATEGORIES = [
-  { icon: <Cpu className="h-6 w-6" />, name: 'Artificial Intelligence & ML', count: '120+ Projects' },
-  { icon: <Globe className="h-6 w-6" />, name: 'Internet of Things (IoT)', count: '85+ Projects' },
-  { icon: <Database className="h-6 w-6" />, name: 'Blockchain & Web3', count: '60+ Projects' },
-  { icon: <Cloud className="h-6 w-6" />, name: 'Cloud Computing', count: '45+ Projects' },
-  { icon: <Bot className="h-6 w-6" />, name: 'Deep Learning & NLP', count: '95+ Projects' },
-  { icon: <Layers className="h-6 w-6" />, name: 'Full Stack Web & Mobile', count: '150+ Projects' },
-  { icon: <Lock className="h-6 w-6" />, name: 'Cybersecurity', count: '40+ Projects' },
-  { icon: <BarChart3 className="h-6 w-6" />, name: 'Data Science & Analytics', count: '75+ Projects' },
-];
-
-const LOCATIONS = [
-  'Hyderabad', 'Bengaluru', 'Chennai', 'Mumbai', 'Delhi NCR',
-  'Pune', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Lucknow',
-  'Coimbatore', 'Vizag', 'Nagpur', 'Indore', 'Bhubaneswar',
-  'Kochi', 'Chandigarh', 'Thiruvananthapuram', 'Bhopal', 'Patna',
+  { emoji: '💻', title: 'Final Year Projects', desc: 'Complete, deployable source code for B.Tech, M.Tech, BCA, MCA final year projects across AI/ML, IoT, Blockchain, Web & Mobile.', badge: 'Most Popular', color: '#4F46E5' },
+  { emoji: '📄', title: '0% Plagiarism Docs', desc: 'Completely original IEEE Research Papers, SRS documents, and project reports with rigorous originality checks and academic citations.', badge: 'High Demand', color: '#059669' },
+  { emoji: '🤖', title: 'AI Stealth Humanizer', desc: 'Refines AI-generated text into natural, human-quality academic writing. Semantic preservation with proper style, tone, and academic formatting.', badge: 'Exclusive', color: '#7C3AED' },
+  { emoji: '📊', title: 'ATS Resume Builder', desc: 'Intelligent Resume Hub that grades your CV against 17-point ATS scoring and generates tailored resumes that beat tracking systems at TCS, Infosys, Wipro.', badge: 'Career Tool', color: '#D97706' },
+  { emoji: '🚀', title: 'Hackathon Directory', desc: 'Real-time directory of national and international hackathons, coding contests, and ideathons. Filter by domain, prize pool, and deadline.', badge: 'Live', color: '#DC2626' },
+  { emoji: '🔧', title: 'Custom Development', desc: 'Have a unique base paper? Upload your abstract and our team will architect and code the entire project from scratch to your college rubric.', badge: 'Premium', color: '#0891B2' },
 ];
 
 const TESTIMONIALS = [
-  { name: 'Sai Kiran Reddy', college: 'JNTUH, Hyderabad', branch: 'B.Tech CSE, 2024', text: 'I was panicking two months before submission. GraduateNex delivered a complete ML-based crop prediction system with IEEE paper, SRS, and PPT. Got 98/100 from my guide. Absolutely life-saving!', rating: 5 },
-  { name: 'Priya Sharma', college: 'VIT, Vellore', branch: 'M.Tech AI, 2024', text: 'The AI Writing Enhancer refined my entire 40-page thesis into natural, polished academic language. The tone was perfectly preserved and it reads beautifully now. Absolutely essential tool.', rating: 5 },
-  { name: 'Rahul Nair', college: 'Anna University, Chennai', branch: 'B.Tech IT, 2023', text: 'Their ATS Resume Builder got me shortlisted at 4 MNC companies in my campus drive. The job description matching feature is insanely accurate. Landed a role at Infosys!', rating: 5 },
-  { name: 'Ananya Gupta', college: 'Amity University, Noida', branch: 'MCA, 2024', text: 'Ordered a custom Blockchain project. The team analysed my professor\'s exact rubric and built a decentralized voting system from scratch. Got an A grade and my guide was thoroughly impressed.', rating: 5 },
+  { name: 'Sai Kiran Reddy', college: 'JNTUH, Hyderabad', branch: 'B.Tech CSE, 2024', text: 'I was panicking two months before submission. GraduateNex delivered a complete ML-based crop prediction system with IEEE paper, SRS, and PPT. Got 98/100 from my guide.', rating: 5, avatar: 'S' },
+  { name: 'Priya Sharma', college: 'VIT, Vellore', branch: 'M.Tech AI, 2024', text: 'The AI Writing Enhancer refined my entire 40-page thesis into natural, polished academic language. The tone was perfectly preserved and it reads beautifully now.', rating: 5, avatar: 'P' },
+  { name: 'Rahul Nair', college: 'Anna University, Chennai', branch: 'B.Tech IT, 2023', text: 'Their ATS Resume Builder got me shortlisted at 4 MNC companies in my campus drive. The job description matching feature is insanely accurate. Landed at Infosys!', rating: 5, avatar: 'R' },
+  { name: 'Ananya Gupta', college: 'Amity University, Noida', branch: 'MCA, 2024', text: 'Ordered a custom Blockchain project. The team analysed my professor\'s exact rubric and built a decentralized voting system. Got an A grade and my guide was impressed.', rating: 5, avatar: 'A' },
 ];
 
-function ParticleCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+function TiltCard({ children, className = '', style: extraStyle = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+    const rotX = ((y - cy) / cy) * -8;
+    const rotY = ((x - cx) / cx) * 8;
+    el.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.03,1.03,1.03)`;
+    el.style.boxShadow = `${-rotY * 3}px ${rotX * 3}px 50px rgba(79,70,229,0.15), 0 30px 60px rgba(0,0,0,0.08)`;
+  };
 
-    let animId: number;
-    const particles: { x: number; y: number; vx: number; vy: number; r: number; alpha: number }[] = [];
+  const handleMouseLeave = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+    el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.06)';
+  };
 
-    function resize() {
-      if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    function init() {
-      for (let i = 0; i < 90; i++) {
-        particles.push({
-          x: Math.random() * (canvas?.width ?? 0),
-          y: Math.random() * (canvas?.height ?? 0),
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          r: Math.random() * 2 + 0.5,
-          alpha: Math.random() * 0.6 + 0.1,
-        });
-      }
-    }
-
-    function draw() {
-      if (!ctx || !canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach((p, i) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(251,146,60,${p.alpha})`;
-        ctx.fill();
-
-        // Draw connection lines between nearby particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const q = particles[j];
-          const dx = p.x - q.x, dy = p.y - q.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 130) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(q.x, q.y);
-            ctx.strokeStyle = `rgba(251,146,60,${0.08 * (1 - dist / 130)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      });
-
-      animId = requestAnimationFrame(draw);
-    }
-
-    resize();
-    init();
-    draw();
-
-    window.addEventListener('resize', resize);
-    return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animId);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />;
+  return (
+    <div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={className}
+      style={{ transition: 'transform 0.15s ease, box-shadow 0.15s ease', transformStyle: 'preserve-3d', willChange: 'transform', ...extraStyle }}
+    >
+      {children}
+    </div>
+  );
 }
 
 export default function Home() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      setMousePos({ x, y });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -179,607 +89,513 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-950 font-sans selection:bg-orange-400/30">
+    <div className="flex flex-col min-h-screen font-sans" style={{ background: '#FAFAFA' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <AuthRedirect />
 
       <style jsx global>{`
-        @keyframes float-up {
-          0%, 100% { transform: translateY(0px) rotateY(0deg); }
-          50% { transform: translateY(-20px) rotateY(10deg); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        @keyframes float-gentle {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          33% { transform: translateY(-12px) rotate(1deg); }
+          66% { transform: translateY(-6px) rotate(-1deg); }
         }
-        @keyframes float-down {
-          0%, 100% { transform: translateY(0px) rotateY(0deg); }
-          50% { transform: translateY(20px) rotateY(-10deg); }
+        @keyframes float-slow {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-18px); }
         }
-        @keyframes spin-slow {
-          from { transform: rotateY(0deg); }
-          to { transform: rotateY(360deg); }
-        }
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(251,146,60,0.3), 0 0 60px rgba(251,146,60,0.1); }
-          50% { box-shadow: 0 0 40px rgba(251,146,60,0.6), 0 0 100px rgba(251,146,60,0.3); }
-        }
-        @keyframes slide-in-left {
-          from { opacity: 0; transform: translateX(-60px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes slide-in-right {
-          from { opacity: 0; transform: translateX(60px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes fade-up {
-          from { opacity: 0; transform: translateY(40px); }
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(30px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes counter-glow {
-          0%, 100% { text-shadow: 0 0 20px rgba(251,146,60,0.5); }
-          50% { text-shadow: 0 0 40px rgba(251,146,60,1), 0 0 60px rgba(251,146,60,0.5); }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
-        @keyframes orbit {
-          from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
-          to { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+        @keyframes gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
-        @keyframes shimmer {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
+        @keyframes scale-in {
+          from { opacity: 0; transform: scale(0.92); }
+          to { opacity: 1; transform: scale(1); }
         }
-        @keyframes tilt-card {
-          0%, 100% { transform: perspective(800px) rotateX(0deg) rotateY(0deg); }
-          25% { transform: perspective(800px) rotateX(3deg) rotateY(3deg); }
-          75% { transform: perspective(800px) rotateX(-3deg) rotateY(-3deg); }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
-        .float-card-1 { animation: float-up 6s ease-in-out infinite; }
-        .float-card-2 { animation: float-down 7s ease-in-out infinite; animation-delay: -2s; }
-        .float-card-3 { animation: float-up 8s ease-in-out infinite; animation-delay: -4s; }
-        .glow-pulse { animation: pulse-glow 3s ease-in-out infinite; }
-        .counter-text { animation: counter-glow 2s ease-in-out infinite; }
-        .slide-left { animation: slide-in-left 0.8s ease-out both; }
-        .slide-right { animation: slide-in-right 0.8s ease-out 0.2s both; }
-        .fade-up { animation: fade-up 0.7s ease-out both; }
-        .shimmer-text {
-          background: linear-gradient(90deg, #f97316, #fb923c, #fdba74, #f97316);
+        .hero-title { animation: slide-up 0.9s cubic-bezier(0.16,1,0.3,1) both; }
+        .hero-sub { animation: slide-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.15s both; }
+        .hero-btns { animation: slide-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s both; }
+        .hero-3d { animation: scale-in 1s cubic-bezier(0.16,1,0.3,1) 0.4s both; }
+        .float-1 { animation: float-gentle 7s ease-in-out infinite; }
+        .float-2 { animation: float-slow 9s ease-in-out infinite 1s; }
+        .float-3 { animation: float-gentle 8s ease-in-out infinite 2s; }
+        .float-4 { animation: float-slow 10s ease-in-out infinite 3s; }
+        .gradient-text {
+          background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
           background-size: 200% auto;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          animation: shimmer 3s linear infinite;
+          animation: gradient-shift 4s ease infinite;
         }
-        .card-3d {
-          transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
-          transform-style: preserve-3d;
+        .mesh-bg {
+          background-color: #F8F7FF;
+          background-image:
+            radial-gradient(at 20% 20%, rgba(79,70,229,0.08) 0, transparent 50%),
+            radial-gradient(at 80% 10%, rgba(124,58,237,0.06) 0, transparent 50%),
+            radial-gradient(at 60% 80%, rgba(236,72,153,0.04) 0, transparent 50%),
+            radial-gradient(at 10% 80%, rgba(16,185,129,0.04) 0, transparent 50%);
         }
-        .card-3d:hover {
-          transform: perspective(800px) rotateX(-4deg) rotateY(4deg) translateY(-8px) scale(1.02);
-          box-shadow: 20px 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(251,146,60,0.15);
+        .card-surface {
+          background: white;
+          border: 1px solid rgba(0,0,0,0.07);
+          box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+          border-radius: 20px;
         }
-        .service-card::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          border-radius: 24px;
-          background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-          pointer-events: none;
+        .service-card:hover .service-emoji { transform: scale(1.2) rotate(-5deg); }
+        .service-emoji { transition: transform 0.3s ease; display: inline-block; }
+        .stat-num {
+          background: linear-gradient(135deg, #4F46E5, #7C3AED);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
-        .stat-card {
-          transform-style: preserve-3d;
-          transition: transform 0.3s ease;
+        .marquee-track { animation: marquee 30s linear infinite; display: flex; gap: 2rem; }
+        .section-label {
+          display: inline-flex; align-items: center; gap: 6px;
+          background: rgba(79,70,229,0.08);
+          color: #4F46E5;
+          font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+          padding: 6px 14px; border-radius: 100px; border: 1px solid rgba(79,70,229,0.15);
         }
-        .stat-card:hover {
-          transform: perspective(500px) rotateX(-5deg) translateY(-4px);
+        .glass-card {
+          background: rgba(255,255,255,0.85);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255,255,255,0.8);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,1);
+          border-radius: 18px;
         }
-        .orbiting-dot {
-          position: absolute;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #f97316;
-          animation: orbit 4s linear infinite;
-        }
-        .orbiting-dot-2 {
-          animation: orbit 6s linear infinite reverse;
-          background: #a78bfa;
-          width: 6px;
-          height: 6px;
-        }
-        .hero-title {
-          animation: fade-up 1s ease-out both;
-        }
-        .hero-subtitle {
-          animation: fade-up 1s ease-out 0.2s both;
-        }
-        .hero-buttons {
-          animation: fade-up 1s ease-out 0.4s both;
-        }
-        .hero-badges {
-          animation: fade-up 1s ease-out 0.6s both;
+        .cta-section {
+          background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #6D28D9 100%);
         }
       `}</style>
 
-      {/* ── HERO SECTION ── */}
-      <section className="relative w-full min-h-screen flex flex-col justify-center bg-zinc-950 overflow-hidden text-white">
-        {/* Animated particle canvas */}
-        <ParticleCanvas />
+      {/* ═══════════════════════════════════════════════════════════ HERO */}
+      <section className="mesh-bg relative overflow-hidden" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        
+        {/* Soft orbs - NOT neon, very subtle */}
+        <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,70,229,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-100px', left: '-100px', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        {/* Deep space gradient layers */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[900px] h-[900px] rounded-full opacity-20" style={{ background: 'radial-gradient(circle, #f97316 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
-          <div className="absolute bottom-0 left-0 w-[700px] h-[700px] rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #7c3aed 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
-          <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] rounded-full opacity-5" style={{ background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)', transform: 'translate(-50%, -50%)' }} />
-        </div>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '80px 32px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center', width: '100%' }}>
 
-        {/* 3D Grid floor */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-20" style={{ perspective: '800px' }}>
-          <div style={{
-            width: '200%', height: '200%', position: 'absolute', bottom: '-50%', left: '-50%',
-            backgroundImage: 'linear-gradient(rgba(251,146,60,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(251,146,60,0.3) 1px, transparent 1px)',
-            backgroundSize: '60px 60px', transform: 'rotateX(60deg)',
-          }} />
-        </div>
+          {/* LEFT: Text */}
+          <div>
+            <div className="hero-title">
+              <div className="section-label" style={{ marginBottom: '24px' }}>
+                <Globe size={12} /> India&apos;s #1 Academic Platform
+              </div>
+              <h1 style={{ fontSize: 'clamp(40px, 5vw, 68px)', fontWeight: 900, lineHeight: 1.05, color: '#0F0E1A', letterSpacing: '-0.03em', marginBottom: '24px' }}>
+                Your Academic<br />
+                <span className="gradient-text">Success Partner</span>
+              </h1>
+            </div>
+            <p className="hero-sub" style={{ fontSize: '18px', color: '#6B7280', lineHeight: 1.7, marginBottom: '36px', fontWeight: 400, maxWidth: '480px' }}>
+              From final year projects and IEEE papers to AI career tools — GraduateNex helps <strong style={{ color: '#111827', fontWeight: 700 }}>2,500+ students</strong> graduate with distinction every year.
+            </p>
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen py-32">
+            <div className="hero-btns" style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '40px' }}>
+              <Link href="/login">
+                <button style={{ height: '52px', padding: '0 28px', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', color: 'white', border: 'none', borderRadius: '14px', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 8px 30px rgba(79,70,229,0.35)', transition: 'all 0.2s ease' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 14px 40px rgba(79,70,229,0.45)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 30px rgba(79,70,229,0.35)'; }}>
+                  Start Free Today <ArrowRight size={16} />
+                </button>
+              </Link>
+              <Link href="#services">
+                <button style={{ height: '52px', padding: '0 28px', background: 'white', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: '14px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#4F46E5'; (e.currentTarget as HTMLButtonElement).style.color = '#4F46E5'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLButtonElement).style.color = '#374151'; }}>
+                  Explore Services
+                </button>
+              </Link>
+            </div>
 
-            {/* Left: Text content */}
-            <div className="space-y-8">
-              <div className="hero-title">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm font-bold tracking-wide mb-6">
-                  <Globe className="h-4 w-4" /> India&apos;s #1 Academic Project Platform
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+              {['Original, Plagiarism-Free Work', '24/7 Expert Support', '50+ Cities Served'].map(t => (
+                <div key={t} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#6B7280', fontWeight: 500 }}>
+                  <CheckCircle size={15} color="#10B981" strokeWidth={2.5} /> {t}
                 </div>
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] text-white">
-                  Your Academic<br />
-                  <span className="shimmer-text">Success Partner</span>
-                </h1>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT: Real 3D floating mockup */}
+          <div className="hero-3d" style={{ position: 'relative', height: '520px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            
+            {/* Main 3D card — perspective dashboard mockup */}
+            <div className="float-1" style={{
+              position: 'relative',
+              width: '420px',
+              background: 'white',
+              borderRadius: '24px',
+              boxShadow: '0 40px 100px rgba(79,70,229,0.2), 0 10px 30px rgba(0,0,0,0.1)',
+              border: '1px solid rgba(79,70,229,0.1)',
+              overflow: 'hidden',
+              transform: `perspective(1000px) rotateY(-6deg) rotateX(3deg) translateX(${mousePos.x * 0.3}px) translateY(${mousePos.y * 0.2}px)`,
+              transition: 'transform 0.1s ease',
+            }}>
+              {/* Mockup top bar */}
+              <div style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255,255,255,0.4)' }} />
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255,255,255,0.4)' }} />
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255,255,255,0.4)' }} />
+                <div style={{ flex: 1, height: '24px', background: 'rgba(255,255,255,0.15)', borderRadius: '8px', marginLeft: '8px' }} />
               </div>
-
-              <p className="hero-subtitle text-lg text-zinc-300 leading-relaxed max-w-xl font-medium">
-                From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — GraduateNex is the complete ecosystem helping <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
-              </p>
-
-              <div className="hero-buttons flex flex-col sm:flex-row gap-4">
-                <Link href="/login">
-                  <button className="glow-pulse h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-2xl hover:scale-105 transition-all flex items-center gap-2">
-                    Start Free Today <ArrowRight className="h-5 w-5" />
-                  </button>
-                </Link>
-                <Link href="#services">
-                  <button className="h-14 px-8 text-lg font-bold rounded-xl bg-white/5 border border-white/20 text-white hover:bg-white/10 hover:border-orange-400/50 transition-all backdrop-blur-md">
-                    Explore Services
-                  </button>
-                </Link>
-              </div>
-
-              <div className="hero-badges flex flex-wrap items-center gap-6">
-                {['Original, Plagiarism-Free Work', '24/7 Expert Support', '50+ Cities Served'].map((t) => (
-                  <div key={t} className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
-                    <CheckCircle className="h-4 w-4 text-emerald-400 flex-shrink-0" /> {t}
-                  </div>
-                ))}
+              {/* Mockup content */}
+              <div style={{ padding: '20px' }}>
+                <div style={{ marginBottom: '14px' }}>
+                  <div style={{ height: '14px', background: '#F3F4F6', borderRadius: '8px', width: '60%', marginBottom: '8px' }} />
+                  <div style={{ height: '10px', background: '#F9FAFB', borderRadius: '6px', width: '85%' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+                  {['#EEF2FF', '#F0FDF4', '#FFF7ED', '#FDF4FF'].map((bg, i) => (
+                    <div key={i} style={{ background: bg, borderRadius: '12px', padding: '12px', height: '60px', border: `1px solid ${['#C7D2FE','#BBF7D0','#FED7AA','#E9D5FF'][i]}` }}>
+                      <div style={{ height: '10px', background: ['#4F46E5','#059669','#D97706','#7C3AED'][i], opacity: 0.4, borderRadius: '6px', width: '60%', marginBottom: '6px' }} />
+                      <div style={{ height: '14px', background: ['#4F46E5','#059669','#D97706','#7C3AED'][i], borderRadius: '4px', width: '40%', fontWeight: 700 }} />
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background: '#F8F7FF', borderRadius: '12px', padding: '14px', border: '1px solid #E0E7FF' }}>
+                  <div style={{ height: '10px', background: '#C7D2FE', borderRadius: '6px', width: '70%', marginBottom: '8px' }} />
+                  <div style={{ height: '8px', background: '#E0E7FF', borderRadius: '4px', width: '90%', marginBottom: '6px' }} />
+                  <div style={{ height: '8px', background: '#E0E7FF', borderRadius: '4px', width: '75%' }} />
+                </div>
               </div>
             </div>
 
-            {/* Right: 3D Floating Cards */}
-            <div className="relative hidden lg:flex items-center justify-center" style={{ height: '500px', perspective: '1000px' }}>
-              {/* Central glowing orb */}
-              <div className="absolute w-48 h-48 rounded-full" style={{ background: 'radial-gradient(circle, rgba(251,146,60,0.4) 0%, rgba(251,146,60,0.05) 60%, transparent 100%)', filter: 'blur(20px)' }} />
-
-              {/* Orbiting dots */}
-              <div className="absolute" style={{ width: '280px', height: '280px', position: 'absolute' }}>
-                <div className="orbiting-dot" />
-                <div className="orbiting-dot orbiting-dot-2" style={{ animationDelay: '-3s' }} />
-              </div>
-
-              {/* Float Card 1: Stats */}
-              <div className="float-card-1 absolute -top-8 -left-12 bg-zinc-900/90 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-5 w-52 shadow-2xl"
-                style={{ boxShadow: '0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
-                    <TrendingUp className="h-5 w-5 text-orange-400" />
-                  </div>
-                  <span className="text-xs text-zinc-400 font-medium">This Month</span>
-                </div>
-                <p className="text-3xl font-black text-white">2,500+</p>
-                <p className="text-xs text-emerald-400 font-semibold mt-1">▲ Projects Delivered</p>
-              </div>
-
-              {/* Float Card 2: Rating */}
-              <div className="float-card-2 absolute -top-4 -right-8 bg-zinc-900/90 backdrop-blur-xl border border-violet-500/30 rounded-2xl p-5 w-48 shadow-2xl"
-                style={{ boxShadow: '0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
-                <div className="flex gap-1 mb-2">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
-                </div>
-                <p className="text-2xl font-black text-white">98%</p>
-                <p className="text-xs text-zinc-400 mt-1">Student Satisfaction</p>
-              </div>
-
-              {/* Float Card 3: AI Badge */}
-              <div className="float-card-3 absolute -bottom-8 left-0 bg-gradient-to-br from-violet-900/80 to-violet-800/80 backdrop-blur-xl border border-violet-500/40 rounded-2xl p-5 w-56 shadow-2xl"
-                style={{ boxShadow: '0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Brain className="h-5 w-5 text-violet-300" />
-                  <span className="text-xs text-violet-300 font-bold uppercase tracking-wider">AI Powered</span>
-                </div>
-                <p className="text-sm font-semibold text-white">Stealth Humanizer</p>
-                <p className="text-xs text-violet-300 mt-1">0% AI Detection Rate</p>
-              </div>
-
-              {/* Float Card 4: Cities */}
-              <div className="float-card-1 absolute -bottom-2 -right-4 bg-zinc-900/90 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-5 w-44 shadow-2xl" style={{ animationDelay: '-3s', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}>
-                <MapPin className="h-5 w-5 text-emerald-400 mb-2" />
-                <p className="text-2xl font-black text-white">50+</p>
-                <p className="text-xs text-zinc-400">Cities in India</p>
-              </div>
-
-              {/* Central icon */}
-              <div className="relative z-10 w-24 h-24 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-2xl" style={{ boxShadow: '0 0 60px rgba(251,146,60,0.5)' }}>
-                <GraduationCap className="h-12 w-12 text-white" />
-              </div>
+            {/* Floating mini cards — glassmorphism, real depth */}
+            <div className="glass-card float-2" style={{ position: 'absolute', top: '30px', right: '-20px', padding: '14px 18px', minWidth: '160px', transform: `translateX(${mousePos.x * 0.5}px) translateY(${mousePos.y * 0.3}px)` }}>
+              <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 600, marginBottom: '4px' }}>This Month</div>
+              <div style={{ fontSize: '26px', fontWeight: 900, color: '#4F46E5', lineHeight: 1 }}>2,500+</div>
+              <div style={{ fontSize: '11px', color: '#10B981', fontWeight: 700, marginTop: '4px' }}>▲ Projects Delivered</div>
             </div>
+
+            <div className="glass-card float-3" style={{ position: 'absolute', bottom: '60px', right: '-30px', padding: '14px 18px', transform: `translateX(${mousePos.x * 0.4}px) translateY(${mousePos.y * -0.2}px)` }}>
+              <div style={{ display: 'flex', gap: '2px', marginBottom: '4px' }}>
+                {[1,2,3,4,5].map(i => <Star key={i} size={12} fill="#F59E0B" color="#F59E0B" />)}
+              </div>
+              <div style={{ fontSize: '22px', fontWeight: 900, color: '#111827', lineHeight: 1 }}>98%</div>
+              <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 500, marginTop: '3px' }}>Satisfaction Rate</div>
+            </div>
+
+            <div className="glass-card float-4" style={{ position: 'absolute', top: '100px', left: '-40px', padding: '14px 18px', transform: `translateX(${mousePos.x * -0.4}px) translateY(${mousePos.y * 0.3}px)` }}>
+              <div style={{ fontSize: '22px', marginBottom: '4px' }}>🏆</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>Rank #1</div>
+              <div style={{ fontSize: '11px', color: '#6B7280' }}>Academic Platform</div>
+            </div>
+
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-zinc-500 z-10">
-          <span className="text-xs font-medium">Scroll to explore</span>
-          <div className="w-5 h-8 rounded-full border border-zinc-700 flex items-start justify-center p-1">
-            <div className="w-1 h-2 bg-orange-400 rounded-full animate-bounce" />
-          </div>
+        {/* Scroll cue */}
+        <div style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '1px', height: '48px', background: 'linear-gradient(to bottom, rgba(79,70,229,0.4), transparent)', animation: 'float-slow 2s ease-in-out infinite' }} />
         </div>
       </section>
 
-      {/* ── STATS STRIP ── */}
-      <section className="relative bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 py-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=20 height=20 xmlns=http://www.w3.org/2000/svg%3E%3Ccircle cx=1 cy=1 r=1 fill=rgba(0,0,0,0.1)/%3E%3C/svg%3E')] opacity-30" />
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white relative z-10">
-            {STATS.map((s) => (
-              <div key={s.label} className="stat-card space-y-1">
-                <p className="text-3xl md:text-4xl font-black">{s.value}</p>
-                <p className="text-sm font-medium text-white/80">{s.label}</p>
-              </div>
-            ))}
-          </div>
+      {/* ═══════════════════════════════════════════════════════════ STATS */}
+      <section style={{ background: 'white', borderTop: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6', padding: '40px 32px' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0' }}>
+          {STATS.map((s, i) => (
+            <div key={s.label} style={{ textAlign: 'center', padding: '24px', borderRight: i < 3 ? '1px solid #F3F4F6' : 'none' }}>
+              <div style={{ fontSize: '28px', marginBottom: '4px' }}>{s.icon}</div>
+              <div className="stat-num" style={{ fontSize: '38px', fontWeight: 900, lineHeight: 1, marginBottom: '6px' }}>{s.value}</div>
+              <div style={{ fontSize: '13px', color: '#9CA3AF', fontWeight: 500 }}>{s.label}</div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── SERVICES ── */}
-      <section id="services" className="w-full py-32 bg-zinc-950 relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 -left-48 w-96 h-96 bg-orange-500/5 rounded-full blur-[80px]" />
-          <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-violet-500/5 rounded-full blur-[80px]" />
-        </div>
-
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="text-center mb-20 space-y-4 max-w-3xl mx-auto fade-up">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-bold">
-              <Layers className="h-4 w-4" /> Our Complete Product Suite
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
-              Everything You Need to<br /><span className="shimmer-text">Graduate with Excellence</span>
+      {/* ═══════════════════════════════════════════════════════════ SERVICES */}
+      <section id="services" className="mesh-bg" style={{ padding: '100px 32px' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+            <div className="section-label" style={{ marginBottom: '16px' }}>Our Complete Suite</div>
+            <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 900, color: '#0F0E1A', letterSpacing: '-0.03em', marginBottom: '16px', lineHeight: 1.1 }}>
+              Everything You Need to<br /><span className="gradient-text">Graduate with Excellence</span>
             </h2>
-            <p className="text-lg text-zinc-400 leading-relaxed">
-              A full-stack academic success platform covering projects, documentation, AI tools, and career launch — all under one roof.
+            <p style={{ fontSize: '17px', color: '#6B7280', maxWidth: '540px', margin: '0 auto', lineHeight: 1.7 }}>
+              A full-stack academic success platform covering projects, documentation, AI tools, and career launch.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
             {SERVICES.map((svc, idx) => (
-              <Link href="/login" key={svc.title}
-                className="card-3d service-card group relative bg-zinc-900/80 backdrop-blur-sm rounded-3xl border border-zinc-800 hover:border-orange-500/40 p-8 flex flex-col overflow-hidden"
-                style={{ animationDelay: `${idx * 0.1}s` }}>
-                {/* Gradient glow on hover */}
-                <div className={`absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${svc.gradient} pointer-events-none`} style={{ opacity: 0 }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.04')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '0')} />
+              <TiltCard key={svc.title} className="card-surface service-card" style={{ padding: '32px', cursor: 'pointer', position: 'relative', overflow: 'hidden' } as React.CSSProperties}>
+                <Link href="/login" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                  {/* Top accent line */}
+                  <div style={{ position: 'absolute', top: 0, left: '32px', right: '32px', height: '3px', background: `linear-gradient(90deg, ${svc.color}, transparent)`, borderRadius: '0 0 4px 4px' }} />
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                    <div className="service-emoji" style={{ fontSize: '36px', lineHeight: 1 }}>{svc.emoji}</div>
+                    <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '100px', background: `${svc.color}15`, color: svc.color, letterSpacing: '0.05em' }}>{svc.badge}</span>
+                  </div>
 
-                <span className="absolute top-5 right-5 text-xs font-bold px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
-                  {svc.badge}
-                </span>
-
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${svc.gradient} flex items-center justify-center mb-6 text-white shadow-lg group-hover:scale-110 transition-transform`}>
-                  {svc.icon}
-                </div>
-
-                <h3 className="text-xl font-bold mb-3 text-white group-hover:text-orange-400 transition-colors">{svc.title}</h3>
-                <p className="text-zinc-400 leading-relaxed mb-6 flex-1 text-sm">{svc.description}</p>
-
-                <ul className="space-y-2 mb-6">
-                  {svc.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm font-medium text-zinc-300">
-                      <CheckCircle className="h-4 w-4 text-emerald-400 flex-shrink-0" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-auto flex items-center gap-2 text-orange-400 font-bold text-sm group-hover:gap-3 transition-all">
-                  Get Started <ChevronRight className="h-4 w-4" />
-                </div>
-              </Link>
+                  <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#111827', marginBottom: '10px', letterSpacing: '-0.02em' }}>{svc.title}</h3>
+                  <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: 1.7, marginBottom: '20px' }}>{svc.desc}</p>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: 700, color: svc.color }}>
+                    Get Started <ChevronRight size={14} />
+                  </div>
+                </Link>
+              </TiltCard>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── PROJECT CATEGORIES ── */}
-      <section className="w-full py-24 bg-zinc-900/50 border-y border-zinc-800">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">Explore by <span className="shimmer-text">Domain</span></h2>
-            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">Browse our deep catalogue of ready-made projects across every major engineering and management domain.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-            {CATEGORIES.map((cat) => (
-              <Link href="/login" key={cat.name}>
-                <div className="card-3d group bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-orange-500/40 cursor-pointer flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 group-hover:bg-orange-500 group-hover:text-white transition-all flex-shrink-0">
-                    {cat.icon}
-                  </div>
-                  <div>
-                    <p className="font-bold text-white leading-tight text-sm">{cat.name}</p>
-                    <p className="text-xs text-zinc-500 mt-1">{cat.count}</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section className="w-full py-32 bg-zinc-950 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-20 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
-              From Order to Delivery in <span className="shimmer-text">3 Simple Steps</span>
+      {/* ═══════════════════════════════════════════════════════════ HOW IT WORKS */}
+      <section style={{ background: 'white', padding: '100px 32px' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+            <div className="section-label" style={{ marginBottom: '16px' }}>How It Works</div>
+            <h2 style={{ fontSize: 'clamp(30px, 4vw, 48px)', fontWeight: 900, color: '#0F0E1A', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+              From Order to Delivery in <span className="gradient-text">3 Simple Steps</span>
             </h2>
-            <p className="text-lg text-zinc-400">We have streamlined the entire process so you can focus on what matters — your viva and your career.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto relative">
-            {/* Connecting line */}
-            <div className="absolute top-16 left-[16.66%] right-[16.66%] h-0.5 bg-gradient-to-r from-orange-500/50 via-orange-400/50 to-orange-500/50 hidden md:block" />
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', position: 'relative' }}>
+            {/* Connector line */}
+            <div style={{ position: 'absolute', top: '52px', left: '20%', right: '20%', height: '2px', background: 'linear-gradient(90deg, #4F46E5, #7C3AED, #EC4899)', borderRadius: '2px', zIndex: 0 }} />
+
             {[
-              { step: '01', icon: <BookOpen className="h-8 w-8" />, title: 'Browse & Select', desc: 'Explore our marketplace. Filter by domain, tech stack, or college level. Every listing includes detailed specs, images, and a demo video.' },
-              { step: '02', icon: <Briefcase className="h-8 w-8" />, title: 'Place Your Order', desc: 'Add to cart, complete checkout, and share your specific college requirements via our custom request form. Upload your professor\'s base paper if needed.' },
-              { step: '03', icon: <TrendingUp className="h-8 w-8" />, title: 'Receive & Deploy', desc: 'Get your complete project package — source code, SRS, IEEE paper, PPT — with a step-by-step deployment guide. Our team is on call for viva prep.' },
-            ].map((step) => (
-              <div key={step.step} className="card-3d flex flex-col items-center text-center space-y-5 bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8">
-                <div className="relative">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400">
-                    {step.icon}
-                  </div>
-                  <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-black w-7 h-7 rounded-full flex items-center justify-center shadow-lg">
-                    {step.step}
-                  </span>
+              { step: '01', title: 'Browse & Select', desc: 'Explore our marketplace. Filter by domain, tech stack, or college level. Every listing includes detailed specs, images, and a demo video.', emoji: '🔍' },
+              { step: '02', title: 'Place Your Order', desc: 'Add to cart, complete checkout, and share your specific college requirements. Upload your professor\'s base paper if needed.', emoji: '🛒' },
+              { step: '03', title: 'Receive & Deploy', desc: 'Get your complete project package — source code, SRS, IEEE paper, PPT — with a step-by-step deployment guide and viva prep.', emoji: '🚀' },
+            ].map((s, i) => (
+              <TiltCard key={s.step} className="card-surface" style={{ padding: '36px 28px', textAlign: 'center', position: 'relative', zIndex: 1 } as React.CSSProperties}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 24px rgba(79,70,229,0.3)', position: 'relative' }}>
+                  <span style={{ fontSize: '22px' }}>{s.emoji}</span>
+                  <div style={{ position: 'absolute', top: '-6px', right: '-6px', width: '22px', height: '22px', borderRadius: '50%', background: '#0F0E1A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 900, color: 'white' }}>{s.step}</div>
                 </div>
-                <h3 className="text-xl font-bold text-white">{step.title}</h3>
-                <p className="text-zinc-400 leading-relaxed text-sm">{step.desc}</p>
-              </div>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#111827', marginBottom: '10px', letterSpacing: '-0.02em' }}>{s.title}</h3>
+                <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: 1.7 }}>{s.desc}</p>
+              </TiltCard>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── TRANSPARENT PRICING ── */}
-      <section className="w-full py-24 bg-zinc-900/50 border-y border-zinc-800">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
-              Transparent & Upfront <span className="shimmer-text">Pricing</span>
+      {/* ═══════════════════════════════════════════════════════════ PRICING */}
+      <section className="mesh-bg" style={{ padding: '100px 32px' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+            <div className="section-label" style={{ marginBottom: '16px' }}>Pricing</div>
+            <h2 style={{ fontSize: 'clamp(30px, 4vw, 48px)', fontWeight: 900, color: '#0F0E1A', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+              Transparent & Upfront <span className="gradient-text">Pricing</span>
             </h2>
-            <p className="text-lg text-zinc-400">No hidden fees. No &quot;Contact us for price&quot;. Get immediate access to what you need.</p>
+            <p style={{ fontSize: '16px', color: '#6B7280', marginTop: '12px' }}>No hidden fees. No &quot;Contact us for price&quot;.</p>
           </div>
-          <div className="grid md:grid-cols-4 gap-5 max-w-6xl mx-auto">
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '18px' }}>
             {[
-              { name: 'ATS Resume Builder', price: '₹199', desc: 'AI-generated ATS-friendly resume.' },
-              { name: 'JD Match Analyzer', price: '₹299', desc: 'Match your resume to specific job roles.' },
-              { name: 'Project Documentation', price: '₹149', desc: 'Instant IEEE/SRS documentation templates.' },
-              { name: 'Final Year Projects', price: 'From ₹6,000', desc: 'Complete source code, setup, and support.' },
-            ].map((plan) => (
-              <Link href="/services" key={plan.name}
-                className="card-3d group bg-zinc-900 border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between text-center hover:border-orange-500/50">
-                <div>
-                  <h3 className="font-bold text-lg mb-2 text-white group-hover:text-orange-400 transition-colors">{plan.name}</h3>
-                  <p className="text-zinc-500 text-sm mb-6">{plan.desc}</p>
-                </div>
-                <div>
-                  <div className="text-3xl font-black text-orange-400 mb-5">{plan.price}</div>
-                  <div className="w-full rounded-xl border border-zinc-700 group-hover:border-orange-500 group-hover:bg-orange-500 py-2.5 text-sm font-bold text-zinc-300 group-hover:text-white transition-all">View Details</div>
-                </div>
-              </Link>
+              { name: 'ATS Resume Builder', price: '₹199', desc: 'AI-generated ATS-friendly resume', hot: false },
+              { name: 'JD Match Analyzer', price: '₹299', desc: 'Match resume to job roles', hot: false },
+              { name: 'Project Documentation', price: '₹149', desc: 'Instant IEEE/SRS docs', hot: false },
+              { name: 'Final Year Projects', price: 'From ₹6,000', desc: 'Complete source code & support', hot: true },
+            ].map((p) => (
+              <TiltCard key={p.name} className="card-surface" style={{ padding: '28px 24px', textAlign: 'center', position: 'relative', ...(p.hot ? { borderColor: '#4F46E5', boxShadow: '0 8px 40px rgba(79,70,229,0.2)' } : {}) } as React.CSSProperties}>
+                {p.hot && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', color: 'white', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '100px', whiteSpace: 'nowrap' }}>Most Popular</div>}
+                <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#111827', marginBottom: '8px' }}>{p.name}</h3>
+                <p style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: '20px', lineHeight: 1.5 }}>{p.desc}</p>
+                <div className="stat-num" style={{ fontSize: '28px', fontWeight: 900, marginBottom: '20px' }}>{p.price}</div>
+                <Link href="/services">
+                  <button style={{ width: '100%', padding: '10px', borderRadius: '10px', border: p.hot ? 'none' : '1.5px solid #E5E7EB', background: p.hot ? 'linear-gradient(135deg, #4F46E5, #7C3AED)' : 'transparent', color: p.hot ? 'white' : '#374151', fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s ease' }}>
+                    View Details
+                  </button>
+                </Link>
+              </TiltCard>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
-      <section className="w-full py-24 bg-zinc-950 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-orange-500/20 to-transparent" />
-        </div>
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-bold">
-              <Star className="h-4 w-4 fill-orange-400" /> Trusted by Students Nationwide
+      {/* ═══════════════════════════════════════════════════════════ TESTIMONIALS */}
+      <section style={{ background: 'white', padding: '100px 32px' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+            <div className="section-label" style={{ marginBottom: '16px' }}>
+              <Star size={12} fill="#4F46E5" /> Student Reviews
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">Real Results from <span className="shimmer-text">Real Students</span></h2>
+            <h2 style={{ fontSize: 'clamp(30px, 4vw, 48px)', fontWeight: 900, color: '#0F0E1A', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+              Real Results from <span className="gradient-text">Real Students</span>
+            </h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-5 max-w-6xl mx-auto">
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
             {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="card-3d bg-zinc-900 border border-zinc-800 hover:border-orange-500/30 rounded-3xl p-8 space-y-4">
-                <div className="flex gap-1">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
+              <TiltCard key={t.name} className="card-surface" style={{ padding: '32px' } as React.CSSProperties}>
+                <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
+                  {Array.from({ length: t.rating }).map((_, i) => <Star key={i} size={14} fill="#F59E0B" color="#F59E0B" />)}
                 </div>
-                <p className="text-zinc-300 leading-relaxed">&quot;{t.text}&quot;</p>
-                <div className="flex items-center gap-4 pt-3 border-t border-zinc-800">
-                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-white font-bold flex-shrink-0">
-                    {t.name[0]}
+                <p style={{ fontSize: '15px', color: '#374151', lineHeight: 1.75, marginBottom: '20px', fontStyle: 'italic' }}>&ldquo;{t.text}&rdquo;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingTop: '16px', borderTop: '1px solid #F3F4F6' }}>
+                  <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '16px', flexShrink: 0 }}>
+                    {t.avatar}
                   </div>
                   <div>
-                    <p className="font-bold text-white text-sm">{t.name}</p>
-                    <p className="text-xs text-zinc-500">{t.branch} · {t.college}</p>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#111827' }}>{t.name}</div>
+                    <div style={{ fontSize: '12px', color: '#9CA3AF' }}>{t.branch} · {t.college}</div>
                   </div>
                 </div>
-              </div>
+              </TiltCard>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── LOCATIONS ── */}
-      <section className="w-full py-24 bg-zinc-900/50 border-y border-zinc-800">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-bold">
-              <MapPin className="h-4 w-4" /> Pan-India Reach
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
-              Serving Students Across <span className="shimmer-text">50+ Cities in India</span>
-            </h2>
+      {/* ═══════════════════════════════════════════════════════════ LOCATIONS */}
+      <section className="mesh-bg" style={{ padding: '80px 32px' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
+          <div className="section-label" style={{ marginBottom: '16px', display: 'inline-flex' }}>
+            <MapPin size={12} /> Pan-India Reach
           </div>
-          <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-            {LOCATIONS.map((city) => (
-              <div key={city} className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-zinc-900 border border-zinc-700 hover:border-orange-500/50 hover:bg-zinc-800 transition-all text-sm font-semibold text-zinc-300">
-                <MapPin className="h-3.5 w-3.5 text-orange-400" /> {city}
+          <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 900, color: '#0F0E1A', letterSpacing: '-0.03em', marginBottom: '12px', lineHeight: 1.1 }}>
+            Serving <span className="gradient-text">50+ Cities</span> Across India
+          </h2>
+          <p style={{ color: '#6B7280', fontSize: '15px', marginBottom: '40px' }}>100% digital delivery — no location barriers.</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
+            {['Hyderabad', 'Bengaluru', 'Chennai', 'Mumbai', 'Delhi NCR', 'Pune', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Lucknow', 'Coimbatore', 'Vizag', 'Nagpur', 'Indore', 'Bhubaneswar', 'Kochi', 'Chandigarh', 'Thiruvananthapuram', 'Bhopal', 'Patna'].map(city => (
+              <div key={city} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '100px', background: 'white', border: '1.5px solid #E5E7EB', fontSize: '13px', fontWeight: 600, color: '#374151', transition: 'all 0.2s ease', cursor: 'default' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#4F46E5'; (e.currentTarget as HTMLDivElement).style.color = '#4F46E5'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLDivElement).style.color = '#374151'; }}>
+                <MapPin size={11} color="#4F46E5" /> {city}
               </div>
             ))}
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-orange-500 text-white text-sm font-bold">
-              + 30 More Cities
-            </div>
+            <div style={{ padding: '8px 16px', borderRadius: '100px', background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', fontSize: '13px', fontWeight: 700, color: 'white' }}>+ 30 More</div>
           </div>
         </div>
       </section>
 
-      {/* ── FOUNDER ── */}
-      <section className="w-full py-24 bg-zinc-950">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12 bg-zinc-900/80 backdrop-blur-sm p-10 md:p-14 rounded-[3rem] border border-zinc-800 shadow-2xl" style={{ boxShadow: '0 0 80px rgba(251,146,60,0.05)' }}>
-            <div className="w-48 h-48 md:w-56 md:h-56 rounded-full p-1 flex-shrink-0 shadow-xl" style={{ background: 'linear-gradient(135deg, #f97316, #fb923c, #fbbf24)', boxShadow: '0 0 60px rgba(251,146,60,0.3)' }}>
-              <div className="w-full h-full rounded-full overflow-hidden relative border-4 border-zinc-900">
+      {/* ═══════════════════════════════════════════════════════════ FOUNDER */}
+      <section style={{ background: 'white', padding: '100px 32px' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <TiltCard className="card-surface" style={{ padding: '60px', display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '56px', alignItems: 'center', boxShadow: '0 20px 60px rgba(79,70,229,0.1)' } as React.CSSProperties}>
+            <div style={{ width: '180px', height: '180px', borderRadius: '50%', flexShrink: 0, position: 'relative' }}>
+              <div style={{ position: 'absolute', inset: '-4px', borderRadius: '50%', background: 'linear-gradient(135deg, #4F46E5, #7C3AED, #EC4899)', zIndex: 0 }} />
+              <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', border: '4px solid white', zIndex: 1 }}>
                 <Image src="/founder_nithin.jpg" alt="Appala Nithin" fill className="object-cover object-top" />
               </div>
             </div>
-            <div className="text-center md:text-left space-y-5">
-              <div className="inline-flex px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm font-bold uppercase tracking-widest">
-                Founder & CEO
-              </div>
-              <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white">Appala Nithin</h3>
-              <div className="space-y-3 text-base text-zinc-400 leading-relaxed">
-                <p><strong className="text-white">Appala Nithin</strong> is the visionary founder behind <strong className="text-orange-400">GraduateNex</strong> — a platform built from the ground up to solve the real academic struggles that millions of Indian students face every year.</p>
-                <p>Having seen firsthand how talented students were failing not because of intelligence, but because of a broken system — he built GraduateNex to be the definitive solution combining a production-quality project marketplace, AI-powered tools, and an intelligent career engine.</p>
-              </div>
-              <div className="flex flex-wrap gap-3 pt-2">
-                {['EdTech Visionary', '2,500+ Students Helped', '50+ Cities Served'].map((tag, i) => {
-                  const icons = [<GraduationCap key={0} className="h-4 w-4 text-orange-400" />, <Award key={1} className="h-4 w-4 text-orange-400" />, <Users key={2} className="h-4 w-4 text-orange-400" />];
-                  return (
-                    <span key={tag} className="flex items-center gap-2 text-sm font-semibold bg-zinc-800 px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-300">
-                      {icons[i]} {tag}
-                    </span>
-                  );
-                })}
+            <div>
+              <div className="section-label" style={{ marginBottom: '12px', display: 'inline-flex' }}>Founder & CEO</div>
+              <h3 style={{ fontSize: '36px', fontWeight: 900, color: '#0F0E1A', letterSpacing: '-0.03em', marginBottom: '16px' }}>Appala Nithin</h3>
+              <p style={{ fontSize: '15px', color: '#6B7280', lineHeight: 1.8, marginBottom: '8px' }}>
+                <strong style={{ color: '#111827' }}>Appala Nithin</strong> is the visionary founder behind <strong style={{ color: '#4F46E5' }}>GraduateNex</strong> — built from the ground up to solve real academic struggles millions of Indian students face every year.
+              </p>
+              <p style={{ fontSize: '15px', color: '#6B7280', lineHeight: 1.8, marginBottom: '20px' }}>
+                Combining a production-quality project marketplace, AI-powered document tools, and an intelligent career launch engine into one seamless platform.
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                {[{ icon: '🎓', text: 'EdTech Visionary' }, { icon: '🏆', text: '2,500+ Students Helped' }, { icon: '🗺️', text: '50+ Cities Served' }].map(tag => (
+                  <span key={tag.text} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: '100px', background: '#F8F7FF', border: '1.5px solid #E0E7FF', fontSize: '13px', fontWeight: 600, color: '#4F46E5' }}>
+                    {tag.icon} {tag.text}
+                  </span>
+                ))}
               </div>
             </div>
-          </div>
+          </TiltCard>
         </div>
       </section>
 
-      {/* ── FAQ ── */}
-      <section className="w-full py-24 bg-zinc-900/50 border-t border-zinc-800">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
-              Frequently Asked <span className="shimmer-text">Questions</span>
+      {/* ═══════════════════════════════════════════════════════════ FAQ */}
+      <section className="mesh-bg" style={{ padding: '100px 32px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+            <div className="section-label" style={{ marginBottom: '16px' }}>FAQ</div>
+            <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 900, color: '#0F0E1A', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+              Frequently Asked <span className="gradient-text">Questions</span>
             </h2>
-            <p className="text-lg text-zinc-400">Quick answers to common queries about our services.</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
             {[
-              { q: 'What is GraduateNex?', a: 'GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India.' },
+              { q: 'What is GraduateNex?', a: 'An academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India.' },
               { q: 'Are the projects plagiarism-free?', a: 'Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards.' },
-              { q: 'How are digital products delivered?', a: 'All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address.' },
+              { q: 'How are products delivered?', a: 'All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address.' },
               { q: 'What payment methods do you accept?', a: 'We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway.' },
               { q: 'Can I get a refund?', a: "Digital products are generally non-refundable once delivered. However, refunds are issued for technical payment failures, undelivered products, and custom projects that don't meet agreed specifications." },
-              { q: 'Do you offer support after purchase?', a: 'Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST.' },
-            ].map((faq) => (
-              <div key={faq.q} className="bg-zinc-900 border border-zinc-800 hover:border-orange-500/30 rounded-2xl p-6 transition-colors">
-                <h3 className="font-bold text-base mb-2 text-white">{faq.q}</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">{faq.a}</p>
+              { q: 'Do you offer support after purchase?', a: 'Yes. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST.' },
+            ].map(f => (
+              <div key={f.q} className="card-surface" style={{ padding: '24px', background: 'white' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#111827', marginBottom: '8px' }}>{f.q}</h3>
+                <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: 1.7 }}>{f.a}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── TRUST SIGNALS ── */}
-      <section className="w-full py-14 bg-zinc-950 border-y border-zinc-800">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-            {[
-              { icon: <Shield className="h-8 w-8 text-emerald-400" />, title: 'Secure Payments', sub: '256-bit SSL Encryption' },
-              { icon: <CreditCard className="h-8 w-8 text-blue-400" />, title: 'Powered by Razorpay', sub: 'PCI-DSS Compliant' },
-              { icon: <CheckCircle className="h-8 w-8 text-orange-400" />, title: '2,500+ Orders', sub: 'Delivered Successfully' },
-              { icon: <Phone className="h-8 w-8 text-violet-400" />, title: 'Dedicated Support', sub: 'Mon–Fri, 9AM–6PM IST' },
-            ].map((item) => (
-              <div key={item.title} className="flex items-center gap-3">
-                {item.icon}
-                <div>
-                  <p className="text-sm font-bold text-white">{item.title}</p>
-                  <p className="text-xs text-zinc-500">{item.sub}</p>
-                </div>
+      {/* ═══════════════════════════════════════════════════════════ TRUST */}
+      <section style={{ background: 'white', borderTop: '1px solid #F3F4F6', padding: '40px 32px' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '48px', alignItems: 'center' }}>
+          {[
+            { icon: <Shield size={24} color="#10B981" />, title: 'Secure Payments', sub: '256-bit SSL Encryption' },
+            { icon: <CreditCard size={24} color="#3B82F6" />, title: 'Powered by Razorpay', sub: 'PCI-DSS Compliant' },
+            { icon: <CheckCircle size={24} color="#4F46E5" />, title: '2,500+ Orders', sub: 'Delivered Successfully' },
+            { icon: <Phone size={24} color="#7C3AED" />, title: 'Dedicated Support', sub: 'Mon–Fri, 9AM–6PM IST' },
+          ].map(item => (
+            <div key={item.title} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {item.icon}
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#111827' }}>{item.title}</div>
+                <div style={{ fontSize: '12px', color: '#9CA3AF' }}>{item.sub}</div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── FINAL CTA ── */}
-      <section className="w-full py-32 relative overflow-hidden bg-zinc-950">
-        {/* 3D perspective rings */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="absolute w-[600px] h-[600px] rounded-full border border-orange-500/10 animate-pulse" />
-          <div className="absolute w-[800px] h-[800px] rounded-full border border-orange-500/5" />
-          <div className="absolute w-[400px] h-[400px] rounded-full bg-orange-500/5 blur-[60px]" />
-        </div>
-
-        <div className="container mx-auto px-4 md:px-6 text-center relative z-10 space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm font-bold">
-            <Zap className="h-4 w-4 fill-orange-400" /> Limited Time — Join 2,500+ Students
+      {/* ═══════════════════════════════════════════════════════════ CTA */}
+      <section className="cta-section" style={{ padding: '100px 32px', position: 'relative', overflow: 'hidden' }}>
+        {/* Subtle depth layers */}
+        <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '400px', height: '400px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-80px', left: '-80px', width: '300px', height: '300px', borderRadius: '50%', background: 'rgba(0,0,0,0.08)', pointerEvents: 'none' }} />
+        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.15)', color: 'white', fontSize: '12px', fontWeight: 700, padding: '6px 16px', borderRadius: '100px', marginBottom: '24px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' }}>
+            <Zap size={12} fill="white" /> Join 2,500+ Students
           </div>
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white">
-            Your Final Year Project is<br /><span className="shimmer-text">One Click Away.</span>
+          <h2 style={{ fontSize: 'clamp(32px, 5vw, 60px)', fontWeight: 900, color: 'white', letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: '20px' }}>
+            Your Final Year Project is<br />One Click Away.
           </h2>
-          <p className="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            Join 2,500+ students who have already secured top grades, submitted original documentation, and advanced their careers using GraduateNex.
+          <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.8)', marginBottom: '36px', lineHeight: 1.7 }}>
+            Join students who have already secured top grades, submitted original documentation, and advanced their careers using GraduateNex.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/login">
-              <button className="glow-pulse h-16 px-12 text-xl font-black rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-2xl hover:scale-105 transition-all flex items-center gap-2">
-                Get Started — It&apos;s Free <ArrowRight className="h-6 w-6" />
+              <button style={{ height: '56px', padding: '0 32px', background: 'white', color: '#4F46E5', border: 'none', borderRadius: '14px', fontSize: '16px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)', transition: 'all 0.2s ease' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 14px 40px rgba(0,0,0,0.3)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 30px rgba(0,0,0,0.2)'; }}>
+                Get Started — It&apos;s Free <ArrowRight size={18} />
               </button>
             </Link>
             <a href="tel:+917981994870">
-              <button className="h-16 px-10 text-xl font-bold rounded-xl bg-white/5 border-2 border-white/20 text-white hover:bg-white/10 hover:border-orange-400/50 transition-all flex items-center gap-2">
-                <Phone className="h-5 w-5" /> Call Us Now
+              <button style={{ height: '56px', padding: '0 28px', background: 'rgba(255,255,255,0.12)', color: 'white', border: '2px solid rgba(255,255,255,0.3)', borderRadius: '14px', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', backdropFilter: 'blur(10px)', transition: 'all 0.2s ease' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.2)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.12)'; }}>
+                <Phone size={16} /> Call Us Now
               </button>
             </a>
           </div>
-          <p className="text-zinc-500 text-sm">
-            📞 +91 79819 94870 &nbsp;|&nbsp; ✉️ support@graduatenex.online &nbsp;|&nbsp; 📍 T Hub, Hitech City, Hyderabad
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', marginTop: '28px' }}>
+            📞 +91 79819 94870 &nbsp;|&nbsp; ✉️ support@graduatenex.online &nbsp;|&nbsp; 📍 T Hub, Hyderabad
           </p>
         </div>
       </section>
 
-      {/* FAQPage Schema */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        '@context': 'https://schema.org', '@type': 'FAQPage',
-        mainEntity: [
-          { '@type': 'Question', name: 'What is GraduateNex?', acceptedAnswer: { '@type': 'Answer', text: 'GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India.' } },
-          { '@type': 'Question', name: 'Are the projects plagiarism-free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards.' } },
-        ],
-      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [{ '@type': 'Question', name: 'What is GraduateNex?', acceptedAnswer: { '@type': 'Answer', text: 'GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India.' } }] }) }} />
     </div>
   );
 }
