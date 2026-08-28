@@ -2,37 +2,207 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Insta AI Poster</title>
+  <title>GraduateNex Insta Suite</title>
   <style>
-    body { font-family: Arial, sans-serif; width: 350px; padding: 15px; margin: 0; background: #fafafa; }
-    h2 { font-size: 18px; color: #262626; margin-top: 0; margin-bottom: 20px; text-align: center; }
-    .input-group { margin-bottom: 15px; }
-    label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #262626; }
-    input[type="file"] { display: block; width: 100%; font-size: 13px; padding: 5px; border: 1px solid #dbdbdb; border-radius: 4px; background: white; }
-    textarea { width: 100%; height: 80px; padding: 8px; font-size: 13px; border: 1px solid #dbdbdb; border-radius: 4px; resize: none; box-sizing: border-box; font-family: inherit; }
-    button { width: 100%; padding: 10px; background-color: #0095f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; margin-top: 10px; transition: 0.2s; }
-    button:hover { background-color: #1877f2; }
-    button:disabled { background-color: #b2dffc; cursor: not-allowed; }
-    #status { margin-top: 15px; font-size: 12px; color: #555; text-align: center; min-height: 15px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; width: 420px; background: #f8f9fa; color: #1a1a2e; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; background: #1a1a2e; }
+    .tab { flex: 1; padding: 12px 6px; text-align: center; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
+    .tab.active { color: #fff; border-bottom-color: #6C63FF; }
+    .tab:hover:not(.active) { color: rgba(255,255,255,0.8); }
+
+    .panel { display: none; padding: 16px; }
+    .panel.active { display: block; }
+
+    /* ── SHARED ── */
+    label { display: block; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    input[type="text"], input[type="file"], textarea, select {
+      width: 100%; padding: 10px 12px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 13px; background: white; color: #111; outline: none; margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: #6C63FF; }
+    textarea { resize: vertical; }
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-primary { background: linear-gradient(135deg, #6C63FF, #8B5CF6); color: white; box-shadow: 0 4px 15px rgba(108,99,255,0.35); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,99,255,0.45); }
+    .btn-primary:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+    .btn-danger:hover { transform: translateY(-1px); }
+    .btn-secondary { background: white; color: #374151; border: 1.5px solid #e5e7eb; }
+    .btn-sm { padding: 8px 14px; font-size: 12px; width: auto; border-radius: 8px; }
+
+    .status { padding: 10px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: none; }
+    .status.success { background: #d1fae5; color: #065f46; display: block; }
+    .status.error { background: #fee2e2; color: #991b1b; display: block; }
+    .status.info { background: #ede9fe; color: #4c1d95; display: block; }
+    .status.warning { background: #fef3c7; color: #92400e; display: block; }
+
+    /* ── AUTO COMMENTER ── */
+    .topics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+    .topic-chip { padding: 6px 8px; border-radius: 8px; background: white; border: 1.5px solid #e5e7eb; font-size: 11px; font-weight: 600; text-align: center; cursor: pointer; transition: all 0.15s; color: #374151; }
+    .topic-chip.selected { background: #EDE9FE; border-color: #6C63FF; color: #6C63FF; }
+    .topic-chip:hover { border-color: #6C63FF; }
+
+    .speed-control { display: flex; gap: 8px; margin-bottom: 12px; }
+    .speed-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1.5px solid #e5e7eb; background: white; font-size: 11px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.15s; color: #374151; }
+    .speed-btn.selected { background: #1a1a2e; border-color: #1a1a2e; color: white; }
+
+    .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .stat-box { background: white; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 10px; text-align: center; }
+    .stat-num { font-size: 22px; font-weight: 900; color: #6C63FF; }
+    .stat-label { font-size: 10px; color: #9ca3af; font-weight: 600; margin-top: 2px; }
+
+    .log-box { background: #0f172a; border-radius: 10px; padding: 10px; height: 130px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #94a3b8; margin-bottom: 12px; }
+    .log-entry { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .log-entry.success { color: #34d399; }
+    .log-entry.error { color: #f87171; }
+    .log-entry.info { color: #60a5fa; }
+
+    .section-title { font-size: 13px; font-weight: 800; color: #1a1a2e; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 4px; }
+    .toggle-label { font-size: 12px; font-weight: 600; color: #374151; }
+    .toggle { position: relative; width: 36px; height: 20px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #d1d5db; border-radius: 20px; transition: 0.3s; }
+    .toggle-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+    input:checked + .toggle-slider { background: #6C63FF; }
+    input:checked + .toggle-slider:before { transform: translateX(16px); }
+
+    .comment-preview { background: white; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 10px; margin-bottom: 12px; font-size: 12px; color: #374151; max-height: 80px; overflow-y: auto; line-height: 1.6; }
+
+    .header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+    .header-logo { font-size: 20px; }
+    .header-title { color: white; font-size: 14px; font-weight: 800; }
+    .header-sub { color: rgba(255,255,255,0.5); font-size: 10px; }
+    .badge { background: #6C63FF; color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+
+    .divider { height: 1px; background: #f3f4f6; margin: 12px 0; }
   </style>
 </head>
 <body>
-  <h2>AI Insta Poster 🚀</h2>
-  
-  <div class="input-group">
-    <label for="imageUpload">1. Select an Image</label>
+
+  <div class="header">
+    <div class="header-logo">🎓</div>
+    <div>
+      <div class="header-title">GraduateNex Insta Suite <span class="badge">v3.0</span></div>
+      <div class="header-sub">Auto Poster + AI Comment Blaster</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" data-tab="commenter">💬 Auto Commenter</div>
+    <div class="tab" data-tab="poster">📸 Auto Poster</div>
+    <div class="tab" data-tab="settings">⚙️ Settings</div>
+  </div>
+
+  <!-- ═══════════════════════════ AUTO COMMENTER TAB -->
+  <div class="panel active" id="tab-commenter">
+
+    <div class="stats-bar">
+      <div class="stat-box"><div class="stat-num" id="stat-commented">0</div><div class="stat-label">Commented</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-skipped">0</div><div class="stat-label">Skipped</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-queue">0</div><div class="stat-label">In Queue</div></div>
+    </div>
+
+    <div id="commenter-status" class="status"></div>
+
+    <div class="section-title">🎯 Target Topics (auto-detects from reels)</div>
+    <div class="topics-grid">
+      <div class="topic-chip selected" data-topic="ai">🤖 AI</div>
+      <div class="topic-chip selected" data-topic="job">💼 Jobs</div>
+      <div class="topic-chip selected" data-topic="fresher">🎓 Fresher</div>
+      <div class="topic-chip selected" data-topic="student">📚 Student</div>
+      <div class="topic-chip selected" data-topic="final year">🏫 Final Year</div>
+      <div class="topic-chip selected" data-topic="resume">📄 Resume</div>
+      <div class="topic-chip selected" data-topic="ats">📊 ATS</div>
+      <div class="topic-chip selected" data-topic="career">🚀 Career</div>
+      <div class="topic-chip selected" data-topic="roadmap">🗺️ Roadmap</div>
+      <div class="topic-chip selected" data-topic="dsa">💻 DSA</div>
+      <div class="topic-chip selected" data-topic="interview">🎤 Interview</div>
+      <div class="topic-chip selected" data-topic="placement">🏆 Placement</div>
+      <div class="topic-chip selected" data-topic="project">🔧 Projects</div>
+      <div class="topic-chip selected" data-topic="college">🏛️ College</div>
+      <div class="topic-chip selected" data-topic="internship">💡 Internship</div>
+    </div>
+
+    <div class="section-title">⚡ Blasting Speed</div>
+    <div class="speed-control">
+      <div class="speed-btn" data-speed="3000">🐢 Safe<br><small>5s delay</small></div>
+      <div class="speed-btn selected" data-speed="1500">⚡ Fast<br><small>2s delay</small></div>
+      <div class="speed-btn" data-speed="600">🚀 Rocket<br><small>0.8s delay</small></div>
+    </div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">📜 Scroll reels automatically</span>
+      <label class="toggle"><input type="checkbox" id="auto-scroll" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">🧠 AI-personalize each comment</span>
+      <label class="toggle"><input type="checkbox" id="ai-personalize" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">🔁 Loop continuously</span>
+      <label class="toggle"><input type="checkbox" id="loop-mode" checked><span class="toggle-slider"></span></label>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">💬 Comment Preview</div>
+    <div class="comment-preview" id="comment-preview">Comments will appear here as they are posted...</div>
+
+    <div class="log-box" id="comment-log">
+      <div class="log-entry info">[ Ready ] GraduateNex Comment Blaster v3.0 loaded</div>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-primary" id="start-commenter" style="flex:3">
+        🚀 Start Blasting Comments
+      </button>
+      <button class="btn btn-danger btn-sm" id="stop-commenter" style="flex:1; display:none">⏹ Stop</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ AUTO POSTER TAB -->
+  <div class="panel" id="tab-poster">
+    <div id="poster-status" class="status"></div>
+
+    <label>📸 Select Image</label>
     <input type="file" id="imageUpload" accept="image/jpeg,image/png,image/heic,image/heif" />
+
+    <label>✍️ Topic for AI Caption</label>
+    <input type="text" id="topicText" placeholder="e.g. GraduateNex final year project AI/ML" />
+
+    <label>🖥️ Backend URL</label>
+    <input type="text" id="backendUrl" placeholder="https://www.graduatenex.online" value="https://www.graduatenex.online" />
+
+    <button class="btn btn-primary" id="postBtn">🤖 Generate Caption & Auto-Post</button>
   </div>
-  
-  <div class="input-group">
-    <label for="topicText">2. What should the caption be about?</label>
-    <textarea id="topicText" placeholder="e.g., A promotional post for our new ATS Resume Builder tool"></textarea>
+
+  <!-- ═══════════════════════════ SETTINGS TAB -->
+  <div class="panel" id="tab-settings">
+    <div class="section-title">🔑 API Settings</div>
+
+    <label>OpenAI API Key (for AI personalized comments)</label>
+    <input type="text" id="apiKey" placeholder="sk-..." />
+
+    <label>Company Name</label>
+    <input type="text" id="companyName" placeholder="GraduateNex" value="GraduateNex" />
+
+    <label>Company Tagline</label>
+    <textarea id="companyTagline" rows="2" placeholder="India's #1 platform for final year projects, AI resume tools and career help for students.">India's #1 platform for final year projects, AI resume tools and career help for students.</textarea>
+
+    <label>Website URL (add in comments)</label>
+    <input type="text" id="websiteUrl" placeholder="graduatenex.online" value="graduatenex.online" />
+
+    <button class="btn btn-primary" id="save-settings">💾 Save Settings</button>
+    <div id="settings-status" class="status" style="margin-top:10px;"></div>
   </div>
-  
-  <button id="postBtn">Generate & Auto-Post</button>
-  
-  <div id="status"></div>
-  
+
   <script src="popup.js"></script>
 </body>
 </html>
