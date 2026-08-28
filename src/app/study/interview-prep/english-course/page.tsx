@@ -302,7 +302,7 @@ export default function EnglishCoursePage() {
   // ─── LESSON VIEW ─────────────────────────────────────────────────────────────
   if (selectedLesson && currentMod) {
     return (
-      <div className="bg-slate-950 flex flex-col" style={{ height: '100dvh', paddingTop: '4rem' }}>
+      <div style={{ position: 'fixed', inset: 0, top: '64px', background: '#0f172a', display: 'flex', flexDirection: 'column', zIndex: 40 }}>
         {/* Header */}
         <div className="bg-slate-900/95 border-b border-white/10 px-4 py-3 flex justify-between items-center flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -392,7 +392,7 @@ export default function EnglishCoursePage() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', minHeight: 0 }}>
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} gap-3 items-start`}>
                 {msg.role === "alex" && (

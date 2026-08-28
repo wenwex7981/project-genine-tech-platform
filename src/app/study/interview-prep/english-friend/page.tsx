@@ -351,7 +351,7 @@ export default function EnglishFriendPage() {
   const topicLabel = CONVERSATION_TOPICS.find(t => t.id === selectedTopic)?.label || "Chat";
 
   return (
-    <div className="bg-slate-950 flex flex-col" style={{ height: '100dvh', paddingTop: '4rem' }}>
+    <div style={{ position: 'fixed', inset: 0, top: '64px', background: '#0f172a', display: 'flex', flexDirection: 'column', zIndex: 40 }}>
       {/* Header */}
       <div className="bg-slate-900/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -425,7 +425,7 @@ export default function EnglishFriendPage() {
       </div>
 
       {/* Main Area */}
-      <div className="flex-1 flex flex-row min-h-0" style={{ overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'row', minHeight: 0, overflow: 'hidden' }}>
 
         {/* LEFT: Robot Avatar Panel */}
         <div className="hidden md:flex w-56 xl:w-64 flex-shrink-0 flex-col items-center justify-center gap-5 bg-gradient-to-b from-slate-900 to-slate-950 border-r border-white/10 p-5">
@@ -522,10 +522,10 @@ export default function EnglishFriendPage() {
         </div>
 
         {/* Chat Column */}
-        <div className="flex-1 flex flex-col min-h-0" style={{ background: '#020617', overflow: 'hidden' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0, overflow: 'hidden', background: '#0f172a' }}>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', minHeight: 0 }}>
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} gap-3 items-end`}>
                 
