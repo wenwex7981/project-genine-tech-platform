@@ -247,7 +247,71 @@ async function typeComment(box, text) {
   // Last check — maybe text was entered but DOM didn't update visibly
   // Try submitting anyway (Instagram will reject empty comments server-side)
   const finalBtn = document.querySelector('button[type="submit"]');
-  return finalBtn ? !finalBtn.disabled : false;
+  if (finalBtn && !finalBtn.disabled) return true;
+
+  // ─────────────────────────────────────────────────────
+  // 🔥 ALTERNATIVE 2: PRIVATE API FALLBACK 🔥
+  // If the UI completely blocks typing, we bypass the UI entirely
+  // and send the comment directly to Instagram's backend servers.
+  // ─────────────────────────────────────────────────────
+  report('info', { reason: 'UI blocked typing. Attempting Private API fallback...' });
+  try {
+    // 1. Get CSRF Token
+    const csrfMatch = document.cookie.match(/csrftoken=([^;]+)/);
+    const csrfToken = csrfMatch ? csrfMatch[1] : '';
+    
+    // 2. Get App ID from page source
+    let appId = '936619743392459'; // Default IG Web App ID
+    const scriptWithAppId = Array.from(document.querySelectorAll('script')).find(s => s.textContent.includes('APP_ID'));
+    if (scriptWithAppId) {
+      const match = scriptWithAppId.textContent.match(/"APP_ID":"(\d+)"/);
+      if (match) appId = match[1];
+    }
+
+    // 3. Get Media ID (Post ID)
+    let mediaId = null;
+    // Try to find it in meta tags (al:ios:url usually has it: instagram://media?id=123456)
+    const metaTag = document.querySelector('meta[property="al:ios:url"]');
+    if (metaTag && metaTag.content.includes('id=')) {
+      mediaId = metaTag.content.split('id=')[1];
+    }
+    
+    if (!mediaId) {
+      // Fetch the page JSON data to find the media ID
+      const pageJson = await fetch(window.location.href + '?__a=1&__d=dis').then(r => r.json());
+      mediaId = pageJson?.items?.[0]?.id || pageJson?.graphql?.shortcode_media?.id;
+    }
+
+    if (mediaId && csrfToken) {
+      const body = new URLSearchParams();
+      body.append('comment_text', text);
+      body.append('replied_to_comment_id', '');
+
+      const res = await fetch(`https://www.instagram.com/api/v1/web/comments/${mediaId}/add/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken,
+          'X-IG-App-ID': appId,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: body.toString()
+      });
+
+      const data = await res.json();
+      if (data && data.status === 'ok') {
+        report('info', { reason: 'Comment posted via Private API successfully! ✅' });
+        // Since we posted via API, we don't need to click the UI submit button.
+        // We will return a special string so the caller knows to skip clicking submit.
+        return 'API_SUCCESS';
+      } else {
+        report('warn', { reason: `API Fallback failed: ${data.message || 'Unknown error'}` });
+      }
+    }
+  } catch (err) {
+    report('warn', { reason: `API Fallback error: ${err.message}` });
+  }
+
+  return false;
 }
 
 // ─────────────────────────────────────────────────────
@@ -287,6 +351,12 @@ async function commentOnCurrentPost(topic) {
   if (!typed) {
     report('skipped', { reason: 'Could not enter text — Instagram blocked input' });
     return false;
+  }
+
+  // If we used the Private API fallback, it's already posted!
+  if (typed === 'API_SUCCESS') {
+    report('commented', { comment: `${comment} (via API)` });
+    return true;
   }
 
   await sleep(400);
