@@ -1,14 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
-  --foreground: #111111;
-  --primary: #f97316;
+  --foreground: #0a0a0a;
+  --primary: #635bff;
   --primary-foreground: #ffffff;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --border: #e4e4e7;
+  --muted: #f6f9fc;
+  --muted-foreground: #425466;
+  --border: #e6ebf1;
 }
 
 @theme inline {
@@ -23,15 +24,19 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* ── Force ALL pages to light — no dark mode ── */
+:root {
+  color-scheme: light only;
+}
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #09090b;
-    --foreground: #fafafa;
-    --primary: #ea580c;
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --primary: #635bff;
     --primary-foreground: #ffffff;
-    --muted: #27272a;
-    --muted-foreground: #a1a1aa;
-    --border: #27272a;
+    --muted: #f6f9fc;
+    --muted-foreground: #425466;
+    --border: #e6ebf1;
   }
 }
 
@@ -46,44 +51,38 @@
   }
 }
 
-/* Mermaid SVG Overrides to prevent microscopic scaling */
-.mermaid-container svg {
-  max-width: none !important;
-  width: max-content !important;
-  height: auto !important;
-  min-width: 800px;
+/* ── Premium smooth scrolling ── */
+html { scroll-behavior: smooth; }
+
+/* ── Stripe-style animated gradient ── */
+@keyframes gradientDrift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.hero-gradient {
+  background: linear-gradient(135deg, #f0f4ff 0%, #fdfcff 30%, #fff9f0 60%, #f0f8ff 100%);
+  background-size: 300% 300%;
+  animation: gradientDrift 14s ease infinite;
 }
 
-/* Turnitin-style PDF Report Generation */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  #printable-report, #printable-report * {
-    visibility: visible;
-  }
-  #printable-report {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 20px;
-    background: white !important;
-    color: black !important;
-  }
-  
-  /* Hide elements that shouldn't be printed */
-  .no-print {
-    display: none !important;
-  }
+/* ── Mesh blobs ── */
+.mesh-bg {
+  background-image:
+    radial-gradient(at 30% 20%, rgba(99,91,255,0.07) 0px, transparent 55%),
+    radial-gradient(at 80% 10%, rgba(0,169,224,0.06) 0px, transparent 50%),
+    radial-gradient(at 5%  60%, rgba(255,143,107,0.07) 0px, transparent 50%),
+    radial-gradient(at 90% 80%, rgba(99,91,255,0.05) 0px, transparent 50%);
 }
 
-/* Hide scrollbars for horizontal snap carousels */
-.hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+/* ── Marquee ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
-.hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
-}
+.marquee-track { animation: marquee 42s linear infinite; }
+.marquee-track:hover { animation-play-state: paused; }
+
+/* ── Hover arrow micro-animation ── */
+.arrow-link:hover .arrow-icon { transform: translateX(3px); }
+.arrow-icon { transition: transform 0.2s ease; }
