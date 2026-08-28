@@ -123,7 +123,7 @@ export default function AboutPage() {
             <Link href="/projects">
               <Button size="lg" className="h-14 px-8 text-lg font-bold">Browse Marketplace</Button>
             </Link>
-            <Link href="/services">
+            <Link href="/pricing">
               <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold">View AI Services</Button>
             </Link>
           </div>

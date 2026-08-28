@@ -27,13 +27,15 @@ export default function HackathonsDirectory() {
 
   const fetchHackathons = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('hackathons_v2')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (!error && data) {
-      setHackathons(data);
+    try {
+      // Use the server-side API which bypasses RLS using the service role key
+      const res = await fetch('/api/insta-events');
+      const json = await res.json();
+      if (json.events) {
+        setHackathons(json.events);
+      }
+    } catch (err) {
+      console.error('Failed to fetch hackathons:', err);
     }
     setLoading(false);
   };

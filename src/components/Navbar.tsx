@@ -64,9 +64,6 @@ export default function Navbar() {
       <Link href="/projects" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/projects")}`}>
         Projects
       </Link>
-      <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/services")}`}>
-        Services
-      </Link>
       <Link href="/resume" onClick={() => setIsMobileMenuOpen(false)} className={`whitespace-nowrap text-sm font-medium transition-colors hover:text-primary ${isActive("/resume")}`}>
         Resume Hub
       </Link>

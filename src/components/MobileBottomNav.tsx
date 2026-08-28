@@ -30,7 +30,6 @@ export default function MobileBottomNav() {
 
   const secondaryLinks = [
     { label: "AI Tools", href: "/ai-services" },
-    { label: "Services", href: "/services" },
     { label: "Hackathons", href: "/hackathons" },
     { label: "Jobs Updates", href: "/jobs-updates" },
     { label: "Pricing", href: "/pricing" },
