@@ -68,32 +68,38 @@ function robustClick(el) {
 // ─────────────────────────────────────────────────────
 // FIND + ACTIVATE COMMENT BOX
 // ─────────────────────────────────────────────────────
-async function findCommentBox(timeout = 10000) {
+async function findCommentBox(timeout = 12000) {
   const start = Date.now();
 
   while (Date.now() - start < timeout) {
-    // Step 1: Scroll to bottom so comment box is in view
+    // Scroll main content area down to reveal comment section
     window.scrollTo(0, document.body.scrollHeight);
-    await sleep(300);
+    const scrollable = document.querySelector('main, [role="main"], article');
+    if (scrollable) scrollable.scrollTop = scrollable.scrollHeight;
+    await sleep(400);
 
-    // Step 2: Try to find existing active textarea/contenteditable
-    const directSelectors = [
-      'textarea[placeholder="Add a comment\u2026"]',   // Unicode ellipsis
+    // Priority order of selectors
+    const selectors = [
+      'textarea[placeholder="Add a comment\u2026"]',
       'textarea[placeholder="Add a comment..."]',
       'textarea[placeholder*="Add a comment"]',
-      'textarea[placeholder*="comment"]',
+      'textarea[aria-label*="comment"]',
       'div[role="textbox"][aria-label*="comment"]',
       'div[contenteditable="true"][aria-label*="comment"]',
+      'div[role="textbox"]',
       'form textarea',
     ];
-    for (const sel of directSelectors) {
+    for (const sel of selectors) {
       const el = document.querySelector(sel);
-      if (el && el.offsetParent !== null) return el;
+      if (el && el.offsetParent !== null) {
+        el.scrollIntoView({ block: 'center' });
+        return el;
+      }
     }
 
-    // Step 3: Click the "Add a comment…" placeholder to reveal the real input
-    const all = Array.from(document.querySelectorAll('*'));
-    const placeholder = all.find(el => {
+    // Try clicking the visible placeholder text to reveal the input
+    const els = Array.from(document.querySelectorAll('*'));
+    const placeholder = els.find(el => {
       const t = el.textContent.trim();
       return (
         (t === 'Add a comment\u2026' || t === 'Add a comment...' || t === 'Add a comment') &&
@@ -105,16 +111,16 @@ async function findCommentBox(timeout = 10000) {
       placeholder.scrollIntoView({ block: 'center' });
       await sleep(200);
       placeholder.click();
-      await sleep(600);
-      // re-check after click
-      for (const sel of directSelectors) {
+      await sleep(800);
+      // Re-check after click
+      for (const sel of selectors) {
         const el = document.querySelector(sel);
         if (el && el.offsetParent !== null) return el;
       }
     }
 
-    // Step 4: Try clicking inside the comment form/section
-    const form = document.querySelector('form[method="post"], section form, article ~ section');
+    // Try the form
+    const form = document.querySelector('form[method="post"]');
     if (form) { form.click(); await sleep(400); }
 
     await sleep(400);
@@ -123,71 +129,125 @@ async function findCommentBox(timeout = 10000) {
 }
 
 // ─────────────────────────────────────────────────────
-// TYPE COMMENT — 4 methods for React/Lexical textarea
+// TYPE COMMENT — Instagram Lexical/React editor safe
 // ─────────────────────────────────────────────────────
 async function typeComment(box, text) {
+  const isTextarea     = box.tagName === 'TEXTAREA';
+  const isContentedit  = box.contentEditable === 'true';
+
+  // Step 1: Scroll into view and do a real mouse click with coordinates
   box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  await sleep(400);
+
+  const rect = box.getBoundingClientRect();
+  const cx   = rect.left + rect.width / 2;
+  const cy   = rect.top  + rect.height / 2;
+  ['mouseover','mouseenter','mousedown','mouseup','click'].forEach(type => {
+    box.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window, clientX: cx, clientY: cy }));
+  });
   await sleep(300);
+
+  // Step 2: Focus element
   box.focus();
   await sleep(300);
 
-  // ── Method 1: React native textarea value setter (most reliable)
-  const isTextarea = box.tagName === 'TEXTAREA';
+  // Step 3a: For textarea — React native value setter
   if (isTextarea) {
     try {
-      const nativeSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLTextAreaElement.prototype, 'value'
-      )?.set;
-      if (nativeSetter) {
-        nativeSetter.call(box, text);
+      const proto  = Object.getPrototypeOf(box);
+      const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set ||
+                     Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value')?.set;
+      if (setter) {
+        setter.call(box, text);
         box.dispatchEvent(new Event('input',  { bubbles: true }));
         box.dispatchEvent(new Event('change', { bubbles: true }));
-        await sleep(300);
-        if ((box.value || '').trim()) return true;
+        await sleep(400);
+        if ((box.value || '').trim()) {
+          report('info', { reason: 'Text entered via native setter ✅' });
+          return true;
+        }
       }
     } catch(e) {}
   }
 
-  // ── Method 2: execCommand insertText (works when element is focused)
+  // Step 3b: For contenteditable (Lexical) — Range API + execCommand
+  if (isContentedit) {
+    try {
+      // Position cursor at end
+      const range = document.createRange();
+      const sel   = window.getSelection();
+      range.selectNodeContents(box);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      await sleep(100);
+
+      // Clear existing and insert
+      document.execCommand('selectAll',   false, null);
+      document.execCommand('delete',      false, null);
+      document.execCommand('insertText',  false, text);
+      box.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text }));
+      await sleep(400);
+
+      // Verify by checking submit button state
+      const submitBtn = document.querySelector('button[type="submit"], div[role="button"][tabindex="0"]');
+      if (submitBtn && !submitBtn.disabled && submitBtn.textContent.trim() === 'Post') {
+        report('info', { reason: 'Text entered via Range+execCommand ✅' });
+        return true;
+      }
+      // Also check if box has content now
+      if ((box.textContent || '').replace(/Add a comment[….]+/, '').trim()) return true;
+    } catch(e) {}
+  }
+
+  // Step 4: execCommand on any element type
   try {
     box.focus();
-    document.execCommand('selectAll', false, null);
+    document.execCommand('selectAll',  false, null);
     document.execCommand('delete',     false, null);
     document.execCommand('insertText', false, text);
-    await sleep(300);
-    const val2 = (box.value || box.textContent || '').trim();
-    if (val2) return true;
-  } catch(e) {}
-
-  // ── Method 3: ClipboardEvent paste (works for Lexical/Draft.js)
-  try {
-    const dt = new DataTransfer();
-    dt.setData('text/plain', text);
-    box.dispatchEvent(new ClipboardEvent('paste', {
-      clipboardData: dt, bubbles: true, cancelable: true
-    }));
     await sleep(400);
-    const val3 = (box.value || box.textContent || '').trim();
-    if (val3) return true;
+    const v = (box.value || box.textContent || '').replace(/Add a comment[….]+/,'').trim();
+    if (v) { report('info', { reason: 'Text via execCommand ✅' }); return true; }
   } catch(e) {}
 
-  // ── Method 4: Simulate keyboard input character by character
+  // Step 5: ClipboardEvent paste — works for Lexical
   try {
     box.focus();
-    const chars = text.slice(0, 120); // enough for a GN comment
-    for (const char of chars) {
-      box.dispatchEvent(new KeyboardEvent('keydown', { key: char, bubbles: true }));
-      document.execCommand('insertText', false, char);
-      box.dispatchEvent(new KeyboardEvent('keyup',   { key: char, bubbles: true }));
-      await sleep(10);
-    }
-    await sleep(300);
-    const val4 = (box.value || box.textContent || '').trim();
-    if (val4) return true;
+    const dt = new DataTransfer();
+    dt.setData('text/plain', text);
+    dt.setData('text/html',  text);
+    const ev = new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true });
+    box.dispatchEvent(ev);
+    await sleep(500);
+    // After paste, check submit button
+    const btn = document.querySelector('button[type="submit"]');
+    if (btn && btn.textContent.trim() === 'Post') { report('info', { reason: 'Text via clipboard paste ✅' }); return true; }
+    const v2 = (box.value || box.textContent || '').replace(/Add a comment[….]+/, '').trim();
+    if (v2) { report('info', { reason: 'Text via clipboard paste ✅' }); return true; }
   } catch(e) {}
 
-  // Check final state
-  return !!(box.value || box.textContent || '').trim();
+  // Step 6: Simulate keystrokes char by char (last resort)
+  try {
+    box.focus();
+    for (const char of text.slice(0, 150)) {
+      box.dispatchEvent(new KeyboardEvent('keydown', { key: char, bubbles: true, cancelable: true }));
+      document.execCommand('insertText', false, char);
+      box.dispatchEvent(new KeyboardEvent('keyup',   { key: char, bubbles: true, cancelable: true }));
+      await sleep(12);
+    }
+    await sleep(400);
+    // Check submit enabled
+    const btn3 = document.querySelector('button[type="submit"]');
+    if (btn3 && btn3.textContent.trim() === 'Post') { report('info', { reason: 'Text via keystrokes ✅' }); return true; }
+    const v3 = (box.value || box.textContent || '').replace(/Add a comment[….]+/, '').trim();
+    if (v3) return true;
+  } catch(e) {}
+
+  // Last check — maybe text was entered but DOM didn't update visibly
+  // Try submitting anyway (Instagram will reject empty comments server-side)
+  const finalBtn = document.querySelector('button[type="submit"]');
+  return finalBtn ? !finalBtn.disabled : false;
 }
 
 // ─────────────────────────────────────────────────────
