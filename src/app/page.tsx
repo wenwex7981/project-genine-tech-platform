@@ -1,667 +1,628 @@
-"use client";
-
 import Link from "next/link";
-import { useRef, useEffect, useState } from "react";
-import { ArrowRight, Star, CheckCircle, Phone, ArrowUpRight, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import {
+  ArrowRight, Globe, ShieldCheck, Zap, MapPin, Star, CheckCircle,
+  BookOpen, Brain, FileText, Cpu, Users, Award, Rocket, Code2,
+  Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, Mail,
+  ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield
+} from "lucide-react";
 import AuthRedirect from "@/components/AuthRedirect";
 
-// ─── DATA ─────────────────────────────────────────────────────────────────────
-const TESTIMONIALS = [
-  { name: "Sai Kiran Reddy",   college: "JNTUH, Hyderabad",   grade: "98/100",          text: "My professor asked if I had a research background. I don't — GraduateNex built the entire ML pipeline for me." },
-  { name: "Priya Sharma",      college: "VIT, Vellore",        grade: "First Class",     text: "No AI smell whatsoever. My guide complimented the writing. The AI Humanizer is genuinely brilliant." },
-  { name: "Rahul Nair",        college: "Anna University",     grade: "4 MNC Offers",    text: "Shortlisted at Infosys, TCS, Wipro, and Cognizant in one week. The JD matching is frighteningly accurate." },
-  { name: "Ananya Gupta",      college: "Amity University",    grade: "A Grade",         text: "They built a decentralised voting system from my professor's base paper. Delivered in 5 days. Got an A." },
-  { name: "Vikram Singh",      college: "SRM Institute",       grade: "Conference Paper",text: "My IEEE paper was accepted nationally. Zero plagiarism. Properly formatted. Referred 6 friends already." },
-  { name: "Megha Jain",        college: "Delhi University",    grade: "9.2 CGPA",        text: "The viva prep guide alone was worth three times the price. I knew every answer my examiner asked." },
-  { name: "Harshit Kumar",     college: "NIT Warangal",        grade: "Distinction",     text: "Absolutely professional. Documented, commented code with a full deployment guide. Nothing was missing." },
-  { name: "Divya Reddy",       college: "Osmania University",  grade: "Top of Batch",    text: "3 weeks before submission and panicking. GraduateNex delivered a complete project in 10 days." },
-];
-
 const STATS = [
-  { n: "2,500+", label: "Projects delivered" },
-  { n: "98%",    label: "Student satisfaction" },
-  { n: "50+",    label: "Cities across India" },
-  { n: "0%",     label: "Average plagiarism" },
+  { value: "2,500+", label: "Projects Delivered" },
+  { value: "98%", label: "Student Satisfaction" },
+  { value: "50+", label: "Cities Across India" },
+  { value: "0%", label: "Plagiarism Score" },
 ];
 
-// ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
+const SERVICES = [
+  {
+    icon: <Code2 className="h-8 w-8" />,
+    color: "blue",
+    title: "Final Year Projects",
+    description: "Complete, deployable source code for B.Tech, M.Tech, BCA, MCA, MBA final year projects. Covers AI/ML, IoT, Blockchain, Web & Mobile development with full documentation.",
+    features: ["Source Code + Setup Guide", "IEEE Base Paper", "SRS Document", "Presentation PPT"],
+    badge: "Most Popular",
+  },
+  {
+    icon: <ShieldCheck className="h-8 w-8" />,
+    color: "emerald",
+    title: "0% Plagiarism Documents",
+    description: "Our expert team crafts completely original IEEE Research Papers, SRS documents, and project reports with rigorous originality checks and proper academic citations.",
+    features: ["IEEE Format Research Papers", "SRS & System Design Docs", "Originality Verified", "University-Specific Formatting"],
+    badge: "High Demand",
+  },
+  {
+    icon: <Brain className="h-8 w-8" />,
+    color: "violet",
+    title: "AI Stealth Humanizer",
+    description: "Advanced AI content enhancement tool that refines and paraphrases AI-generated text into natural, human-quality academic writing with proper style and tone.",
+    features: ["Natural Language Refinement", "Semantic Preservation", "Academic Tone Maintained", "Bulk Text Processing"],
+    badge: "Exclusive",
+  },
+  {
+    icon: <FileText className="h-8 w-8" />,
+    color: "orange",
+    title: "ATS Resume Builder",
+    description: "Our intelligent Resume Hub grades your CV against a 17-point ATS scoring rubric and generates tailored resumes that beat Applicant Tracking Systems at top companies like TCS, Infosys, and Wipro.",
+    features: ["17-Point ATS Scoring", "Job Description Matching", "Cover Letter Generator", "Multiple Export Formats"],
+    badge: "Career Tool",
+  },
+  {
+    icon: <Rocket className="h-8 w-8" />,
+    color: "rose",
+    title: "Hackathon Directory",
+    description: "Stay ahead with our curated, real-time directory of national and international hackathons, coding contests, and ideathons. Filter by domain, prize pool, and deadline.",
+    features: ["Real-Time Hackathon Listings", "Filter by Domain & Date", "Team Formation Help", "Submission Guides"],
+    badge: "Live",
+  },
+  {
+    icon: <PenTool className="h-8 w-8" />,
+    color: "cyan",
+    title: "Custom Project Development",
+    description: "Have a unique base paper from your professor? Upload your abstract and our team will architect and code the entire project from scratch, tailored to your college rubric and viva requirements.",
+    features: ["Requirement Analysis", "Custom Architecture Design", "End-to-End Development", "Viva Preparation Support"],
+    badge: "Premium",
+  },
+];
+
+const CATEGORIES = [
+  { icon: <Cpu className="h-6 w-6" />, name: "Artificial Intelligence & ML", count: "120+ Projects" },
+  { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Projects" },
+  { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Projects" },
+  { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Projects" },
+  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Projects" },
+  { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Projects" },
+  { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Projects" },
+  { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Projects" },
+];
+
+const LOCATIONS = [
+  "Hyderabad", "Bengaluru", "Chennai", "Mumbai", "Delhi NCR",
+  "Pune", "Kolkata", "Ahmedabad", "Jaipur", "Lucknow",
+  "Coimbatore", "Vizag", "Nagpur", "Indore", "Bhubaneswar",
+  "Kochi", "Chandigarh", "Thiruvananthapuram", "Bhopal", "Patna",
+];
+
+const TESTIMONIALS = [
+  {
+    name: "Sai Kiran Reddy",
+    college: "JNTUH, Hyderabad",
+    branch: "B.Tech CSE, 2024",
+    text: "I was panicking two months before submission. GraduateNex delivered a complete ML-based crop prediction system with IEEE paper, SRS, and PPT. Got 98/100 from my guide. Absolutely life-saving!",
+    rating: 5,
+  },
+  {
+    name: "Priya Sharma",
+    college: "VIT, Vellore",
+    branch: "M.Tech AI, 2024",
+    text: "The AI Writing Enhancer refined my entire 40-page thesis into natural, polished academic language. The tone was perfectly preserved and it reads beautifully now. Absolutely essential tool.",
+    rating: 5,
+  },
+  {
+    name: "Rahul Nair",
+    college: "Anna University, Chennai",
+    branch: "B.Tech IT, 2023",
+    text: "Their ATS Resume Builder got me shortlisted at 4 MNC companies in my campus drive. The job description matching feature is insanely accurate. Landed a role at Infosys!",
+    rating: 5,
+  },
+  {
+    name: "Ananya Gupta",
+    college: "Amity University, Noida",
+    branch: "MCA, 2024",
+    text: "Ordered a custom Blockchain project. The team analysed my professor's exact rubric and built a decentralized voting system from scratch. Got an A grade and my guide was thoroughly impressed.",
+    rating: 5,
+  },
+];
+
+const colorMap: Record<string, string> = {
+  blue: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+  emerald: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
+  violet: "bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400",
+  orange: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+  rose: "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400",
+  cyan: "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400",
+};
+
+const badgeColorMap: Record<string, string> = {
+  "Most Popular": "bg-blue-600 text-white",
+  "High Demand": "bg-emerald-600 text-white",
+  "Exclusive": "bg-violet-600 text-white",
+  "Career Tool": "bg-orange-600 text-white",
+  "Live": "bg-rose-600 text-white",
+  "Premium": "bg-cyan-600 text-white",
+};
+
 export default function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "WebSite", "url": "https://www.graduatenex.online/", "name": "GraduateNex",
-        "potentialAction": { "@type": "SearchAction", "target": "https://www.graduatenex.online/projects?q={search_term_string}", "query-input": "required name=search_term_string" }
+      {
+        "@type": "WebSite",
+        "url": "https://www.graduatenex.online/",
+        "name": "GraduateNex",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.graduatenex.online/projects?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
       },
-      { "@type": "Organization", "name": "GraduateNex", "url": "https://www.graduatenex.online/" }
+      {
+        "@type": "Organization",
+        "name": "GraduateNex",
+        "url": "https://www.graduatenex.online/",
+        "logo": "https://www.graduatenex.online/logo.png"
+      }
     ]
   };
 
   return (
-    <div style={{ background: "#fff", color: "#0a0a0a", fontFamily: "'Inter', system-ui, -apple-system, sans-serif", overflowX: "hidden" }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <div className="flex flex-col min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans selection:bg-primary/30">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <AuthRedirect />
+      {/* ── HERO SECTION ── */}
+      <section className="relative w-full min-h-[92vh] flex flex-col justify-center bg-zinc-950 overflow-hidden text-white">
+        <Image src="/images/hero-bg.png" alt="Hero Background" fill priority className="object-cover object-center opacity-40 z-0" sizes="100vw" />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-zinc-950/75 backdrop-blur-[2px] z-0"></div>
+        
+        {/* Background gradient orbs */}
+        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3 pointer-events-none z-0" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none z-0" />
 
-      {/* ───────────────────── HERO ─────────────────────────── */}
-      <section style={{ position: "relative", background: "#fff", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", overflow: "hidden" }}>
-        {/* Stripe-style animated mesh */}
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }} aria-hidden>
-          <div style={{
-            position: "absolute", width: 800, height: 800, top: -200, right: -200, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(99,91,255,0.06) 0%, transparent 70%)",
-          }} />
-          <div style={{
-            position: "absolute", width: 600, height: 600, bottom: -100, left: -150, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(255,143,107,0.06) 0%, transparent 70%)",
-          }} />
-          <div style={{
-            position: "absolute", width: 500, height: 500, top: "30%", left: "40%", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(0,169,224,0.04) 0%, transparent 70%)",
-          }} />
-        </div>
-
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px", paddingTop: 140, paddingBottom: 80, position: "relative", zIndex: 1, width: "100%" }}>
-          {/* Eyebrow */}
-          <FadeIn delay={0}>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 36 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 0 3px rgba(34,197,94,0.2)" }} />
-              <span style={{ fontSize: 13, fontWeight: 600, color: "#64748b", letterSpacing: "0.01em" }}>
-                Trusted by 2,500+ students across 50+ cities in India
-              </span>
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 py-10 md:py-20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-bold tracking-wide">
+              <Globe className="h-4 w-4" /> India&apos;s #1 Academic Project Platform
             </div>
-          </FadeIn>
 
-          {/* Main headline */}
-          <FadeIn delay={0.08}>
-            <h1 style={{
-              fontSize: "clamp(3rem, 8vw, 6.5rem)",
-              fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0,
-              color: "#0a0a0a", marginBottom: 28, maxWidth: 700,
-            }}>
-              Graduate with<br />
-              <span style={{ background: "linear-gradient(135deg, #635bff 0%, #00a9e0 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                a distinction.
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] md:leading-[1.05]">
+              Your Academic<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-400 to-yellow-400">
+                Success Partner
               </span>
             </h1>
-          </FadeIn>
 
-          <FadeIn delay={0.16}>
-            <p style={{ fontSize: 20, color: "#64748b", maxWidth: 480, lineHeight: 1.65, marginBottom: 40, fontWeight: 400 }}>
-              Final year projects, ATS resumes, IEEE papers, and viva prep — built by engineers, delivered on time.
+            <p className="text-lg md:text-xl text-zinc-300 leading-relaxed max-w-2xl mx-auto font-medium">
+              From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — GraduateNex is the complete ecosystem that helps over <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
             </p>
-          </FadeIn>
 
-          {/* CTAs */}
-          <FadeIn delay={0.24}>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <Link href="/login" id="hero-primary-cta">
-                <HoverButton
-                  base={{ background: "#635bff", color: "#fff", boxShadow: "0 4px 24px rgba(99,91,255,0.32)" }}
-                  hover={{ background: "#5a52e8", boxShadow: "0 6px 32px rgba(99,91,255,0.42)" }}
-                  style={{ padding: "15px 32px", borderRadius: 12, fontSize: 15, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 8 }}
-                >
-                  Start free today <ArrowRight size={16} />
-                </HoverButton>
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center w-full">
+              <Link href="/login" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-xl shadow-primary/30 hover:shadow-primary/50 hover:scale-[1.02] transition-all">
+                  Start Free Today <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </Link>
-              <Link href="#products" id="hero-secondary-cta">
-                <HoverButton
-                  base={{ background: "#fff", color: "#425466", border: "1.5px solid #e6ebf1" }}
-                  hover={{ borderColor: "#c7d0dd", color: "#0a0a0a" }}
-                  style={{ padding: "15px 32px", borderRadius: 12, fontSize: 15, fontWeight: 600 }}
-                >
-                  See what we build
-                </HoverButton>
+              <Link href="#services" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full h-14 px-8 text-lg font-bold rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all backdrop-blur-md">
+                  Explore Services
+                </Button>
               </Link>
             </div>
-          </FadeIn>
 
-          {/* Stats row */}
-          <FadeIn delay={0.4}>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0 48px", marginTop: 72, paddingTop: 40, borderTop: "1px solid #f1f5f9" }}>
-              {STATS.map((s, i) => (
-                <div key={i}>
-                  <div style={{ fontSize: "2rem", fontWeight: 900, letterSpacing: "-0.03em", color: "#0a0a0a", lineHeight: 1 }}>{s.n}</div>
-                  <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 4, fontWeight: 500 }}>{s.label}</div>
-                </div>
-              ))}
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-6">
+              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> Original, Plagiarism-Free Work</div>
+              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 24/7 Expert Support</div>
+              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 50+ Cities Served</div>
             </div>
-          </FadeIn>
+          </div>
+        </div>
+
+
+      </section>
+
+      {/* ── STATS TICKER ── */}
+      <section className="bg-primary py-5 border-y">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
+            {STATS.map((s) => (
+              <div key={s.label} className="space-y-1">
+                <p className="text-3xl md:text-4xl font-black">{s.value}</p>
+                <p className="text-sm font-medium text-primary-foreground/80">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ───────────────────── PRODUCT SHOWCASE (Stripe-style) ─── */}
-      <section id="products" style={{ background: "#f7f8fb", padding: "96px 0", borderTop: "1px solid #e6ebf1" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}>
-
-          {/* Section header — Stripe style: bold then faded */}
-          <Reveal>
-            <div style={{ marginBottom: 56 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#635bff", marginBottom: 14 }}>Platform</p>
-              <h2 style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1.2, maxWidth: 680 }}>
-                <span style={{ color: "#0a0a0a" }}>Flexible tools for every student. </span>
-                <span style={{ color: "#94a3b8" }}>From final year projects to career launch — built to work individually or together.</span>
-              </h2>
+      {/* ── SERVICES ── */}
+      <section id="services" className="w-full py-12 md:py-28 bg-background">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-10 md:mb-20 space-y-4 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-bold">
+              <Layers className="h-4 w-4" /> Our Complete Product Suite
             </div>
-          </Reveal>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+              Everything You Need to<br /><span className="text-primary">Graduate with Excellence</span>
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              We are not just a project shop. We are a full-stack academic success platform covering projects, documentation, AI tools, and career launch — all under one roof.
+            </p>
+          </div>
 
-          {/* ROW 1: Large left + right */}
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,3fr) minmax(0,2fr)", gap: 16 }}>
-            {/* PROJECT MARKETPLACE CARD */}
-            <Reveal>
-              <ProductCard
-                tag="Most Popular"
-                title="Final Year Project Marketplace"
-                description="500+ deployable projects for B.Tech, M.Tech, BCA & MCA. Source code, SRS, IEEE paper, PPT and viva prep."
-                href="/projects"
-                accent="#635bff"
-                bgGradient="linear-gradient(135deg, #f0eeff 0%, #e8f4ff 100%)"
-              >
-                {/* Browser chrome mockup */}
-                <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: "1px solid #e6ebf1", boxShadow: "0 8px 32px rgba(0,0,0,0.06)" }}>
-                  {/* Browser bar */}
-                  <div style={{ background: "#f6f9fc", padding: "10px 14px", borderBottom: "1px solid #e6ebf1", display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ display: "flex", gap: 5 }}>
-                      <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#ff5f57" }} />
-                      <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#ffbd2e" }} />
-                      <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#28ca41" }} />
-                    </div>
-                    <div style={{ flex: 1, background: "#fff", borderRadius: 6, padding: "3px 12px", fontSize: 10, color: "#94a3b8", border: "1px solid #e6ebf1" }}>
-                      graduatenex.online/projects
-                    </div>
-                  </div>
-                  {/* Search bar */}
-                  <div style={{ padding: "12px 14px", borderBottom: "1px solid #f1f5f9", display: "flex", gap: 8, alignItems: "center" }}>
-                    <div style={{ flex: 1, background: "#f6f9fc", borderRadius: 8, padding: "7px 12px", fontSize: 12, color: "#94a3b8", border: "1px solid #e6ebf1" }}>
-                      🔍  Search by domain, tech stack...
-                    </div>
-                    <div style={{ background: "#635bff", color: "#fff", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 600 }}>Filter</div>
-                  </div>
-                  {/* Project rows */}
-                  <div style={{ padding: "8px 14px 14px" }}>
-                    {[
-                      { title: "Crop Yield Prediction using CNN", tags: ["Python", "TensorFlow", "Flask"], price: "₹8,500", badge: "AI/ML", grade: "98/100" },
-                      { title: "IoT Smart Home Automation", tags: ["Arduino", "React", "Firebase"], price: "₹7,200", badge: "IoT", grade: "A+" },
-                      { title: "Blockchain Voting System", tags: ["Solidity", "Web3.js", "React"], price: "₹9,800", badge: "Web3", grade: "97/100" },
-                    ].map((p, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: i < 2 ? "1px solid #f1f5f9" : "none" }}>
-                        <div>
-                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: 4, background: "#f0eeff", color: "#635bff" }}>{p.badge}</span>
-                            <span style={{ fontSize: 12, fontWeight: 600, color: "#0a0a0a" }}>{p.title}</span>
-                          </div>
-                          <div style={{ display: "flex", gap: 4 }}>
-                            {p.tags.map(t => <span key={t} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#f6f9fc", color: "#64748b", border: "1px solid #e6ebf1" }}>{t}</span>)}
-                          </div>
-                        </div>
-                        <div style={{ textAlign: "right", flexShrink: 0, paddingLeft: 12 }}>
-                          <div style={{ fontSize: 13, fontWeight: 800, color: "#0a0a0a" }}>{p.price}</div>
-                          <div style={{ fontSize: 10, color: "#22c55e", fontWeight: 700 }}>Grade: {p.grade}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Footer */}
-                  <div style={{ padding: "10px 14px", background: "#f6f9fc", borderTop: "1px solid #e6ebf1", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 11, color: "#94a3b8" }}>Showing 3 of <strong style={{ color: "#635bff" }}>500+</strong> projects</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: "#635bff", cursor: "pointer" }}>View all →</span>
-                  </div>
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 xl:grid-cols-3 md:gap-8 max-w-7xl mx-auto pb-6 md:pb-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {SERVICES.map((svc) => (
+              <Link href="/login" key={svc.title} className="min-w-[85vw] snap-center md:min-w-0 group relative bg-white dark:bg-zinc-900 rounded-3xl border hover:border-primary/40 shadow-sm hover:shadow-2xl transition-all duration-300 p-6 md:p-8 flex flex-col overflow-hidden">
+                <div className="absolute top-5 right-5">
+                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${badgeColorMap[svc.badge]}`}>{svc.badge}</span>
                 </div>
-              </ProductCard>
-            </Reveal>
-
-            {/* ATS RESUME CARD */}
-            <Reveal delay={0.06}>
-              <ProductCard
-                tag="Career Tool"
-                title="ATS Resume Builder"
-                description="17-point ATS scoring. JD match analysis. Keyword gap reports. ₹99 flat."
-                href="/resume"
-                accent="#00a9e0"
-                bgGradient="linear-gradient(135deg, #e8f7ff 0%, #f0f9ff 100%)"
-              >
-                <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: "1px solid #e6ebf1", boxShadow: "0 8px 32px rgba(0,0,0,0.06)", padding: 20 }}>
-                  {/* Score circle */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-                    <div style={{ position: "relative", width: 72, height: 72, flexShrink: 0 }}>
-                      <svg width={72} height={72} viewBox="0 0 72 72">
-                        <circle cx={36} cy={36} r={30} fill="none" stroke="#e6ebf1" strokeWidth={6} />
-                        <circle cx={36} cy={36} r={30} fill="none" stroke="#635bff" strokeWidth={6} strokeDasharray="188.4" strokeDashoffset="30" strokeLinecap="round" transform="rotate(-90 36 36)" />
-                      </svg>
-                      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: 18, fontWeight: 900, color: "#0a0a0a", lineHeight: 1 }}>87</span>
-                        <span style={{ fontSize: 9, color: "#94a3b8" }}>/100</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#0a0a0a", marginBottom: 2 }}>ATS Score</div>
-                      <div style={{ fontSize: 11, color: "#22c55e", fontWeight: 600 }}>● Good — above 80 is ideal</div>
-                    </div>
-                  </div>
-                  {/* Metrics */}
-                  {[
-                    { label: "JD Match", value: "94%", color: "#22c55e", pct: 94 },
-                    { label: "Keywords found", value: "23/27", color: "#f59e0b", pct: 85 },
-                    { label: "Format score", value: "18/20", color: "#635bff", pct: 90 },
-                  ].map((m, i) => (
-                    <div key={i} style={{ marginBottom: i < 2 ? 14 : 0 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-                        <span style={{ fontSize: 11, color: "#64748b" }}>{m.label}</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: m.color }}>{m.value}</span>
-                      </div>
-                      <div style={{ height: 5, background: "#f1f5f9", borderRadius: 99, overflow: "hidden" }}>
-                        <div style={{ height: "100%", width: `${m.pct}%`, background: m.color, borderRadius: 99 }} />
-                      </div>
-                    </div>
+                <div className={`w-16 h-16 rounded-2xl ${colorMap[svc.color]} flex items-center justify-center mb-6`}>
+                  {svc.icon}
+                </div>
+                <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">{svc.title}</h3>
+                <p className="text-muted-foreground leading-relaxed mb-6 flex-1">{svc.description}</p>
+                <ul className="space-y-2 mb-6">
+                  {svc.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm font-medium">
+                      <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                      <span>{f}</span>
+                    </li>
                   ))}
-                  {/* Missing keywords */}
-                  <div style={{ marginTop: 16, padding: 12, background: "#fff8f0", borderRadius: 8, border: "1px solid #fed7aa" }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#ea580c", marginBottom: 6 }}>⚠ Missing keywords (4)</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                      {["Docker", "Kubernetes", "CI/CD", "GraphQL"].map(k => (
-                        <span key={k} style={{ fontSize: 10, padding: "2px 8px", borderRadius: 20, background: "#fff", border: "1px solid #fed7aa", color: "#9a3412" }}>{k}</span>
-                      ))}
-                    </div>
+                </ul>
+                <div className="mt-auto">
+                  <div className="w-full gap-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    Get Started <ChevronRight className="h-4 w-4 ml-2" />
                   </div>
                 </div>
-              </ProductCard>
-            </Reveal>
-          </div>
-
-          {/* ROW 2 */}
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,2fr) minmax(0,3fr)", gap: 16, marginTop: 16 }}>
-            {/* AI HUMANIZER */}
-            <Reveal delay={0.04}>
-              <ProductCard
-                tag="Exclusive"
-                title="AI Humanizer"
-                description="Refine AI-generated text into natural academic writing. No AI detection."
-                href="/ai-services"
-                accent="#7c3aed"
-                bgGradient="linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)"
-              >
-                <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e6ebf1", boxShadow: "0 8px 32px rgba(0,0,0,0.06)", overflow: "hidden" }}>
-                  {/* Before */}
-                  <div style={{ padding: "12px 14px", borderBottom: "1px solid #f1f5f9" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: "#ef4444", textTransform: "uppercase", letterSpacing: "0.06em" }}>Before</span>
-                      <span style={{ fontSize: 10, background: "#fee2e2", color: "#ef4444", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>AI Detected ●</span>
-                    </div>
-                    <p style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.5, margin: 0 }}>
-                      "The utilization of machine learning algorithms facilitates the optimization of predictive accuracy in agricultural yield forecasting..."
-                    </p>
-                  </div>
-                  {/* Arrow */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "8px 0", background: "#f6f9fc", gap: 8 }}>
-                    <div style={{ flex: 1, height: 1, background: "#e6ebf1", marginLeft: 14 }} />
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "#7c3aed", flexShrink: 0 }}>✦ HUMANIZING</span>
-                    <div style={{ flex: 1, height: 1, background: "#e6ebf1", marginRight: 14 }} />
-                  </div>
-                  {/* After */}
-                  <div style={{ padding: "12px 14px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: "#22c55e", textTransform: "uppercase", letterSpacing: "0.06em" }}>After</span>
-                      <span style={{ fontSize: 10, background: "#dcfce7", color: "#16a34a", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>100% Human ✓</span>
-                    </div>
-                    <p style={{ fontSize: 11, color: "#334155", lineHeight: 1.5, margin: 0 }}>
-                      "Using ML models to predict crop yields can meaningfully improve how farmers plan for the season ahead..."
-                    </p>
-                  </div>
-                  {/* Similarity */}
-                  <div style={{ padding: "8px 14px 12px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                      <span style={{ fontSize: 10, color: "#64748b" }}>Plagiarism</span>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: "#22c55e" }}>0%</span>
-                    </div>
-                    <div style={{ height: 4, background: "#f1f5f9", borderRadius: 99 }}>
-                      <div style={{ width: "2%", height: "100%", background: "#22c55e", borderRadius: 99 }} />
-                    </div>
-                  </div>
-                </div>
-              </ProductCard>
-            </Reveal>
-
-            {/* IEEE RESEARCH PAPERS */}
-            <Reveal delay={0.08}>
-              <ProductCard
-                tag="High Demand"
-                title="IEEE Research Papers"
-                description="Conference-ready research papers. Verified originality, correct IEEE format, complete bibliography."
-                href="/projects/research-paper"
-                accent="#059669"
-                bgGradient="linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)"
-              >
-                <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #e6ebf1", boxShadow: "0 8px 32px rgba(0,0,0,0.06)", overflow: "hidden" }}>
-                  {/* Paper header */}
-                  <div style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: "#059669", marginBottom: 4 }}>IEEE Transactions on Neural Networks</div>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: "#0a0a0a", lineHeight: 1.4, maxWidth: 280 }}>
-                          Deep Learning Approaches for Crop Disease Detection Using Transfer Learning
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 4, paddingLeft: 12, flexShrink: 0 }}>
-                        <span style={{ fontSize: 9, fontWeight: 700, background: "#dcfce7", color: "#16a34a", padding: "2px 8px", borderRadius: 20, textAlign: "center" }}>✓ IEEE Format</span>
-                        <span style={{ fontSize: 9, fontWeight: 700, background: "#dcfce7", color: "#16a34a", padding: "2px 8px", borderRadius: 20, textAlign: "center" }}>✓ 0% Plagiarism</span>
-                      </div>
-                    </div>
-                    <div style={{ marginTop: 8, fontSize: 10, color: "#94a3b8" }}>Abstract  •  Introduction  •  Methodology  •  Results  •  References</div>
-                  </div>
-                  {/* Stats row */}
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", borderBottom: "1px solid #f1f5f9" }}>
-                    {[
-                      { label: "Pages", value: "8" },
-                      { label: "References", value: "24" },
-                      { label: "Similarity", value: "0%" },
-                    ].map((s, i) => (
-                      <div key={i} style={{ padding: "10px 16px", textAlign: "center", borderRight: i < 2 ? "1px solid #f1f5f9" : "none" }}>
-                        <div style={{ fontSize: 16, fontWeight: 900, color: "#0a0a0a" }}>{s.value}</div>
-                        <div style={{ fontSize: 9, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Abstract preview */}
-                  <div style={{ padding: "12px 20px" }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "#64748b", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>Abstract</div>
-                    <p style={{ fontSize: 11, color: "#64748b", lineHeight: 1.6, margin: 0 }}>
-                      This paper proposes a novel transfer learning framework using ResNet-50 and DenseNet architectures for real-time crop disease classification. Our model achieves 97.3% accuracy on the PlantVillage dataset...
-                    </p>
-                  </div>
-                  {/* Deliverables */}
-                  <div style={{ padding: "0 20px 14px", display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {["Full Paper (PDF)", "LaTeX Source", "Reference List", "Plagiarism Report"].map(d => (
-                      <span key={d} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "#f0fdf4", color: "#059669", border: "1px solid #bbf7d0", fontWeight: 600 }}>✓ {d}</span>
-                    ))}
-                  </div>
-                </div>
-              </ProductCard>
-            </Reveal>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ───────────────────── HOW IT WORKS ─────────────────── */}
-      <section style={{ background: "#fff", padding: "96px 0", borderTop: "1px solid #e6ebf1" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "start" }}>
-            <Reveal>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#635bff", marginBottom: 14 }}>Process</p>
-                <h2 style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)", fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1.15, color: "#0a0a0a", marginBottom: 16 }}>
-                  Order to delivery in three steps.
-                </h2>
-                <p style={{ fontSize: 16, color: "#64748b", lineHeight: 1.65, marginBottom: 28 }}>
-                  The fastest, most transparent academic delivery process in India. No back-and-forth. No surprises.
-                </p>
-                <Link href="/login" id="process-cta">
-                  <HoverButton
-                    base={{ background: "#635bff", color: "#fff", boxShadow: "0 4px 20px rgba(99,91,255,0.28)" }}
-                    hover={{ background: "#5a52e8" }}
-                    style={{ padding: "12px 24px", borderRadius: 10, fontSize: 14, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 8 }}
-                  >
-                    Start your order <ArrowRight size={15} />
-                  </HoverButton>
-                </Link>
-              </div>
-            </Reveal>
-            <div>
-              {[
-                { n: "01", title: "Browse & choose", body: "Explore 500+ projects by domain and tech stack. View full spec sheets and demo previews before you commit." },
-                { n: "02", title: "Brief us on your needs", body: "Share your professor's base paper, rubric, or specific university format. We read everything and follow it exactly." },
-                { n: "03", title: "Receive your full package", body: "Source code, SRS, IEEE paper, PPT, and a viva prep guide — delivered on time, documented, and ready to present." },
-              ].map((step, i) => (
-                <Reveal key={i} delay={i * 0.1}>
-                  <div style={{ display: "flex", gap: 20, padding: "24px 0", borderBottom: i < 2 ? "1px solid #e6ebf1" : "none" }}>
-                    <div style={{ fontSize: 11, fontWeight: 800, color: "#635bff", letterSpacing: "0.06em", minWidth: 24, paddingTop: 2 }}>{step.n}</div>
-                    <div>
-                      <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0a0a0a", marginBottom: 6 }}>{step.title}</h3>
-                      <p style={{ fontSize: 14, color: "#64748b", lineHeight: 1.6, margin: 0 }}>{step.body}</p>
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+      {/* ── PROJECT CATEGORIES ── */}
+      <section className="w-full py-12 md:py-24 bg-muted/30 border-y">
+        <div className="container mx-auto pl-4 pr-0 md:px-6">
+          <div className="text-center mb-10 md:mb-16 space-y-4 pr-4 md:pr-0">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">Explore by Domain</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Browse our deep catalogue of ready-made projects across every major engineering and management domain.
+            </p>
           </div>
-        </div>
-      </section>
-
-      {/* ───────────────────── TESTIMONIALS ─────────────────── */}
-      <section style={{ background: "#f7f8fb", padding: "96px 0", borderTop: "1px solid #e6ebf1", overflow: "hidden" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px", marginBottom: 48 }}>
-          <Reveal>
-            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#635bff", marginBottom: 14 }}>Students</p>
-                <h2 style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)", fontWeight: 800, letterSpacing: "-0.025em", color: "#0a0a0a", lineHeight: 1.15 }}>
-                  2,500+ students.<br />Real results.
-                </h2>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                {[1,2,3,4,5].map(s => <Star key={s} size={16} fill="#fbbf24" color="#fbbf24" />)}
-                <span style={{ fontSize: 15, fontWeight: 800, color: "#0a0a0a", marginLeft: 4 }}>4.9</span>
-                <span style={{ fontSize: 14, color: "#94a3b8" }}>/ 5.0 average</span>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-        {/* Marquee */}
-        <div style={{ position: "relative" }}>
-          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 140, background: "linear-gradient(90deg, #f7f8fb, transparent)", zIndex: 2, pointerEvents: "none" }} />
-          <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 140, background: "linear-gradient(270deg, #f7f8fb, transparent)", zIndex: 2, pointerEvents: "none" }} />
-          <div className="marquee-track" style={{ display: "flex", gap: 16, width: "max-content", paddingLeft: 24 }}>
-            {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-              <div key={i} style={{ width: 320, background: "#fff", border: "1.5px solid #e6ebf1", borderRadius: 16, padding: 24, flexShrink: 0 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
-                  <div style={{ display: "flex", gap: 2 }}>
-                    {[1,2,3,4,5].map(s => <Star key={s} size={11} fill="#fbbf24" color="#fbbf24" />)}
-                  </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, background: "#f0fdf4", color: "#16a34a", border: "1px solid #bbf7d0", padding: "2px 8px", borderRadius: 20 }}>{t.grade}</span>
-                </div>
-                <p style={{ fontSize: 13, color: "#334155", lineHeight: 1.6, marginBottom: 18 }}>"{t.text}"</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ width: 34, height: 34, borderRadius: "50%", background: "linear-gradient(135deg, #635bff, #00a9e0)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 800 }}>
-                    {t.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:grid sm:grid-cols-2 lg:grid-cols-4 md:gap-5 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {CATEGORIES.map((cat) => (
+              <Link href="/login" key={cat.name} className="min-w-[75vw] snap-center md:min-w-0">
+                <div className="group bg-white dark:bg-zinc-900 border rounded-2xl p-5 md:p-6 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex items-center md:items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors flex-shrink-0">
+                    {cat.icon}
                   </div>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#0a0a0a" }}>{t.name}</div>
-                    <div style={{ fontSize: 11, color: "#94a3b8" }}>{t.college}</div>
+                    <p className="font-bold leading-tight">{cat.name}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{cat.count}</p>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ───────────────────── PRICING ───────────────────────── */}
-      <section style={{ background: "#fff", padding: "96px 0", borderTop: "1px solid #e6ebf1" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}>
-          <Reveal>
-            <div style={{ marginBottom: 56 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#635bff", marginBottom: 14 }}>Pricing</p>
-              <h2 style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)", fontWeight: 800, letterSpacing: "-0.025em", color: "#0a0a0a", lineHeight: 1.15, marginBottom: 10 }}>
-                No hidden fees. No surprises.
-              </h2>
-              <p style={{ fontSize: 16, color: "#94a3b8" }}>The price you see is the price you pay. Always.</p>
-            </div>
-          </Reveal>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+      {/* ── HOW IT WORKS ── */}
+      <section className="w-full py-12 md:py-28 bg-white dark:bg-zinc-950">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-10 md:mb-20 space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+              From Order to Delivery in <span className="text-primary">3 Simple Steps</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              We have streamlined the entire process so you can focus on what matters — your viva and your career.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
             {[
-              { name: "ATS Resume Builder",   price: "₹99",        desc: "ATS scoring, JD match, keyword gap analysis.",        href: "/resume",                  featured: false },
-              { name: "JD Match Analyzer",    price: "₹149",       desc: "Deep resume-to-job match with actionable edits.",      href: "/resume",                  featured: false },
-              { name: "Project Documentation",price: "₹299",       desc: "IEEE paper, SRS, and PPT — formatted and verified.",   href: "/projects/documentation",  featured: false },
-              { name: "Final Year Projects",  price: "From ₹6k",   desc: "Full project: code, docs, IEEE paper, viva prep.",     href: "/projects",                featured: true  },
-            ].map((p, i) => (
-              <Reveal key={i} delay={i * 0.07}>
-                <Link href={p.href} id={`pricing-${i}`} style={{ display: "block", height: "100%" }}>
-                  <div
-                    style={{
-                      height: "100%", borderRadius: 16, padding: 24,
-                      border: p.featured ? "2px solid #635bff" : "1.5px solid #e6ebf1",
-                      background: p.featured ? "linear-gradient(160deg, #f7f6ff 0%, #eff0ff 100%)" : "#fff",
-                      display: "flex", flexDirection: "column", cursor: "pointer",
-                      transition: "box-shadow 0.2s, transform 0.2s",
-                    }}
-                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = "0 8px 32px rgba(99,91,255,0.15)"; el.style.transform = "translateY(-2px)"; }}
-                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = "none"; el.style.transform = "translateY(0)"; }}
-                  >
-                    {p.featured && <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#635bff", background: "#ebe8ff", padding: "4px 10px", borderRadius: 20, alignSelf: "flex-start", marginBottom: 16 }}>Best Value</span>}
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#0a0a0a", marginBottom: 6 }}>{p.name}</div>
-                    <div style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, flex: 1, marginBottom: 20 }}>{p.desc}</div>
-                    <div style={{ fontSize: "clamp(1.4rem, 2.5vw, 1.8rem)", fontWeight: 900, color: "#0a0a0a", letterSpacing: "-0.03em", marginBottom: 14 }}>{p.price}</div>
-                    <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 700, color: "#635bff" }}>
-                      Get started <ArrowRight size={13} />
-                    </span>
+              { step: "01", icon: <BookOpen className="h-10 w-10" />, title: "Browse & Select", desc: "Explore our marketplace. Filter by domain, tech stack, or college level. Every listing includes detailed specs, images, and a demo video." },
+              { step: "02", icon: <Briefcase className="h-10 w-10" />, title: "Place Your Order", desc: "Add to cart, complete checkout, and share your specific college requirements via our custom request form. Upload your professor's base paper if needed." },
+              { step: "03", icon: <TrendingUp className="h-10 w-10" />, title: "Receive & Deploy", desc: "Get your complete project package — source code, SRS, IEEE paper, PPT — with a step-by-step deployment guide. Our team is on call for viva prep." },
+            ].map((step) => (
+              <div key={step.step} className="flex flex-col items-center text-center space-y-5">
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-primary">
+                    {step.icon}
                   </div>
-                </Link>
-              </Reveal>
+                  <span className="absolute -top-2 -right-2 bg-primary text-white text-sm font-black w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
+                    {step.step}
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold">{step.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ───────────────────── FOUNDER ───────────────────────── */}
-      <section style={{ background: "#f7f8fb", padding: "80px 0", borderTop: "1px solid #e6ebf1" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}>
-          <Reveal>
-            <div style={{ maxWidth: 760 }}>
-              <blockquote style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.45rem)", fontWeight: 500, lineHeight: 1.55, color: "#0a0a0a", fontStyle: "italic", marginBottom: 28 }}>
-                "I built GraduateNex because I watched brilliant students fail — not from lack of intelligence, but because of a broken system. We give you the tools, the code, and the documents so you can focus on building your career."
-              </blockquote>
-              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg, #635bff, #00a9e0)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 16 }}>A</div>
+      {/* ── TRANSPARENT PRICING ── */}
+      <section className="w-full py-12 md:py-24 bg-zinc-50 border-y dark:bg-zinc-900/50">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-10 md:mb-16 space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+              Transparent & Upfront <span className="text-primary">Pricing</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              No hidden fees. No "Contact us for price". Get immediate access to what you need.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {[
+              { name: "ATS Resume Builder", price: "₹199", desc: "AI-generated ATS-friendly resume." },
+              { name: "JD Match Analyzer", price: "₹299", desc: "Match your resume to specific job roles." },
+              { name: "Project Documentation", price: "₹149", desc: "Instant IEEE/SRS documentation templates." },
+              { name: "Final Year Projects", price: "From ₹6,000", desc: "Complete source code, setup, and support." },
+            ].map((plan) => (
+              <Link href="/services" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#0a0a0a" }}>Appala Nithin</div>
-                  <div style={{ fontSize: 13, color: "#94a3b8" }}>Founder & CEO, GraduateNex</div>
+                  <h3 className="font-bold text-xl mb-2 group-hover:text-primary transition-colors">{plan.name}</h3>
+                  <p className="text-muted-foreground text-sm mb-6 h-10">{plan.desc}</p>
                 </div>
-              </div>
-            </div>
-          </Reveal>
+                <div>
+                  <div className="text-3xl font-black text-primary mb-6">{plan.price}</div>
+                  <div className="w-full gap-2 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-primary hover:text-white h-12 px-4 py-2">
+                    View Details
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ───────────────────── CTA ───────────────────────────── */}
-      <section style={{ background: "#fff", padding: "96px 0", borderTop: "1px solid #e6ebf1" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}>
-          <Reveal>
-            <div style={{ borderRadius: 24, padding: "56px 64px", border: "1.5px solid #e6ebf1", background: "linear-gradient(135deg, #fafbff 0%, #f7f6ff 50%, #fafbff 100%)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 32 }}>
-              <div>
-                <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.025em", color: "#0a0a0a", marginBottom: 12 }}>
-                  Ready to graduate with a distinction?
-                </h2>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 20px" }}>
-                  {["Zero plagiarism", "On-time delivery", "24/7 expert support"].map(t => (
-                    <span key={t} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#64748b" }}>
-                      <CheckCircle size={13} color="#22c55e" /> {t}
-                    </span>
+      {/* ── TESTIMONIALS ── */}
+      <section className="w-full py-12 md:py-24 bg-zinc-950 text-white">
+        <div className="container mx-auto pl-4 pr-0 md:px-6">
+          <div className="text-center mb-10 md:mb-16 space-y-4 pr-4 md:pr-0">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-bold">
+              <Star className="h-4 w-4 fill-primary" /> Trusted by Students Nationwide
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">Real Results from Real Students</h2>
+            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+              Over 2,500 students across India have used GraduateNex to score top grades and land their dream jobs.
+            </p>
+          </div>
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {TESTIMONIALS.map((t) => (
+              <div key={t.name} className="min-w-[85vw] snap-center md:min-w-0 bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-3xl p-6 md:p-8 space-y-4 transition-colors">
+                <div className="flex gap-1">
+                  {Array.from({ length: t.rating }).map((_, i) => (
+                    <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
+                <p className="text-zinc-300 leading-relaxed text-lg">"{t.text}"</p>
+                <div className="flex items-center gap-4 pt-2 border-t border-zinc-800">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-lg">
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <p className="font-bold">{t.name}</p>
+                    <p className="text-sm text-zinc-500">{t.branch} · {t.college}</p>
+                  </div>
+                </div>
               </div>
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", flexShrink: 0 }}>
-                <Link href="/login" id="cta-primary">
-                  <HoverButton
-                    base={{ background: "#635bff", color: "#fff", boxShadow: "0 4px 20px rgba(99,91,255,0.28)" }}
-                    hover={{ background: "#5a52e8" }}
-                    style={{ padding: "14px 28px", borderRadius: 11, fontSize: 15, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 8, whiteSpace: "nowrap" }}
-                  >
-                    Start free today <ArrowRight size={15} />
-                  </HoverButton>
-                </Link>
-                <a href="tel:+917981994870" id="cta-call">
-                  <HoverButton
-                    base={{ background: "#fff", color: "#425466", border: "1.5px solid #e6ebf1" }}
-                    hover={{ borderColor: "#c7d0dd", color: "#0a0a0a" }}
-                    style={{ padding: "14px 28px", borderRadius: 11, fontSize: 15, fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 8, whiteSpace: "nowrap" }}
-                  >
-                    <Phone size={15} /> Call us
-                  </HoverButton>
-                </a>
-              </div>
-            </div>
-          </Reveal>
+            ))}
+          </div>
         </div>
       </section>
-    </div>
-  );
-}
 
-// ─── REUSABLE COMPONENTS ──────────────────────────────────────────────────────
-
-function ProductCard({ tag, title, description, href, accent, bgGradient, children }: {
-  tag: string; title: string; description: string; href: string;
-  accent: string; bgGradient: string; children: React.ReactNode;
-}) {
-  return (
-    <Link href={href} id={`product-${title.toLowerCase().replace(/\s+/g,'-')}`} style={{ display: "block", height: "100%" }}>
-      <div
-        style={{
-          height: "100%", borderRadius: 20, border: "1.5px solid #e6ebf1",
-          background: "#fff", overflow: "hidden",
-          transition: "box-shadow 0.25s ease, transform 0.25s ease",
-          cursor: "pointer", display: "flex", flexDirection: "column",
-        }}
-        onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = "0 16px 48px rgba(0,0,0,0.09)"; el.style.transform = "translateY(-3px)"; }}
-        onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = "none"; el.style.transform = "translateY(0)"; }}
-      >
-        {/* Card header */}
-        <div style={{ padding: "28px 28px 0" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
-            <div>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: accent, marginBottom: 6, display: "block" }}>{tag}</span>
-              <h3 style={{ fontSize: 18, fontWeight: 800, color: "#0a0a0a", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}>{title}</h3>
+      {/* ── LOCATIONS ── */}
+      <section className="w-full py-12 md:py-24 bg-background border-y">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-10 md:mb-16 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-bold">
+              <MapPin className="h-4 w-4" /> Pan-India Reach
             </div>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: "#f6f9fc", border: "1px solid #e6ebf1", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginLeft: 12 }}>
-              <ArrowUpRight size={13} color="#94a3b8" />
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+              Serving Students Across <span className="text-primary">50+ Cities in India</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Whether you are in a Tier-1 metro or a Tier-3 college town, our digital-first delivery model ensures you get premium project support wherever you are.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
+            {LOCATIONS.map((city) => (
+              <div key={city} className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-muted border hover:border-primary/50 hover:bg-primary/5 transition-colors text-sm font-semibold">
+                <MapPin className="h-3.5 w-3.5 text-primary" /> {city}
+              </div>
+            ))}
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-bold">
+              + 30 More Cities
             </div>
           </div>
-          <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.55, marginBottom: 20 }}>{description}</p>
+          <p className="text-center text-muted-foreground mt-8 text-base">
+            We deliver <strong>100% digitally</strong> — all files, code, and documents sent directly to your email and dashboard. No location barriers.
+          </p>
         </div>
-        {/* Mockup area with gradient bg */}
-        <div style={{ flex: 1, margin: "0 20px 20px", borderRadius: 14, padding: 16, background: bgGradient, overflow: "hidden" }}>
-          {children}
+      </section>
+
+      {/* ── FOUNDER ── */}
+      <section className="w-full py-12 md:py-24 bg-muted/20">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-white dark:bg-zinc-900 p-8 md:p-14 rounded-[2.5rem] md:rounded-[3rem] border shadow-2xl">
+            <div className="w-40 h-40 md:w-64 md:h-64 rounded-full bg-gradient-to-tr from-primary via-orange-400 to-yellow-300 p-1.5 flex-shrink-0 shadow-xl">
+              <div className="w-full h-full rounded-full overflow-hidden relative border-4 border-white dark:border-zinc-900">
+                <Image src="/founder_nithin.jpg" alt="Appala Nithin" fill className="object-cover object-top" />
+              </div>
+            </div>
+            <div className="text-center md:text-left space-y-4 md:space-y-5">
+              <div className="inline-flex px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-bold uppercase tracking-widest">
+                Founder & CEO
+              </div>
+              <h3 className="text-3xl md:text-5xl font-black tracking-tight">Appala Nithin</h3>
+              <div className="space-y-3 text-base md:text-lg text-muted-foreground leading-relaxed">
+                <p>
+                  <strong className="text-foreground">Appala Nithin</strong> is the visionary founder behind <strong className="text-primary">GraduateNex</strong> — a platform built from the ground up to solve the real academic struggles that millions of Indian students face every year.
+                </p>
+                <p>
+                  Having seen firsthand how talented students were failing not because of intelligence, but because of a broken system of plagiarism-check barriers, outdated project repositories, and zero career support, Nithin built GraduateNex to be the definitive solution — combining a production-quality project marketplace, AI-powered document tools, and an intelligent career launch engine.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><GraduationCap className="h-4 w-4 text-primary" /> EdTech Visionary</span>
+                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><Award className="h-4 w-4 text-primary" /> 2,500+ Students Helped</span>
+                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><Users className="h-4 w-4 text-primary" /> 50+ Cities Served</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </Link>
-  );
-}
+      </section>
 
-function HoverButton({ base, hover, style, children }: {
-  base: React.CSSProperties; hover: React.CSSProperties;
-  style?: React.CSSProperties; children: React.ReactNode;
-}) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <span
-      style={{ ...style, ...base, ...(hovered ? hover : {}), transition: "all 0.2s ease", display: style?.display || "inline-flex", cursor: "pointer" }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {children}
-    </span>
-  );
-}
+      {/* ── FAQ SECTION ── */}
+      <section className="w-full py-12 md:py-24 bg-background">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-10 md:mb-16 space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+              Frequently Asked <span className="text-primary">Questions</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">Quick answers to common queries about our services.</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {[
+              { q: "What is GraduateNex?", a: "GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India." },
+              { q: "Are the projects plagiarism-free?", a: "Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards." },
+              { q: "How are digital products delivered?", a: "All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address." },
+              { q: "What payment methods do you accept?", a: "We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway." },
+              { q: "Can I get a refund?", a: "Digital products are generally non-refundable once delivered. However, refunds are issued for technical payment failures, undelivered products, and custom projects that don't meet agreed specifications. See our Refund Policy for full details." },
+              { q: "Do you offer support after purchase?", a: "Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST." },
+            ].map((faq) => (
+              <div key={faq.q} className="bg-muted/30 border rounded-2xl p-6">
+                <h3 className="font-bold text-lg mb-2">{faq.q}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const [v, setV] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setV(true), delay * 1000 + 100); return () => clearTimeout(t); }, [delay]);
-  return (
-    <div style={{ opacity: v ? 1 : 0, transform: v ? "translateY(0)" : "translateY(18px)", transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s` }}>
-      {children}
-    </div>
-  );
-}
+      {/* ── TRUST SIGNALS ── */}
+      <section className="w-full py-10 md:py-16 bg-zinc-950 border-y border-zinc-800">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col md:flex-row flex-wrap justify-center items-start md:items-center gap-6 md:gap-16 max-w-xl mx-auto md:max-w-none pl-6 md:pl-0">
+            <div className="flex items-center gap-4 md:gap-3 text-zinc-400">
+              <Shield className="h-8 w-8 text-emerald-400" />
+              <div>
+                <p className="text-sm font-bold text-white">Secure Payments</p>
+                <p className="text-xs text-zinc-500">256-bit SSL Encryption</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-zinc-400">
+              <CreditCard className="h-8 w-8 text-blue-400" />
+              <div>
+                <p className="text-sm font-bold text-white">Powered by Razorpay</p>
+                <p className="text-xs text-zinc-500">PCI-DSS Compliant</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-zinc-400">
+              <CheckCircle className="h-8 w-8 text-primary" />
+              <div>
+                <p className="text-sm font-bold text-white">2,500+ Orders</p>
+                <p className="text-xs text-zinc-500">Delivered Successfully</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-zinc-400">
+              <Phone className="h-8 w-8 text-violet-400" />
+              <div>
+                <p className="text-sm font-bold text-white">Dedicated Support</p>
+                <p className="text-xs text-zinc-500">Mon–Fri, 9AM–6PM IST</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } }, { rootMargin: "-40px" });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return (
-    <div ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(20px)", transition: `opacity 0.55s ease ${delay}s, transform 0.55s ease ${delay}s` }}>
-      {children}
+      {/* ── FINAL CTA ── */}
+      <section className="w-full py-20 md:py-32 bg-gradient-to-br from-primary via-orange-500 to-yellow-500 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-black/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2" />
+        </div>
+        <div className="container mx-auto px-4 md:px-6 text-center relative z-10 space-y-6 md:space-y-8">
+          <h2 className="text-3xl md:text-6xl font-black tracking-tight text-white">
+            Your Final Year Project is<br className="hidden md:block"/> One Click Away.
+          </h2>
+          <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+            Join 2,500+ students who have already secured top grades, submitted original documentation, and advanced their careers using GraduateNex.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/login">
+              <Button size="lg" className="h-16 px-12 text-xl font-black rounded-xl bg-white text-primary hover:bg-zinc-50 shadow-2xl hover:scale-105 transition-all">
+                Get Started — It&apos;s Free <ArrowRight className="ml-2 h-6 w-6" />
+              </Button>
+            </Link>
+            <a href="tel:+917981994870">
+              <Button size="lg" className="h-16 px-10 text-xl font-bold rounded-xl bg-white/20 border-2 border-white text-white hover:bg-white/30 transition-all">
+                <Phone className="mr-2 h-5 w-5" /> Call Us Now
+              </Button>
+            </a>
+          </div>
+          <p className="text-white/60 text-sm">
+            📞 +91 79819 94870 &nbsp;|&nbsp; ✉️ support@graduatenex.online &nbsp;|&nbsp; 📍 T Hub, Hitech City, Hyderabad
+          </p>
+        </div>
+      </section>
+
+      {/* FAQPage Schema for Google Rich Results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              {
+                '@type': 'Question',
+                name: 'What is GraduateNex?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'Are the projects plagiarism-free?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'How are digital products delivered?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'What payment methods do you accept?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'Can I get a refund?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: "Digital products are generally non-refundable once delivered. However, refunds are issued for technical payment failures, undelivered products, and custom projects that don't meet agreed specifications."
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'Do you offer support after purchase?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST.'
+                }
+              }
+            ]
+          })
+        }}
+      />
+
     </div>
   );
 }
