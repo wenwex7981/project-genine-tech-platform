@@ -150,14 +150,14 @@ export default function Home() {
         >
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: "easeOut" }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-sm font-semibold shadow-sm"
             >
               <Globe className="h-4 w-4 text-indigo-500" /> India's Premier Academic Success Platform
             </motion.div>
 
             <motion.h1 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
               className="text-5xl md:text-7xl lg:text-[5rem] font-extrabold tracking-tight leading-[1.05] text-slate-900"
             >
               Engineer Your <br className="hidden md:block" />
@@ -167,14 +167,14 @@ export default function Home() {
             </motion.h1>
 
             <motion.p 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-medium"
             >
               From ready-to-deploy final year projects to AI-powered ATS resumes — GraduateNex is the complete ecosystem helping 2,500+ students graduate with distinction.
             </motion.p>
 
             <motion.div 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6"
             >
               <Link href="/login" className="w-full sm:w-auto group">

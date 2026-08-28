@@ -88,7 +88,7 @@ const JobCard = ({ job, index }: { job: Job, index: number }) => (
   <motion.a
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: index * 0.04, ease: [0.25, 0.46, 0.45, 0.94] }}
+    transition={{ delay: index * 0.04 }}
     href={job.url}
     target="_blank"
     rel="noopener noreferrer"
@@ -156,7 +156,7 @@ const NewsCard = ({ item, index }: { item: NewsItem, index: number }) => (
   <motion.a
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: index * 0.04, ease: [0.25, 0.46, 0.45, 0.94] }}
+    transition={{ delay: index * 0.04 }}
     href={item.url}
     target="_blank"
     rel="noopener noreferrer"
