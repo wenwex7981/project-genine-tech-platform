@@ -1,97 +1,139 @@
-// GraduateNex Job Crawler — popup.js
+// GraduateNex Job Crawler — popup.js v1.1
+'use strict';
 
-let selectedSources = new Set(['remotive','arbeitnow','devto','hn']);
-
-function addLog(msg, type = 'info') {
-  const log = document.getElementById('crawl-log');
-  if (!log) return;
+// ── DOM helpers
+const $ = id => document.getElementById(id);
+const log = (msg, type = 'info') => {
+  const box  = $('log-box');
+  if (!box) return;
   const time = new Date().toLocaleTimeString('en-IN', { hour12: false });
-  const div = document.createElement('div');
-  div.className = `log-entry ${type}`;
-  div.textContent = `[${time}] ${msg}`;
-  log.appendChild(div);
-  log.scrollTop = log.scrollHeight;
+  const line = document.createElement('div');
+  line.className = 'log-line ' + type;
+  line.textContent = `[${time}] ${msg}`;
+  box.appendChild(line);
+  box.scrollTop = box.scrollHeight;
+};
+
+const setStatus = (msg, type = 'info') => {
+  const el = $('main-status');
+  if (!el) return;
+  el.innerHTML = msg;
+  el.className = 'status-bar ' + type;
+};
+
+// ── Source checkboxes toggle styling
+function initSourceCheckboxes() {
+  ['remotive','arbeitnow','devto','hn'].forEach(src => {
+    const cb  = $('src-' + src);
+    const lbl = $('lbl-' + src);
+    if (!cb || !lbl) return;
+    cb.addEventListener('change', () => {
+      lbl.classList.toggle('checked', cb.checked);
+    });
+  });
 }
 
-function setStatus(msg, type) {
-  const el = document.getElementById('main-status');
-  if (el) { el.textContent = msg; el.className = `status ${type}`; }
+function getSelectedSources() {
+  return ['remotive','arbeitnow','devto','hn'].filter(s => {
+    const el = $('src-' + s);
+    return el && el.checked;
+  });
 }
 
+// ── On load
 document.addEventListener('DOMContentLoaded', () => {
-  // Load saved config
-  chrome.storage.local.get(['backendUrl','crawlerSecret','lastCrawl','crawlStats'], data => {
-    if (data.backendUrl)     document.getElementById('backendUrl').value = data.backendUrl;
-    if (data.crawlerSecret)  document.getElementById('crawlerSecret').value = data.crawlerSecret;
+  initSourceCheckboxes();
+
+  // Restore saved settings
+  chrome.storage.local.get(['backendUrl','crawlerSecret','lastCrawl','crawlStats','selectedSources'], data => {
+    if (data.backendUrl)    $('backendUrl').value    = data.backendUrl;
+    if (data.crawlerSecret) $('crawlerSecret').value = data.crawlerSecret;
+
     if (data.lastCrawl) {
       const d = new Date(data.lastCrawl);
-      document.getElementById('last-run-time').textContent = `Last crawl: ${d.toLocaleString('en-IN')}`;
+      $('last-run').textContent = 'Last crawl: ' + d.toLocaleString('en-IN');
     }
     if (data.crawlStats) {
-      document.getElementById('stat-jobs').textContent   = data.crawlStats.jobs || 0;
-      document.getElementById('stat-intern').textContent = data.crawlStats.internships || 0;
-      document.getElementById('stat-news').textContent   = data.crawlStats.news || 0;
+      $('stat-jobs').textContent   = data.crawlStats.jobs        || 0;
+      $('stat-intern').textContent = data.crawlStats.internships  || 0;
+      $('stat-news').textContent   = data.crawlStats.news         || 0;
+    }
+    if (data.selectedSources && Array.isArray(data.selectedSources)) {
+      ['remotive','arbeitnow','devto','hn'].forEach(src => {
+        const cb  = $('src-' + src);
+        const lbl = $('lbl-' + src);
+        if (!cb || !lbl) return;
+        cb.checked = data.selectedSources.includes(src);
+        lbl.classList.toggle('checked', cb.checked);
+      });
     }
   });
 
-  // Source chips
-  document.querySelectorAll('.source-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const s = chip.dataset.source;
-      if (selectedSources.has(s)) { selectedSources.delete(s); chip.classList.remove('selected'); }
-      else                         { selectedSources.add(s);    chip.classList.add('selected'); }
+  // ── SAVE CONFIG
+  $('btn-save').addEventListener('click', () => {
+    const backendUrl    = $('backendUrl').value.trim()    || 'https://www.graduatenex.online';
+    const crawlerSecret = $('crawlerSecret').value.trim() || '';
+    const selectedSources = getSelectedSources();
+
+    chrome.storage.local.set({ backendUrl, crawlerSecret, selectedSources }, () => {
+      // Ask background to setup hourly alarm
+      chrome.runtime.sendMessage({ action: 'SETUP_ALARM' }, () => {
+        if (chrome.runtime.lastError) { /* ignore */ }
+      });
+      setStatus('✅ Saved! Auto-crawl runs every hour automatically.', 'success');
+      log('Config saved. Hourly auto-crawl enabled ✅', 'success');
     });
   });
 
-  // Save config + enable hourly alarm
-  document.getElementById('save-config').addEventListener('click', () => {
-    const backendUrl    = document.getElementById('backendUrl').value.trim();
-    const crawlerSecret = document.getElementById('crawlerSecret').value.trim();
-    chrome.storage.local.set({ backendUrl, crawlerSecret, selectedSources: Array.from(selectedSources) }, () => {
-      // Set hourly alarm
-      chrome.runtime.sendMessage({ action: 'SETUP_ALARM' });
-      setStatus('✅ Saved! Auto-crawl runs every hour.', 'success');
-      addLog('Config saved. Hourly auto-crawl enabled.', 'success');
-    });
-  });
+  // ── CRAWL NOW
+  $('btn-crawl').addEventListener('click', () => {
+    const backendUrl    = $('backendUrl').value.trim()    || 'https://www.graduatenex.online';
+    const crawlerSecret = $('crawlerSecret').value.trim() || '';
+    const sources       = getSelectedSources();
 
-  // Manual crawl now
-  document.getElementById('crawl-now').addEventListener('click', async () => {
-    const backendUrl    = document.getElementById('backendUrl').value.trim() || 'https://www.graduatenex.online';
-    const crawlerSecret = document.getElementById('crawlerSecret').value.trim();
+    if (sources.length === 0) {
+      setStatus('❌ Please select at least one source!', 'error');
+      return;
+    }
 
-    document.getElementById('crawl-now').disabled = true;
-    setStatus('⏳ Crawling fresh jobs & news...', 'info');
-    addLog('Starting crawl from all sources...', 'info');
+    $('btn-crawl').disabled = true;
+    $('btn-crawl').textContent = '⏳ Crawling…';
+    setStatus('⏳ Crawling all sources… please wait', 'warning');
+    log('Starting crawl: ' + sources.join(', '), 'info');
 
-    chrome.runtime.sendMessage({
-      action: 'CRAWL_NOW',
-      backendUrl,
-      crawlerSecret,
-      sources: Array.from(selectedSources),
-    }, response => {
-      document.getElementById('crawl-now').disabled = false;
-      if (chrome.runtime.lastError || !response) {
-        setStatus('❌ Crawl failed. Check console.', 'error');
-        addLog('Error: ' + (chrome.runtime.lastError?.message || 'No response'), 'error');
+    chrome.runtime.sendMessage({ action: 'CRAWL_NOW', backendUrl, crawlerSecret, sources }, response => {
+      $('btn-crawl').disabled  = false;
+      $('btn-crawl').innerHTML = '🚀 Crawl Now &amp; Push to Site';
+
+      if (chrome.runtime.lastError) {
+        const err = chrome.runtime.lastError.message || 'Unknown error';
+        setStatus('❌ Error: ' + err, 'error');
+        log('Error: ' + err, 'error');
+        return;
+      }
+      if (!response) {
+        setStatus('❌ No response from background. Reload extension.', 'error');
+        log('No response from background script.', 'error');
         return;
       }
       if (response.success) {
-        setStatus(`✅ Pushed ${response.total} items to GraduateNex!`, 'success');
-        addLog(`Jobs: ${response.jobs} | Internships: ${response.internships} | News: ${response.news}`, 'success');
-        document.getElementById('stat-jobs').textContent   = response.jobs || 0;
-        document.getElementById('stat-intern').textContent = response.internships || 0;
-        document.getElementById('stat-news').textContent   = response.news || 0;
-        document.getElementById('last-run-time').textContent = `Last crawl: ${new Date().toLocaleString('en-IN')}`;
+        setStatus(`✅ Done! Pushed ${response.total || 0} items to GraduateNex!`, 'success');
+        log(`Jobs: ${response.jobs || 0} | Internships: ${response.internships || 0} | News: ${response.news || 0}`, 'success');
+        $('stat-jobs').textContent   = response.jobs        || 0;
+        $('stat-intern').textContent = response.internships  || 0;
+        $('stat-news').textContent   = response.news         || 0;
+        $('last-run').textContent    = 'Last crawl: ' + new Date().toLocaleString('en-IN');
       } else {
-        setStatus('❌ ' + (response.error || 'Unknown error'), 'error');
-        addLog('Error: ' + (response.error || ''), 'error');
+        setStatus('❌ ' + (response.error || 'Crawl failed'), 'error');
+        log('Error: ' + (response.error || 'Unknown'), 'error');
       }
     });
   });
 });
 
-// Receive log updates from background
+// ── Receive live log lines from background
 chrome.runtime.onMessage.addListener(msg => {
-  if (msg.action === 'CRAWL_LOG') addLog(msg.text, msg.type || 'info');
+  if (msg.action === 'CRAWL_LOG') {
+    log(msg.text || '', msg.type || 'info');
+  }
 });
