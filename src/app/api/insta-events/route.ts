@@ -77,7 +77,7 @@ function extractRegLink(url: string | null, caption: string | null): string | nu
     const urls: string[] = caption.match(/(https?:\/\/[^\s\u200B-\u200D\uFEFF]+)/g) ?? [];
     const platform = urls.find(u => platforms.some(p => u.includes(p)));
     if (platform) return platform;
-    if (urls.length > 0) return urls[0] ?? null;
+    if (urls.length > 0) return (urls[0] as string) ?? null;
   }
   return url ?? null;
 }
