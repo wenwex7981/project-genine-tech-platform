@@ -256,60 +256,90 @@ export default function StudyHubPage() {
       {/* Main Content Container */}
       <div className="container mx-auto px-4 md:px-6 mt-8 max-w-7xl">
 
-        {/* Action Buttons (Moved from banner) */}
-        <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
-          {/* Main Tabs */}
-          <button
-            onClick={() => setActiveTab("interview-prep")}
-            className={`h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg cursor-pointer ${
-              activeTab === "interview-prep"
-                ? "bg-amber-400 text-slate-950 ring-4 ring-amber-400/30 scale-105"
-                : "bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60"
-            }`}
-          >
-            <BookOpen className="h-4 w-4 md:h-5 md:w-5" /> Question Banks ({docs.length})
-          </button>
+        {/* ── Navigation & Quick Actions ── */}
+        <div className="space-y-6 mb-12">
 
-          <button
-            onClick={() => setActiveTab("ai-roadmap")}
-            className={`h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg cursor-pointer ${
-              activeTab === "ai-roadmap"
-                ? "bg-blue-500 text-white ring-4 ring-blue-500/30 scale-105"
-                : "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-400 dark:hover:bg-blue-900/60"
-            }`}
-          >
-            <Sparkles className="h-4 w-4 md:h-5 md:w-5" /> AI Roadmap
-          </button>
+          {/* Section Tabs — Segmented Control */}
+          <div className="flex justify-center">
+            <div className="inline-flex bg-white dark:bg-zinc-900 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+              <button
+                onClick={() => setActiveTab("interview-prep")}
+                className={`px-5 py-2.5 text-sm font-bold rounded-xl transition-all duration-200 flex items-center gap-2 ${
+                  activeTab === "interview-prep"
+                    ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-md"
+                    : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                }`}
+              >
+                <BookOpen className="h-4 w-4" /> Question Banks
+                <span className={`text-[11px] px-1.5 py-0.5 rounded-md font-bold ${
+                  activeTab === "interview-prep" 
+                    ? "bg-white/20 text-white dark:bg-zinc-900/30 dark:text-zinc-900" 
+                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"
+                }`}>{docs.length}</span>
+              </button>
 
-          <button
-            onClick={() => setActiveTab("syllabus")}
-            className={`h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl transition-all duration-200 flex items-center gap-2 md:gap-3 shadow-lg cursor-pointer ${
-              activeTab === "syllabus"
-                ? "bg-teal-500 text-white ring-4 ring-teal-500/30 scale-105"
-                : "bg-teal-100 text-teal-800 hover:bg-teal-200 dark:bg-teal-900/40 dark:text-teal-400 dark:hover:bg-teal-900/60"
-            }`}
-          >
-            <Layers className="h-4 w-4 md:h-5 md:w-5" /> Syllabuses
-          </button>
+              <button
+                onClick={() => setActiveTab("ai-roadmap")}
+                className={`px-5 py-2.5 text-sm font-bold rounded-xl transition-all duration-200 flex items-center gap-2 ${
+                  activeTab === "ai-roadmap"
+                    ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-md"
+                    : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                }`}
+              >
+                <Sparkles className="h-4 w-4" /> AI Roadmap
+              </button>
 
-          {/* AI Tools */}
-          <Link href="/study/interview-prep/mock-interview">
-            <Button size="lg" className="h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl bg-purple-600 hover:bg-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all flex items-center gap-2 md:gap-3">
-              <Mic className="h-4 w-4 md:h-5 md:w-5" /> Voice Mock Interview
-            </Button>
-          </Link>
-          
-          <Link href="/study/interview-prep/communication-builder">
-            <Button size="lg" className="h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-xl shadow-purple-900/50 hover:scale-105 transition-all flex items-center gap-2 md:gap-3">
-              <Sparkles className="h-4 w-4 md:h-5 md:w-5" /> Self-Intro Builder
-            </Button>
-          </Link>
-          
-          <Link href="/study/interview-prep/english-friend">
-            <Button size="lg" className="h-14 px-6 md:px-8 text-sm md:text-base font-extrabold rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-xl shadow-emerald-900/50 hover:scale-105 transition-all flex items-center gap-2 md:gap-3">
-              <MessageCircle className="h-4 w-4 md:h-5 md:w-5" /> English Friend Alex
-            </Button>
-          </Link>
+              <button
+                onClick={() => setActiveTab("syllabus")}
+                className={`px-5 py-2.5 text-sm font-bold rounded-xl transition-all duration-200 flex items-center gap-2 ${
+                  activeTab === "syllabus"
+                    ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-md"
+                    : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                }`}
+              >
+                <Layers className="h-4 w-4" /> Syllabuses
+              </button>
+            </div>
+          </div>
+
+          {/* AI Tools — Elegant Cards Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <Link href="/study/interview-prep/mock-interview" className="group">
+              <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 flex items-center gap-4 hover:border-violet-300 dark:hover:border-violet-600 hover:shadow-[0_4px_20px_rgba(139,92,246,0.08)] transition-all duration-300">
+                <div className="w-11 h-11 rounded-xl bg-violet-50 dark:bg-violet-900/30 border border-violet-200/60 dark:border-violet-700/40 flex items-center justify-center shrink-0">
+                  <Mic className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-violet-700 dark:group-hover:text-violet-400 transition-colors">Voice Mock Interview</div>
+                  <div className="text-xs text-zinc-400 dark:text-zinc-500">AI-powered practice</div>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/study/interview-prep/communication-builder" className="group">
+              <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 flex items-center gap-4 hover:border-rose-300 dark:hover:border-rose-600 hover:shadow-[0_4px_20px_rgba(244,63,94,0.08)] transition-all duration-300">
+                <div className="w-11 h-11 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200/60 dark:border-rose-700/40 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-700 dark:group-hover:text-rose-400 transition-colors">Self-Intro Builder</div>
+                  <div className="text-xs text-zinc-400 dark:text-zinc-500">Perfect your pitch</div>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/study/interview-prep/english-friend" className="group">
+              <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 flex items-center gap-4 hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-[0_4px_20px_rgba(16,185,129,0.08)] transition-all duration-300">
+                <div className="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200/60 dark:border-emerald-700/40 flex items-center justify-center shrink-0">
+                  <MessageCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">English Friend Alex</div>
+                  <div className="text-xs text-zinc-400 dark:text-zinc-500">Conversational fluency</div>
+                </div>
+              </div>
+            </Link>
+          </div>
         </div>
 
         {/* TAB 1: INTERVIEW PREP DOCUMENTS CATALOG (DEFAULT) */}
