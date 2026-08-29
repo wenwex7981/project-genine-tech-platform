@@ -121,6 +121,92 @@ export default function PricingPage() {
 
       <div className="container mx-auto px-4 mt-16 max-w-7xl space-y-24">
 
+        {/* ⭐ ALL ACCESS PASS — HERO BUNDLE */}
+        <section>
+          <div className="relative max-w-4xl mx-auto">
+            <div className="absolute -inset-[2px] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-400 rounded-[2rem] opacity-80" style={{ backgroundSize: '200% 100%' }} />
+            
+            <div className="relative bg-zinc-950 rounded-[2rem] p-8 md:p-12 overflow-hidden">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-violet-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-500/15 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+
+              <div className="relative z-10">
+                <div className="flex justify-center mb-6">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-200/20 to-yellow-200/20 border border-amber-500/30 text-amber-300 text-sm font-bold">
+                    <span className="text-lg">👑</span> BEST VALUE — SAVE 47%
+                  </div>
+                </div>
+
+                <h2 className="text-3xl md:text-5xl font-black text-center text-white tracking-tight mb-3">
+                  All Access Pass
+                </h2>
+                <p className="text-center text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
+                  One plan. Every tool. Unlimited usage. Get everything GraduateNex offers for one low price.
+                </p>
+
+                <div className="max-w-md mx-auto bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 mb-8 space-y-3">
+                  {[
+                    { name: "Premium AI Helper", price: "₹200" },
+                    { name: "AI Tools Pro (Plagiarism + Humanizer)", price: "₹300" },
+                    { name: "Resume Hub Pro (ATS + JD Match)", price: "₹500" },
+                    { name: "Hackathon Pro Badge", price: "₹500" },
+                  ].map((item) => (
+                    <div key={item.name} className="flex justify-between items-center text-sm text-zinc-300">
+                      <span className="flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                        {item.name}
+                      </span>
+                      <span className="text-zinc-500 line-through">{item.price}</span>
+                    </div>
+                  ))}
+                  <div className="border-t border-zinc-700 pt-3 mt-3 flex justify-between items-center">
+                    <span className="text-sm text-zinc-400 font-semibold">Total Value</span>
+                    <span className="text-zinc-500 line-through font-bold">₹1,500</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg text-white font-black">YOUR PRICE</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400">₹799</span>
+                      <span className="text-sm text-zinc-500 font-medium">/30 days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                  <Button
+                    onClick={() => handlePurchase('all_access_pass', 'All Access Pass (30 Days)', 799)}
+                    disabled={isProcessing}
+                    className="flex-1 h-14 text-lg font-black bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-xl shadow-amber-500/25 rounded-xl border-0"
+                  >
+                    {isProcessing ? <Loader2 className="animate-spin h-5 w-5" /> : "Get All Access Pass"}
+                  </Button>
+                  <div className="flex-1 text-center sm:text-left flex flex-col justify-center">
+                    <p className="text-xs text-zinc-500 font-medium">Also available:</p>
+                    <Button
+                      onClick={() => handlePurchase('all_access_semester', 'All Access Semester (6 Months)', 1999)}
+                      disabled={isProcessing}
+                      variant="ghost"
+                      className="text-sm font-bold text-violet-400 hover:text-violet-300 hover:bg-violet-950/30 p-0 h-auto justify-start"
+                    >
+                      Semester Pass — ₹1,999 / 6 months →
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-8 text-xs text-zinc-500 font-medium">
+                  <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> Secure Payment</span>
+                  <span className="flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-amber-400" /> Instant Activation</span>
+                  <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-blue-400" /> Cancel Anytime</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="text-center">
+          <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Or pick individual tools</p>
+        </div>
+
         {/* 1. AI Helper Suite */}
         <section>
           <div className="text-center mb-10">
@@ -160,7 +246,7 @@ export default function PricingPage() {
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-cyan-300" /> Unlimited UML Diagrams</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-cyan-300" /> Priority Processing</li>
               </ul>
-              <Button 
+              <Button
                 onClick={() => handlePurchase('ai_premium', 'Premium AI Helper (30 Days)', 200)}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-white text-blue-700 hover:bg-blue-50"
@@ -192,7 +278,7 @@ export default function PricingPage() {
             </div>
             <div className="p-8 md:w-1/2 bg-gray-50 dark:bg-zinc-800/50 flex flex-col justify-between">
               <div>
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">AI Tools Pro <Zap className="w-5 h-5 text-yellow-500"/></h3>
+                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">AI Tools Pro <Zap className="w-5 h-5 text-yellow-500" /></h3>
                 <div className="text-4xl font-black mb-6">₹300<span className="text-lg text-muted-foreground font-normal">/30 days</span></div>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center gap-2 text-sm font-semibold"><CheckCircle2 className="w-5 h-5 text-green-500" /> Unlimited Plagiarism Checks</li>
@@ -200,7 +286,7 @@ export default function PricingPage() {
                   <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> Access to full "AI Tools Tab"</li>
                 </ul>
               </div>
-              <Button 
+              <Button
                 onClick={() => handlePurchase('plagiarism_pro', 'AI Tools Pro (30 Days)', 300)}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-zinc-900 text-white hover:bg-zinc-800"
@@ -247,7 +333,7 @@ export default function PricingPage() {
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-emerald-200" /> Unlimited JD Matching</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-emerald-200" /> Access to Premium Templates</li>
               </ul>
-              <Button 
+              <Button
                 onClick={() => handlePurchase('resume_hub_pro', 'Resume Hub Monthly', 500)}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-white text-emerald-700 hover:bg-emerald-50"
@@ -276,7 +362,7 @@ export default function PricingPage() {
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-indigo-500" /> "Pro Hacker" Profile Badge</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-indigo-500" /> Priority Registration</li>
               </ul>
-              <Button 
+              <Button
                 onClick={() => handlePurchase('hackathon_badge_15', 'Hackathon Pro Badge (15 Events)', 500, true)}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -284,7 +370,7 @@ export default function PricingPage() {
                 {isProcessing ? <Loader2 className="animate-spin w-5 h-5" /> : "Get Pro Badge"}
               </Button>
             </div>
-            
+
             <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white p-8 rounded-3xl shadow-xl relative overflow-hidden transform scale-105">
               <div className="absolute -right-10 -top-10 opacity-10">
                 <Medal className="w-48 h-48" />
@@ -299,7 +385,7 @@ export default function PricingPage() {
                 <li className="flex items-center gap-2 text-sm font-semibold"><CheckCircle2 className="w-5 h-5 text-amber-400" /> Join UNLIMITED Events</li>
                 <li className="flex items-center gap-2 text-sm font-semibold"><CheckCircle2 className="w-5 h-5 text-amber-400" /> Gold "Elite Hacker" Badge</li>
               </ul>
-              <Button 
+              <Button
                 onClick={() => handlePurchase('hackathon_badge_unlimited', 'Hackathon Unlimited Badge', 1000, true)}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-gradient-to-r from-amber-400 to-yellow-500 text-black hover:from-amber-500 hover:to-yellow-600 border-none shadow-lg"

@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2, Lock, Zap } from "lucide-react";
+import { Sparkles, Loader2, Zap } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import UpgradeWall from "@/components/UpgradeWall";
 
 export default function AIGeneratorPage() {
   const router = useRouter();
   const [topic, setTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  
+
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [hasPremium, setHasPremium] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
@@ -33,7 +34,7 @@ export default function AIGeneratorPage() {
       const email = session?.user?.email;
       if (email) {
         setUserEmail(email);
-        
+
         // Admins bypass
         if (email === 'projectgenie16@gmail.com' || email === 'nithinpatel2025@gmail.com') {
           setHasPremium(true);
@@ -47,7 +48,7 @@ export default function AIGeneratorPage() {
           .eq('plan_id', 'ai_premium')
           .eq('status', 'active')
           .single();
-        
+
         if (data) {
           // Check expiration
           if (!data.expires_at || new Date(data.expires_at) > new Date()) {
@@ -66,10 +67,10 @@ export default function AIGeneratorPage() {
       setShowPaywall(true);
       return;
     }
-    
+
     setIsGenerating(true);
     setResult(null);
-    
+
     try {
       const response = await fetch('/api/generate-abstract', {
         method: 'POST',
@@ -78,11 +79,11 @@ export default function AIGeneratorPage() {
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) throw new Error(data.error || 'Failed to generate abstract');
 
       setResult(data.result);
-      
+
       // Increment usage
       if (!hasPremium) {
         const newCount = usageCount + 1;
@@ -151,7 +152,7 @@ export default function AIGeneratorPage() {
         <div className="flex flex-col gap-4">
           <div>
             <label htmlFor="topic" className="block text-sm font-semibold mb-2">Project Topic or Keywords</label>
-            <textarea 
+            <textarea
               id="topic"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
@@ -159,8 +160,8 @@ export default function AIGeneratorPage() {
               className="w-full min-h-[100px] p-4 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
             />
           </div>
-          <Button 
-            onClick={handleGenerate} 
+          <Button
+            onClick={handleGenerate}
             disabled={!topic || isGenerating}
             size="lg"
             className="w-full md:w-auto md:self-end h-12 px-8 text-lg"
@@ -188,38 +189,24 @@ export default function AIGeneratorPage() {
         )}
       </div>
 
-      {/* Paywall Modal */}
-      {showPaywall && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in-95">
-            <button onClick={() => setShowPaywall(false)} className="absolute top-4 right-4 p-2 hover:bg-muted rounded-full">
-              ✕
-            </button>
-            <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-              <Lock className="w-8 h-8" />
-            </div>
-            <h2 className="text-2xl font-black text-center mb-2">Free Trial Ended</h2>
-            <p className="text-center text-muted-foreground mb-8">
-              You've used your 1 free abstract generation. Choose how you want to continue.
-            </p>
-            
-            <div className="space-y-4">
-              <Button onClick={handlePayPerUse} className="w-full h-14 text-lg font-bold bg-blue-600 hover:bg-blue-700 text-white">
-                Pay ₹20 for 1 Use
-              </Button>
-              <div className="relative flex items-center py-2">
-                <div className="flex-grow border-t border-muted"></div>
-                <span className="flex-shrink-0 mx-4 text-muted-foreground text-sm font-medium">OR</span>
-                <div className="flex-grow border-t border-muted"></div>
-              </div>
-              <Button onClick={() => router.push('/pricing')} variant="outline" className="w-full h-14 text-lg font-bold border-2 flex items-center justify-center gap-2">
-                <Zap className="w-5 h-5 text-amber-500 fill-amber-500" />
-                View Unlimited Plans
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Premium UpgradeWall */}
+      <UpgradeWall
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        toolName="Abstract Generator"
+        lockedFeatures={[
+          "Unlimited abstract generations",
+          "Priority AI processing speed",
+          "Multiple format exports (IEEE, APA)",
+          "Academic tone refinement",
+        ]}
+        payPerUsePrice={20}
+        payPerUseLabel="for 1 Generation"
+        onPayPerUse={handlePayPerUse}
+        originalPrice={200}
+        discountPrice={99}
+        discountPlanName="Premium AI Helper"
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { CartProvider } from "@/context/CartContext";
 import { GoogleAnalytics } from '@next/third-parties/google';
+import MonetizationWidgets from "@/components/MonetizationWidgets";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,9 +38,9 @@ export const metadata: Metadata = {
     },
   },
   keywords: [
-    "Final year projects for CSE students in India", "BTech projects with source code", "MTech research projects", 
-    "Free ATS Resume Checker India", "Plagiarism removal service online", "AI Abstract maker", 
-    "PPT maker for engineering projects", "Document generator", "Major project for CSE", "Mini project ideas", 
+    "Final year projects for CSE students in India", "BTech projects with source code", "MTech research projects",
+    "Free ATS Resume Checker India", "Plagiarism removal service online", "AI Abstract maker",
+    "PPT maker for engineering projects", "Document generator", "Major project for CSE", "Mini project ideas",
     "Job description resume matching", "GraduateNex", "Fresher resume builder",
     "JNTUH projects", "JNTUK", "JNTUA", "Anna University BTech projects", "VTU final year projects",
     "DU", "Delhi University", "Mumbai University", "SPPU Pune University", "Osmania University",
@@ -78,8 +79,9 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground pb-20 md:pb-0">
+      <body className="min-h-full flex flex-col bg-background text-foreground pb-20 md:pb-0 pt-10">
         <CartProvider>
+          <MonetizationWidgets />
           <Navbar />
           <main className="flex-1">
             {children}
@@ -87,7 +89,7 @@ export default function RootLayout({
           <Footer />
           <MobileBottomNav />
         </CartProvider>
-        
+
         {/* Global Organization JSON-LD Schema */}
         <script
           type="application/ld+json"
@@ -112,7 +114,7 @@ export default function RootLayout({
             })
           }}
         />
-        
+
         {/* WebSite SearchAction Schema */}
         <script
           type="application/ld+json"
