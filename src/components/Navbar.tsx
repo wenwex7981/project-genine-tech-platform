@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Lock, X, ShoppingCart, Menu, UserCircle, Sparkles } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import CountrySelector from "@/components/CountrySelector";
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
@@ -121,6 +122,9 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3 z-50">
+          <div className="hidden md:block">
+            <CountrySelector />
+          </div>
           {user && (
             <Link href="/cart" className="relative p-2 hover:bg-muted rounded-full transition-colors flex items-center justify-center">
               <ShoppingCart className="h-6 w-6 text-foreground" />

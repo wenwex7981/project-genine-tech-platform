@@ -97,6 +97,7 @@
   <div class="tabs">
     <div class="tab active" data-tab="commenter">💬 Auto Commenter</div>
     <div class="tab" data-tab="poster">📸 Auto Poster</div>
+    <div class="tab" data-tab="finalyear">🎓 Final Year Projects</div>
     <div class="tab" data-tab="settings">⚙️ Settings</div>
   </div>
 
@@ -181,6 +182,31 @@
     <input type="text" id="backendUrl" placeholder="https://www.graduatenex.online" value="https://www.graduatenex.online" />
 
     <button class="btn btn-primary" id="postBtn">🤖 Generate Caption & Auto-Post</button>
+  </div>
+
+  <!-- ═══════════════════════════ FINAL YEAR PROJECTS TAB -->
+  <div class="panel" id="tab-finalyear">
+    <div class="section-title">🎓 Final Year Projects Auto-Comment</div>
+    
+    <label>Instagram ID (e.g. @your_id)</label>
+    <input type="text" id="fy-ig-id" placeholder="@projectgenie" />
+    
+    <label>Website URL</label>
+    <input type="text" id="fy-url" placeholder="https://graduatenex.online" />
+    
+    <label style="color:#6C63FF">🤖 AI Messages Enabled</label>
+    <div style="font-size:10px; color:#6b7280; margin-bottom:12px; line-height:1.4;">
+      The bot will auto-generate 20+ varied, highly-converting messages about PPT, documentation, research papers, source code & deployment for final year projects to attract students.
+    </div>
+
+    <label>Target Colleges / Accounts (one per line)</label>
+    <textarea id="fy-hashtags" rows="6" style="font-size:11px; white-space:pre;" placeholder="Enter college names or @usernames..."></textarea>
+
+    <div style="display:flex; gap:8px; margin-top: 10px;">
+      <button class="btn btn-primary" id="btn-start-fy" style="flex:3">▶ Start Auto-Comment</button>
+      <button class="btn btn-danger btn-sm" id="btn-stop-fy" style="flex:1; display:none">⏹ Stop</button>
+    </div>
+    <div id="fy-status" class="status" style="margin-top:10px;"></div>
   </div>
 
   <!-- ═══════════════════════════ SETTINGS TAB -->

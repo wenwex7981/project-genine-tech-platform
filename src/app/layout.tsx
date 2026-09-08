@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { CartProvider } from "@/context/CartContext";
+import { CountryProvider } from "@/context/CountryContext";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import MonetizationWidgets from "@/components/MonetizationWidgets";
 
@@ -80,6 +81,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground pb-20 md:pb-0 pt-10">
+        <CountryProvider>
         <CartProvider>
           <MonetizationWidgets />
           <Navbar />
@@ -89,6 +91,7 @@ export default function RootLayout({
           <Footer />
           <MobileBottomNav />
         </CartProvider>
+        </CountryProvider>
 
         {/* Global Organization JSON-LD Schema */}
         <script

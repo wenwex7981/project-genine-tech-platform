@@ -17,6 +17,7 @@ import {
   Loader2,
   TrendingUp,
   Calendar,
+  Globe,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -135,6 +136,7 @@ export default function AdminDashboard() {
     { label: "New Study Material", href: "/admin/study/new", icon: Plus, desc: "Upload educational resources" },
     { label: "View All Requests", href: "/admin/requests", icon: ArrowRight, desc: "Manage client custom requests" },
     { label: "View Blog Manager", href: "/admin/blog", icon: ArrowRight, desc: "Manage all blog posts" },
+    { label: "International Pricing", href: "/admin/international", icon: Globe, desc: "Manage country pricing and domains" },
   ];
 
   return (

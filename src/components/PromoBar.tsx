@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import { X, Zap, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { useCountry } from '@/context/CountryContext';
+
 export default function PromoBar() {
+  const { formatPrice } = useCountry();
   const [isVisible, setIsVisible] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
@@ -62,8 +65,8 @@ export default function PromoBar() {
 
             <span className="font-semibold">
               <span className="hidden sm:inline">All Access Pass </span>
-              <strong className="text-yellow-200">₹799</strong>
-              <span className="line-through opacity-70 ml-1 text-xs">₹1,499</span>
+              <strong className="text-yellow-200">{formatPrice(799)}</strong>
+              <span className="line-through opacity-70 ml-1 text-xs">{formatPrice(1499)}</span>
             </span>
 
             <span className="hidden md:inline text-white/80">—</span>

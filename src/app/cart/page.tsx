@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useCountry } from "@/context/CountryContext";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Minus, Plus, ShoppingCart, Trash2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import { supabase } from "@/lib/supabase";
 
 export default function CartPage() {
   const { cart, updateQuantity, totalPrice, clearCart } = useCart();
+  const { formatPrice, currency, razorpayCurrency, country } = useCountry();
   const [isCheckoutLoaded, setIsCheckoutLoaded] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState<string | null>(null);
 
@@ -37,7 +39,7 @@ export default function CartPage() {
       const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: totalPrice })
+        body: JSON.stringify({ amount: totalPrice, currency: razorpayCurrency })
       });
 
       if (!res.ok) {
@@ -58,7 +60,7 @@ export default function CartPage() {
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
-        currency: order.currency,
+        currency: razorpayCurrency,
         name: "GraduateNex",
         description: itemNames.length > 100 ? itemNames.substring(0, 97) + "..." : itemNames,
         order_id: order.id,
@@ -91,8 +93,10 @@ export default function CartPage() {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 items: cart,
-                total_amount: order.amount / 100,
-                user_email: userEmail
+                total_amount: totalPrice,
+                user_email: userEmail,
+                currency_code: razorpayCurrency,
+                country_code: country
               })
             });
             const verifyData = await verifyRes.json();
@@ -197,7 +201,7 @@ export default function CartPage() {
               <div className="flex-1 flex flex-col justify-between w-full h-full">
                 <div>
                   <h3 className="font-bold text-lg leading-tight mb-2 line-clamp-2">{item.title}</h3>
-                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">₹{item.price}</p>
+                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{formatPrice(item.price)}</p>
                 </div>
                 
                 <div className="flex items-center justify-between mt-4 sm:mt-0">
@@ -226,11 +230,11 @@ export default function CartPage() {
             <div className="space-y-4 mb-6 text-lg">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal ({cart.reduce((a, b) => a + b.quantity, 0)} items)</span>
-                <span>₹{totalPrice}</span>
+                <span>{formatPrice(totalPrice)}</span>
               </div>
               <div className="border-t pt-4 flex justify-between font-black text-2xl">
                 <span>Total</span>
-                <span>₹{totalPrice}</span>
+                <span>{formatPrice(totalPrice)}</span>
               </div>
             </div>
 

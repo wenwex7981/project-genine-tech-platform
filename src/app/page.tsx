@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useCountry } from '@/context/CountryContext';
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import {
@@ -135,6 +138,8 @@ const badgeColorMap: Record<string, string> = {
 };
 
 export default function Home() {
+  const { formatPrice, isIndia } = useCountry();
+  
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -348,10 +353,10 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {[
-              { name: "ATS Resume Builder", price: "₹199", desc: "AI-generated ATS-friendly resume." },
-              { name: "JD Match Analyzer", price: "₹299", desc: "Match your resume to specific job roles." },
-              { name: "Project Documentation", price: "₹149", desc: "Instant IEEE/SRS documentation templates." },
-              { name: "Final Year Projects", price: "From ₹6,000", desc: "Complete source code, setup, and support." },
+              { name: "ATS Resume Builder", price: formatPrice(199), desc: "AI-generated ATS-friendly resume." },
+              { name: "JD Match Analyzer", price: formatPrice(299), desc: "Match your resume to specific job roles." },
+              { name: "Project Documentation", price: formatPrice(149), desc: "Instant IEEE/SRS documentation templates." },
+              { name: "Final Year Projects", price: `From ${formatPrice(6000)}`, desc: "Complete source code, setup, and support." },
             ].map((plan) => (
               <Link href="/services" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
                 <div>
@@ -406,34 +411,72 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── LOCATIONS ── */}
-      <section className="w-full py-12 md:py-24 bg-background border-y">
-        <div className="container mx-auto px-4 md:px-6">
+      {/* ── LOCATIONS / GLOBAL REACH ── */}
+      <section className="w-full py-12 md:py-24 bg-background border-y overflow-hidden relative">
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="text-center mb-10 md:mb-16 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-bold">
-              <MapPin className="h-4 w-4" /> Pan-India Reach
+              <Globe className="h-4 w-4" /> Global Reach
             </div>
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-              Serving Students Across <span className="text-primary">50+ Cities in India</span>
+              Empowering Students in <span className="text-primary">50+ Countries</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Whether you are in a Tier-1 metro or a Tier-3 college town, our digital-first delivery model ensures you get premium project support wherever you are.
+              {isIndia 
+                ? "From Tier-1 metros in India to global tech hubs, our digital-first platform provides premium career and academic support worldwide."
+                : "Whether you are in North America, Europe, or Asia, our digital-first AI platform delivers premium career and academic tools worldwide."}
             </p>
           </div>
-          <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-            {LOCATIONS.map((city) => (
-              <div key={city} className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-muted border hover:border-primary/50 hover:bg-primary/5 transition-colors text-sm font-semibold">
-                <MapPin className="h-3.5 w-3.5 text-primary" /> {city}
-              </div>
-            ))}
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-bold">
-              + 30 More Cities
+          
+          {/* Countries Marquee - Row 1 */}
+          <div className="relative flex overflow-x-hidden group pb-4">
+            <div className="animate-marquee whitespace-nowrap flex items-center gap-4 group-hover:pause">
+              {/* Loop 3 times for continuous scroll effect */}
+              {[1, 2, 3].map((loop) => (
+                <div key={loop} className="flex items-center gap-4 px-2">
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇺🇸</span> United States
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇮🇳</span> India
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇬🇧</span> United Kingdom
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇨🇦</span> Canada
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇦🇺</span> Australia
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇦🇪</span> UAE
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇸🇬</span> Singapore
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇩🇪</span> Germany
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇫🇷</span> France
+                  </div>
+                  <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm text-base font-bold">
+                    <span className="text-xl">🇸🇦</span> Saudi Arabia
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+
           <p className="text-center text-muted-foreground mt-8 text-base">
-            We deliver <strong>100% digitally</strong> — all files, code, and documents sent directly to your email and dashboard. No location barriers.
+            Delivering <strong>100% digitally</strong> — instant access to AI tools, resumes, and resources. No geographic barriers.
           </p>
         </div>
+        
+        {/* Gradient fades for marquee */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-20 md:w-40 bg-gradient-to-r from-background to-transparent z-20"></div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-20 md:w-40 bg-gradient-to-l from-background to-transparent z-20"></div>
       </section>
 
       {/* ── FOUNDER ── */}

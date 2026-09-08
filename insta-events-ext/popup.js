@@ -185,6 +185,64 @@ $('btn-stop').addEventListener('click', async () => {
   log('warn', '⏹ Stopped.');
 });
 
+// ── AUTO-COMMENT: START
+$('btn-start-cmt').addEventListener('click', async () => {
+  const hashtagsRaw = $('cmt-hashtags').value.trim();
+  if (!hashtagsRaw) { log('error', 'Enter at least one hashtag for commenting!'); return; }
+  
+  const hashtags = hashtagsRaw.split(',').map(h => h.trim()).filter(Boolean);
+  const igId = $('cmt-ig-id').value.trim();
+  const url = $('cmt-url').value.trim();
+  const msg = $('cmt-msg').value.trim() || 'Looking for final year projects? We can help!';
+
+  if (!igId || !url) { log('error', 'Instagram ID and Website URL are required!'); return; }
+
+  // Save settings
+  await chrome.storage.local.set({ gnCmtSettings: { igId, url, msg, hashtags: hashtagsRaw } });
+
+  const tabs = await chrome.tabs.query({ url: '*://*.instagram.com/*' });
+  let tab;
+  if (tabs.length > 0) {
+    tab = tabs[0];
+    await chrome.tabs.update(tab.id, { active: true });
+  } else {
+    tab = await chrome.tabs.create({ url: 'https://www.instagram.com/' });
+    await new Promise(r => setTimeout(r, 3000));
+  }
+
+  log('info', `💬 AUTO-COMMENT mode: starting on ${hashtags.length} hashtags`);
+  setStatus('running');
+  
+  $('btn-start-cmt').style.display = 'none';
+  $('btn-stop-cmt').style.display = 'flex';
+
+  try {
+    await chrome.tabs.sendMessage(tab.id, { action:'START_COMMENT_BOT', hashtags, igId, url, msg });
+  } catch {
+    try {
+      await chrome.scripting.executeScript({ target:{ tabId: tab.id }, files:['content.js'] });
+      await new Promise(r => setTimeout(r, 1500));
+      await chrome.tabs.sendMessage(tab.id, { action:'START_COMMENT_BOT', hashtags, igId, url, msg });
+    } catch (e2) {
+      log('error', 'Open instagram.com first, then try again.');
+      $('btn-start-cmt').style.display = 'flex';
+      $('btn-stop-cmt').style.display = 'none';
+      setStatus('idle');
+    }
+  }
+});
+
+// ── AUTO-COMMENT: STOP
+$('btn-stop-cmt').addEventListener('click', async () => {
+  const tabs = await chrome.tabs.query({ url: '*://*.instagram.com/*' });
+  if (tabs.length) try { await chrome.tabs.sendMessage(tabs[0].id, { action:'STOP_COMMENT_BOT' }); } catch {}
+  
+  $('btn-start-cmt').style.display = 'flex';
+  $('btn-stop-cmt').style.display = 'none';
+  log('warn', '⏹ Comment Bot Stopped.');
+  setStatus('idle');
+});
+
 // ── CLEAR
 $('btn-clear').addEventListener('click', async () => {
   await chrome.storage.local.set({
@@ -293,6 +351,14 @@ async function init() {
     if ($('api-url'))   $('api-url').value   = s.gnEventsSettings.apiUrl  || 'https://graduatenex.online/api/insta-events';
     if ($('api-key'))   $('api-key').value   = s.gnEventsSettings.apiKey  || '';
     if ($('max-posts')) $('max-posts').value = s.gnEventsSettings.maxPosts || 12;
+  }
+
+  const cmtS = await chrome.storage.local.get(['gnCmtSettings']);
+  if (cmtS.gnCmtSettings) {
+    if ($('cmt-ig-id')) $('cmt-ig-id').value = cmtS.gnCmtSettings.igId || '';
+    if ($('cmt-url')) $('cmt-url').value = cmtS.gnCmtSettings.url || '';
+    if ($('cmt-msg')) $('cmt-msg').value = cmtS.gnCmtSettings.msg || '';
+    if ($('cmt-hashtags')) $('cmt-hashtags').value = cmtS.gnCmtSettings.hashtags || 'btech,mca,engineering,mba';
   }
 
   await refreshStats();

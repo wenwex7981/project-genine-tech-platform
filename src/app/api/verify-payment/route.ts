@@ -15,7 +15,9 @@ export async function POST(req: NextRequest) {
       razorpay_payment_id, 
       razorpay_signature,
       items,
-      total_amount
+      total_amount,
+      currency_code = 'INR',
+      country_code = 'IN'
     } = body;
 
     const secret = process.env.RAZORPAY_KEY_SECRET;
@@ -27,6 +29,8 @@ export async function POST(req: NextRequest) {
         razorpay_payment_id: razorpay_payment_id || 'mock_payment',
         items,
         total_amount,
+        currency_code,
+        country_code,
         status: 'paid',
         user_email: body.user_email || null
       });
@@ -46,6 +50,8 @@ export async function POST(req: NextRequest) {
         razorpay_payment_id,
         items,
         total_amount,
+        currency_code,
+        country_code,
         status: 'paid',
         user_email: body.user_email || null
       });

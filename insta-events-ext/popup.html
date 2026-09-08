@@ -153,6 +153,7 @@
 
 <div class="tabs">
   <div class="tab active" data-tab="scraper">🕷 Scraper</div>
+  <div class="tab" data-tab="comment">💬 Auto-Comment</div>
   <div class="tab" data-tab="preview">📸 Preview</div>
   <div class="tab" data-tab="settings">⚙ Settings</div>
 </div>
@@ -185,6 +186,38 @@
     <div class="sec-title">Pushed Events Preview</div>
     <div id="events-list">
       <div class="empty"><div class="empty-emoji">🔍</div><div>No events yet.<br>Start the scout!</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMENT TAB -->
+<div class="tab-panel" id="tab-comment">
+  <div class="sec">
+    <div class="sec-title">Final Year Projects Auto-Comment</div>
+    
+    <div class="inp-g">
+      <label class="inp-l">Instagram ID (e.g. @your_id)</label>
+      <input class="inp" id="cmt-ig-id" placeholder="@projectgenie" />
+    </div>
+    
+    <div class="inp-g">
+      <label class="inp-l">Website URL</label>
+      <input class="inp" id="cmt-url" placeholder="https://yourwebsite.com" />
+    </div>
+    
+    <div class="inp-g">
+      <label class="inp-l">Custom Message (Optional)</label>
+      <textarea class="inp" id="cmt-msg" rows="3" style="resize:vertical; font-family:inherit;" placeholder="Looking for final year projects? We can help!"></textarea>
+    </div>
+
+    <div class="inp-g">
+      <label class="inp-l">Target Hashtags (comma separated)</label>
+      <input class="inp" id="cmt-hashtags" value="btech,mca,engineering,mba" />
+    </div>
+
+    <div class="row" style="margin-top: 10px;">
+      <button class="btn btn-primary" id="btn-start-cmt">▶ Start Auto-Comment</button>
+      <button class="btn btn-danger" id="btn-stop-cmt" style="display:none;flex:none;width:auto;padding:9px 12px;">■ Stop</button>
     </div>
   </div>
 </div>

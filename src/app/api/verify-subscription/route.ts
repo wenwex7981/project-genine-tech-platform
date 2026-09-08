@@ -17,7 +17,9 @@ export async function POST(req: NextRequest) {
       plan_id,
       plan_name,
       user_email,
-      is_lifetime
+      is_lifetime,
+      currency_code = 'INR',
+      country_code = 'IN'
     } = body;
 
     const secret = process.env.RAZORPAY_KEY_SECRET;
@@ -49,6 +51,8 @@ export async function POST(req: NextRequest) {
         plan_id,
         plan_name,
         expires_at,
+        currency_code,
+        country_code,
         status: 'active'
       });
 

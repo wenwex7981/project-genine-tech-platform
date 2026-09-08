@@ -432,11 +432,17 @@ async function moveToNextHashtag(state) {
 (async function onLoad() {
   await sleep(1500);
   const state = await loadState();
-  if (!state?.running) return;
+  const cmtState = await loadCmtState();
 
   const url = window.location.href;
-  if (/instagram\.com\/(p|reel)\//.test(url)) await handlePostPage(state);
-  else if (url.includes('/explore/')) await handleHashtagPage(state);
+
+  if (state?.running) {
+    if (/instagram\.com\/(p|reel)\//.test(url)) await handlePostPage(state);
+    else if (url.includes('/explore/')) await handleHashtagPage(state);
+  } else if (cmtState?.running) {
+    if (/instagram\.com\/(p|reel)\//.test(url)) await handleCmtPostPage(cmtState);
+    else if (url.includes('/explore/')) await handleCmtHashtagPage(cmtState);
+  }
 })();
 
 // ══════════════════════════════════════════════════════
@@ -471,4 +477,168 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     saveState({ running: false }).then(() => sendResponse({ status: 'stopped' }));
     return true;
   }
+
+  if (request.action === 'START_COMMENT_BOT') {
+    sendResponse({ status: 'started' });
+    const { hashtags, igId, url, msg } = request;
+    
+    // Make sure to stop the other bot
+    chrome.storage.local.set({ gnEventsState: { running: false } });
+
+    const [first, ...remaining] = hashtags;
+    saveCmtState({
+      running: true,
+      pendingHashtags: remaining,
+      currentHashtag: first,
+      pendingPosts: [],
+      maxPerHashtag: 5,
+      igId, url, msg
+    }).then(() => {
+      report('navigate', { msg: `🚀 Starting CommentBot with ${hashtags.length} hashtags` });
+      window.location.href = `https://www.instagram.com/explore/tags/${first}/`;
+    });
+    return true;
+  }
+
+  if (request.action === 'STOP_COMMENT_BOT') {
+    saveCmtState({ running: false }).then(() => sendResponse({ status: 'stopped' }));
+    return true;
+  }
 });
+
+// ══════════════════════════════════════════════════════════════════
+// AUTO-COMMENT BOT LOGIC
+// ══════════════════════════════════════════════════════════════════
+
+const saveCmtState = state => chrome.storage.local.set({ gnCommentBotState: state });
+async function loadCmtState() {
+  const d = await chrome.storage.local.get(['gnCommentBotState']);
+  return d.gnCommentBotState || null;
+}
+
+async function markCmtScraped(url) {
+  const d = await chrome.storage.local.get(['gnCmtScrapedUrls']);
+  const arr = d.gnCmtScrapedUrls || [];
+  if (!arr.includes(url)) {
+    arr.push(url);
+    await chrome.storage.local.set({ gnCmtScrapedUrls: arr.slice(-1000) });
+  }
+}
+async function alreadyCmtScraped(url) {
+  const d = await chrome.storage.local.get(['gnCmtScrapedUrls']);
+  return (d.gnCmtScrapedUrls || []).includes(url);
+}
+
+async function injectComment(msg, igId, url) {
+  try {
+    let textArea = null;
+    for(let i=0; i<10; i++) {
+      textArea = document.querySelector('textarea[placeholder*="Add a comment"]');
+      if(textArea) break;
+      await sleep(1000);
+    }
+    
+    if(!textArea) {
+      report('warn', { msg: 'Textarea not found. Comments might be disabled.' });
+      return false;
+    }
+
+    const fullMessage = `${msg} DM us at ${igId} or visit ${url}`;
+    
+    textArea.focus();
+    textArea.click();
+    await sleep(500);
+
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+    if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(textArea, fullMessage);
+        textArea.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+        textArea.value = fullMessage;
+        textArea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    
+    await sleep(1000);
+
+    const postBtn = Array.from(document.querySelectorAll('div[role="button"]')).find(btn => btn.textContent.trim() === 'Post');
+    if(postBtn && !postBtn.disabled) {
+      postBtn.click();
+      report('pushed', { msg: `✅ Commented on post!` });
+      await sleep(3000);
+      return true;
+    } else {
+      report('warn', { msg: 'Post button not found or disabled.' });
+      return false;
+    }
+  } catch(e) {
+    report('error', { msg: `Comment error: ${e.message}` });
+    return false;
+  }
+}
+
+async function handleCmtHashtagPage(state) {
+  await sleep(3000);
+  report('navigate', { msg: `📡 CommentBot scanning #${state.currentHashtag}...` });
+
+  const posts = await collectPostLinks(9000);
+  if (posts.length === 0) {
+    report('warn', { msg: `No posts for #${state.currentHashtag}, skipping` });
+    await moveCmtToNextHashtag(state);
+    return;
+  }
+
+  const maxPer = state.maxPerHashtag || 5;
+  report('info', { msg: `#${state.currentHashtag}: ${posts.length} posts found → commenting on ${Math.min(posts.length, maxPer)}` });
+  await saveCmtState({ ...state, pendingPosts: posts.slice(0, maxPer) });
+  window.location.href = posts[0];
+}
+
+async function handleCmtPostPage(state) {
+  const { pendingPosts = [], igId, url, msg } = state;
+  const currentUrl = window.location.href.split('?')[0];
+
+  await sleep(3000);
+
+  if (!(await alreadyCmtScraped(currentUrl))) {
+    report('info', { msg: `💬 Attempting to comment: ${window.location.pathname}` });
+    await markCmtScraped(currentUrl);
+    
+    const success = await injectComment(msg, igId, url);
+    if(success) {
+      const delay = Math.floor(Math.random() * 10000) + 15000; // 15s to 25s delay
+      report('info', { msg: `⏳ Waiting ${Math.round(delay/1000)}s before next post to avoid rate limits...` });
+      await sleep(delay);
+    }
+  } else {
+    report('skip', { msg: `⏭ Already commented on: ${window.location.pathname}` });
+  }
+
+  const remaining = pendingPosts.slice(1);
+  if (remaining.length > 0) {
+    await saveCmtState({ ...state, pendingPosts: remaining });
+    window.location.href = remaining[0];
+  } else {
+    await moveCmtToNextHashtag({ ...state, pendingPosts: [] });
+  }
+}
+
+async function moveCmtToNextHashtag(state) {
+  const pending = state.pendingHashtags || [];
+  if (pending.length === 0) {
+    await saveCmtState({ ...state, running: false });
+    report('done', { msg: `🎉 CommentBot finished all hashtags!` });
+    return;
+  }
+
+  const [next, ...remaining] = pending;
+  report('navigate', { msg: `→ #${next} (${remaining.length} hashtags left)` });
+
+  await saveCmtState({
+    ...state,
+    pendingHashtags: remaining,
+    currentHashtag: next,
+    pendingPosts: [],
+  });
+
+  window.location.href = `https://www.instagram.com/explore/tags/${next}/`;
+}

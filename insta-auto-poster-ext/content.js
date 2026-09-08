@@ -3,6 +3,39 @@
 // RELIABLE: Navigate directly to post pages and comment
 // ══════════════════════════════════════════════════════════════════
 
+// ─────────────────────────────────────────────────────
+// IN-PAGE REPORTER UI
+// ─────────────────────────────────────────────────────
+function report(type, details) {
+  console.log(`[GraduateNex Bot] ${type.toUpperCase()}: ${details.msg}`);
+  let r = document.getElementById('gn-bot-reporter');
+  if (!r) {
+    r = document.createElement('div');
+    r.id = 'gn-bot-reporter';
+    r.style.cssText = `
+      position:fixed; top:20px; right:20px; width:350px;
+      background:rgba(17, 17, 17, 0.95); color:#fff; font-family:monospace; font-size:14px;
+      padding:20px; border-radius:12px; z-index:9999999;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.8); border: 2px solid #6C63FF;
+      backdrop-filter: blur(8px);
+    `;
+    document.body.appendChild(r);
+  }
+  let icon = 'ℹ️';
+  if (type === 'error') icon = '❌';
+  if (type === 'done') icon = '🎉';
+  if (type === 'navigate') icon = '🚀';
+  
+  r.innerHTML = `
+    <div style="margin-bottom:12px; font-weight:bold; color:#6C63FF; font-size:16px; display:flex; align-items:center; gap:8px;">
+      <span style="animation: blink 1s infinite;">🔴</span> GraduateNex Bot Active
+    </div>
+    <div style="margin-bottom:8px; line-height:1.4;">${icon} ${details.msg}</div>
+    <div style="font-size:11px; color:#888; border-top: 1px solid #333; padding-top:8px; margin-top:12px;">${new Date().toLocaleTimeString()}</div>
+    <style>@keyframes blink { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }</style>
+  `;
+}
+
 let commenterRunning = false;
 let commentedCount   = 0;
 let skippedCount     = 0;
@@ -48,7 +81,11 @@ const COMMENTS = {
 
 function getComment(topic) {
   const pool = COMMENTS[topic] || COMMENTS.default;
-  return pool[Math.floor(Math.random() * pool.length)];
+  let comment = pool[Math.floor(Math.random() * pool.length)];
+  
+  // Remove existing link to avoid duplication, then append the required tags
+  comment = comment.replace(/graduatenex\.online/gi, '').trim();
+  return `${comment}\n\n🌐 graduatenex.online\n📸 @graduatenex\n🏷️ #graduatenex`;
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -492,17 +529,27 @@ async function moveToNextHashtag(state) {
 // ─────────────────────────────────────────────────────
 (async function onLoad() {
   await sleep(1200);
+  
+  const fyData = await chrome.storage.local.get(['gnFyBotState']);
+  const fyState = fyData.gnFyBotState;
+  
   const data  = await chrome.storage.local.get(['gnCommenterState']);
   const state = data.gnCommenterState;
+  
+  const url = window.location.href;
+  const isPost    = /instagram\.com\/(p|reel)\//.test(url);
+  const isExplore = url.includes('/explore/');
+  
+  if (fyState && fyState.running) {
+    await startFyBotFlow(fyState);
+    return;
+  }
+
   if (!state || !state.running) return;
 
   commenterRunning  = true;
   commentedCount    = state.stats?.commentedCount || 0;
   skippedCount      = state.stats?.skippedCount   || 0;
-
-  const url = window.location.href;
-  const isPost    = /instagram\.com\/(p|reel)\//.test(url);
-  const isExplore = url.includes('/explore/');
 
   if (isPost)    await handlePostPage(state);
   else if (isExplore) await handleExplorePage(state);
@@ -572,7 +619,307 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     startAutomation(base64Data || imageData, caption, filename, filetype);
     return true;
   }
+
+  if (request.action === 'START_FY_BOT') {
+    sendResponse({ status: 'started' });
+    const { hashtags, igId, url } = request;
+    
+    chrome.storage.local.set({ gnCommenterState: null });
+    commenterRunning = false;
+
+    const [first, ...remaining] = hashtags;
+    saveFyState({
+      running: true,
+      pendingHashtags: remaining,
+      currentHashtag: first,
+      pendingPosts: [],
+      pendingProfile: null,
+      igId, url
+    }).then(() => {
+      window.location.href = `https://www.instagram.com/`;
+    });
+    return true;
+  }
+
+  if (request.action === 'STOP_FY_BOT') {
+    saveFyState({ running: false }).then(() => sendResponse({ status: 'stopped' }));
+    return true;
+  }
 });
+
+// ══════════════════════════════════════════════════════════════════
+// FINAL YEAR PROJECTS BOT LOGIC
+// ══════════════════════════════════════════════════════════════════
+
+const FY_MESSAGES = [
+  "Looking for last minute final year projects? We are here to help you! PPT, documentation, research paper, source code, deployment & guidance up to submission. 🚀",
+  "Final year panic? 😱 We provide complete projects with IEEE papers, SRS, zero plagiarism, and full source code!",
+  "Get your B.Tech/MCA final year project done fast with our expert guidance. Full deployment and documentation included! 🎓",
+  "Need a solid research paper & project source code for your final year? We provide A-Z guidance up to your final submission. 💡",
+  "Don't worry about plagiarism! We offer 100% original final year projects with complete documentation and PPTs. ✅",
+  "Stuck on your final year project deployment? Let us handle the source code, research paper, and submission guidance! 🔧",
+  "We help engineering students with last-minute final year projects! AI, ML, IoT, Blockchain—complete with documentation! 🤖",
+  "Your one-stop solution for final year projects! We provide everything from PPTs to plagiarism removal and deployment. 🎓",
+  "Final year viva coming up? Get a fully deployed project with a research paper and complete guidance from us! 🚀",
+  "B.Tech & MCA students: Get your major project sorted today. Full source code, zero plagiarism, and final submission support! 💻",
+  "Why stress over documentation? We provide final year projects with complete SRS, PPT, and research papers! 📄",
+  "Last minute project submission? We deliver ready-to-deploy final year projects with full guidance! ⏳",
+  "From idea to deployment—we help students build and submit top-tier final year projects with zero plagiarism. 🏆",
+  "Get IEEE standard final year projects with complete documentation, PPT, and deployment assistance! 🌟",
+  "Need help with your major project? We provide source code, research papers, and complete submission guidance! 🎯",
+  "Engineering students: Get your final year project done right! PPT, documentation, and deployment included. ⚙️",
+  "We specialize in last-minute final year projects! Complete with plagiarism removal and full source code. 🔥",
+  "Don't fail your final year project! We provide A-Z support, from research papers to successful deployment! 📚",
+  "Need an AI/ML or Web Dev project for your final year? We provide source code, documentation, and PPTs! 🧠",
+  "Complete your final year project stress-free! We offer full deployment, plagiarism removal, and submission guidance. 🚀"
+];
+
+const saveFyState = state => chrome.storage.local.set({ gnFyBotState: state });
+async function loadFyState() {
+  const d = await chrome.storage.local.get(['gnFyBotState']);
+  return d.gnFyBotState || null;
+}
+async function alreadyFyScraped(url) {
+  const d = await chrome.storage.local.get(['gnFyScrapedUrls']);
+  return (d.gnFyScrapedUrls || []).includes(url);
+}
+async function markFyScraped(url) {
+  const d = await chrome.storage.local.get(['gnFyScrapedUrls']);
+  const arr = d.gnFyScrapedUrls || [];
+  if (!arr.includes(url)) {
+    arr.push(url);
+    await chrome.storage.local.set({ gnFyScrapedUrls: arr.slice(-10000) });
+  }
+}
+async function alreadyVisitedProfile(username) {
+  const d = await chrome.storage.local.get(['gnFyVisitedProfiles']);
+  return (d.gnFyVisitedProfiles || []).includes(username);
+}
+async function markProfileVisited(username) {
+  const d = await chrome.storage.local.get(['gnFyVisitedProfiles']);
+  const arr = d.gnFyVisitedProfiles || [];
+  if (!arr.includes(username)) {
+    arr.push(username);
+    await chrome.storage.local.set({ gnFyVisitedProfiles: arr.slice(-5000) });
+  }
+}
+
+async function startFyBotFlow(state) {
+  if (state.pendingPosts && state.pendingPosts.length > 0) {
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('/p/') || currentUrl.includes('/reel/')) {
+      await handleFyPostPage(state);
+      return;
+    } else {
+      window.location.href = state.pendingPosts[0];
+      return;
+    }
+  }
+
+  if (state.pendingProfile) {
+    const currentUrl = window.location.href;
+    if (currentUrl.toLowerCase().includes(state.pendingProfile.toLowerCase())) {
+      await handleFyProfilePage(state);
+      return;
+    } else {
+      window.location.href = `https://www.instagram.com/${state.pendingProfile}/`;
+      return;
+    }
+  }
+
+  await handleFyCollegeSearchLoop(state);
+}
+
+async function handleFyCollegeSearchLoop(state) {
+  let currentState = state;
+  
+  while (currentState.running && currentState.currentHashtag) {
+    const college = currentState.currentHashtag;
+    report('navigate', { msg: `🔍 Searching IG for: ${college.substring(0, 30)}...` });
+    await sleep(800); // FASTER: 1500 -> 800
+    
+    let foundUsername = null;
+    try {
+      const csrfMatch = document.cookie.match(/csrftoken=([^;]+)/);
+      const csrfToken = csrfMatch ? csrfMatch[1] : '';
+      const searchUrl = `https://www.instagram.com/web/search/topsearch/?context=blended&query=${encodeURIComponent(college)}`;
+      
+      const res = await fetch(searchUrl, {
+         headers: {
+           'X-CSRFToken': csrfToken,
+           'X-Requested-With': 'XMLHttpRequest'
+         }
+      });
+      
+      if (res.ok) {
+         const text = await res.text();
+         try {
+           const data = JSON.parse(text);
+           const user = data.users && data.users.length > 0 ? data.users[0].user : null;
+           if (user && user.username) foundUsername = user.username;
+         } catch(e) {
+           report('warn', { msg: `IG returned invalid JSON for search` });
+         }
+      } else {
+         report('warn', { msg: `API error ${res.status} for search` });
+      }
+    } catch (err) {
+       report('error', { msg: `Search failed: ${err.message}` });
+    }
+    
+    if (foundUsername) {
+       const alreadyVisited = await alreadyVisitedProfile(foundUsername);
+       if (alreadyVisited) {
+         report('skipped', { msg: `⏭️ Already visited profile @${foundUsername}, skipping...` });
+         const pending = currentState.pendingHashtags || [];
+         if (pending.length === 0) {
+            await chrome.storage.local.set({ gnFyBotState: null });
+            report('done', { msg: `🎉 Finished all colleges!` });
+            return;
+         }
+         const [next, ...remaining] = pending;
+         currentState.pendingHashtags = remaining;
+         currentState.currentHashtag = next;
+         await saveFyState(currentState);
+         continue; // Move to next iteration immediately
+       }
+
+       report('info', { msg: `✅ Found profile: @${foundUsername}` });
+       await markProfileVisited(foundUsername);
+       currentState.pendingProfile = foundUsername;
+       await saveFyState(currentState);
+       window.location.href = `https://www.instagram.com/${foundUsername}/`;
+       return; 
+    } else {
+       report('warn', { msg: `❌ No profile found for ${college.substring(0, 20)}` });
+       
+       const pending = currentState.pendingHashtags || [];
+       if (pending.length === 0) {
+          await chrome.storage.local.set({ gnFyBotState: null });
+          report('done', { msg: `🎉 Finished all colleges!` });
+          return;
+       }
+       const [next, ...remaining] = pending;
+       currentState.pendingHashtags = remaining;
+       currentState.currentHashtag = next;
+       await saveFyState(currentState);
+    }
+  }
+}
+
+async function handleFyProfilePage(state) {
+  await sleep(1500); // FASTER: 2500 -> 1500
+  report('info', { msg: `Collecting posts from @${state.pendingProfile}...` });
+
+  let posts = await collectPostLinks(3000); // FASTER: 5000 -> 3000
+  
+  // Filter out already scraped posts BEFORE visiting them
+  const scrapedData = await chrome.storage.local.get(['gnFyScrapedUrls']);
+  const scrapedUrls = scrapedData.gnFyScrapedUrls || [];
+  posts = posts.filter(url => !scrapedUrls.includes(url));
+
+  if (posts.length === 0) {
+    report('warn', { msg: `No fresh posts found on profile, skipping` });
+    
+    const pending = state.pendingHashtags || [];
+    if (pending.length === 0) {
+       await chrome.storage.local.set({ gnFyBotState: null });
+       report('done', { msg: `🎉 Finished all colleges!` });
+       return;
+    }
+    const [next, ...remaining] = pending;
+    state.pendingHashtags = remaining;
+    state.currentHashtag = next;
+    state.pendingProfile = null;
+    await saveFyState(state);
+    
+    await handleFyCollegeSearchLoop(state);
+    return;
+  }
+  
+  const maxPer = 2; 
+  state.pendingProfile = null;
+  state.pendingPosts = posts.slice(0, maxPer);
+  await saveFyState(state);
+  
+  report('navigate', { msg: `Found ${posts.length} posts. Navigating to first post...` });
+  await sleep(800);
+  window.location.href = state.pendingPosts[0];
+}
+
+async function handleFyPostPage(state) {
+  const { pendingPosts = [], igId, url } = state;
+  const currentUrl = window.location.href.split('?')[0];
+
+  await sleep(1200); // FASTER: 2000 -> 1200
+  report('info', { msg: `Preparing to comment on post...` });
+
+  if (!(await alreadyFyScraped(currentUrl))) {
+    await markFyScraped(currentUrl);
+    
+    const box = await findCommentBox(4000); // FASTER: 5000 -> 4000
+    if (box) {
+      report('info', { msg: `Found comment box, typing AI message...` });
+      const msg = FY_MESSAGES[Math.floor(Math.random() * FY_MESSAGES.length)];
+      const adBlock = `🚀 We Provide Complete B.Tech/MCA/MBA Projects!
+✅ Mini & Major Projects
+✅ Research Papers, PPTs & Abstracts
+✅ Full Documentation & SRS
+✅ End-to-End Support & Deployment
+✅ Plagiarism Removal
+✅ Resume Building Projects
+
+📞 Call/WhatsApp: 7981994870
+📸 DM us at ${igId}
+🌐 Visit: ${url}
+🏷️ #graduatenex #finalyearprojects #miniprojects`;
+      const fullMessage = `${msg}\n\n${adBlock}`;
+      
+      const typed = await typeComment(box, fullMessage);
+      if (typed) {
+        if (typed !== 'API_SUCCESS') {
+          await sleep(400);
+          await submitComment(box);
+        }
+        report('done', { msg: `✅ Comment posted successfully!` });
+        const delay = Math.floor(Math.random() * 2000) + 2000; // FASTER: 4000+4000 -> 2000+2000
+        await sleep(delay);
+      }
+    } else {
+      report('warn', { msg: `❌ Could not find comment box.` });
+      await sleep(1000);
+    }
+  } else {
+      report('info', { msg: `Already commented on this post.` });
+      await sleep(500);
+  }
+
+  const remaining = pendingPosts.slice(1);
+  if (remaining.length > 0 && state.running) {
+    state.pendingPosts = remaining;
+    await saveFyState(state);
+    report('navigate', { msg: `Moving to next post...` });
+    window.location.href = remaining[0];
+  } else {
+    report('info', { msg: `Done with this college profile.` });
+    await sleep(500);
+    
+    const pending = state.pendingHashtags || [];
+    if (pending.length === 0) {
+       await chrome.storage.local.set({ gnFyBotState: null });
+       report('done', { msg: `🎉 Finished all colleges!` });
+       return;
+    }
+    const [next, ...remainingHashes] = pending;
+    state.pendingHashtags = remainingHashes;
+    state.currentHashtag = next;
+    state.pendingPosts = [];
+    state.pendingProfile = null;
+    await saveFyState(state);
+    
+    await handleFyCollegeSearchLoop(state);
+  }
+}
 
 // ══════════════════════════════════════════════════════
 // AUTO POSTER — original (unchanged)

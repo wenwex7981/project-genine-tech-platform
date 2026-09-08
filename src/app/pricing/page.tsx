@@ -5,12 +5,22 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, ShieldCheck, Sparkles, FileText, Medal, ArrowRight, Loader2, Zap } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { useCountry } from '@/context/CountryContext';
+import { getAllPricesForCountry, PRODUCT_CATALOG } from '@/lib/i18n/pricing';
 
 export default function PricingPage() {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isCheckoutLoaded, setIsCheckoutLoaded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { country, currency, isIndia, formatPrice, razorpayCurrency } = useCountry();
+  const [prices, setPrices] = useState<Record<string, {price: number; currencyCode: string}>>({});
+
+  useEffect(() => {
+    getAllPricesForCountry(country).then(setPrices);
+  }, [country]);
+
+  const getPrice = (productId: string) => prices[productId]?.price || PRODUCT_CATALOG[productId]?.defaultPriceINR || 0;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -36,7 +46,7 @@ export default function PricingPage() {
       const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount })
+        body: JSON.stringify({ amount, currency: razorpayCurrency })
       });
 
       if (!res.ok) throw new Error("Could not create order");
@@ -45,7 +55,7 @@ export default function PricingPage() {
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
-        currency: order.currency,
+        currency: razorpayCurrency,
         name: "GraduateNex",
         description: planName,
         order_id: order.id,
@@ -146,10 +156,10 @@ export default function PricingPage() {
 
                 <div className="max-w-md mx-auto bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 mb-8 space-y-3">
                   {[
-                    { name: "Premium AI Helper", price: "₹200" },
-                    { name: "AI Tools Pro (Plagiarism + Humanizer)", price: "₹300" },
-                    { name: "Resume Hub Pro (ATS + JD Match)", price: "₹500" },
-                    { name: "Hackathon Pro Badge", price: "₹500" },
+                    { name: "Premium AI Helper", price: formatPrice(getPrice('ai_premium')) },
+                    { name: "AI Tools Pro (Plagiarism + Humanizer)", price: formatPrice(getPrice('plagiarism_pro')) },
+                    { name: "Resume Hub Pro (ATS + JD Match)", price: formatPrice(getPrice('resume_hub_pro')) },
+                    { name: "Hackathon Pro Badge", price: formatPrice(getPrice('hackathon_badge_15')) },
                   ].map((item) => (
                     <div key={item.name} className="flex justify-between items-center text-sm text-zinc-300">
                       <span className="flex items-center gap-2">
@@ -161,12 +171,12 @@ export default function PricingPage() {
                   ))}
                   <div className="border-t border-zinc-700 pt-3 mt-3 flex justify-between items-center">
                     <span className="text-sm text-zinc-400 font-semibold">Total Value</span>
-                    <span className="text-zinc-500 line-through font-bold">₹1,500</span>
+                    <span className="text-zinc-500 line-through font-bold">{formatPrice(getPrice('ai_premium') + getPrice('plagiarism_pro') + getPrice('resume_hub_pro') + getPrice('hackathon_badge_15'))}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-lg text-white font-black">YOUR PRICE</span>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400">₹799</span>
+                      <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400">{formatPrice(getPrice('all_access_pass'))}</span>
                       <span className="text-sm text-zinc-500 font-medium">/30 days</span>
                     </div>
                   </div>
@@ -174,7 +184,7 @@ export default function PricingPage() {
 
                 <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                   <Button
-                    onClick={() => handlePurchase('all_access_pass', 'All Access Pass (30 Days)', 799)}
+                    onClick={() => handlePurchase('all_access_pass', 'All Access Pass (30 Days)', getPrice('all_access_pass'))}
                     disabled={isProcessing}
                     className="flex-1 h-14 text-lg font-black bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black shadow-xl shadow-amber-500/25 rounded-xl border-0"
                   >
@@ -183,12 +193,12 @@ export default function PricingPage() {
                   <div className="flex-1 text-center sm:text-left flex flex-col justify-center">
                     <p className="text-xs text-zinc-500 font-medium">Also available:</p>
                     <Button
-                      onClick={() => handlePurchase('all_access_semester', 'All Access Semester (6 Months)', 1999)}
+                      onClick={() => handlePurchase('all_access_semester', 'All Access Semester (6 Months)', getPrice('all_access_semester'))}
                       disabled={isProcessing}
                       variant="ghost"
                       className="text-sm font-bold text-violet-400 hover:text-violet-300 hover:bg-violet-950/30 p-0 h-auto justify-start"
                     >
-                      Semester Pass — ₹1,999 / 6 months →
+                      Semester Pass — {formatPrice(getPrice('all_access_semester'))} / 6 months →
                     </Button>
                   </div>
                 </div>
@@ -230,24 +240,24 @@ export default function PricingPage() {
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-3xl border shadow-sm flex flex-col relative overflow-hidden">
               <div className="absolute top-4 right-4 text-xs font-bold bg-orange-100 text-orange-700 px-2 py-1 rounded">Pay Per Use</div>
               <h3 className="text-xl font-bold mb-2">Pay As You Go</h3>
-              <div className="text-4xl font-black mb-6">₹20<span className="text-lg text-muted-foreground font-normal">/use</span></div>
+              <div className="text-4xl font-black mb-6">{formatPrice(getPrice('abstract_gen'))}<span className="text-lg text-muted-foreground font-normal">/use</span></div>
               <ul className="space-y-4 mb-8 flex-grow">
-                <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> Abstract Generator: ₹20 / use</li>
-                <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> UML Diagrams: ₹50 / use</li>
+                <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> Abstract Generator: {formatPrice(getPrice('abstract_gen'))} / use</li>
+                <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> UML Diagrams: {formatPrice(50)} / use</li>
               </ul>
               <Button variant="secondary" className="w-full h-12 font-bold" onClick={() => router.push('/ai-abstracts')}>Go to Tools</Button>
             </div>
             <div className="bg-gradient-to-b from-blue-600 to-blue-800 text-white p-8 rounded-3xl shadow-xl flex flex-col relative transform scale-105 z-10">
               <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-cyan-300 to-blue-300"></div>
               <h3 className="text-xl font-bold mb-2">Premium AI Helper</h3>
-              <div className="text-4xl font-black mb-6">₹200<span className="text-lg text-blue-200 font-normal">/30 days</span></div>
+              <div className="text-4xl font-black mb-6">{formatPrice(getPrice('ai_premium'))}<span className="text-lg text-blue-200 font-normal">/30 days</span></div>
               <ul className="space-y-4 mb-8 flex-grow">
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-cyan-300" /> Unlimited Abstract Generations</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-cyan-300" /> Unlimited UML Diagrams</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-cyan-300" /> Priority Processing</li>
               </ul>
               <Button
-                onClick={() => handlePurchase('ai_premium', 'Premium AI Helper (30 Days)', 200)}
+                onClick={() => handlePurchase('ai_premium', 'Premium AI Helper (30 Days)', getPrice('ai_premium'))}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-white text-blue-700 hover:bg-blue-50"
               >
@@ -279,7 +289,7 @@ export default function PricingPage() {
             <div className="p-8 md:w-1/2 bg-gray-50 dark:bg-zinc-800/50 flex flex-col justify-between">
               <div>
                 <h3 className="text-xl font-bold mb-2 flex items-center gap-2">AI Tools Pro <Zap className="w-5 h-5 text-yellow-500" /></h3>
-                <div className="text-4xl font-black mb-6">₹300<span className="text-lg text-muted-foreground font-normal">/30 days</span></div>
+                <div className="text-4xl font-black mb-6">{formatPrice(getPrice('plagiarism_pro'))}<span className="text-lg text-muted-foreground font-normal">/30 days</span></div>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center gap-2 text-sm font-semibold"><CheckCircle2 className="w-5 h-5 text-green-500" /> Unlimited Plagiarism Checks</li>
                   <li className="flex items-center gap-2 text-sm font-semibold"><CheckCircle2 className="w-5 h-5 text-green-500" /> Unlimited Humanizer Usage</li>
@@ -287,7 +297,7 @@ export default function PricingPage() {
                 </ul>
               </div>
               <Button
-                onClick={() => handlePurchase('plagiarism_pro', 'AI Tools Pro (30 Days)', 300)}
+                onClick={() => handlePurchase('plagiarism_pro', 'AI Tools Pro (30 Days)', getPrice('plagiarism_pro'))}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-zinc-900 text-white hover:bg-zinc-800"
               >
@@ -318,23 +328,23 @@ export default function PricingPage() {
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-3xl border shadow-sm">
               <div className="absolute top-4 right-4 text-xs font-bold bg-orange-100 text-orange-700 px-2 py-1 rounded">Pay Per Use</div>
               <h3 className="text-xl font-bold mb-2">A La Carte</h3>
-              <div className="text-4xl font-black mb-6">₹50<span className="text-lg text-muted-foreground font-normal">/check</span></div>
+              <div className="text-4xl font-black mb-6">{formatPrice(getPrice('ats_scan'))}<span className="text-lg text-muted-foreground font-normal">/check</span></div>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> Detailed ATS Breakdown: ₹50</li>
-                <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> JD Based Matching: ₹100</li>
+                <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> Detailed ATS Breakdown: {formatPrice(getPrice('ats_scan'))}</li>
+                <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-green-500" /> JD Based Matching: {formatPrice(getPrice('jd_match'))}</li>
               </ul>
               <Button variant="secondary" className="w-full h-12 font-bold" onClick={() => router.push('/resume')}>Go to Resume Hub</Button>
             </div>
             <div className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-8 rounded-3xl shadow-lg flex flex-col">
               <h3 className="text-xl font-bold mb-2">Resume Hub Monthly</h3>
-              <div className="text-4xl font-black mb-6">₹500<span className="text-lg text-emerald-200 font-normal">/30 days</span></div>
+              <div className="text-4xl font-black mb-6">{formatPrice(getPrice('resume_hub_pro'))}<span className="text-lg text-emerald-200 font-normal">/30 days</span></div>
               <ul className="space-y-4 mb-8 flex-grow">
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-emerald-200" /> Unlimited ATS Breakdowns</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-emerald-200" /> Unlimited JD Matching</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-emerald-200" /> Access to Premium Templates</li>
               </ul>
               <Button
-                onClick={() => handlePurchase('resume_hub_pro', 'Resume Hub Monthly', 500)}
+                onClick={() => handlePurchase('resume_hub_pro', 'Resume Hub Monthly', getPrice('resume_hub_pro'))}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-white text-emerald-700 hover:bg-emerald-50"
               >
@@ -356,14 +366,14 @@ export default function PricingPage() {
           <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-3xl border-2 border-indigo-100 hover:border-indigo-300 transition-colors shadow-sm relative">
               <h3 className="text-xl font-bold mb-2">Pro Badge</h3>
-              <div className="text-4xl font-black mb-6">₹500<span className="text-lg text-muted-foreground font-normal">/lifetime</span></div>
+              <div className="text-4xl font-black mb-6">{formatPrice(getPrice('hackathon_badge_15'))}<span className="text-lg text-muted-foreground font-normal">/lifetime</span></div>
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-indigo-500" /> Access Card for 15 Hackathons</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-indigo-500" /> "Pro Hacker" Profile Badge</li>
                 <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-5 h-5 text-indigo-500" /> Priority Registration</li>
               </ul>
               <Button
-                onClick={() => handlePurchase('hackathon_badge_15', 'Hackathon Pro Badge (15 Events)', 500, true)}
+                onClick={() => handlePurchase('hackathon_badge_15', 'Hackathon Pro Badge (15 Events)', getPrice('hackathon_badge_15'), true)}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-indigo-600 hover:bg-indigo-700 text-white"
               >
@@ -379,14 +389,14 @@ export default function PricingPage() {
                 Best Value
               </div>
               <h3 className="text-xl font-bold mb-2">Unlimited Badge</h3>
-              <div className="text-4xl font-black mb-6">₹1000<span className="text-lg text-indigo-300 font-normal">/lifetime</span></div>
+              <div className="text-4xl font-black mb-6">{formatPrice(getPrice('hackathon_badge_unlimited'))}<span className="text-lg text-indigo-300 font-normal">/lifetime</span></div>
               <ul className="space-y-4 mb-8 relative z-10">
                 <li className="flex items-center gap-2 text-sm font-semibold"><CheckCircle2 className="w-5 h-5 text-amber-400" /> Join UNLIMITED Hackathons</li>
                 <li className="flex items-center gap-2 text-sm font-semibold"><CheckCircle2 className="w-5 h-5 text-amber-400" /> Join UNLIMITED Events</li>
                 <li className="flex items-center gap-2 text-sm font-semibold"><CheckCircle2 className="w-5 h-5 text-amber-400" /> Gold "Elite Hacker" Badge</li>
               </ul>
               <Button
-                onClick={() => handlePurchase('hackathon_badge_unlimited', 'Hackathon Unlimited Badge', 1000, true)}
+                onClick={() => handlePurchase('hackathon_badge_unlimited', 'Hackathon Unlimited Badge', getPrice('hackathon_badge_unlimited'), true)}
                 disabled={isProcessing}
                 className="w-full h-12 font-bold bg-gradient-to-r from-amber-400 to-yellow-500 text-black hover:from-amber-500 hover:to-yellow-600 border-none shadow-lg"
               >

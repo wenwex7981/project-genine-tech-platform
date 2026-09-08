@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
+import { RAZORPAY_SUPPORTED_CURRENCIES, getCurrencyMultiplier } from '@/lib/i18n/countries';
 
 export async function POST(req: NextRequest) {
   try {
-    const { amount, currency = 'INR' } = await req.json();
+    let { amount, currency = 'INR' } = await req.json();
+
+    if (!RAZORPAY_SUPPORTED_CURRENCIES.has(currency)) {
+      currency = 'INR';
+    }
 
     // Support both server-side and public env var naming
     const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
@@ -29,7 +34,7 @@ export async function POST(req: NextRequest) {
     }
 
     const options = {
-      amount: Math.round(safeAmount * 100), // convert to paise
+      amount: Math.round(safeAmount * getCurrencyMultiplier(currency)), // convert to smallest unit
       currency,
       receipt: `rcpt_${Date.now().toString().slice(-8)}`,
     };
