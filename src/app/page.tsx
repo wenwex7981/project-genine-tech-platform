@@ -169,9 +169,9 @@ export default function Home() {
       <AuthRedirect />
       {/* ── HERO SECTION ── */}
       <section className="relative w-full min-h-[92vh] flex flex-col justify-center bg-zinc-950 overflow-hidden text-white">
-        <Image src="/images/hero-bg-global.jpg" alt="Hero Background" fill priority className="object-cover object-center opacity-40 z-0" sizes="100vw" />
+        <Image src="/images/hero-bg-global.jpg" alt="Hero Background" fill priority className="object-cover object-center opacity-70 z-0" sizes="100vw" />
         {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-zinc-950/75 backdrop-blur-[2px] z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/80 via-zinc-950/30 to-zinc-950/90 z-0"></div>
         
         {/* Background gradient orbs */}
         <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3 pointer-events-none z-0" />
