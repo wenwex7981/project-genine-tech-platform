@@ -23,10 +23,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.graduatenex.online'),
   title: {
-    default: "Final Year Projects with Source Code & Free ATS Resume Builder [2026] — GraduateNex",
+    default: "Academic Projects, AI Resume Builder & Thesis Help for Students Worldwide [2026] — GraduateNex",
     template: "%s | GraduateNex",
   },
-  description: "GraduateNex provides premium, zero-plagiarism source code, research papers, and AI-powered document generation for Indian students and freshers to secure top jobs.",
+  description: "GraduateNex is the world's premier academic success platform — production-ready capstone projects, AI-powered ATS resume builders, thesis & dissertation help, and career tools for students in the US, UK, Canada, Australia, India, and 50+ countries.",
   robots: {
     index: true,
     follow: true,
@@ -39,21 +39,40 @@ export const metadata: Metadata = {
     },
   },
   keywords: [
-    "Final year projects for CSE students in India", "BTech projects with source code", "MTech research projects",
-    "Free ATS Resume Checker India", "Plagiarism removal service online", "AI Abstract maker",
-    "PPT maker for engineering projects", "Document generator", "Major project for CSE", "Mini project ideas",
-    "Job description resume matching", "GraduateNex", "Fresher resume builder",
-    "JNTUH projects", "JNTUK", "JNTUA", "Anna University BTech projects", "VTU final year projects",
-    "DU", "Delhi University", "Mumbai University", "SPPU Pune University", "Osmania University",
-    "SRM University projects", "VIT Vellore", "Manipal University", "Amity", "LPU", "Chandigarh University",
-    "AKTU projects", "UPTU", "GTU Gujarat", "RGPV Bhopal", "KTU Kerala", "MAKAUT", "BPUT", "Andhra University", "SVU",
-    "IIT projects", "NIT final year projects", "IIIT", "BITS Pilani",
-    "Andhra Pradesh", "Telangana", "Maharashtra", "Karnataka", "Tamil Nadu", "Delhi NCR", "Uttar Pradesh"
+    // Global keywords
+    "capstone project help", "final year project source code", "thesis writing service", "dissertation help online",
+    "ATS resume builder", "AI resume checker", "academic project marketplace", "plagiarism-free projects",
+    "literature review writing", "research paper help", "IEEE format paper writing",
+    // US-focused
+    "capstone project help USA", "thesis writing service USA", "ATS resume builder United States",
+    "MIT projects", "Stanford capstone", "Harvard dissertation help", "Georgia Tech projects",
+    "UC Berkeley", "Carnegie Mellon", "University of Michigan", "Purdue University",
+    // UK-focused
+    "dissertation writing service UK", "final year project UK", "thesis help United Kingdom",
+    "Oxford University", "Cambridge", "Imperial College London", "UCL projects", "University of Edinburgh",
+    // Canada-focused
+    "capstone project Canada", "thesis writing help Canada",
+    "University of Toronto", "UBC", "McGill University", "University of Waterloo",
+    // Australia-focused
+    "thesis help Australia", "final year project Australia",
+    "University of Melbourne", "UNSW", "ANU", "University of Sydney",
+    // India-focused (retain existing)
+    "Final year projects for CSE students", "BTech projects with source code", "MTech research projects",
+    "JNTUH projects", "Anna University", "VTU", "VIT Vellore", "SRM University",
+    // UAE & Middle East
+    "thesis writing UAE", "capstone project Dubai", "academic help Abu Dhabi",
+    // Singapore & Asia
+    "NUS capstone project", "NTU Singapore", "academic project Singapore",
+    // Germany & Europe
+    "TU Munich projects", "RWTH Aachen", "thesis help Germany",
+    // Services
+    "AI content humanizer", "plagiarism checker", "ATS resume scorer", "hackathon directory",
+    "GraduateNex", "academic success platform"
   ],
   authors: [{ name: "Appala Nithin" }],
   openGraph: {
-    title: "GraduateNex | Academic & Career Success Platform in India",
-    description: "Production-ready engineering projects, zero-plagiarism documentation, and AI-driven career tools to secure your dream job in India.",
+    title: "GraduateNex | Global Academic & Career Success Platform",
+    description: "Production-ready capstone projects, zero-plagiarism thesis & dissertation help, AI-powered resume builders, and career tools for students in 50+ countries.",
     url: "https://www.graduatenex.online",
     siteName: "GraduateNex",
     images: [{ url: "https://www.graduatenex.online/logo.png", width: 800, height: 800 }],
@@ -61,8 +80,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "GraduateNex | Academic & Career Success Platform",
-    description: "Production-ready engineering projects, zero-plagiarism documentation, and AI-driven career tools for Indian students.",
+    title: "GraduateNex | Global Academic & Career Success Platform",
+    description: "Production-ready capstone projects, thesis help, AI resume builders, and career tools for students worldwide.",
     images: ["https://www.graduatenex.online/logo.png"],
   },
   verification: {
@@ -114,10 +133,10 @@ export default async function RootLayout({
               ],
               contactPoint: {
                 '@type': 'ContactPoint',
-                email: 'projectgenie16@gmail.com',
+                email: 'support@graduatenex.online',
                 contactType: 'Customer Support',
-                areaServed: 'IN',
-                availableLanguage: ['English', 'Hindi', 'Telugu']
+                areaServed: ['US', 'GB', 'CA', 'AU', 'AE', 'SG', 'DE', 'IN', 'SA', 'FR'],
+                availableLanguage: ['English']
               }
             })
           }}
@@ -154,20 +173,30 @@ export default async function RootLayout({
               mainEntity: {
                 '@type': 'EducationalOrganization',
                 name: 'GraduateNex',
-                description: 'India\'s #1 Academic & Career Success Platform providing production-ready engineering projects, zero-plagiarism documentation, AI-powered resume builders, and hackathon discovery for Indian engineering students.',
+                description: 'The world\'s premier Academic & Career Success Platform providing production-ready capstone projects, zero-plagiarism thesis & dissertation writing, AI-powered resume builders, hackathon discovery, and career launch tools for students in 50+ countries.',
                 url: 'https://www.graduatenex.online',
-                areaServed: {
-                  '@type': 'Country',
-                  name: 'India'
-                },
+                areaServed: [
+                  { '@type': 'Country', name: 'United States' },
+                  { '@type': 'Country', name: 'United Kingdom' },
+                  { '@type': 'Country', name: 'Canada' },
+                  { '@type': 'Country', name: 'Australia' },
+                  { '@type': 'Country', name: 'India' },
+                  { '@type': 'Country', name: 'United Arab Emirates' },
+                  { '@type': 'Country', name: 'Singapore' },
+                  { '@type': 'Country', name: 'Germany' },
+                  { '@type': 'Country', name: 'Saudi Arabia' },
+                  { '@type': 'Country', name: 'France' }
+                ],
                 hasOfferCatalog: {
                   '@type': 'OfferCatalog',
-                  name: 'Academic Services',
+                  name: 'Academic & Career Services',
                   itemListElement: [
-                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Final Year Project Source Code', description: 'Production-ready BTech/MTech projects with complete source code in Java, Python, React, ML, AI, IoT, Blockchain' } },
-                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'ATS Resume Builder', description: 'Free ATS resume checker, JD matching analyzer, and AI-powered resume generation for Indian freshers' } },
-                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Interview Preparation', description: 'AI-generated interview prep guides for Deloitte, TCS, Infosys, Wipro, Google, Amazon and more' } },
-                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Research Paper Writing', description: 'IEEE-format research papers, project documentation, and abstracts with zero plagiarism guarantee' } }
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Capstone & Final Year Projects', description: 'Production-ready capstone projects with complete source code in Python, Java, React, ML, AI, IoT, Blockchain for universities worldwide' } },
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Thesis & Dissertation Writing', description: 'Expert thesis and dissertation help for Masters and PhD students with literature reviews, methodology design, and Turnitin-safe delivery in APA/MLA/Chicago/Harvard formats' } },
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'ATS Resume Builder', description: 'AI-powered ATS resume checker, JD matching analyzer, and resume generation for job seekers targeting top global companies' } },
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'AI Content Humanizer', description: 'Advanced AI text humanizer that transforms AI-generated content into natural, academic-quality writing that bypasses AI detection tools' } },
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Research Paper Writing', description: 'IEEE-format research papers, project documentation, SRS documents, and abstracts with zero plagiarism guarantee' } },
+                    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Interview Preparation', description: 'AI-generated interview prep guides for Google, Amazon, Microsoft, Meta, Goldman Sachs, McKinsey, and more' } }
                   ]
                 }
               }

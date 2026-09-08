@@ -44,12 +44,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   
   // Programmatic SEO Hubs
   const locationEntries: MetadataRoute.Sitemap = seoLocations
-    .filter(loc => ['state', 'city', 'university'].includes(loc.type))
+    .filter(loc => ['state', 'city', 'university', 'country'].includes(loc.type))
     .map((loc) => ({
       url: `${baseUrl}/locations/${loc.slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 0.8,
+      priority: loc.type === 'country' ? 0.9 : 0.8,
     }));
 
   const roleEntries: MetadataRoute.Sitemap = seoLocations
@@ -107,12 +107,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/services`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
     },
     {
       url: `${baseUrl}/pricing`,

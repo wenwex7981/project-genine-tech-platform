@@ -399,20 +399,37 @@ export default function ResumeHub() {
 
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-8 bg-gray-100 dark:bg-zinc-800 p-1.5 rounded-xl border max-w-fit">
-        <button onClick={() => setActiveTab("ats")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "ats" ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-700 dark:text-slate-300 hover:bg-gray-200/50 dark:hover:bg-zinc-700'}`}>
-          <CheckCircle className="h-4 w-4" /> 17-Point ATS Checker
-        </button>
-        <button onClick={() => setActiveTab("jd")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "jd" ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-700 dark:text-slate-300 hover:bg-gray-200/50 dark:hover:bg-zinc-700'}`}>
-          <Search className="h-4 w-4" /> 20-Point JD Analyzer
-        </button>
-        <button onClick={() => setActiveTab("maker")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "maker" ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-700 dark:text-slate-300 hover:bg-gray-200/50 dark:hover:bg-zinc-700'}`}>
-          <Zap className="h-4 w-4" /> AI Resume Maker
-        </button>
-        <button onClick={() => setActiveTab("community")} className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === "community" ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-700 dark:text-slate-300 hover:bg-gray-200/50 dark:hover:bg-zinc-700'}`}>
-          <Users className="h-4 w-4" /> Resume Templates
-        </button>
+      {/* Premium Tool Selector / Tabs */}
+      <div className="flex overflow-x-auto no-scrollbar w-full mb-8 pb-4 -mx-4 px-4 md:mx-0 md:px-0">
+        <div className="flex gap-3 bg-zinc-100/80 dark:bg-zinc-800/80 p-2 rounded-2xl border border-zinc-200 dark:border-zinc-700/50 shadow-inner w-max">
+          <button 
+            onClick={() => setActiveTab("ats")} 
+            className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 active:scale-95 ${activeTab === "ats" ? 'bg-white dark:bg-zinc-900 shadow-md text-indigo-600 ring-1 ring-black/5 dark:ring-white/10' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}
+          >
+            <CheckCircle className="h-5 w-5" /> 17-Point ATS Checker
+          </button>
+          
+          <button 
+            onClick={() => setActiveTab("jd")} 
+            className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 active:scale-95 ${activeTab === "jd" ? 'bg-white dark:bg-zinc-900 shadow-md text-indigo-600 ring-1 ring-black/5 dark:ring-white/10' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}
+          >
+            <Search className="h-5 w-5" /> 20-Point JD Analyzer
+          </button>
+          
+          <button 
+            onClick={() => setActiveTab("maker")} 
+            className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 active:scale-95 ${activeTab === "maker" ? 'bg-white dark:bg-zinc-900 shadow-md text-indigo-600 ring-1 ring-black/5 dark:ring-white/10' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}
+          >
+            <Zap className="h-5 w-5" /> AI Resume Maker
+          </button>
+          
+          <button 
+            onClick={() => setActiveTab("community")} 
+            className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 active:scale-95 ${activeTab === "community" ? 'bg-white dark:bg-zinc-900 shadow-md text-indigo-600 ring-1 ring-black/5 dark:ring-white/10' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-700/50'}`}
+          >
+            <Users className="h-5 w-5" /> Resume Templates
+          </button>
+        </div>
       </div>
 
       <div className="mb-6 flex justify-end">
@@ -448,10 +465,17 @@ export default function ResumeHub() {
                   className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors ${file ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-500/10' : 'border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-zinc-800/50'}`}
                 >
                   <Upload className={`h-10 w-10 mx-auto mb-4 ${file ? 'text-indigo-500' : 'text-gray-400'}`} />
-                  <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                    {file ? file.name : "Drag & Drop or Click to Upload"}
+                  <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    {file ? file.name : "Drag & Drop your resume here"}
                   </p>
-                  <p className="text-sm text-gray-500">Supports PDF & DOCX (Max 5MB)</p>
+                  {!file && (
+                    <div className="mt-4 mb-2 flex justify-center">
+                      <div className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 font-bold px-6 py-2.5 rounded-full flex items-center gap-2">
+                        <Upload className="w-4 h-4" /> Browse Files
+                      </div>
+                    </div>
+                  )}
+                  <p className="text-sm text-gray-500 mt-2">Supports PDF & DOCX (Max 5MB)</p>
                   <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf,.docx" className="hidden" />
                 </motion.div>
               </div>
@@ -1166,12 +1190,12 @@ export default function ResumeHub() {
                       </p>
                     )}
                   </div>
-                  <div className="grid grid-cols-1 border-t divide-x">
+                  <div className="p-5 pt-0 mt-auto">
                     {resume._type === 'premium' ? (
                       purchasedIds.includes(String(resume.id)) || hasResumePro ? (
                         <a href={resume.file_url === 'pending' ? `/view/${resume.id}` : (resume.file_url || resume.pdf_url || '#')} target={resume.file_url === 'pending' ? "_self" : "_blank"} rel="noreferrer"
-                          className="py-4 flex items-center justify-center gap-2 text-sm font-bold text-green-600 hover:bg-green-50 bg-green-50/30">
-                          <CheckCircle className="h-4 w-4" /> Open Resume
+                          className="w-full flex items-center justify-center gap-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl shadow-md active:scale-95 transition-all">
+                          <CheckCircle className="h-5 w-5" /> Open Resume
                         </a>
                       ) : (
                         <button
@@ -1180,15 +1204,15 @@ export default function ResumeHub() {
                             addToCart({ id: resume.id, title: resume.name, price: price || 0, quantity: 1, image_url: resume.image_url, file_url: resume.file_url || resume.pdf_url });
                             alert(`${resume.name} added to cart!`);
                           }}
-                          className="py-4 flex items-center justify-center gap-2 text-sm font-bold text-indigo-600 hover:bg-indigo-50 bg-indigo-50/30">
-                          <Lock className="h-4 w-4" /> Unlock for {formatPrice(convertPrice(resume.price))}
+                          className="w-full flex items-center justify-center gap-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl shadow-md active:scale-95 transition-all">
+                          <Lock className="h-5 w-5" /> Unlock for {formatPrice(convertPrice(resume.price))}
                         </button>
                       )
                     ) : (
-                      <>
-                        <button className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 hover:bg-gray-50"><Eye className="h-4 w-4" /> Preview</button>
-                        <button className="py-4 flex items-center justify-center gap-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"><Download className="h-4 w-4" /> Download</button>
-                      </>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button className="w-full flex items-center justify-center gap-2 text-sm font-bold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 py-3 rounded-xl active:scale-95 transition-all"><Eye className="h-4 w-4" /> Preview</button>
+                        <button className="w-full flex items-center justify-center gap-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl shadow-md active:scale-95 transition-all"><Download className="h-4 w-4" /> Download</button>
+                      </div>
                     )}
                   </div>
                 </div>

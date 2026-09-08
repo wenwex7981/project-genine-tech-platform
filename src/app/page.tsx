@@ -8,14 +8,15 @@ import {
   ArrowRight, Globe, ShieldCheck, Zap, MapPin, Star, CheckCircle,
   BookOpen, Brain, FileText, Cpu, Users, Award, Rocket, Code2,
   Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, Mail,
-  ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield
+  ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield,
+  ScrollText
 } from "lucide-react";
 import AuthRedirect from "@/components/AuthRedirect";
 
 const STATS = [
-  { value: "2,500+", label: "Active Global Users" },
+  { value: "2,500+", label: "Students Worldwide" },
   { value: "98%", label: "Client Success Rate" },
-  { value: "15+", label: "Countries Worldwide" },
+  { value: "50+", label: "Countries Served" },
   { value: "0%", label: "Plagiarism Guarantee" },
 ];
 
@@ -74,17 +75,26 @@ const SERVICES = [
     badge: "Premium",
     link: "/custom-requirements",
   },
+  {
+    icon: <ScrollText className="h-8 w-8" />,
+    color: "emerald",
+    title: "Thesis & Dissertation Help",
+    description: "Expert assistance with Masters and PhD-level thesis writing, literature reviews, methodology design, and academic formatting for global university standards.",
+    features: ["Thesis & Dissertation Writing", "Literature Review & Methodology", "APA / MLA / Chicago / Harvard", "Turnitin-Safe Delivery"],
+    badge: "Global",
+    link: "/custom-requirements",
+  },
 ];
 
 const CATEGORIES = [
-  { icon: <Cpu className="h-6 w-6" />, name: "Artificial Intelligence & ML", count: "120+ Solutions", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=600" },
-  { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Solutions", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600" },
-  { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Solutions", image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=600" },
-  { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Solutions", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600" },
-  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Solutions", image: "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&q=80&w=600" },
-  { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Solutions", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=600" },
-  { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Solutions", image: "https://images.unsplash.com/photo-1510915361894-dba8b601051b?auto=format&fit=crop&q=80&w=600" },
-  { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Solutions", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600" },
+  { icon: <Cpu className="h-6 w-6" />, name: "Artificial Intelligence & ML", count: "120+ Solutions", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=80" },
+  { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Solutions", image: "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&q=80" },
+  { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Solutions", image: "https://images.unsplash.com/photo-1644088379091-d574269d422f?w=600&q=80" },
+  { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Solutions", image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80" },
+  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Solutions", image: "https://images.unsplash.com/photo-1515879218367-8466d910auj7?w=600&q=80" },
+  { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Solutions", image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" },
+  { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Solutions", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=80" },
+  { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Solutions", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" },
 ];
 
 const LOCATIONS = [
@@ -289,7 +299,7 @@ export default function Home() {
             {SERVICES.map((svc) => (
               <Link href={svc.link} key={svc.title} className="min-w-[85vw] snap-center md:min-w-0 group relative bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 hover:bg-white dark:hover:bg-zinc-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] hover:shadow-2xl transition-all duration-500 rounded-3xl p-6 md:p-8 flex flex-col overflow-hidden">
                 <div className="absolute top-5 right-5">
-                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${badgeColorMap[svc.badge]}`}>{svc.badge}</span>
+                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${badgeColorMap[svc.badge] || 'bg-emerald-600/90 backdrop-blur text-white shadow-lg shadow-emerald-900/20 border border-emerald-500/30'}`}>{svc.badge}</span>
                 </div>
                 <div className={`w-16 h-16 rounded-2xl ${colorMap[svc.color]} flex items-center justify-center mb-6`}>
                   {svc.icon}
@@ -328,11 +338,12 @@ export default function Home() {
             {CATEGORIES.map((cat) => (
               <Link href={`/projects?category=${encodeURIComponent(cat.name)}`} key={cat.name} className="min-w-[80vw] sm:min-w-0 snap-center">
                 <div className="group relative h-64 md:h-72 w-full rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer border border-zinc-200/50 dark:border-zinc-800/50">
-                  <Image 
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
                     src={cat.image} 
                     alt={cat.name} 
-                    fill 
-                    className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    loading="lazy"
                   />
                   {/* Elegant dark gradient overlay (no neon) */}
                   <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/90 via-zinc-900/40 to-transparent transition-opacity duration-300" />
@@ -540,16 +551,16 @@ export default function Home() {
               <h3 className="text-3xl md:text-5xl font-black tracking-tight">Appala Nithin</h3>
               <div className="space-y-3 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  <strong className="text-foreground">Appala Nithin</strong> is the visionary founder behind <strong className="text-primary">GraduateNex</strong> — a platform built from the ground up to solve the real academic struggles that millions of Indian students face every year.
+                  <strong className="text-foreground">Appala Nithin</strong> is the visionary founder behind <strong className="text-primary">GraduateNex</strong> — a platform built from the ground up to solve the real academic struggles that millions of students face worldwide.
                 </p>
                 <p>
-                  Having seen firsthand how talented students were failing not because of intelligence, but because of a broken system of plagiarism-check barriers, outdated project repositories, and zero career support, Nithin built GraduateNex to be the definitive solution — combining a production-quality project marketplace, AI-powered document tools, and an intelligent career launch engine.
+                  Having seen firsthand how talented students were failing not because of intelligence, but because of a broken system of plagiarism-check barriers, outdated project repositories, and zero career support, Nithin built GraduateNex to be the definitive solution — combining a production-quality project marketplace, AI-powered document tools, and an intelligent career launch engine serving students across 50+ countries.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 pt-2">
                 <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><GraduationCap className="h-4 w-4 text-primary" /> EdTech Visionary</span>
-                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><Award className="h-4 w-4 text-primary" /> 2,500+ Students Helped</span>
-                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><Users className="h-4 w-4 text-primary" /> 50+ Cities Served</span>
+                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><Award className="h-4 w-4 text-primary" /> 2,500+ Students Worldwide</span>
+                <span className="flex items-center gap-2 text-sm font-semibold bg-muted px-3 py-1.5 rounded-full border"><Globe className="h-4 w-4 text-primary" /> 50+ Countries Served</span>
               </div>
             </div>
           </div>
@@ -567,12 +578,12 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {[
-              { q: "What is GraduateNex?", a: "GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India." },
-              { q: "Are the projects plagiarism-free?", a: "Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening tools to ensure the content meets academic integrity standards." },
-              { q: "How are digital products delivered?", a: "All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address." },
-              { q: "What payment methods do you accept?", a: "We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway." },
+              { q: "What is GraduateNex?", a: "GraduateNex is a global academic success platform providing production-ready capstone project source code, AI-powered resume tools, thesis & dissertation help, documentation generators, and research paper assistance for students across 50+ countries." },
+              { q: "Are the projects plagiarism-free?", a: "Yes. Every project and document we deliver is crafted to be original. We use internal plagiarism screening and Turnitin-compatible checks to ensure the content meets international academic integrity standards." },
+              { q: "How are digital products delivered?", a: "All digital products are delivered instantly after payment via secure download links on the order confirmation page and through your registered email address. We serve students worldwide with instant digital delivery." },
+              { q: "What payment methods do you accept?", a: "We accept Visa, Mastercard, American Express, international debit/credit cards, UPI, Net Banking, and digital wallets through our PCI-DSS compliant payment gateway. Students from the US, UK, Canada, Australia, UAE, and 40+ other countries can pay seamlessly." },
               { q: "Can I get a refund?", a: "Digital products are generally non-refundable once delivered. However, refunds are issued for technical payment failures, undelivered products, and custom projects that don't meet agreed specifications. See our Refund Policy for full details." },
-              { q: "Do you offer support after purchase?", a: "Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST." },
+              { q: "Do you offer thesis and dissertation help?", a: "Yes! We provide expert thesis and dissertation writing assistance for Masters and PhD students worldwide. This includes literature reviews, methodology design, data analysis, and formatting in APA, MLA, Chicago, or Harvard styles — all Turnitin-safe." },
             ].map((faq) => (
               <div key={faq.q} className="bg-muted/30 border rounded-2xl p-6">
                 <h3 className="font-bold text-lg mb-2">{faq.q}</h3>
@@ -597,22 +608,22 @@ export default function Home() {
             <div className="flex items-center gap-3 text-zinc-400">
               <CreditCard className="h-8 w-8 text-blue-400" />
               <div>
-                <p className="text-sm font-bold text-white">Powered by Razorpay</p>
-                <p className="text-xs text-zinc-500">PCI-DSS Compliant</p>
+                <p className="text-sm font-bold text-white">Visa / Mastercard / Amex</p>
+                <p className="text-xs text-zinc-500">International Cards Accepted</p>
               </div>
             </div>
             <div className="flex items-center gap-3 text-zinc-400">
               <CheckCircle className="h-8 w-8 text-primary" />
               <div>
                 <p className="text-sm font-bold text-white">2,500+ Orders</p>
-                <p className="text-xs text-zinc-500">Delivered Successfully</p>
+                <p className="text-xs text-zinc-500">Delivered to 50+ Countries</p>
               </div>
             </div>
             <div className="flex items-center gap-3 text-zinc-400">
-              <Phone className="h-8 w-8 text-violet-400" />
+              <Globe className="h-8 w-8 text-violet-400" />
               <div>
-                <p className="text-sm font-bold text-white">Dedicated Support</p>
-                <p className="text-xs text-zinc-500">Mon–Fri, 9AM–6PM IST</p>
+                <p className="text-sm font-bold text-white">24/7 Email Support</p>
+                <p className="text-xs text-zinc-500">support@graduatenex.online</p>
               </div>
             </div>
           </div>
@@ -627,10 +638,10 @@ export default function Home() {
         </div>
         <div className="container mx-auto px-4 md:px-6 text-center relative z-10 space-y-6 md:space-y-8">
           <h2 className="text-3xl md:text-6xl font-black tracking-tight text-white">
-            Your Final Year Project is<br className="hidden md:block"/> One Click Away.
+            Your Academic Success is<br className="hidden md:block"/> One Click Away.
           </h2>
           <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Join 2,500+ students who have already secured top grades, submitted original documentation, and advanced their careers using GraduateNex.
+            Join 2,500+ students across 50+ countries who have already secured top grades, submitted original documentation, and advanced their careers using GraduateNex.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/login">
@@ -638,14 +649,14 @@ export default function Home() {
                 Get Started — It&apos;s Free <ArrowRight className="ml-2 h-6 w-6" />
               </Button>
             </Link>
-            <a href="tel:+917981994870">
+            <a href="mailto:support@graduatenex.online">
               <Button size="lg" className="h-16 px-10 text-xl font-bold rounded-xl bg-white/20 border-2 border-white text-white hover:bg-white/30 transition-all">
-                <Phone className="mr-2 h-5 w-5" /> Call Us Now
+                <Mail className="mr-2 h-5 w-5" /> Email Us
               </Button>
             </a>
           </div>
           <p className="text-white/60 text-sm">
-            📞 +91 79819 94870 &nbsp;|&nbsp; ✉️ support@graduatenex.online &nbsp;|&nbsp; 📍 T Hub, Hitech City, Hyderabad
+            ✉️ support@graduatenex.online &nbsp;|&nbsp; 📞 +91 79819 94870 &nbsp;|&nbsp; 🌍 Serving students in 50+ countries
           </p>
         </div>
       </section>
@@ -663,7 +674,7 @@ export default function Home() {
                 name: 'What is GraduateNex?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'GraduateNex is an academic success platform providing production-ready final year project source code, AI-powered resume tools, documentation generators, and research paper assistance for students across India.'
+                  text: 'GraduateNex is a global academic success platform providing production-ready capstone project source code, AI-powered resume tools, thesis & dissertation help, documentation generators, and research paper assistance for students across 50+ countries worldwide.'
                 }
               },
               {
@@ -687,7 +698,7 @@ export default function Home() {
                 name: 'What payment methods do you accept?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'We accept UPI, Debit/Credit Cards, Net Banking, and Wallets through Razorpay — a PCI-DSS compliant, bank-grade secure payment gateway.'
+                  text: 'We accept Visa, Mastercard, American Express, international debit/credit cards, UPI, Net Banking, and digital wallets through our PCI-DSS compliant payment gateway. Students from the US, UK, Canada, Australia, UAE, and 40+ other countries can pay seamlessly.'
                 }
               },
               {
@@ -700,10 +711,10 @@ export default function Home() {
               },
               {
                 '@type': 'Question',
-                name: 'Do you offer support after purchase?',
+                name: 'Do you offer thesis and dissertation help?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'Absolutely. We provide post-purchase technical support for setup, deployment, and viva preparation. Our team is available Monday–Friday, 9AM–6PM IST.'
+                  text: 'Yes! We provide expert thesis and dissertation writing assistance for Masters and PhD students worldwide. This includes literature reviews, methodology design, data analysis, and formatting in APA, MLA, Chicago, or Harvard styles — all Turnitin-safe.'
                 }
               }
             ]

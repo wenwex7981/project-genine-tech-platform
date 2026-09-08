@@ -1,11 +1,28 @@
 export type SEOLocation = {
   slug: string;
   name: string;
-  type: 'state' | 'university' | 'city' | 'role' | 'company';
+  type: 'state' | 'university' | 'city' | 'role' | 'company' | 'country';
 };
 
 export const seoLocations: SEOLocation[] = [
-  // Major States
+  // ── INTERNATIONAL COUNTRIES ──
+  { slug: 'united-states', name: 'United States', type: 'country' },
+  { slug: 'united-kingdom', name: 'United Kingdom', type: 'country' },
+  { slug: 'canada', name: 'Canada', type: 'country' },
+  { slug: 'australia', name: 'Australia', type: 'country' },
+  { slug: 'uae', name: 'United Arab Emirates', type: 'country' },
+  { slug: 'singapore', name: 'Singapore', type: 'country' },
+  { slug: 'germany', name: 'Germany', type: 'country' },
+  { slug: 'saudi-arabia', name: 'Saudi Arabia', type: 'country' },
+  { slug: 'france', name: 'France', type: 'country' },
+  { slug: 'india', name: 'India', type: 'country' },
+  { slug: 'malaysia', name: 'Malaysia', type: 'country' },
+  { slug: 'nigeria', name: 'Nigeria', type: 'country' },
+  { slug: 'south-africa', name: 'South Africa', type: 'country' },
+  { slug: 'new-zealand', name: 'New Zealand', type: 'country' },
+  { slug: 'ireland', name: 'Ireland', type: 'country' },
+
+  // ── INDIAN STATES ──
   { slug: 'andhra-pradesh', name: 'Andhra Pradesh', type: 'state' },
   { slug: 'telangana', name: 'Telangana', type: 'state' },
   { slug: 'maharashtra', name: 'Maharashtra', type: 'state' },
@@ -27,7 +44,8 @@ export const seoLocations: SEOLocation[] = [
   { slug: 'chhattisgarh', name: 'Chhattisgarh', type: 'state' },
   { slug: 'uttarakhand', name: 'Uttarakhand', type: 'state' },
 
-  // Major Cities
+  // ── GLOBAL CITIES ──
+  // India
   { slug: 'hyderabad', name: 'Hyderabad', type: 'city' },
   { slug: 'bangalore', name: 'Bangalore', type: 'city' },
   { slug: 'mumbai', name: 'Mumbai', type: 'city' },
@@ -38,8 +56,18 @@ export const seoLocations: SEOLocation[] = [
   { slug: 'gurugram', name: 'Gurugram', type: 'city' },
   { slug: 'ahmedabad', name: 'Ahmedabad', type: 'city' },
   { slug: 'kolkata', name: 'Kolkata', type: 'city' },
+  // International
+  { slug: 'new-york', name: 'New York', type: 'city' },
+  { slug: 'san-francisco', name: 'San Francisco', type: 'city' },
+  { slug: 'london', name: 'London', type: 'city' },
+  { slug: 'toronto', name: 'Toronto', type: 'city' },
+  { slug: 'sydney', name: 'Sydney', type: 'city' },
+  { slug: 'dubai', name: 'Dubai', type: 'city' },
+  { slug: 'berlin', name: 'Berlin', type: 'city' },
+  { slug: 'singapore-city', name: 'Singapore City', type: 'city' },
 
-  // Top Universities
+  // ── UNIVERSITIES ──
+  // India
   { slug: 'iit', name: 'IITs', type: 'university' },
   { slug: 'nit', name: 'NITs', type: 'university' },
   { slug: 'iiit', name: 'IIITs', type: 'university' },
@@ -72,8 +100,49 @@ export const seoLocations: SEOLocation[] = [
   { slug: 'kiit', name: 'KIIT Bhubaneswar', type: 'university' },
   { slug: 'pes-university', name: 'PES University', type: 'university' },
   { slug: 'christ-university', name: 'Christ University', type: 'university' },
+  // USA
+  { slug: 'mit', name: 'Massachusetts Institute of Technology (MIT)', type: 'university' },
+  { slug: 'stanford', name: 'Stanford University', type: 'university' },
+  { slug: 'harvard', name: 'Harvard University', type: 'university' },
+  { slug: 'georgia-tech', name: 'Georgia Institute of Technology', type: 'university' },
+  { slug: 'uc-berkeley', name: 'UC Berkeley', type: 'university' },
+  { slug: 'carnegie-mellon', name: 'Carnegie Mellon University', type: 'university' },
+  { slug: 'caltech', name: 'California Institute of Technology', type: 'university' },
+  { slug: 'university-of-michigan', name: 'University of Michigan', type: 'university' },
+  { slug: 'purdue', name: 'Purdue University', type: 'university' },
+  { slug: 'university-of-texas', name: 'University of Texas at Austin', type: 'university' },
+  // UK
+  { slug: 'oxford', name: 'University of Oxford', type: 'university' },
+  { slug: 'cambridge', name: 'University of Cambridge', type: 'university' },
+  { slug: 'imperial-college', name: 'Imperial College London', type: 'university' },
+  { slug: 'ucl', name: 'University College London (UCL)', type: 'university' },
+  { slug: 'university-of-edinburgh', name: 'University of Edinburgh', type: 'university' },
+  { slug: 'kings-college', name: 'King\'s College London', type: 'university' },
+  // Canada
+  { slug: 'university-of-toronto', name: 'University of Toronto', type: 'university' },
+  { slug: 'ubc', name: 'University of British Columbia (UBC)', type: 'university' },
+  { slug: 'mcgill', name: 'McGill University', type: 'university' },
+  { slug: 'university-of-waterloo', name: 'University of Waterloo', type: 'university' },
+  // Australia
+  { slug: 'university-of-melbourne', name: 'University of Melbourne', type: 'university' },
+  { slug: 'unsw', name: 'University of New South Wales (UNSW)', type: 'university' },
+  { slug: 'anu', name: 'Australian National University (ANU)', type: 'university' },
+  { slug: 'university-of-sydney', name: 'University of Sydney', type: 'university' },
+  // Singapore
+  { slug: 'nus', name: 'National University of Singapore (NUS)', type: 'university' },
+  { slug: 'ntu-singapore', name: 'Nanyang Technological University (NTU)', type: 'university' },
+  // UAE
+  { slug: 'khalifa-university', name: 'Khalifa University', type: 'university' },
+  { slug: 'american-university-sharjah', name: 'American University of Sharjah', type: 'university' },
+  // Germany
+  { slug: 'tu-munich', name: 'Technical University of Munich (TUM)', type: 'university' },
+  { slug: 'rwth-aachen', name: 'RWTH Aachen University', type: 'university' },
+  { slug: 'tu-berlin', name: 'Technical University of Berlin', type: 'university' },
+  // Saudi Arabia
+  { slug: 'kaust', name: 'King Abdullah University of Science and Technology (KAUST)', type: 'university' },
+  { slug: 'ksu', name: 'King Saud University', type: 'university' },
 
-  // Engineering Job Roles
+  // ── ENGINEERING JOB ROLES ──
   { slug: 'software-engineer', name: 'Software Engineer', type: 'role' },
   { slug: 'data-scientist', name: 'Data Scientist', type: 'role' },
   { slug: 'frontend-developer', name: 'Frontend Developer', type: 'role' },
@@ -84,19 +153,32 @@ export const seoLocations: SEOLocation[] = [
   { slug: 'devops-engineer', name: 'DevOps Engineer', type: 'role' },
   { slug: 'cybersecurity-analyst', name: 'Cybersecurity Analyst', type: 'role' },
   { slug: 'cloud-engineer', name: 'Cloud Engineer', type: 'role' },
+  { slug: 'product-manager', name: 'Product Manager', type: 'role' },
+  { slug: 'ux-designer', name: 'UX Designer', type: 'role' },
 
-  // Target Companies for Interviews
+  // ── TARGET COMPANIES FOR INTERVIEWS ──
+  // Indian IT
   { slug: 'tcs', name: 'TCS (Tata Consultancy Services)', type: 'company' },
   { slug: 'infosys', name: 'Infosys', type: 'company' },
   { slug: 'wipro', name: 'Wipro', type: 'company' },
   { slug: 'cognizant', name: 'Cognizant', type: 'company' },
+  { slug: 'tech-mahindra', name: 'Tech Mahindra', type: 'company' },
+  { slug: 'zoho', name: 'Zoho', type: 'company' },
+  // Global Tech Giants
+  { slug: 'google', name: 'Google', type: 'company' },
+  { slug: 'amazon', name: 'Amazon', type: 'company' },
+  { slug: 'microsoft', name: 'Microsoft', type: 'company' },
+  { slug: 'meta', name: 'Meta (Facebook)', type: 'company' },
+  { slug: 'apple', name: 'Apple', type: 'company' },
+  { slug: 'netflix', name: 'Netflix', type: 'company' },
+  { slug: 'nvidia', name: 'Nvidia', type: 'company' },
+  { slug: 'salesforce', name: 'Salesforce', type: 'company' },
+  { slug: 'ibm', name: 'IBM', type: 'company' },
+  // Consulting & Finance
   { slug: 'accenture', name: 'Accenture', type: 'company' },
   { slug: 'capgemini', name: 'Capgemini', type: 'company' },
-  { slug: 'tech-mahindra', name: 'Tech Mahindra', type: 'company' },
-  { slug: 'ibm', name: 'IBM', type: 'company' },
-  { slug: 'amazon', name: 'Amazon', type: 'company' },
-  { slug: 'google', name: 'Google', type: 'company' },
-  { slug: 'microsoft', name: 'Microsoft', type: 'company' },
-  { slug: 'zoho', name: 'Zoho', type: 'company' },
-  { slug: 'deloitte', name: 'Deloitte', type: 'company' }
+  { slug: 'deloitte', name: 'Deloitte', type: 'company' },
+  { slug: 'mckinsey', name: 'McKinsey & Company', type: 'company' },
+  { slug: 'goldman-sachs', name: 'Goldman Sachs', type: 'company' },
+  { slug: 'jpmorgan', name: 'JPMorgan Chase', type: 'company' },
 ];

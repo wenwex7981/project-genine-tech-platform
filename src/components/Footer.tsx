@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone, Globe, CreditCard } from "lucide-react";
 import { seoLocations } from "@/lib/seo-data";
 
 export default function Footer() {
+  const countries = seoLocations.filter(loc => loc.type === 'country');
   const states = seoLocations.filter(loc => loc.type === 'state');
   const cities = seoLocations.filter(loc => loc.type === 'city');
   const universities = seoLocations.filter(loc => loc.type === 'university');
@@ -22,12 +23,24 @@ export default function Footer() {
               <span className="text-2xl font-bold text-white tracking-tight">GraduateNex</span>
             </div>
             <p className="text-sm leading-relaxed text-zinc-400">
-              Empowering students with production-ready projects, zero-plagiarism documentation, and AI-driven career tools to secure their dream jobs.
+              The world&apos;s premier academic success platform — empowering students in 50+ countries with production-ready projects, AI-powered career tools, thesis help, and zero-plagiarism documentation.
             </p>
             <div className="flex flex-col gap-2 pt-2">
-              <p className="text-sm flex items-center gap-2"><Phone className="h-4 w-4" /> +91 79819 94870</p>
               <p className="text-sm flex items-center gap-2"><Mail className="h-4 w-4" /> support@graduatenex.online</p>
-              <p className="text-sm flex items-center gap-2"><MapPin className="h-4 w-4" /> Hyderabad, Telangana, India</p>
+              <p className="text-sm flex items-center gap-2"><Phone className="h-4 w-4" /> +91 79819 94870</p>
+              <p className="text-sm flex items-center gap-2"><Globe className="h-4 w-4" /> Serving 50+ countries worldwide</p>
+            </div>
+            {/* Payment Badges */}
+            <div className="flex items-center gap-3 pt-2">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 rounded-lg border border-zinc-800 text-xs font-bold text-zinc-300">
+                <CreditCard className="h-3.5 w-3.5" /> Visa
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 rounded-lg border border-zinc-800 text-xs font-bold text-zinc-300">
+                <CreditCard className="h-3.5 w-3.5" /> Mastercard
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 rounded-lg border border-zinc-800 text-xs font-bold text-zinc-300">
+                <CreditCard className="h-3.5 w-3.5" /> Amex
+              </div>
             </div>
           </div>
 
@@ -40,8 +53,9 @@ export default function Footer() {
               <li><Link href="/projects" className="text-sm hover:text-primary transition-colors">Browse Projects</Link></li>
               <li><Link href="/resume" className="text-sm hover:text-primary transition-colors">Resume Hub</Link></li>
               <li><Link href="/hackathons" className="text-sm hover:text-primary transition-colors">Hackathons</Link></li>
+              <li><Link href="/ai-services" className="text-sm hover:text-primary transition-colors">AI Tools</Link></li>
               <li><Link href="/blog" className="text-sm hover:text-primary transition-colors">Blog & Guides</Link></li>
-              <li><Link href="/locations" className="text-sm hover:text-primary transition-colors">Locations & Universities</Link></li>
+              <li><Link href="/pricing" className="text-sm hover:text-primary transition-colors">Pricing</Link></li>
             </ul>
           </div>
 
@@ -59,7 +73,7 @@ export default function Footer() {
           {/* Newsletter */}
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-white">Stay Updated</h3>
-            <p className="text-sm text-zinc-400">Subscribe to our newsletter for the latest tech stacks and hackathon alerts.</p>
+            <p className="text-sm text-zinc-400">Subscribe for the latest projects, hackathon alerts, and career resources.</p>
             <div className="flex gap-2">
               <input type="email" placeholder="Enter your email" className="bg-zinc-900 border border-zinc-800 text-sm px-4 py-2 rounded-lg w-full outline-none focus:border-primary transition-colors" />
               <button className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
@@ -69,9 +83,21 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* SEO Locations & Universities */}
+        {/* Countries We Serve */}
         <div className="mt-16 pt-8 border-t border-zinc-800">
-          <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-4">Proudly Serving Students Across States</h3>
+          <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-4">🌍 Countries We Serve</h3>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-zinc-600">
+            {countries.map((country) => (
+              <Link key={country.slug} href={`/locations/${country.slug}`} className="hover:text-primary hover:underline transition-colors">
+                {country.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* SEO Locations & Universities */}
+        <div className="mt-8 pt-6 border-t border-zinc-800/50">
+          <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-4">Indian States</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-zinc-600">
             {states.map((state) => (
               <Link key={state.slug} href={`/locations/${state.slug}`} className="hover:text-primary hover:underline transition-colors">
@@ -101,7 +127,7 @@ export default function Footer() {
 
         <div className="mt-16 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-zinc-500">
-            &copy; {new Date().getFullYear()} GraduateNex. All rights reserved.
+            &copy; {new Date().getFullYear()} GraduateNex. All rights reserved. Serving students in 50+ countries.
           </p>
           <div className="flex items-center gap-4">
             {/* Social Icons Mock */}
