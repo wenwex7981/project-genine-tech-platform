@@ -169,7 +169,7 @@ export default function Home() {
       <AuthRedirect />
       {/* ── HERO SECTION ── */}
       <section className="relative w-full min-h-[92vh] flex flex-col justify-center bg-zinc-950 overflow-hidden text-white">
-        <Image src="/images/hero-bg.png" alt="Hero Background" fill priority className="object-cover object-center opacity-40 z-0" sizes="100vw" />
+        <Image src="/images/hero-bg-global.jpg" alt="Hero Background" fill priority className="object-cover object-center opacity-40 z-0" sizes="100vw" />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-zinc-950/75 backdrop-blur-[2px] z-0"></div>
         
@@ -216,28 +216,28 @@ export default function Home() {
                   {[1, 2, 3].map((loop) => (
                     <div key={loop} className="flex items-center gap-4 px-2">
                       <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
-                        <span className="text-lg">🇺🇸</span> US
+                        <img src="https://flagcdn.com/w40/us.png" srcSet="https://flagcdn.com/w80/us.png 2x" alt="US" className="w-6 h-auto rounded-sm" /> US
                       </div>
                       <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
-                        <span className="text-lg">🇮🇳</span> India
+                        <img src="https://flagcdn.com/w40/in.png" srcSet="https://flagcdn.com/w80/in.png 2x" alt="India" className="w-6 h-auto rounded-sm" /> India
                       </div>
                       <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
-                        <span className="text-lg">🇬🇧</span> UK
+                        <img src="https://flagcdn.com/w40/gb.png" srcSet="https://flagcdn.com/w80/gb.png 2x" alt="UK" className="w-6 h-auto rounded-sm" /> UK
                       </div>
                       <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
-                        <span className="text-lg">🇨🇦</span> Canada
+                        <img src="https://flagcdn.com/w40/ca.png" srcSet="https://flagcdn.com/w80/ca.png 2x" alt="Canada" className="w-6 h-auto rounded-sm" /> Canada
                       </div>
                       <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
-                        <span className="text-lg">🇦🇺</span> Australia
+                        <img src="https://flagcdn.com/w40/au.png" srcSet="https://flagcdn.com/w80/au.png 2x" alt="Australia" className="w-6 h-auto rounded-sm" /> Australia
                       </div>
                       <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
-                        <span className="text-lg">🇦🇪</span> UAE
+                        <img src="https://flagcdn.com/w40/ae.png" srcSet="https://flagcdn.com/w80/ae.png 2x" alt="UAE" className="w-6 h-auto rounded-sm" /> UAE
                       </div>
                       <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
-                        <span className="text-lg">🇸🇬</span> Singapore
+                        <img src="https://flagcdn.com/w40/sg.png" srcSet="https://flagcdn.com/w80/sg.png 2x" alt="Singapore" className="w-6 h-auto rounded-sm" /> Singapore
                       </div>
                       <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
-                        <span className="text-lg">🇩🇪</span> Germany
+                        <img src="https://flagcdn.com/w40/de.png" srcSet="https://flagcdn.com/w80/de.png 2x" alt="Germany" className="w-6 h-auto rounded-sm" /> Germany
                       </div>
                     </div>
                   ))}
