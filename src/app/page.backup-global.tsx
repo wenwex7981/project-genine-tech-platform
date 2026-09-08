@@ -13,34 +13,34 @@ import {
 import AuthRedirect from "@/components/AuthRedirect";
 
 const STATS = [
-  { value: "2,500+", label: "Active Global Users" },
-  { value: "98%", label: "Client Success Rate" },
-  { value: "15+", label: "Countries Worldwide" },
-  { value: "0%", label: "Plagiarism Guarantee" },
+  { value: "2,500+", label: "Projects Delivered" },
+  { value: "98%", label: "Student Satisfaction" },
+  { value: "50+", label: "Cities Across India" },
+  { value: "0%", label: "Plagiarism Score" },
 ];
 
 const SERVICES = [
   {
     icon: <Code2 className="h-8 w-8" />,
     color: "blue",
-    title: "Capstone & Portfolio Projects",
-    description: "Complete, deployable source code for computer science, engineering, and MBA capstones. Master AI/ML, IoT, Blockchain, and Full-Stack development.",
-    features: ["Production-Ready Code", "Base Research Paper", "System Architecture", "Pitch Deck Presentation"],
+    title: "Final Year Projects",
+    description: "Complete, deployable source code for B.Tech, M.Tech, BCA, MCA, MBA final year projects. Covers AI/ML, IoT, Blockchain, Web & Mobile development with full documentation.",
+    features: ["Source Code + Setup Guide", "IEEE Base Paper", "SRS Document", "Presentation PPT"],
     badge: "Most Popular",
   },
   {
     icon: <ShieldCheck className="h-8 w-8" />,
     color: "emerald",
-    title: "Technical Documentation",
-    description: "Our expert team crafts completely original IEEE-format research papers, whitepapers, and system design documents with rigorous originality checks.",
-    features: ["IEEE Format Papers", "Whitepapers & System Docs", "Originality Verified", "Peer-Review Ready"],
+    title: "0% Plagiarism Documents",
+    description: "Our expert team crafts completely original IEEE Research Papers, SRS documents, and project reports with rigorous originality checks and proper academic citations.",
+    features: ["IEEE Format Research Papers", "SRS & System Design Docs", "Originality Verified", "University-Specific Formatting"],
     badge: "High Demand",
   },
   {
     icon: <Brain className="h-8 w-8" />,
     color: "violet",
     title: "AI Stealth Humanizer",
-    description: "Advanced AI content enhancement tool that refines and paraphrases AI-generated text into natural, human-quality academic writing with proper tone.",
+    description: "Advanced AI content enhancement tool that refines and paraphrases AI-generated text into natural, human-quality academic writing with proper style and tone.",
     features: ["Natural Language Refinement", "Semantic Preservation", "Academic Tone Maintained", "Bulk Text Processing"],
     badge: "Exclusive",
   },
@@ -48,91 +48,93 @@ const SERVICES = [
     icon: <FileText className="h-8 w-8" />,
     color: "orange",
     title: "ATS Resume Builder",
-    description: "Our intelligent Resume Hub grades your CV against a 17-point ATS scoring rubric and generates tailored resumes that beat tracking systems at top global firms.",
+    description: "Our intelligent Resume Hub grades your CV against a 17-point ATS scoring rubric and generates tailored resumes that beat Applicant Tracking Systems at top companies like TCS, Infosys, and Wipro.",
     features: ["17-Point ATS Scoring", "Job Description Matching", "Cover Letter Generator", "Multiple Export Formats"],
     badge: "Career Tool",
   },
   {
     icon: <Rocket className="h-8 w-8" />,
     color: "rose",
-    title: "Global Hackathon Directory",
-    description: "Stay ahead with our curated, real-time directory of national and international hackathons, coding contests, and ideathons worldwide.",
-    features: ["Real-Time Global Listings", "Filter by Domain & Date", "Team Formation Hub", "Submission Guides"],
+    title: "Hackathon Directory",
+    description: "Stay ahead with our curated, real-time directory of national and international hackathons, coding contests, and ideathons. Filter by domain, prize pool, and deadline.",
+    features: ["Real-Time Hackathon Listings", "Filter by Domain & Date", "Team Formation Help", "Submission Guides"],
     badge: "Live",
   },
   {
     icon: <PenTool className="h-8 w-8" />,
     color: "cyan",
-    title: "Custom Software Solutions",
-    description: "Have a unique technical challenge? Upload your requirements and our team will architect and code the entire software solution from scratch.",
-    features: ["Requirement Analysis", "Custom Architecture", "End-to-End Development", "Deployment Support"],
+    title: "Custom Project Development",
+    description: "Have a unique base paper from your professor? Upload your abstract and our team will architect and code the entire project from scratch, tailored to your college rubric and viva requirements.",
+    features: ["Requirement Analysis", "Custom Architecture Design", "End-to-End Development", "Viva Preparation Support"],
     badge: "Premium",
   },
 ];
 
 const CATEGORIES = [
-  { icon: <Cpu className="h-6 w-6" />, name: "Artificial Intelligence & ML", count: "120+ Solutions" },
-  { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Solutions" },
-  { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Solutions" },
-  { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Solutions" },
-  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Solutions" },
-  { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Solutions" },
-  { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Solutions" },
-  { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Solutions" },
+  { icon: <Cpu className="h-6 w-6" />, name: "Artificial Intelligence & ML", count: "120+ Projects" },
+  { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Projects" },
+  { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Projects" },
+  { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Projects" },
+  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Projects" },
+  { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Projects" },
+  { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Projects" },
+  { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Projects" },
 ];
 
 const LOCATIONS = [
-  "San Francisco", "London", "Dubai", "Singapore", "New York",
-  "Bengaluru", "Berlin", "Toronto", "Sydney", "Paris",
+  "Hyderabad", "Bengaluru", "Chennai", "Mumbai", "Delhi NCR",
+  "Pune", "Kolkata", "Ahmedabad", "Jaipur", "Lucknow",
+  "Coimbatore", "Vizag", "Nagpur", "Indore", "Bhubaneswar",
+  "Kochi", "Chandigarh", "Thiruvananthapuram", "Bhopal", "Patna",
 ];
 
 const TESTIMONIALS = [
   {
-    name: "James Carter",
-    college: "University College London",
-    branch: "Computer Science, 2024",
-    text: "GraduateNex delivered a complete ML-based predictive system with a flawless research paper. The quality of the architecture and code was truly enterprise-grade.",
+    name: "Sai Kiran Reddy",
+    college: "JNTUH, Hyderabad",
+    branch: "B.Tech CSE, 2024",
+    text: "I was panicking two months before submission. GraduateNex delivered a complete ML-based crop prediction system with IEEE paper, SRS, and PPT. Got 98/100 from my guide. Absolutely life-saving!",
     rating: 5,
   },
   {
     name: "Priya Sharma",
     college: "VIT, Vellore",
     branch: "M.Tech AI, 2024",
-    text: "The AI Writing Enhancer refined my entire thesis into natural, polished academic language. The tone was perfectly preserved and it reads beautifully now.",
+    text: "The AI Writing Enhancer refined my entire 40-page thesis into natural, polished academic language. The tone was perfectly preserved and it reads beautifully now. Absolutely essential tool.",
     rating: 5,
   },
   {
-    name: "Sarah Lin",
-    college: "National University of Singapore",
-    branch: "Information Systems, 2023",
-    text: "Their ATS Resume Builder got me shortlisted at multiple top-tier tech firms. The job description matching feature is insanely accurate.",
+    name: "Rahul Nair",
+    college: "Anna University, Chennai",
+    branch: "B.Tech IT, 2023",
+    text: "Their ATS Resume Builder got me shortlisted at 4 MNC companies in my campus drive. The job description matching feature is insanely accurate. Landed a role at Infosys!",
     rating: 5,
   },
   {
-    name: "Michael Davies",
-    college: "University of Toronto",
-    branch: "Software Engineering, 2024",
-    text: "Ordered a custom Blockchain solution for my capstone. The team analysed the exact rubric and built a decentralized app from scratch. Incredible support.",
+    name: "Ananya Gupta",
+    college: "Amity University, Noida",
+    branch: "MCA, 2024",
+    text: "Ordered a custom Blockchain project. The team analysed my professor's exact rubric and built a decentralized voting system from scratch. Got an A grade and my guide was thoroughly impressed.",
     rating: 5,
   },
 ];
 
 const colorMap: Record<string, string> = {
-  blue: "bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20",
-  emerald: "bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
-  violet: "bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 border border-violet-500/20",
-  orange: "bg-orange-500/10 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/20",
-  rose: "bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20",
-  cyan: "bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20",
+  blue: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+  emerald: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
+  violet: "bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400",
+  orange: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+  rose: "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400",
+  cyan: "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400",
 };
 
 const badgeColorMap: Record<string, string> = {
-  "Most Popular": "bg-blue-600/90 backdrop-blur text-white shadow-lg shadow-blue-900/20 border border-blue-500/30",
-  "High Demand": "bg-emerald-600/90 backdrop-blur text-white shadow-lg shadow-emerald-900/20 border border-emerald-500/30",
-  "Exclusive": "bg-violet-600/90 backdrop-blur text-white shadow-lg shadow-violet-900/20 border border-violet-500/30",
-  "Career Tool": "bg-orange-600/90 backdrop-blur text-white shadow-lg shadow-orange-900/20 border border-orange-500/30",
-  "Live": "bg-rose-600/90 backdrop-blur text-white shadow-lg shadow-rose-900/20 border border-rose-500/30",
-  "Premium": "bg-cyan-600/90 backdrop-blur text-white shadow-lg shadow-cyan-900/20 border border-cyan-500/30",
+  "Most Popular": "bg-blue-600 text-white",
+  "High Demand": "bg-emerald-600 text-white",
+  "Exclusive": "bg-violet-600 text-white",
+  "Career Tool": "bg-orange-600 text-white",
+  "Live": "bg-rose-600 text-white",
+  "Premium": "bg-cyan-600 text-white",
 };
 
 export default function Home() {
@@ -184,14 +186,14 @@ export default function Home() {
             </div>
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] md:leading-[1.05]">
-              Accelerate Your<br />
+              Your Academic<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-400 to-yellow-400">
-                Career & Academics
+                Success Partner
               </span>
             </h1>
 
             <p className="text-lg md:text-xl text-zinc-300 leading-relaxed max-w-2xl mx-auto font-medium">
-              The ultimate AI-powered ecosystem for students and professionals worldwide. Master your capstone projects, build ATS-beating resumes, and land top-tier jobs.
+              From final year projects and zero-plagiarism IEEE papers to AI-powered career tools — GraduateNex is the complete ecosystem that helps over <strong className="text-white">2,500+ students</strong> graduate with distinction every year.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center w-full">
@@ -281,7 +283,7 @@ export default function Home() {
 
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 xl:grid-cols-3 md:gap-8 max-w-7xl mx-auto pb-6 md:pb-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {SERVICES.map((svc) => (
-              <Link href="/login" key={svc.title} className="min-w-[85vw] snap-center md:min-w-0 group relative bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 hover:bg-white dark:hover:bg-zinc-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] hover:shadow-2xl transition-all duration-500 rounded-3xl p-6 md:p-8 flex flex-col overflow-hidden">
+              <Link href="/login" key={svc.title} className="min-w-[85vw] snap-center md:min-w-0 group relative bg-white dark:bg-zinc-900 rounded-3xl border hover:border-primary/40 shadow-sm hover:shadow-2xl transition-all duration-300 p-6 md:p-8 flex flex-col overflow-hidden">
                 <div className="absolute top-5 right-5">
                   <span className={`text-xs font-bold px-3 py-1 rounded-full ${badgeColorMap[svc.badge]}`}>{svc.badge}</span>
                 </div>
@@ -321,7 +323,7 @@ export default function Home() {
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:grid sm:grid-cols-2 lg:grid-cols-4 md:gap-5 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {CATEGORIES.map((cat) => (
               <Link href="/login" key={cat.name} className="min-w-[75vw] snap-center md:min-w-0">
-                <div className="group bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 rounded-2xl p-5 md:p-6 hover:border-primary/40 hover:bg-white dark:hover:bg-zinc-900 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-pointer flex items-center md:items-start gap-4">
+                <div className="group bg-white dark:bg-zinc-900 border rounded-2xl p-5 md:p-6 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex items-center md:items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors flex-shrink-0">
                     {cat.icon}
                   </div>
@@ -410,16 +412,16 @@ export default function Home() {
         <div className="container mx-auto pl-4 pr-0 md:px-6">
           <div className="text-center mb-10 md:mb-16 space-y-4 pr-4 md:pr-0">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-bold">
-              <Star className="h-4 w-4 fill-primary" /> Trusted by Users Worldwide
+              <Star className="h-4 w-4 fill-primary" /> Trusted by Students Nationwide
             </div>
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">Real Results from Global Users</h2>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">Real Results from Real Students</h2>
             <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
-              Professionals and students across the globe use GraduateNex to master their academics and land top-tier tech jobs.
+              Over 2,500 students across India have used GraduateNex to score top grades and land their dream jobs.
             </p>
           </div>
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="min-w-[85vw] snap-center md:min-w-0 bg-white/5 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] hover:shadow-2xl hover:border-primary/30 rounded-3xl p-6 md:p-8 space-y-4 transition-all duration-500">
+              <div key={t.name} className="min-w-[85vw] snap-center md:min-w-0 bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-3xl p-6 md:p-8 space-y-4 transition-colors">
                 <div className="flex gap-1">
                   {Array.from({ length: t.rating }).map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
