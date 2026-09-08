@@ -182,7 +182,7 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 py-10 md:py-20">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-bold tracking-wide">
-              <Globe className="h-4 w-4" /> India&apos;s #1 Academic Project Platform
+              <Globe className="h-4 w-4" /> {isIndia ? "India's #1 Academic Project Platform" : "World's Premier AI Career & Academic Platform"}
             </div>
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] md:leading-[1.05]">
@@ -212,7 +212,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center justify-center gap-6 pt-6">
               <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> Original, Plagiarism-Free Work</div>
               <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 24/7 Expert Support</div>
-              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 50+ Cities Served</div>
+              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> {isIndia ? "50+ Cities Served" : "10+ Countries Served"}</div>
             </div>
           </div>
         </div>

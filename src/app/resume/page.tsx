@@ -39,7 +39,6 @@ export default function ResumeHub() {
   const [activeTab, setActiveTab] = useState<"ats" | "jd" | "community" | "maker">("community");
   const [preferredModel, setPreferredModel] = useState<AIModel>("deepseek");
   const [copiedText, setCopiedText] = useState<string | null>(null);
-  const { addToCart } = useCart();
   
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [hasResumePro, setHasResumePro] = useState(false);
