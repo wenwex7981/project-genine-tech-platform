@@ -138,7 +138,7 @@ const badgeColorMap: Record<string, string> = {
 };
 
 export default function Home() {
-  const { formatPrice, isIndia } = useCountry();
+  const { formatPrice, convertPrice, isIndia } = useCountry();
   
   const jsonLd = {
     "@context": "https://schema.org",
@@ -353,10 +353,10 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {[
-              { name: "ATS Resume Builder", price: formatPrice(199), desc: "AI-generated ATS-friendly resume." },
-              { name: "JD Match Analyzer", price: formatPrice(299), desc: "Match your resume to specific job roles." },
-              { name: "Project Documentation", price: formatPrice(149), desc: "Instant IEEE/SRS documentation templates." },
-              { name: "Final Year Projects", price: `From ${formatPrice(6000)}`, desc: "Complete source code, setup, and support." },
+              { name: "ATS Resume Builder", price: formatPrice(convertPrice(199)), desc: "AI-generated ATS-friendly resume." },
+              { name: "JD Match Analyzer", price: formatPrice(convertPrice(299)), desc: "Match your resume to specific job roles." },
+              { name: "Project Documentation", price: formatPrice(convertPrice(149)), desc: "Instant IEEE/SRS documentation templates." },
+              { name: "Final Year Projects", price: `From ${formatPrice(convertPrice(6000))}`, desc: "Complete source code, setup, and support." },
             ].map((plan) => (
               <Link href="/services" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
                 <div>

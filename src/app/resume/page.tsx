@@ -10,7 +10,7 @@ import {
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { supabase } from "@/lib/supabase";
 import { useCart } from "@/context/CartContext";
-
+import { useCountry } from "@/context/CountryContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ResumeEditor from "@/components/ResumeEditor";
@@ -25,6 +25,8 @@ const LIVE_NOTIFICATIONS = [
 ];
 
 export default function ResumeHub() {
+  const { formatPrice, convertPrice, getPrice } = useCountry();
+  const { addToCart } = useCart();
   const router = useRouter();
   const [notificationIndex, setNotificationIndex] = useState(0);
 
@@ -560,7 +562,7 @@ export default function ResumeHub() {
                 <p className="text-muted-foreground mb-6 max-w-md">Unlock the full 17-point detailed breakdown, keyword analysis, and exact copy-paste improvements.</p>
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
                   <Button onClick={() => handlePayPerUse("ats")} className="flex-1 h-12 font-bold bg-indigo-600 hover:bg-indigo-700">
-                    Pay ₹50 Once
+                    Pay {formatPrice(getPrice('ats_scan'))} Once
                   </Button>
                   <Button onClick={() => router.push('/pricing')} variant="outline" className="flex-1 h-12 font-bold border-2 flex items-center justify-center gap-2">
                     <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
@@ -761,7 +763,7 @@ export default function ResumeHub() {
                 <p className="text-muted-foreground mb-6 max-w-md">Unlock missing skills, missing keywords, optimized bullet points, and the AI-generated summary rewrite.</p>
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
                   <Button onClick={() => handlePayPerUse("jd")} className="flex-1 h-12 font-bold bg-indigo-600 hover:bg-indigo-700">
-                    Pay ₹100 Once
+                    Pay {formatPrice(getPrice('jd_match'))} Once
                   </Button>
                   <Button onClick={() => router.push('/pricing')} variant="outline" className="flex-1 h-12 font-bold border-2 flex items-center justify-center gap-2">
                     <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
@@ -1127,7 +1129,7 @@ export default function ResumeHub() {
                         <Star className="w-3 h-3" /> Premium
                       </div>
                       <div className="absolute top-3 right-3 bg-white/90 backdrop-blur text-gray-900 font-extrabold text-sm px-3 py-1 rounded-full shadow">
-                        ₹{resume.price}
+                        {formatPrice(convertPrice(resume.price))}
                       </div>
                     </div>
                   )}
@@ -1143,7 +1145,7 @@ export default function ResumeHub() {
                       <div className="flex gap-2">
                         {resume._type === 'premium' && !resume.image_url && (
                           <span className="text-xs font-extrabold text-white bg-gray-900 px-3 py-1 rounded-full shadow-sm">
-                            ₹{resume.price}
+                            {formatPrice(convertPrice(resume.price))}
                           </span>
                         )}
                         <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{resume.domain}</span>
@@ -1180,7 +1182,7 @@ export default function ResumeHub() {
                             alert(`${resume.name} added to cart!`);
                           }}
                           className="py-4 flex items-center justify-center gap-2 text-sm font-bold text-indigo-600 hover:bg-indigo-50 bg-indigo-50/30">
-                          <Lock className="h-4 w-4" /> Unlock for ₹{resume.price}
+                          <Lock className="h-4 w-4" /> Unlock for {formatPrice(convertPrice(resume.price))}
                         </button>
                       )
                     ) : (
@@ -1300,21 +1302,24 @@ export default function ResumeHub() {
                 <div className="grid md:grid-cols-2 gap-4 w-full mb-8">
                   <div className="bg-zinc-900/80 border border-white/5 rounded-2xl p-6 text-left hover:border-indigo-500/30 transition-colors">
                     <h3 className="text-indigo-400 font-bold mb-1">ATS Scanner</h3>
-                    <div className="text-3xl font-black text-white mb-2">₹49</div>
-                    <ul className="space-y-2 text-sm text-gray-400 mb-6">
-                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> 17-Point Structure Check</li>
-                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> Action Verb Analysis</li>
-                      <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> Formatting Audit</li>
+                    <div className="text-3xl font-black text-white mb-2">{formatPrice(getPrice('ats_scan'))}</div>
+                    <p className="text-indigo-200 text-sm font-medium mb-6 line-through">{formatPrice(getPrice('ats_scan') * 2)}</p>
+                    <ul className="space-y-3 mb-8 text-indigo-50">
+                      <li className="flex gap-2 text-sm"><Check className="w-5 h-5 text-indigo-300 shrink-0" /> Full 17-point detailed report</li>
+                      <li className="flex gap-2 text-sm"><Check className="w-5 h-5 text-indigo-300 shrink-0" /> Exactly what to change & rewrite</li>
+                      <li className="flex gap-2 text-sm"><Check className="w-5 h-5 text-indigo-300 shrink-0" /> Line-by-line grammar feedback</li>
+                      <li className="flex gap-2 text-sm"><Check className="w-5 h-5 text-indigo-300 shrink-0" /> Downloadable PDF report</li>
                     </ul>
-                    <Button onClick={() => handlePayPerUse("ats")} className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold h-12">
-                      Unlock ATS Audit
+                    <Button onClick={() => handlePayPerUse("ats")} className="w-full bg-white text-indigo-600 hover:bg-gray-100 font-bold h-12 shadow-lg">
+                      Buy ATS Breakdown
                     </Button>
                   </div>
                   
-                  <div className="bg-gradient-to-b from-indigo-900/40 to-zinc-900/80 border border-indigo-500/50 rounded-2xl p-6 text-left relative overflow-hidden shadow-[0_0_30px_rgba(79,70,229,0.15)]">
-                    <div className="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">MOST POPULAR</div>
-                    <h3 className="text-purple-400 font-bold mb-1">JD Tailor</h3>
-                    <div className="text-3xl font-black text-white mb-2">₹99</div>
+                  <div className="bg-gradient-to-b from-indigo-700 to-indigo-900 rounded-3xl p-8 border border-indigo-500/30 relative shadow-xl overflow-hidden group">
+                    <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-[10px] font-black px-3 py-1 uppercase tracking-wider rounded-bl-xl">Best Value</div>
+                    <h3 className="text-xl font-bold text-white mb-2">JD Match Analyzer</h3>
+                    <p className="text-indigo-200 text-sm mb-6">Compare your resume against a target job to uncover missing keywords.</p>
+                    <div className="text-3xl font-black text-white mb-2">{formatPrice(getPrice('jd_match'))}</div>
                     <ul className="space-y-2 text-sm text-gray-300 mb-6">
                       <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> 20-Point Keyword Match</li>
                       <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-400" /> AI Resume Rewrite</li>

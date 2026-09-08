@@ -8,8 +8,10 @@ import { ArrowLeft, CheckCircle, FileText, Upload, ShoppingCart, ShieldCheck } f
 import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
 import ReactMarkdown from 'react-markdown';
+import { useCountry } from '@/context/CountryContext';
 
 export default function ClientProjectUI({ project }: { project: any }) {
+  const { formatPrice, convertPrice } = useCountry();
   const { addToCart } = useCart();
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -128,7 +130,7 @@ export default function ClientProjectUI({ project }: { project: any }) {
           <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4 leading-tight">{project.title}</h1>
           
           <div className="flex items-center gap-4 mb-6 pb-6 border-b">
-            <p className="text-4xl font-black text-emerald-600 dark:text-emerald-400">₹{project.price}</p>
+            <p className="text-4xl font-black text-emerald-600 dark:text-emerald-400">{formatPrice(convertPrice(project.price))}</p>
             <div className="flex items-center gap-1 text-sm font-bold text-muted-foreground bg-muted px-3 py-1 rounded-full">
               <ShieldCheck className="h-4 w-4 text-emerald-500" /> 100% Original
             </div>

@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Package, User, Building2, GraduationCap, Phone, ExternalLink, Flame, Trophy, Award } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useCountry } from "@/context/CountryContext";
 
 export default function DashboardPage() {
+  const { formatPrice } = useCountry();
   const [user, setUser] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>({
@@ -334,7 +336,7 @@ export default function DashboardPage() {
                   <div>
                     <h3 className="font-bold text-lg">{order.item_title || 'Service Purchase'}</h3>
                     <p className="text-sm text-muted-foreground">Order ID: {order.order_id}</p>
-                    <p className="text-sm font-semibold mt-1 text-primary">₹{(order.amount / 100).toLocaleString()}</p>
+                    <p className="text-sm font-semibold mt-1 text-primary">{formatPrice(order.amount / 100, order.currency_code)}</p>
                   </div>
                   <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase">
                     {order.status}

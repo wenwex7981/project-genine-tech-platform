@@ -124,7 +124,7 @@ const CURRENCY_LOCALE_MAP: Record<string, string> = {
 
 /**
  * Detect user's country from browser signals.
- * Priority: localStorage → browser locale → timezone → default India
+ * Priority: localStorage → timezone → browser locale → default India
  */
 export function detectUserCountry(): string {
   if (typeof window === 'undefined') return 'IN';
@@ -133,17 +133,17 @@ export function detectUserCountry(): string {
   const saved = localStorage.getItem('gn_country');
   if (saved && saved.length === 2) return saved;
 
-  // 2. Check browser locale
-  const locale = navigator.language || (navigator as any).userLanguage || '';
-  const localeCountry = LOCALE_COUNTRY_MAP[locale] || LOCALE_COUNTRY_MAP[locale.split('-')[0]];
-  if (localeCountry) return localeCountry;
-
-  // 3. Check timezone
+  // 2. Check timezone (more accurate than locale which is often en-US)
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const tzCountry = TIMEZONE_COUNTRY_MAP[tz];
     if (tzCountry) return tzCountry;
   } catch { /* ignore */ }
+
+  // 3. Check browser locale as fallback
+  const locale = navigator.language || (navigator as any).userLanguage || '';
+  const localeCountry = LOCALE_COUNTRY_MAP[locale] || LOCALE_COUNTRY_MAP[locale.split('-')[0]];
+  if (localeCountry) return localeCountry;
 
   // 4. Default to India
   return 'IN';

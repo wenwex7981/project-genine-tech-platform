@@ -6,10 +6,13 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
+import { useCountry } from "@/context/CountryContext";
 import { supabase } from "@/lib/supabase";
 
 export default function ProjectsHub() {
   const { addToCart } = useCart();
+  const { formatPrice, convertPrice } = useCountry();
   
   const [selectedDegree, setSelectedDegree] = useState("All");
   const [selectedDomain, setSelectedDomain] = useState("All");
@@ -221,7 +224,7 @@ export default function ProjectsHub() {
                       </Link>
                       
                       <div className="mt-auto pt-4 flex items-center justify-between border-t mt-4">
-                        <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">₹{project.price}</p>
+                        <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{formatPrice(convertPrice(project.price))}</p>
                         <Button onClick={(e) => {
                           e.preventDefault();
                           addToCart(project);

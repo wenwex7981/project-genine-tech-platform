@@ -12,6 +12,7 @@ import {
   PRIORITY_COUNTRIES,
 } from '@/lib/i18n/countries';
 import { supabase } from '@/lib/supabase';
+import { getAllPricesForCountry, PRODUCT_CATALOG } from '@/lib/i18n/pricing';
 
 interface CountryContextType {
   /** Current country code (ISO 3166-1 alpha-2) */
@@ -24,13 +25,17 @@ interface CountryContextType {
   setCountry: (code: string) => void;
   /** Format a price in the current country's currency */
   formatPrice: (amount: number, overrideCurrency?: string) => string;
+  /** Get the raw numerical localized price for a specific product */
+  getPrice: (productId: string) => number;
+  /** Convert a raw INR amount to the current localized currency using fixed fallback rates */
+  convertPrice: (amountInINR: number) => number;
   /** Get the Razorpay-compatible currency (falls back to INR) */
   razorpayCurrency: string;
   /** Get the currency multiplier for Razorpay (100 for most, 1 for JPY etc.) */
   currencyMultiplier: number;
   /** Country info object */
   countryInfo: Country | undefined;
-  /** Whether the country has been detected/loaded */
+  /** Whether the country and pricing have been loaded */
   isReady: boolean;
 }
 
@@ -40,6 +45,8 @@ const CountryContext = createContext<CountryContextType>({
   isIndia: true,
   setCountry: () => {},
   formatPrice: (amount) => `₹${amount}`,
+  getPrice: (id) => PRODUCT_CATALOG[id]?.defaultPriceINR || 0,
+  convertPrice: (amount) => amount,
   razorpayCurrency: 'INR',
   currencyMultiplier: 100,
   countryInfo: PRIORITY_COUNTRIES[0],
@@ -48,13 +55,13 @@ const CountryContext = createContext<CountryContextType>({
 
 export function CountryProvider({ children }: { children: ReactNode }) {
   const [country, setCountryState] = useState('IN');
+  const [prices, setPrices] = useState<Record<string, {price: number, currencyCode: string}>>({});
   const [isReady, setIsReady] = useState(false);
 
   // Detect country on mount
   useEffect(() => {
     const detected = detectUserCountry();
     setCountryState(detected);
-    setIsReady(true);
 
     // Also check if authenticated user has a saved preference
     (async () => {
@@ -77,6 +84,19 @@ export function CountryProvider({ children }: { children: ReactNode }) {
       }
     })();
   }, []);
+
+  // Fetch prices whenever country changes
+  useEffect(() => {
+    let mounted = true;
+    setIsReady(false);
+    getAllPricesForCountry(country).then(data => {
+      if (mounted) {
+        setPrices(data);
+        setIsReady(true);
+      }
+    });
+    return () => { mounted = false; };
+  }, [country]);
 
   const setCountry = useCallback((code: string) => {
     setCountryState(code);
@@ -108,6 +128,35 @@ export function CountryProvider({ children }: { children: ReactNode }) {
     return formatPriceUtil(amount, overrideCurrency || currency);
   }, [currency]);
 
+  const getPrice = useCallback((productId: string) => {
+    return prices[productId]?.price || PRODUCT_CATALOG[productId]?.defaultPriceINR || 0;
+  }, [prices]);
+
+  const convertPrice = useCallback((amountInINR: number) => {
+    if (currency === 'INR') return amountInINR;
+    
+    // Fallback conversion rates (approximate)
+    const rates: Record<string, number> = {
+      'USD': 0.012, // 1 INR = 0.012 USD (~83 INR/USD)
+      'GBP': 0.0094, // ~106 INR/GBP
+      'EUR': 0.011, // ~90 INR/EUR
+      'CAD': 0.016, // ~61 INR/CAD
+      'AUD': 0.018, // ~55 INR/AUD
+      'AED': 0.044, // ~22 INR/AED
+      'SGD': 0.016, // ~61 INR/SGD
+      'SAR': 0.045, // ~22 INR/SAR
+    };
+
+    const rate = rates[currency] || 0.012; // Fallback to USD rate for unknown currencies
+    const converted = amountInINR * rate;
+    
+    // Round to 99 cents/pence if greater than 1, otherwise 2 decimal places
+    if (converted > 1) {
+      return Math.floor(converted) + 0.99;
+    }
+    return Number(converted.toFixed(2));
+  }, [currency]);
+
   return (
     <CountryContext.Provider value={{
       country,
@@ -115,6 +164,8 @@ export function CountryProvider({ children }: { children: ReactNode }) {
       isIndia,
       setCountry,
       formatPrice,
+      getPrice,
+      convertPrice,
       razorpayCurrency,
       currencyMultiplier,
       countryInfo,
