@@ -70,18 +70,23 @@ export const metadata: Metadata = {
   }
 };
 
-export default function RootLayout({
+import { headers } from "next/headers";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const defaultCountry = headersList.get("x-user-country") || undefined;
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground pb-20 md:pb-0 pt-10">
-        <CountryProvider>
+        <CountryProvider defaultCountry={defaultCountry}>
         <CartProvider>
           <MonetizationWidgets />
           <Navbar />

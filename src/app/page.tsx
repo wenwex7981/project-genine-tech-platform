@@ -209,10 +209,42 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-6">
-              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> Original, Plagiarism-Free Work</div>
-              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> 24/7 Expert Support</div>
-              <div className="flex items-center gap-2 text-sm text-zinc-300 font-medium"><CheckCircle className="h-4 w-4 text-emerald-400" /> {isIndia ? "50+ Cities Served" : "10+ Countries Served"}</div>
+            {/* Countries Marquee inside Hero */}
+            <div className="pt-10 w-full overflow-hidden max-w-5xl mx-auto opacity-80 hover:opacity-100 transition-opacity">
+              <p className="text-xs uppercase tracking-widest text-zinc-400 font-bold mb-4 text-center">Available & Trusted by Students in 50+ Countries</p>
+              <div className="relative flex overflow-x-hidden group pb-4">
+                <div className="animate-marquee whitespace-nowrap flex items-center gap-4 group-hover:pause">
+                  {/* Loop 3 times for continuous scroll effect */}
+                  {[1, 2, 3].map((loop) => (
+                    <div key={loop} className="flex items-center gap-4 px-2">
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
+                        <span className="text-lg">🇺🇸</span> US
+                      </div>
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
+                        <span className="text-lg">🇮🇳</span> India
+                      </div>
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
+                        <span className="text-lg">🇬🇧</span> UK
+                      </div>
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
+                        <span className="text-lg">🇨🇦</span> Canada
+                      </div>
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
+                        <span className="text-lg">🇦🇺</span> Australia
+                      </div>
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
+                        <span className="text-lg">🇦🇪</span> UAE
+                      </div>
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
+                        <span className="text-lg">🇸🇬</span> Singapore
+                      </div>
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-sm font-bold text-white shadow-sm">
+                        <span className="text-lg">🇩🇪</span> Germany
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

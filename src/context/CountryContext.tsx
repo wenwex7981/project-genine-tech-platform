@@ -53,14 +53,15 @@ const CountryContext = createContext<CountryContextType>({
   isReady: false,
 });
 
-export function CountryProvider({ children }: { children: ReactNode }) {
-  const [country, setCountryState] = useState('IN');
+export function CountryProvider({ children, defaultCountry }: { children: ReactNode, defaultCountry?: string }) {
+  const [country, setCountryState] = useState(defaultCountry || 'IN');
   const [prices, setPrices] = useState<Record<string, {price: number, currencyCode: string}>>({});
   const [isReady, setIsReady] = useState(false);
 
   // Detect country on mount
   useEffect(() => {
-    const detected = detectUserCountry();
+    // If we have a server-detected country, still respect localStorage overriding it
+    const detected = detectUserCountry(defaultCountry);
     setCountryState(detected);
 
     // Also check if authenticated user has a saved preference

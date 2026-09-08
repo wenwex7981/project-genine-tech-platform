@@ -124,14 +124,17 @@ const CURRENCY_LOCALE_MAP: Record<string, string> = {
 
 /**
  * Detect user's country from browser signals.
- * Priority: localStorage → timezone → browser locale → default India
+ * Priority: localStorage → server header → timezone → browser locale → default India
  */
-export function detectUserCountry(): string {
-  if (typeof window === 'undefined') return 'IN';
+export function detectUserCountry(serverFallback?: string): string {
+  if (typeof window === 'undefined') return serverFallback || 'IN';
 
   // 1. Check saved preference
   const saved = localStorage.getItem('gn_country');
   if (saved && saved.length === 2) return saved;
+
+  // 1.5 Check server fallback
+  if (serverFallback && serverFallback.length === 2) return serverFallback;
 
   // 2. Check timezone (more accurate than locale which is often en-US)
   try {
