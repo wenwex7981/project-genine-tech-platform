@@ -40,7 +40,7 @@ export default function MobileBottomNav() {
     <>
       {/* Full-screen slide-up menu for the "Menu" button */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-background md:hidden flex flex-col pt-20 pb-24 px-6 overflow-y-auto animate-in slide-in-from-bottom-full duration-300">
+        <div className="fixed inset-0 z-40 bg-background lg:hidden flex flex-col pt-20 pb-24 px-6 overflow-y-auto animate-in slide-in-from-bottom-full duration-300">
           <div className="flex justify-between items-center mb-8 border-b pb-4">
             <h2 className="text-2xl font-bold">More Options</h2>
             <button onClick={() => setIsMenuOpen(false)} className="p-2 bg-muted rounded-full">
@@ -82,7 +82,7 @@ export default function MobileBottomNav() {
       )}
 
       {/* Fixed Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 w-full bg-background/90 backdrop-blur-xl border-t z-50 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-none">
+      <div className="lg:hidden fixed bottom-0 left-0 w-full bg-background/90 backdrop-blur-xl border-t z-50 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-none">
         <div className="flex justify-around items-center h-16 px-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
