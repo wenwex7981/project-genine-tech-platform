@@ -27,6 +27,7 @@ const SERVICES = [
     description: "Complete, deployable source code for computer science, engineering, and MBA capstones. Master AI/ML, IoT, Blockchain, and Full-Stack development.",
     features: ["Production-Ready Code", "Base Research Paper", "System Architecture", "Pitch Deck Presentation"],
     badge: "Most Popular",
+    link: "/projects",
   },
   {
     icon: <ShieldCheck className="h-8 w-8" />,
@@ -35,6 +36,7 @@ const SERVICES = [
     description: "Our expert team crafts completely original IEEE-format research papers, whitepapers, and system design documents with rigorous originality checks.",
     features: ["IEEE Format Papers", "Whitepapers & System Docs", "Originality Verified", "Peer-Review Ready"],
     badge: "High Demand",
+    link: "/study",
   },
   {
     icon: <Brain className="h-8 w-8" />,
@@ -43,6 +45,7 @@ const SERVICES = [
     description: "Advanced AI content enhancement tool that refines and paraphrases AI-generated text into natural, human-quality academic writing with proper tone.",
     features: ["Natural Language Refinement", "Semantic Preservation", "Academic Tone Maintained", "Bulk Text Processing"],
     badge: "Exclusive",
+    link: "/ai-services",
   },
   {
     icon: <FileText className="h-8 w-8" />,
@@ -51,6 +54,7 @@ const SERVICES = [
     description: "Our intelligent Resume Hub grades your CV against a 17-point ATS scoring rubric and generates tailored resumes that beat tracking systems at top global firms.",
     features: ["17-Point ATS Scoring", "Job Description Matching", "Cover Letter Generator", "Multiple Export Formats"],
     badge: "Career Tool",
+    link: "/resume",
   },
   {
     icon: <Rocket className="h-8 w-8" />,
@@ -59,6 +63,7 @@ const SERVICES = [
     description: "Stay ahead with our curated, real-time directory of national and international hackathons, coding contests, and ideathons worldwide.",
     features: ["Real-Time Global Listings", "Filter by Domain & Date", "Team Formation Hub", "Submission Guides"],
     badge: "Live",
+    link: "/hackathons",
   },
   {
     icon: <PenTool className="h-8 w-8" />,
@@ -67,18 +72,19 @@ const SERVICES = [
     description: "Have a unique technical challenge? Upload your requirements and our team will architect and code the entire software solution from scratch.",
     features: ["Requirement Analysis", "Custom Architecture", "End-to-End Development", "Deployment Support"],
     badge: "Premium",
+    link: "/custom-requirements",
   },
 ];
 
 const CATEGORIES = [
-  { icon: <Cpu className="h-6 w-6" />, name: "Artificial Intelligence & ML", count: "120+ Solutions" },
-  { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Solutions" },
-  { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Solutions" },
-  { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Solutions" },
-  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Solutions" },
-  { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Solutions" },
-  { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Solutions" },
-  { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Solutions" },
+  { icon: <Cpu className="h-6 w-6" />, name: "Artificial Intelligence & ML", count: "120+ Solutions", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=600" },
+  { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Solutions", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600" },
+  { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Solutions", image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=600" },
+  { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Solutions", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600" },
+  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Solutions", image: "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&q=80&w=600" },
+  { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Solutions", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=600" },
+  { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Solutions", image: "https://images.unsplash.com/photo-1510915361894-dba8b601051b?auto=format&fit=crop&q=80&w=600" },
+  { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Solutions", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600" },
 ];
 
 const LOCATIONS = [
@@ -281,7 +287,7 @@ export default function Home() {
 
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:grid md:grid-cols-2 xl:grid-cols-3 md:gap-8 max-w-7xl mx-auto pb-6 md:pb-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {SERVICES.map((svc) => (
-              <Link href="/login" key={svc.title} className="min-w-[85vw] snap-center md:min-w-0 group relative bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 hover:bg-white dark:hover:bg-zinc-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] hover:shadow-2xl transition-all duration-500 rounded-3xl p-6 md:p-8 flex flex-col overflow-hidden">
+              <Link href={svc.link} key={svc.title} className="min-w-[85vw] snap-center md:min-w-0 group relative bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800/50 hover:bg-white dark:hover:bg-zinc-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] hover:shadow-2xl transition-all duration-500 rounded-3xl p-6 md:p-8 flex flex-col overflow-hidden">
                 <div className="absolute top-5 right-5">
                   <span className={`text-xs font-bold px-3 py-1 rounded-full ${badgeColorMap[svc.badge]}`}>{svc.badge}</span>
                 </div>
@@ -318,16 +324,25 @@ export default function Home() {
               Browse our deep catalogue of ready-made projects across every major engineering and management domain.
             </p>
           </div>
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:grid sm:grid-cols-2 lg:grid-cols-4 md:gap-5 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 md:grid sm:grid-cols-2 lg:grid-cols-4 md:gap-8 max-w-6xl mx-auto pb-6 pr-4 md:pr-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {CATEGORIES.map((cat) => (
-              <Link href="/login" key={cat.name} className="min-w-[75vw] snap-center md:min-w-0">
-                <div className="group bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 rounded-2xl p-5 md:p-6 hover:border-primary/40 hover:bg-white dark:hover:bg-zinc-900 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 cursor-pointer flex items-center md:items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors flex-shrink-0">
-                    {cat.icon}
-                  </div>
-                  <div>
-                    <p className="font-bold leading-tight">{cat.name}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{cat.count}</p>
+              <Link href={`/projects?category=${encodeURIComponent(cat.name)}`} key={cat.name} className="min-w-[80vw] sm:min-w-0 snap-center">
+                <div className="group relative h-64 md:h-72 w-full rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer border border-zinc-200/50 dark:border-zinc-800/50">
+                  <Image 
+                    src={cat.image} 
+                    alt={cat.name} 
+                    fill 
+                    className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                  />
+                  {/* Elegant dark gradient overlay (no neon) */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/90 via-zinc-900/40 to-transparent transition-opacity duration-300" />
+                  
+                  <div className="absolute bottom-0 left-0 w-full p-6 text-left flex flex-col justify-end">
+                    <div className="w-10 h-10 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center text-white mb-3 shadow-sm border border-white/30 group-hover:bg-primary group-hover:border-primary transition-colors">
+                      {cat.icon}
+                    </div>
+                    <p className="font-bold text-xl text-white leading-tight drop-shadow-sm">{cat.name}</p>
+                    <p className="text-sm text-zinc-300 mt-2 font-medium">{cat.count}</p>
                   </div>
                 </div>
               </Link>
@@ -388,7 +403,7 @@ export default function Home() {
               { name: "Project Documentation", price: formatPrice(convertPrice(149)), desc: "Instant IEEE/SRS documentation templates." },
               { name: "Final Year Projects", price: `From ${formatPrice(convertPrice(6000))}`, desc: "Complete source code, setup, and support." },
             ].map((plan) => (
-              <Link href="/services" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
+              <Link href="/pricing" key={plan.name} className="group bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 flex flex-col justify-between text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-xl">
                 <div>
                   <h3 className="font-bold text-xl mb-2 group-hover:text-primary transition-colors">{plan.name}</h3>
                   <p className="text-muted-foreground text-sm mb-6 h-10">{plan.desc}</p>

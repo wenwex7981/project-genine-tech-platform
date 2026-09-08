@@ -1082,29 +1082,29 @@ export default function ResumeHub() {
       {/* -------------------- COMMUNITY TAB -------------------- */}
       {activeTab === "community" && (
         <div className="animate-in fade-in duration-500">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 mb-8">
             <h2 className="text-2xl font-bold flex items-center gap-2"><Trophy className="h-6 w-6 text-yellow-500" /> Winning Resumes</h2>
             <Button onClick={() => setShowPostModal(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">
               <PlusCircle className="mr-2 h-4 w-4" /> Publish Yours
             </Button>
           </div>
 
-          <div className="flex flex-wrap gap-4 mb-8 bg-white dark:bg-zinc-900 p-4 rounded-xl border">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-gray-500">Experience:</span>
+          <div className="flex flex-col xl:flex-row gap-4 mb-8 bg-white dark:bg-zinc-900 p-4 rounded-xl border w-full overflow-hidden">
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 sm:pb-0 w-full xl:w-auto">
+              <span className="text-sm font-semibold text-gray-500 whitespace-nowrap">Experience:</span>
               {["All", "Fresher", "Experienced"].map(level => (
                 <button 
                   key={level} onClick={() => setFilterExp(level)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filterExp === level ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${filterExp === level ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}
                 >{level}</button>
               ))}
             </div>
-            <div className="flex items-center gap-2 border-l pl-4 ml-2">
-              <span className="text-sm font-semibold text-gray-500">Domain:</span>
+            <div className="flex items-center gap-2 xl:border-l xl:pl-4 xl:ml-2 overflow-x-auto no-scrollbar pb-2 sm:pb-0 w-full xl:w-auto">
+              <span className="text-sm font-semibold text-gray-500 whitespace-nowrap">Domain:</span>
               {["All", "Software Engineering", "Data Science", "Product Management", "Design"].map(domain => (
                 <button 
                   key={domain} onClick={() => setFilterDomain(domain)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filterDomain === domain ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${filterDomain === domain ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'}`}
                 >{domain}</button>
               ))}
             </div>

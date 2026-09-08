@@ -134,9 +134,9 @@ export default function ProjectsHub() {
               <div className="space-y-6">
                 <div>
                   <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-3">Degree</h4>
-                  <div className="space-y-2">
+                  <div className="flex overflow-x-auto no-scrollbar gap-4 md:flex-col md:gap-2 pb-2 md:pb-0">
                     {degrees.map(deg => (
-                      <label key={deg} className="flex items-center gap-3 cursor-pointer group">
+                      <label key={deg} className="flex items-center gap-2 cursor-pointer group whitespace-nowrap">
                         <input 
                           type="radio" 
                           name="degree" 
@@ -154,9 +154,9 @@ export default function ProjectsHub() {
 
                 <div className="border-t pt-4">
                   <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-3">Domain</h4>
-                  <div className="space-y-2">
+                  <div className="flex overflow-x-auto no-scrollbar gap-4 md:flex-col md:gap-2 pb-2 md:pb-0">
                     {domains.map(dom => (
-                      <label key={dom} className="flex items-center gap-3 cursor-pointer group">
+                      <label key={dom} className="flex items-center gap-2 cursor-pointer group whitespace-nowrap">
                         <input 
                           type="radio" 
                           name="domain" 
