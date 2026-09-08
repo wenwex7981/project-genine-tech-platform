@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
 import { useCountry } from "@/context/CountryContext";
 import { supabase } from "@/lib/supabase";
 

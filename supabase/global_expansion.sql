@@ -27,7 +27,37 @@ CREATE TABLE IF NOT EXISTS country_pricing (
   UNIQUE(product_id, country_code)
 );
 
--- 3. Add country columns to existing tables
+-- 3. Ensure Core Tables Exist Before Altering
+CREATE TABLE IF NOT EXISTS user_profiles (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  full_name TEXT,
+  phone_number TEXT,
+  university TEXT,
+  graduation_year TEXT,
+  total_score INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  order_id TEXT UNIQUE NOT NULL,
+  email TEXT NOT NULL,
+  item_title TEXT,
+  amount NUMERIC NOT NULL,
+  status TEXT DEFAULT 'pending',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS user_subscriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  plan_id TEXT,
+  status TEXT DEFAULT 'active',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 4. Add country columns to core tables
 ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS country_code TEXT DEFAULT NULL;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS currency_code TEXT DEFAULT 'INR';
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS country_code TEXT DEFAULT 'IN';
