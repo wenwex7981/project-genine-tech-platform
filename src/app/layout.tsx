@@ -9,6 +9,7 @@ import { CartProvider } from "@/context/CartContext";
 import { CountryProvider } from "@/context/CountryContext";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import MonetizationWidgets from "@/components/MonetizationWidgets";
+import MobileQuickExplore from "@/components/MobileQuickExplore";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -104,7 +105,7 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground pb-20 md:pb-0 pt-10">
+      <body className="min-h-full flex flex-col bg-background text-foreground pb-28 md:pb-0 pt-10">
         <CountryProvider defaultCountry={defaultCountry}>
         <CartProvider>
           <MonetizationWidgets />
@@ -114,6 +115,7 @@ export default async function RootLayout({
           </main>
           <Footer />
           <MobileBottomNav />
+          <MobileQuickExplore />
         </CartProvider>
         </CountryProvider>
 

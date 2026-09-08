@@ -9,7 +9,7 @@ import {
   BookOpen, Brain, FileText, Cpu, Users, Award, Rocket, Code2,
   Bot, PenTool, BarChart3, Briefcase, GraduationCap, Phone, Mail,
   ChevronRight, TrendingUp, Lock, Layers, Database, Cloud, CreditCard, Shield,
-  ScrollText
+  ScrollText, ChevronDown, FolderOpen, Sparkles
 } from "lucide-react";
 import AuthRedirect from "@/components/AuthRedirect";
 
@@ -184,7 +184,7 @@ export default function Home() {
       />
       <AuthRedirect />
       {/* ── HERO SECTION ── */}
-      <section className="relative w-full min-h-[92vh] flex flex-col justify-center bg-zinc-950 overflow-hidden text-white">
+      <section className="relative w-full min-h-[75vh] md:min-h-[92vh] flex flex-col justify-center bg-zinc-950 overflow-hidden text-white">
         <Image src="/images/hero-bg-global.jpg" alt="Hero Background" fill priority className="object-cover object-center opacity-70 z-0" sizes="100vw" />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/80 via-zinc-950/30 to-zinc-950/90 z-0"></div>
@@ -263,7 +263,51 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Mobile scroll indicator */}
+        <div className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 animate-bounce">
+          <span className="text-xs text-zinc-400 font-semibold">Scroll to explore</span>
+          <ChevronDown className="w-5 h-5 text-zinc-400" />
+        </div>
 
+      </section>
+
+      {/* ── MOBILE QUICK EXPLORE ── Only visible on mobile */}
+      <section className="md:hidden w-full py-6 bg-background border-b">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-4">
+            <h2 className="text-lg font-extrabold tracking-tight">⚡ Quick Explore</h2>
+            <p className="text-xs text-muted-foreground">Tap to visit any section</p>
+          </div>
+          <div className="grid grid-cols-3 gap-2.5">
+            {[
+              { icon: <FolderOpen className="w-5 h-5" />, label: "Projects", href: "/projects", color: "from-blue-500 to-blue-600", badge: "120+" },
+              { icon: <Sparkles className="w-5 h-5" />, label: "Resume Hub", href: "/resume", color: "from-orange-500 to-amber-500", badge: "AI" },
+              { icon: <Brain className="w-5 h-5" />, label: "AI Tools", href: "/ai-services", color: "from-violet-500 to-purple-600", badge: "New" },
+              { icon: <Rocket className="w-5 h-5" />, label: "Hackathons", href: "/hackathons", color: "from-rose-500 to-pink-600", badge: "Live" },
+              { icon: <Briefcase className="w-5 h-5" />, label: "Jobs", href: "/jobs-updates", color: "from-emerald-500 to-green-600", badge: "🔴" },
+              { icon: <BookOpen className="w-5 h-5" />, label: "Study Hub", href: "/study", color: "from-cyan-500 to-teal-600" },
+              { icon: <BarChart3 className="w-5 h-5" />, label: "Pricing", href: "/pricing", color: "from-amber-500 to-yellow-600" },
+              { icon: <FileText className="w-5 h-5" />, label: "Blog", href: "/blog", color: "from-slate-500 to-gray-600" },
+              { icon: <PenTool className="w-5 h-5" />, label: "Custom Work", href: "/custom-requirements", color: "from-indigo-500 to-blue-600", badge: "Pro" },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-primary/30 active:scale-95 transition-all relative"
+              >
+                {item.badge && (
+                  <span className="absolute -top-1 -right-1 text-[8px] font-black bg-red-500 text-white px-1.5 py-0.5 rounded-full leading-none">
+                    {item.badge}
+                  </span>
+                )}
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white shadow-md`}>
+                  {item.icon}
+                </div>
+                <span className="text-[11px] font-bold text-center leading-tight">{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ── STATS TICKER ── */}
