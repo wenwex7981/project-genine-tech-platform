@@ -1,11 +1,12 @@
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Calendar, Tag } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Engineering Student Guides — Projects, Resumes & Hackathon Tips [2026]",
-  description: "Expert guides on final year project ideas, ATS resume building, hackathon winning strategies, and AI tools for Indian engineering students. Updated weekly.",
+  title: "Engineering & Tech Guides — Projects, Resumes & Hackathon Tips [2026]",
+  description: "Expert guides on capstone project ideas, ATS resume building, hackathon winning strategies, and AI tools for students and professionals worldwide. Updated weekly.",
 };
 
 // Force dynamic rendering to ensure new blogs show up immediately
@@ -25,11 +26,23 @@ export default async function BlogIndex() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950">
-      <div className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-violet-900 py-24 text-center px-4">
-        <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">GraduateNex Resources</h1>
-        <p className="text-xl text-indigo-100 max-w-2xl mx-auto font-medium">
-          Ultimate guides to final year projects, hackathons, resumes, and the future of AI.
-        </p>
+      <div className="relative py-24 text-center px-4 overflow-hidden flex flex-col items-center justify-center min-h-[400px]">
+        <Image 
+          src="/images/blog-hero-bg.jpg" 
+          alt="Library Background" 
+          fill 
+          priority 
+          className="object-cover object-center opacity-80 z-0" 
+          sizes="100vw" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/90 via-indigo-950/60 to-zinc-950/90 z-0 backdrop-blur-[1px]"></div>
+        
+        <div className="relative z-10">
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight drop-shadow-md">GraduateNex Resources</h1>
+          <p className="text-xl text-indigo-50 max-w-2xl mx-auto font-medium drop-shadow-sm">
+            Ultimate guides to capstone projects, global hackathons, ATS resumes, and the future of tech.
+          </p>
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-16">
