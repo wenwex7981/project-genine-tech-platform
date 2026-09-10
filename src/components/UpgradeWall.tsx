@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Crown, CheckCircle2, Clock, Users, ArrowRight, Loader2, X, Sparkles, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useCountry } from "@/context/CountryContext";
 
 interface UpgradeWallProps {
   isOpen: boolean;
@@ -61,6 +62,7 @@ export default function UpgradeWall({
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes
   const [socialIndex, setSocialIndex] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { formatPrice, convertPrice, razorpayCurrency } = useCountry();
 
   // Countdown timer
   useEffect(() => {
@@ -142,8 +144,8 @@ export default function UpgradeWall({
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-black text-amber-800 dark:text-amber-300">₹{discountPrice}</span>
-                  <span className="text-lg text-amber-600/60 line-through">₹{originalPrice}</span>
+                  <span className="text-3xl font-black text-amber-800 dark:text-amber-300">{formatPrice(discountPrice, razorpayCurrency)}</span>
+                  <span className="text-lg text-amber-600/60 line-through">{formatPrice(originalPrice, razorpayCurrency)}</span>
                 </div>
                 <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">/ 30 days</span>
               </div>
@@ -207,7 +209,7 @@ export default function UpgradeWall({
                 {isProcessing ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <>Pay ₹{payPerUsePrice} {payPerUseLabel || "for 1 Use"}</>
+                  <>Pay {formatPrice(payPerUsePrice, razorpayCurrency)} {payPerUseLabel || "for 1 Use"}</>
                 )}
               </Button>
             )}

@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2, Zap } from "lucide-react";
+import { Sparkles, Loader2, Zap, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import UpgradeWall from "@/components/UpgradeWall";
+import { useCountry } from "@/context/CountryContext";
+import { PayPalCheckoutButton } from "@/components/PayPalCheckoutButton";
 
 export default function AIGeneratorPage() {
   const router = useRouter();
@@ -18,6 +20,8 @@ export default function AIGeneratorPage() {
   const [usageCount, setUsageCount] = useState(0);
   const [isCheckoutLoaded, setIsCheckoutLoaded] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const { formatPrice, convertPrice, getPrice, country, razorpayCurrency } = useCountry();
+  const [payPalCheckout, setPayPalCheckout] = useState<{amount: number, desc: string} | null>(null);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -102,11 +106,19 @@ export default function AIGeneratorPage() {
     if (!userEmail) return router.push("/login");
     if (!isCheckoutLoaded) return alert("Payment loading...");
 
+    const amount = getPrice('abstract_gen');
+    const desc = "Abstract Generator (1 Use)";
+
+    if (country !== 'IN') {
+      setPayPalCheckout({ amount, desc });
+      return;
+    }
+
     try {
       const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: 20 })
+        body: JSON.stringify({ amount })
       });
       const order = await res.json();
 
@@ -115,7 +127,7 @@ export default function AIGeneratorPage() {
         amount: order.amount,
         currency: order.currency,
         name: "GraduateNex",
-        description: "Abstract Generator (1 Use)",
+        description: desc,
         order_id: order.id,
         prefill: { email: userEmail },
         handler: function () {
@@ -200,13 +212,51 @@ export default function AIGeneratorPage() {
           "Multiple format exports (IEEE, APA)",
           "Academic tone refinement",
         ]}
-        payPerUsePrice={20}
+        payPerUsePrice={getPrice('abstract_gen') || 20}
         payPerUseLabel="for 1 Generation"
         onPayPerUse={handlePayPerUse}
         originalPrice={200}
-        discountPrice={99}
+        discountPrice={getPrice('ai_premium') || 99}
         discountPlanName="Premium AI Helper"
       />
     </div>
+
+      {/* PayPal Checkout Modal */}
+      {payPalCheckout && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-md w-full relative shadow-2xl border">
+            <button 
+              onClick={() => setPayPalCheckout(null)}
+              className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-800 dark:hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h3 className="text-2xl font-bold mb-2">Complete Purchase</h3>
+            <p className="text-muted-foreground mb-6">
+              You are purchasing <strong>{payPalCheckout.desc}</strong> for {formatPrice(payPalCheckout.amount, razorpayCurrency)}.
+            </p>
+            
+            <PayPalCheckoutButton 
+              amount={payPalCheckout.amount}
+              currency={razorpayCurrency}
+              items={{ title: payPalCheckout.desc }}
+              country={country}
+              userEmail={userEmail || undefined}
+              onSuccess={async (paymentId) => {
+                setShowPaywall(false);
+                // Give them 1 more free use locally
+                localStorage.setItem("abstract_generator_usage", "0");
+                setUsageCount(0);
+                alert("Payment successful! You can now generate your abstract.");
+                setPayPalCheckout(null);
+              }}
+              onError={(err) => {
+                alert("PayPal checkout failed.");
+                setPayPalCheckout(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
   );
 }

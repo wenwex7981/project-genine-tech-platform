@@ -14,6 +14,7 @@ import { useCountry } from "@/context/CountryContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ResumeEditor from "@/components/ResumeEditor";
+import { PayPalCheckoutButton } from "@/components/PayPalCheckoutButton";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -25,7 +26,7 @@ const LIVE_NOTIFICATIONS = [
 ];
 
 export default function ResumeHub() {
-  const { formatPrice, convertPrice, getPrice } = useCountry();
+  const { formatPrice, convertPrice, getPrice, country, razorpayCurrency } = useCountry();
   const { addToCart } = useCart();
   const router = useRouter();
   const [notificationIndex, setNotificationIndex] = useState(0);
@@ -47,6 +48,7 @@ export default function ResumeHub() {
   const [unlockedJd, setUnlockedJd] = useState(false);
   const [showPaywall, setShowPaywall] = useState<"ats" | "jd" | null>(null);
   const [isCheckoutLoaded, setIsCheckoutLoaded] = useState(false);
+  const [payPalCheckout, setPayPalCheckout] = useState<{type: "ats" | "jd", amount: number, desc: string} | null>(null);
 
   // --- ANALYZER STATE ---
   const [jd, setJd] = useState("");
@@ -129,8 +131,13 @@ export default function ResumeHub() {
     if (!userEmail) return router.push("/login");
     if (!isCheckoutLoaded) return alert("Payment loading...");
 
-    const amount = type === "ats" ? 50 : 100;
+    const amount = type === "ats" ? getPrice('ats_scan') : getPrice('jd_match');
     const desc = type === "ats" ? "Detailed ATS Breakdown (1 Use)" : "JD Matching Analysis (1 Use)";
+
+    if (country !== 'IN') {
+      setPayPalCheckout({ type, amount, desc });
+      return;
+    }
 
     try {
       const res = await fetch('/api/create-order', {
@@ -1362,7 +1369,44 @@ export default function ResumeHub() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+
+      {/* PayPal Checkout Modal */}
+      {payPalCheckout && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-md w-full relative shadow-2xl border">
+            <button 
+              onClick={() => setPayPalCheckout(null)}
+              className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-800 dark:hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h3 className="text-2xl font-bold mb-2">Complete Purchase</h3>
+            <p className="text-muted-foreground mb-6">
+              You are purchasing <strong>{payPalCheckout.desc}</strong> for {formatPrice(payPalCheckout.amount, razorpayCurrency)}.
+            </p>
+            
+            <PayPalCheckoutButton 
+              amount={payPalCheckout.amount}
+              currency={razorpayCurrency}
+              items={{ title: payPalCheckout.desc }}
+              country={country}
+              userEmail={userEmail || undefined}
+              onSuccess={async (paymentId) => {
+                setShowPaywall(null);
+                if (payPalCheckout.type === "ats") setUnlockedAts(true);
+                if (payPalCheckout.type === "jd") setUnlockedJd(true);
+                alert(`Payment successful! You now have access to your ${payPalCheckout.type.toUpperCase()} report.`);
+                setPayPalCheckout(null);
+              }}
+              onError={(err) => {
+                alert("PayPal checkout failed.");
+                setPayPalCheckout(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

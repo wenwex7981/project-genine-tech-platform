@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Loader2, ChevronLeft, CheckCircle2 } from "lucide-react";
+import { Loader2, ChevronLeft, CheckCircle2, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCountry } from "@/context/CountryContext";
+import { PayPalCheckoutButton } from "@/components/PayPalCheckoutButton";
 
 const PLAN_PRICES: Record<string, number> = {
   "Free Listing": 0,
@@ -42,6 +44,8 @@ export default function PostHackathonPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
   const [isCheckoutLoaded, setIsCheckoutLoaded] = useState(false);
+  const { country, convertPrice, formatPrice, razorpayCurrency } = useCountry();
+  const [payPalCheckout, setPayPalCheckout] = useState<{plan: string, amount: number} | null>(null);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -86,12 +90,17 @@ export default function PostHackathonPage() {
 
     setIsSubmitting(true);
     
-    const price = PLAN_PRICES[formData.pricing_plan];
+    const price = convertPrice(PLAN_PRICES[formData.pricing_plan]);
 
     if (price === 0) {
       // Free listing, just save directly
       await saveHackathonToDB("free");
       setIsSubmitting(false);
+      return;
+    }
+
+    if (country !== 'IN') {
+      setPayPalCheckout({ plan: formData.pricing_plan, amount: price });
       return;
     }
 
@@ -321,7 +330,7 @@ export default function PostHackathonPage() {
                       )}
                       <h3 className="font-extrabold text-lg mb-2">{plan}</h3>
                       <div className="text-3xl font-black mb-6">
-                        {price === 0 ? "Free" : `₹${price}`}
+                        {price === 0 ? "Free" : formatPrice(convertPrice(price), razorpayCurrency)}
                       </div>
                       <ul className="space-y-3 flex-grow mb-6">
                         {PLAN_BENEFITS[plan].map((benefit, idx) => (
@@ -351,12 +360,51 @@ export default function PostHackathonPage() {
               {isSubmitting ? (
                 <><Loader2 className="animate-spin w-5 h-5 mr-2" /> Processing...</>
               ) : (
-                step === 4 ? (PLAN_PRICES[formData.pricing_plan] === 0 ? "Publish Free Listing" : `Pay ₹${PLAN_PRICES[formData.pricing_plan]} & Publish`) : "Next Step"
+                step === 4 ? (PLAN_PRICES[formData.pricing_plan] === 0 ? "Publish Free Listing" : `Pay ${formatPrice(convertPrice(PLAN_PRICES[formData.pricing_plan]), razorpayCurrency)} & Publish`) : "Next Step"
               )}
             </Button>
           </div>
         </form>
       </div>
+
+      {/* PayPal Checkout Modal */}
+      {payPalCheckout && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-md w-full relative shadow-2xl border">
+            <button 
+              onClick={() => {
+                setPayPalCheckout(null);
+                setIsSubmitting(false);
+              }}
+              className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-800 dark:hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h3 className="text-2xl font-bold mb-2">Complete Purchase</h3>
+            <p className="text-muted-foreground mb-6">
+              You are purchasing <strong>{payPalCheckout.plan}</strong> for {formatPrice(payPalCheckout.amount, razorpayCurrency)}.
+            </p>
+            
+            <PayPalCheckoutButton 
+              amount={payPalCheckout.amount}
+              currency={razorpayCurrency}
+              items={{ title: `Hackathon Post - ${payPalCheckout.plan}` }}
+              country={country}
+              userEmail={formData.contact_email || undefined}
+              onSuccess={async (paymentId) => {
+                await saveHackathonToDB("paid");
+                setPayPalCheckout(null);
+                setIsSubmitting(false);
+              }}
+              onError={(err) => {
+                alert("PayPal checkout failed.");
+                setPayPalCheckout(null);
+                setIsSubmitting(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

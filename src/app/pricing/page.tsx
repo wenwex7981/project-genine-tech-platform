@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useCountry } from '@/context/CountryContext';
 import { getAllPricesForCountry, PRODUCT_CATALOG } from '@/lib/i18n/pricing';
+import { PayPalCheckoutButton } from "@/components/PayPalCheckoutButton";
 
 export default function PricingPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function PricingPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const { country, currency, isIndia, formatPrice, razorpayCurrency } = useCountry();
   const [prices, setPrices] = useState<Record<string, {price: number; currencyCode: string}>>({});
+  const [selectedPlanForPayPal, setSelectedPlanForPayPal] = useState<{planId: string, planName: string, amount: number, isLifetime: boolean} | null>(null);
 
   useEffect(() => {
     getAllPricesForCountry(country).then(setPrices);
@@ -40,6 +42,11 @@ export default function PricingPage() {
       return;
     }
     if (!isCheckoutLoaded) return alert("Payment system is loading, please wait.");
+
+    if (country !== 'IN') {
+      setSelectedPlanForPayPal({ planId, planName, amount, isLifetime });
+      return;
+    }
 
     setIsProcessing(true);
     try {
@@ -407,6 +414,65 @@ export default function PricingPage() {
         </section>
 
       </div>
+
+      {/* PayPal Checkout Modal */}
+      {selectedPlanForPayPal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-8 max-w-md w-full relative shadow-2xl border">
+            <button 
+              onClick={() => setSelectedPlanForPayPal(null)}
+              className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-800 dark:hover:text-white"
+            >
+              ✕
+            </button>
+            <h3 className="text-2xl font-bold mb-2">Complete Purchase</h3>
+            <p className="text-muted-foreground mb-6">
+              You are purchasing <strong>{selectedPlanForPayPal.planName}</strong> for {formatPrice(selectedPlanForPayPal.amount, razorpayCurrency)}.
+            </p>
+            
+            <PayPalCheckoutButton 
+              amount={selectedPlanForPayPal.amount}
+              currency={razorpayCurrency}
+              items={{ title: selectedPlanForPayPal.planName }}
+              country={country}
+              userEmail={userEmail || undefined}
+              onSuccess={async (paymentId) => {
+                try {
+                  const verifyRes = await fetch('/api/verify-subscription', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      razorpay_order_id: paymentId,
+                      razorpay_payment_id: paymentId + '_capture',
+                      razorpay_signature: paymentId,
+                      plan_id: selectedPlanForPayPal.planId,
+                      plan_name: selectedPlanForPayPal.planName,
+                      user_email: userEmail,
+                      is_lifetime: selectedPlanForPayPal.isLifetime
+                    })
+                  });
+
+                  if (verifyRes.ok) {
+                    alert(`🎉 Success! You now have access to ${selectedPlanForPayPal.planName}.`);
+                    router.push("/dashboard");
+                  } else {
+                    alert("Payment verification failed.");
+                  }
+                } catch (err) {
+                  console.error(err);
+                  alert("Error verifying payment.");
+                } finally {
+                  setSelectedPlanForPayPal(null);
+                }
+              }}
+              onError={(err) => {
+                alert("PayPal checkout failed.");
+                setSelectedPlanForPayPal(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

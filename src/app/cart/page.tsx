@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import { PayPalCheckoutButton } from "@/components/PayPalCheckoutButton";
 
 export default function CartPage() {
   const { cart, updateQuantity, totalPrice, clearCart } = useCart();
@@ -248,6 +249,23 @@ export default function CartPage() {
                 RAZORPAY
               </div>
             </div>
+
+            {country !== 'IN' && (
+              <div className="mt-6 border-t pt-6">
+                <p className="text-sm text-center text-muted-foreground mb-4">Or pay with PayPal</p>
+                <PayPalCheckoutButton 
+                  amount={totalPrice}
+                  currency={razorpayCurrency}
+                  items={cart}
+                  country={country}
+                  onSuccess={(paymentId) => {
+                    setPaymentSuccess(paymentId);
+                    clearCart();
+                  }}
+                  onError={(err) => alert("PayPal payment failed.")}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
