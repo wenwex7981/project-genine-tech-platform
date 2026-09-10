@@ -353,12 +353,17 @@ async function init() {
     if ($('max-posts')) $('max-posts').value = s.gnEventsSettings.maxPosts || 12;
   }
 
-  const cmtS = await chrome.storage.local.get(['gnCmtSettings']);
+  const cmtS = await chrome.storage.local.get(['gnCmtSettings', 'gnCommentBotState']);
   if (cmtS.gnCmtSettings) {
     if ($('cmt-ig-id')) $('cmt-ig-id').value = cmtS.gnCmtSettings.igId || '';
     if ($('cmt-url')) $('cmt-url').value = cmtS.gnCmtSettings.url || '';
     if ($('cmt-msg')) $('cmt-msg').value = cmtS.gnCmtSettings.msg || '';
-    if ($('cmt-hashtags')) $('cmt-hashtags').value = cmtS.gnCmtSettings.hashtags || 'btech,mca,engineering,mba';
+    
+    if (cmtS.gnCommentBotState && cmtS.gnCommentBotState.pendingHashtags && cmtS.gnCommentBotState.pendingHashtags.length > 0) {
+      if ($('cmt-hashtags')) $('cmt-hashtags').value = cmtS.gnCommentBotState.pendingHashtags.join(',');
+    } else {
+      if ($('cmt-hashtags')) $('cmt-hashtags').value = cmtS.gnCmtSettings.hashtags || 'btech,mca,engineering,mba';
+    }
   }
 
   await refreshStats();

@@ -437,10 +437,10 @@ async function moveToNextHashtag(state) {
   const url = window.location.href;
 
   if (state?.running) {
-    if (/instagram\.com\/(p|reel)\//.test(url)) await handlePostPage(state);
+    if (/instagram\.com\/.*?(p|reel)\//.test(url)) await handlePostPage(state);
     else if (url.includes('/explore/')) await handleHashtagPage(state);
   } else if (cmtState?.running) {
-    if (/instagram\.com\/(p|reel)\//.test(url)) await handleCmtPostPage(cmtState);
+    if (/instagram\.com\/.*?(p|reel)\//.test(url)) await handleCmtPostPage(cmtState);
     else if (url.includes('/explore/')) await handleCmtHashtagPage(cmtState);
   }
 })();
@@ -474,7 +474,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'STOP_SCOUT') {
-    saveState({ running: false }).then(() => sendResponse({ status: 'stopped' }));
+    chrome.storage.local.get(['gnEventsState'], (d) => {
+      if (d.gnEventsState) {
+        d.gnEventsState.running = false;
+        chrome.storage.local.set({ gnEventsState: d.gnEventsState }, () => sendResponse({ status: 'stopped' }));
+      } else {
+        sendResponse({ status: 'stopped' });
+      }
+    });
     return true;
   }
 
@@ -501,7 +508,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'STOP_COMMENT_BOT') {
-    saveCmtState({ running: false }).then(() => sendResponse({ status: 'stopped' }));
+    chrome.storage.local.get(['gnCommentBotState'], (d) => {
+      if (d.gnCommentBotState) {
+        d.gnCommentBotState.running = false;
+        chrome.storage.local.set({ gnCommentBotState: d.gnCommentBotState }, () => sendResponse({ status: 'stopped' }));
+      } else {
+        sendResponse({ status: 'stopped' });
+      }
+    });
     return true;
   }
 });

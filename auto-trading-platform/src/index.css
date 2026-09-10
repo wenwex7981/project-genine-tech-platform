@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg-dark: #0a0e17;
+  --bg-panel: #131722;
+  --bg-panel-hover: #1e222d;
+  --border-color: #2a2e39;
+  --text-main: #d1d4dc;
+  --text-dim: #787b86;
+  --accent-blue: #2962ff;
+  --trade-green: #089981;
+  --trade-red: #f23645;
+  --trade-green-bg: rgba(8, 153, 129, 0.1);
+  --trade-red-bg: rgba(242, 54, 69, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
