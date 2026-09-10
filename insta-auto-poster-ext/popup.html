@@ -88,7 +88,7 @@
   <div class="header">
     <div class="header-logo">🎓</div>
     <div>
-      <div class="header-title">GraduateNex Insta Suite <span class="badge">v3.0</span></div>
+      <div class="header-title">GraduateNex Insta Suite <span class="badge">v4.0</span></div>
       <div class="header-sub">Auto Poster + AI Comment Blaster</div>
     </div>
   </div>
@@ -98,6 +98,9 @@
     <div class="tab active" data-tab="commenter">💬 Auto Commenter</div>
     <div class="tab" data-tab="poster">📸 Auto Poster</div>
     <div class="tab" data-tab="finalyear">🎓 Final Year Projects</div>
+    <div class="tab" data-tab="southindia">🌴 South India</div>
+    <div class="tab" data-tab="global">🌍 Global Unis</div>
+    <div class="tab" data-tab="reddit">🔥 Reddit</div>
     <div class="tab" data-tab="settings">⚙️ Settings</div>
   </div>
 
@@ -189,7 +192,7 @@
     <div class="section-title">🎓 Final Year Projects Auto-Comment</div>
     
     <label>Instagram ID (e.g. @your_id)</label>
-    <input type="text" id="fy-ig-id" placeholder="@projectgenie" />
+    <input type="text" id="fy-ig-id" placeholder="@graduatenex" />
     
     <label>Website URL</label>
     <input type="text" id="fy-url" placeholder="https://graduatenex.online" />
@@ -207,6 +210,104 @@
       <button class="btn btn-danger btn-sm" id="btn-stop-fy" style="flex:1; display:none">⏹ Stop</button>
     </div>
     <div id="fy-status" class="status" style="margin-top:10px;"></div>
+  </div>
+
+  <!-- ═══════════════════════════ SOUTH INDIA TAB ══════════════════════════ -->
+  <div class="panel" id="tab-southindia">
+    <div class="section-title">🌴 South India Colleges Database</div>
+    <label>Pre-loaded Colleges (Telangana & AP)</label>
+    <textarea id="si-colleges-list" rows="15" style="font-size:10px; white-space:pre; line-height:1.5;"></textarea>
+  </div>
+
+  <!-- ═══════════════════════════ GLOBAL UNIVERSITIES TAB ══════════════════════════ -->
+  <div class="panel" id="tab-global">
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-box"><div class="stat-num" id="glob-stat-commented">0</div><div class="stat-label">Commented</div></div>
+      <div class="stat-box"><div class="stat-num" id="glob-stat-skipped">0</div><div class="stat-label">Skipped</div></div>
+      <div class="stat-box"><div class="stat-num" id="glob-stat-queue">0</div><div class="stat-label">Remaining</div></div>
+    </div>
+
+    <div id="global-status" class="status"></div>
+
+    <!-- Country Selector -->
+    <div class="section-title">🌎 Select Target Countries</div>
+    <div class="topics-grid" id="country-chips">
+      <div class="topic-chip selected" data-country="usa">🇺🇸 USA</div>
+      <div class="topic-chip selected" data-country="uk">🇬🇧 UK</div>
+      <div class="topic-chip selected" data-country="canada">🇨🇦 Canada</div>
+      <div class="topic-chip selected" data-country="australia">🇦🇺 Australia</div>
+    </div>
+
+    <!-- Comment Style -->
+    <div class="section-title">🎯 Comment Style (localized per region)</div>
+    <div class="speed-control" id="glob-style-btns">
+      <div class="speed-btn selected" data-style="soft">🤝 Soft<br><small>Value-first</small></div>
+      <div class="speed-btn" data-style="bold">🔥 Bold<br><small>Direct CTA</small></div>
+      <div class="speed-btn" data-style="question">❓ Question<br><small>Curious hook</small></div>
+    </div>
+
+    <!-- Speed -->
+    <div class="section-title">⚡ Speed</div>
+    <div class="speed-control" id="glob-speed-btns">
+      <div class="speed-btn" data-gspeed="4000">🐢 Safe<br><small>6s</small></div>
+      <div class="speed-btn selected" data-gspeed="2000">⚡ Fast<br><small>3s</small></div>
+      <div class="speed-btn" data-gspeed="900">🚀 Rocket<br><small>1.5s</small></div>
+    </div>
+
+    <!-- Optional custom university list -->
+    <div class="section-title">🏛️ University List <small style="color:#9ca3af;font-weight:400">(pre-loaded · editable)</small></div>
+    <textarea id="glob-uni-list" rows="5" style="font-size:10px; white-space:pre; line-height:1.5;"
+      placeholder="Paste university names one per line..."></textarea>
+
+    <!-- Log -->
+    <div class="log-box" id="glob-log">
+      <div class="log-entry info">[ Ready ] Global University Bot v1.0 loaded</div>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-primary" id="btn-start-global" style="flex:3">
+        🌍 Start Global Comment Blast
+      </button>
+      <button class="btn btn-danger btn-sm" id="btn-stop-global" style="flex:1; display:none">⏹ Stop</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ REDDIT GLOBAL TAB -->
+  <div class="panel" id="tab-reddit">
+    <div class="stats-bar">
+      <div class="stat-box"><div class="stat-num" id="reddit-stat-commented">0</div><div class="stat-label">Commented</div></div>
+      <div class="stat-box"><div class="stat-num" id="reddit-stat-skipped">0</div><div class="stat-label">Skipped</div></div>
+      <div class="stat-box"><div class="stat-num" id="reddit-stat-queue">0</div><div class="stat-label">Subreddits Left</div></div>
+    </div>
+
+    <div id="reddit-status" class="status"></div>
+
+    <div class="section-title">🌍 Target Subreddits</div>
+    <label>List of Subreddits (comma separated)</label>
+    <textarea id="reddit-subreddits" rows="4">resumes, cscareerquestions, EngineeringStudents, jobs, ApplyingToCollege, gradadmissions, InternationalStudents</textarea>
+
+    <div class="section-title">⚡ Comment Style</div>
+    <div class="speed-control" id="reddit-style-btns">
+      <div class="speed-btn selected" data-style="soft">💬 Soft</div>
+      <div class="speed-btn" data-style="bold">🔥 Bold</div>
+      <div class="speed-btn" data-style="question">❓ Ask</div>
+    </div>
+
+    <div class="section-title">⚡ Action Delay</div>
+    <div class="speed-control" id="reddit-speed-btns">
+      <div class="speed-btn" data-speed="15000">🐢 Safe (15s)</div>
+      <div class="speed-btn selected" data-speed="800">⚡ Fast (0.8s)</div>
+    </div>
+
+    <div style="height: 10px;"></div>
+    <button class="btn btn-primary" id="btn-start-reddit">🚀 Start Reddit Bot</button>
+    <button class="btn btn-danger" id="btn-stop-reddit" style="display:none">⏹ Stop Bot</button>
+
+    <div class="divider"></div>
+    <label>Live Logs (Reddit)</label>
+    <div class="log-box" id="reddit-log"></div>
   </div>
 
   <!-- ═══════════════════════════ SETTINGS TAB -->

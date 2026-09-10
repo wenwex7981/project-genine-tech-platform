@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "GraduateNex AI Insta Suite",
-  "version": "3.1",
-  "description": "Auto-comment on Instagram reels + auto-post with AI captions for GraduateNex marketing.",
+  "version": "4.0",
+  "description": "Auto-comment on Instagram reels + auto-post + Global University Bot for international student reach. GraduateNex marketing suite.",
   "permissions": [
     "activeTab",
     "scripting",
@@ -10,6 +10,7 @@
   ],
   "host_permissions": [
     "*://*.instagram.com/*",
+    "*://*.reddit.com/*",
     "https://api.openai.com/*",
     "https://*.blob.core.windows.net/*",
     "https://www.graduatenex.online/*",
@@ -21,7 +22,12 @@
   "content_scripts": [
     {
       "matches": ["*://*.instagram.com/*"],
-      "js": ["content.js"],
+      "js": ["content.js", "content_global.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.reddit.com/*"],
+      "js": ["content_reddit.js"],
       "run_at": "document_idle"
     }
   ]

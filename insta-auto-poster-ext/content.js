@@ -498,7 +498,19 @@ async function handlePostPage(state) {
 // MOVE TO NEXT HASHTAG
 // ─────────────────────────────────────────────────────
 async function moveToNextHashtag(state) {
-  const pending = state.pendingHashtags || [];
+  let pending = state.pendingHashtags || [];
+  
+  if (pending.length === 0 && state.config && state.config.loopMode && commenterRunning) {
+    report('info', { reason: `Loop mode enabled: Restarting topics...` });
+    const allHashtags = [];
+    for (const topic of (state.config.topics || [])) {
+      const hashes = TOPIC_HASHTAGS[topic] || [topic.replace(/\s+/g, '')];
+      for (const h of hashes) allHashtags.push({ hashtag: h, topic });
+    }
+    allHashtags.sort(() => Math.random() - 0.5);
+    pending = allHashtags;
+  }
+
   if (pending.length === 0 || !commenterRunning) {
     await chrome.storage.local.set({ gnCommenterState: null });
     commenterRunning = false;
@@ -536,8 +548,8 @@ async function moveToNextHashtag(state) {
   const data  = await chrome.storage.local.get(['gnCommenterState']);
   const state = data.gnCommenterState;
   
-  const url = window.location.href;
-  const isPost    = /instagram\.com\/(p|reel)\//.test(url);
+  const url       = window.location.href;
+  const isPost    = /instagram\.com\/.*?(p|reel)\//.test(url);
   const isExplore = url.includes('/explore/');
   
   if (fyState && fyState.running) {
@@ -607,7 +619,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.action === 'STOP_COMMENTER') {
     commenterRunning = false;
-    chrome.storage.local.set({ gnCommenterState: null });
+    chrome.storage.local.get(['gnCommenterState'], (d) => {
+      if (d.gnCommenterState) {
+        d.gnCommenterState.running = false;
+        chrome.storage.local.set({ gnCommenterState: d.gnCommenterState });
+      }
+    });
     sendResponse({ status: 'stopped' });
     return true;
   }
@@ -642,7 +659,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'STOP_FY_BOT') {
-    saveFyState({ running: false }).then(() => sendResponse({ status: 'stopped' }));
+    chrome.storage.local.get(['gnFyBotState'], (d) => {
+      if (d.gnFyBotState) {
+        d.gnFyBotState.running = false;
+        chrome.storage.local.set({ gnFyBotState: d.gnFyBotState }, () => sendResponse({ status: 'stopped' }));
+      } else {
+        sendResponse({ status: 'stopped' });
+      }
+    });
     return true;
   }
 });
@@ -711,6 +735,21 @@ async function startFyBotFlow(state) {
       await handleFyPostPage(state);
       return;
     } else {
+      if (state.lastRedirect === state.pendingPosts[0]) {
+        report('warn', { msg: `⚠️ Post redirect detected. Skipping post...` });
+        state.pendingPosts = state.pendingPosts.slice(1);
+        await saveFyState(state);
+        if (state.pendingPosts.length > 0) {
+          state.lastRedirect = state.pendingPosts[0];
+          await saveFyState(state);
+          window.location.href = state.pendingPosts[0];
+        } else {
+          await handleFyCollegeSearchLoop(state);
+        }
+        return;
+      }
+      state.lastRedirect = state.pendingPosts[0];
+      await saveFyState(state);
       window.location.href = state.pendingPosts[0];
       return;
     }
@@ -722,6 +761,15 @@ async function startFyBotFlow(state) {
       await handleFyProfilePage(state);
       return;
     } else {
+      if (state.lastRedirect === state.pendingProfile) {
+        report('warn', { msg: `⚠️ Redirect detected. Skipping @${state.pendingProfile}` });
+        state.pendingProfile = null;
+        await saveFyState(state);
+        await handleFyCollegeSearchLoop(state);
+        return;
+      }
+      state.lastRedirect = state.pendingProfile;
+      await saveFyState(state);
       window.location.href = `https://www.instagram.com/${state.pendingProfile}/`;
       return;
     }
@@ -734,38 +782,21 @@ async function handleFyCollegeSearchLoop(state) {
   let currentState = state;
   
   while (currentState.running && currentState.currentHashtag) {
-    const college = currentState.currentHashtag;
-    report('navigate', { msg: `🔍 Searching IG for: ${college.substring(0, 30)}...` });
-    await sleep(800); // FASTER: 1500 -> 800
-    
-    let foundUsername = null;
-    try {
-      const csrfMatch = document.cookie.match(/csrftoken=([^;]+)/);
-      const csrfToken = csrfMatch ? csrfMatch[1] : '';
-      const searchUrl = `https://www.instagram.com/web/search/topsearch/?context=blended&query=${encodeURIComponent(college)}`;
-      
-      const res = await fetch(searchUrl, {
-         headers: {
-           'X-CSRFToken': csrfToken,
-           'X-Requested-With': 'XMLHttpRequest'
-         }
-      });
-      
-      if (res.ok) {
-         const text = await res.text();
-         try {
-           const data = JSON.parse(text);
-           const user = data.users && data.users.length > 0 ? data.users[0].user : null;
-           if (user && user.username) foundUsername = user.username;
-         } catch(e) {
-           report('warn', { msg: `IG returned invalid JSON for search` });
-         }
-      } else {
-         report('warn', { msg: `API error ${res.status} for search` });
-      }
-    } catch (err) {
-       report('error', { msg: `Search failed: ${err.message}` });
+    let college = currentState.currentHashtag.trim();
+    // Remove @ if user included it
+    if (college.startsWith('@')) college = college.substring(1);
+    // If user accidentally put full URL, extract the handle
+    if (college.includes('instagram.com/')) {
+       const parts = college.split('instagram.com/');
+       college = parts[1].split('/')[0];
     }
+    
+    // Replace spaces with nothing or underscores, or just trust the user provided a valid handle
+    // but typically IG handles have no spaces.
+    let foundUsername = college.replace(/\s+/g, '');
+    
+    report('navigate', { msg: `🔍 Visiting IG profile: @${foundUsername}...` });
+    await sleep(800);
     
     if (foundUsername) {
        const alreadyVisited = await alreadyVisitedProfile(foundUsername);
@@ -784,25 +815,12 @@ async function handleFyCollegeSearchLoop(state) {
          continue; // Move to next iteration immediately
        }
 
-       report('info', { msg: `✅ Found profile: @${foundUsername}` });
+       report('info', { msg: `✅ Navigating to profile: @${foundUsername}` });
        await markProfileVisited(foundUsername);
        currentState.pendingProfile = foundUsername;
        await saveFyState(currentState);
        window.location.href = `https://www.instagram.com/${foundUsername}/`;
        return; 
-    } else {
-       report('warn', { msg: `❌ No profile found for ${college.substring(0, 20)}` });
-       
-       const pending = currentState.pendingHashtags || [];
-       if (pending.length === 0) {
-          await chrome.storage.local.set({ gnFyBotState: null });
-          report('done', { msg: `🎉 Finished all colleges!` });
-          return;
-       }
-       const [next, ...remaining] = pending;
-       currentState.pendingHashtags = remaining;
-       currentState.currentHashtag = next;
-       await saveFyState(currentState);
     }
   }
 }
