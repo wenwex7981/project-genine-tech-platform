@@ -219,8 +219,6 @@ export default function AIGeneratorPage() {
         discountPrice={getPrice('ai_premium') || 99}
         discountPlanName="Premium AI Helper"
       />
-    </div>
-
       {/* PayPal Checkout Modal */}
       {payPalCheckout && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -258,5 +256,6 @@ export default function AIGeneratorPage() {
           </div>
         </div>
       )}
+    </div>
   );
 }

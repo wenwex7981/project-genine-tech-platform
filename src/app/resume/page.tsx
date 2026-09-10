@@ -1408,5 +1408,6 @@ export default function ResumeHub() {
       )}
 
     </div>
+    </div>
   );
 }
