@@ -1,98 +1,154 @@
-// ══════════════════════════════════════════════════════════════════
-// GraduateNex Insta Suite — content.js v5.0
-// RELIABLE: Navigate directly to post pages and comment
-// ══════════════════════════════════════════════════════════════════
+// TakeVolet Insta Auto Commenter — content.js v4.0
+// FULL VISUAL AUTOMATION: Reel Highlight + Live Typing Visual Preview + DOM Typing + Direct API Fallback
 
-// ─────────────────────────────────────────────────────
-// IN-PAGE REPORTER UI
-// ─────────────────────────────────────────────────────
-function report(type, details) {
-  console.log(`[GraduateNex Bot] ${type.toUpperCase()}: ${details.msg}`);
-  let r = document.getElementById('gn-bot-reporter');
-  if (!r) {
-    r = document.createElement('div');
-    r.id = 'gn-bot-reporter';
-    r.style.cssText = `
-      position:fixed; top:20px; right:20px; width:350px;
-      background:rgba(17, 17, 17, 0.95); color:#fff; font-family:monospace; font-size:14px;
-      padding:20px; border-radius:12px; z-index:9999999;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.8); border: 2px solid #6C63FF;
-      backdrop-filter: blur(8px);
-    `;
-    document.body.appendChild(r);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+
+let isRunning = false;
+let commentedCount = 0;
+let skippedCount = 0;
+
+// ── 15 VARIED TAKE-VOLET PROMOTIONAL COMMENT TEMPLATES
+const TAKEVOLET_TEMPLATES = [
+  "Hey guys! I'm the founder of TakeVolet 🏠 Serving across India in major cities like {city}, Hyderabad, Mumbai, Pune, Delhi, Noida & Chennai! Book PGs, co-living hostels, rental flats, sharing rooms & day-wise stays with ZERO brokerage. Please support our startup 🙏\n📲 Play Store App: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Website: takevolet.online | IG: @take_volet #takevolet",
+
+  "Tired of paying 1 month rent as broker fee? 🚫 TakeVolet is serving across India in major cities including {city}! Book verified PGs, hostels, 1BHK/2BHK rental flats, room sharing & short-term day-wise stays with 0 brokerage.\n📲 Download on Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Visit: takevolet.online | Follow @take_volet #takevolet",
+
+  "Calling all bachelors & students across India! 🎒 Find budget co-living PGs, student hostels, flat rentals & room sharing with 0 brokerage in {city}, Hyderabad, Mumbai, Pune, Delhi & Noida! Just sit & book online on TakeVolet.\n📲 Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Website: takevolet.online | IG @take_volet #takevolet",
+
+  "Need a room for just 2 days or 2 months? 🛌 TakeVolet is available across major cities in India! Book instant day-wise stays, co-living PGs, hostels, rental flats & shared rooms in {city} with 0% broker commission.\n📲 Download App on Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 takevolet.online | Follow @take_volet #takevolet",
+
+  "Flat-hunting in India made super easy! 🔑 Now serving major cities across India like {city}, Mumbai, Hyderabad, Pune, Delhi, Noida & Chennai. Find verified PGs, hostels, rental flats, sharing rooms & day-wise stays with 0 brokerage.\n📲 Get TakeVolet on Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Visit takevolet.online | Instagram @take_volet #takevolet",
+
+  "Looking for shared flats or co-living PGs in {city}? 🛋️ TakeVolet is expanding fast across major Indian cities! Connect directly with verified owners & roommates with 0 Brokerage on PGs, hostels, rental flats & day-wise stays.\n📲 Download Play Store App: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Website: takevolet.online | @take_volet #takevolet",
+
+  "Relocating to {city} for job or college? 🧳 Don't waste money on greedy brokers! TakeVolet serves major cities across India with verified PGs, co-living hostels, rental flats, room sharing & day-wise stays at 0 broker fee.\n📲 Play Store App: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Website: takevolet.online | Follow @take_volet #takevolet",
+
+  "Hi everyone! As an Indian founder, I launched TakeVolet to eliminate broker fees across India 🚀 Serving major cities like {city}, Hyderabad, Mumbai, Pune, Delhi, Noida & Chennai! Book PGs, hostels, rental flats & day-wise stays directly from owners.\n📲 Download on Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 takevolet.online | IG @take_volet #takevolet",
+
+  "Save big on your next room anywhere in India! 💰 Serving {city} & major metro cities nationwide. Rent PGs, co-living hostels, sharing rooms, full rental flats & day-wise stays with 0% broker commission on TakeVolet.\n📲 Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Visit: takevolet.online | @take_volet #takevolet",
+
+  "Why visit 10 different brokers in {city}? 📱 TakeVolet serves top major cities across India! Just sit & book PGs, hostels, 1BHK/2BHK rental flats, room sharing & day-wise stays directly on the app with 0 brokerage.\n📲 Download App on Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 takevolet.online | @take_volet #takevolet",
+
+  "Searching for luxury co-living PGs, hostels or rental flats in {city}? 🏙️ TakeVolet operates across major Indian cities providing 100% verified rooms, sharing flats & day-wise stays with zero broker commission!\n📲 Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Website: takevolet.online | Follow @take_volet #takevolet",
+
+  "Whether you need a day-wise stay for a weekend or a monthly PG / rental flat in {city}, TakeVolet is serving across India in major cities with 0% broker fees! 🌟 Direct owner contact guaranteed.\n📲 Download on Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 takevolet.online | @take_volet #takevolet",
+
+  "No brokers, no hidden charges across major cities in India! 🏠 Serving {city}, Hyderabad, Mumbai, Pune, Delhi, Noida & Chennai. Book PGs, co-living hostels, 1BHK/2BHK rental flats, room sharing & day-wise stays on TakeVolet.\n📲 Get App on Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 takevolet.online | @take_volet #takevolet",
+
+  "Find affordable room sharing, co-living PGs, student hostels & rental flats across major Indian cities including {city}! 🎒 Plus instant day-wise stays with 0 brokerage on TakeVolet app.\n📲 Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 Website: takevolet.online | Follow @take_volet #takevolet",
+
+  "Our mission at TakeVolet: Zero brokerage housing across India! 🇮🇳 Serving major cities like {city}, Hyderabad, Mumbai, Pune, Delhi, Noida & Chennai. PGs, hostels, flat rentals & day-wise stays all in one easy app. Try it today!\n📲 Download on Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 takevolet.online | @take_volet #takevolet"
+];
+
+function getFormattedComment(customTemplate, city) {
+  const cityName = city ? (city.charAt(0).toUpperCase() + city.slice(1)) : 'your city';
+  let raw = customTemplate;
+  if (!raw || raw.trim() === '' || raw.includes('AUTOMATIC_ROTATE')) {
+    raw = TAKEVOLET_TEMPLATES[Math.floor(Math.random() * TAKEVOLET_TEMPLATES.length)];
+  } else {
+    if (Math.random() < 0.6) {
+      raw = TAKEVOLET_TEMPLATES[Math.floor(Math.random() * TAKEVOLET_TEMPLATES.length)];
+    }
   }
+  let text = raw.replace(/\{city\}/gi, cityName);
+  if (!text.includes('play.google.com')) {
+    text += `\n\n📲 Play Store: https://play.google.com/store/apps/details?id=com.takevolet.app\n🌐 takevolet.online | @take_volet #takevolet`;
+  }
+  return text;
+}
+
+function shortcodeToMediaId(shortcode) {
+  if (!shortcode) return null;
+  try {
+    let id = BigInt(0);
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    for (let i = 0; i < shortcode.length; i++) {
+      const char = shortcode[i];
+      const index = alphabet.indexOf(char);
+      if (index === -1) continue;
+      id = id * BigInt(64) + BigInt(index);
+    }
+    return id.toString();
+  } catch (e) {
+    return null;
+  }
+}
+
+// ── In-Page Status Overlay Badge with LIVE Comment Preview
+function showBadge(type, msgText, currentComment = '') {
+  if (!msgText) return;
+  const botTitle = window.gnFyBotActive ? 'GraduateNex Final Year Bot' : 'TakeVolet Reel Commenter';
+  const botApp = window.gnFyBotActive ? 'GraduateNex' : 'TakeVolet';
+
+  console.log(`[${botApp} Bot] ${type.toUpperCase()}: ${msgText}`);
+  let el = document.getElementById('takevolet-bot-badge');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'takevolet-bot-badge';
+    document.body.appendChild(el);
+  }
+  el.style.cssText = `
+    position: fixed; bottom: 24px; right: 24px; top: auto; left: auto; width: 420px; max-width: 90vw;
+    background: rgba(13, 10, 26, 0.95); color: #fff; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px;
+    padding: 16px; border-radius: 16px; z-index: 9999999;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.5); border: 2px solid #8b5cf6;
+    backdrop-filter: blur(12px); transition: all 0.3s ease;
+  `;
   let icon = 'ℹ️';
   if (type === 'error') icon = '❌';
-  if (type === 'done') icon = '🎉';
+  if (type === 'commented') icon = '🎉';
+  if (type === 'typing') icon = '✍️';
   if (type === 'navigate') icon = '🚀';
-  
-  r.innerHTML = `
-    <div style="margin-bottom:12px; font-weight:bold; color:#6C63FF; font-size:16px; display:flex; align-items:center; gap:8px;">
-      <span style="animation: blink 1s infinite;">🔴</span> GraduateNex Bot Active
+
+  let commentBlock = '';
+  if (currentComment) {
+    commentBlock = `
+      <div style="margin-top: 10px; padding: 10px; background: rgba(255, 255, 255, 0.08); border-left: 3px solid #a855f7; border-radius: 8px; font-size: 12px; max-height: 110px; overflow-y: auto; color: #e9d5ff; white-space: pre-wrap; word-break: break-word; font-family: monospace;">
+        <strong style="color:#d8b4fe;">📝 Typing / Current Comment:</strong><br>${currentComment}
+      </div>
+    `;
+  }
+
+  el.innerHTML = `
+    <div style="margin-bottom:8px; font-weight:bold; color:#c084fc; font-size:15px; display:flex; align-items:center; justify-content:space-between;">
+      <span style="display:flex; align-items:center; gap:8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#a855f7; border-radius:50%; box-shadow:0 0 10px #a855f7; animation: pulse 1s infinite;"></span>
+        ${botTitle}
+      </span>
+      <span style="font-size:11px; background:rgba(168,85,247,0.25); padding:2px 8px; border-radius:12px; color:#e9d5ff; font-weight:600;">ACTIVE</span>
     </div>
-    <div style="margin-bottom:8px; line-height:1.4;">${icon} ${details.msg}</div>
-    <div style="font-size:11px; color:#888; border-top: 1px solid #333; padding-top:8px; margin-top:12px;">${new Date().toLocaleTimeString()}</div>
-    <style>@keyframes blink { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }</style>
+    <div style="margin-bottom:6px; line-height:1.4; font-weight:500; color:#f3e8ff;">${icon} ${msgText}</div>
+    ${commentBlock}
+    <div style="font-size:10px; color:#94a3b8; border-top: 1px solid rgba(255,255,255,0.1); padding-top:6px; margin-top:8px; display:flex; justify-content:space-between;">
+      <span>Time: ${new Date().toLocaleTimeString()}</span>
+      <span>Target App: ${botApp}</span>
+    </div>
+    <style>@keyframes pulse { 0% {transform: scale(0.95); opacity:0.8;} 50% {transform: scale(1.1); opacity:1;} 100% {transform: scale(0.95); opacity:0.8;} }</style>
   `;
 }
 
-let commenterRunning = false;
-let commentedCount   = 0;
-let skippedCount     = 0;
+async function safeNavigate(url) {
+  const check = await chrome.storage.local.get(['userStartedBot', 'gnFyBotState', 'takevoletBotState']);
+  const fyRunning = check.gnFyBotState && check.gnFyBotState.running;
+  const tvRunning = check.takevoletBotState && check.takevoletBotState.running;
 
-// ── Topic → Instagram hashtags
-const TOPIC_HASHTAGS = {
-  'ai':          ['artificialintelligence','aitools','machinelearningprojects','aiproject','deeplearning','aifresher'],
-  'job':         ['jobseekers','freshersjob','jobvacancy','itjobs','hiringnow','softwarejobs'],
-  'fresher':     ['freshersjob','freshers2024','fresherlife','fresherresume','fresherhiring'],
-  'student':     ['engineeringstudent','btechwala','studentlife','collegestudent','engineeringlife'],
-  'final year':  ['finalyearproject','finalyear','engineeringproject','majorproject','fyp2024'],
-  'resume':      ['resumetips','resumebuilder','atsresume','cvwriting','resumewriting'],
-  'ats':         ['atsresume','resumescanner','resumetips','jobsearch2024'],
-  'career':      ['careertips','careeradvice','techcareer','careergrowth'],
-  'roadmap':     ['coderroadmap','techroadmap','learningpath','careerpath'],
-  'dsa':         ['datastructures','leetcode','dsa','dsacracker','competitiveprogramming'],
-  'interview':   ['interviewprep','technicalinterview','jobinterview','mockinterview'],
-  'placement':   ['campusplacement','placement2024','placementpreparation','btechwala'],
-  'project':     ['finalyearproject','codingprojects','studentproject','iotproject'],
-  'college':     ['engineeringcollege','collegelife','btech','collegestudent'],
-  'internship':  ['internship2024','techinternship','remoteinternship','internshiplife'],
-};
-
-// ── GraduateNex comment pool (by topic)
-const COMMENTS = {
-  ai:         ["🚀 Check out GraduateNex — 120+ AI/ML final year projects with IEEE papers! graduatenex.online","🤖 GraduateNex has IEEE-ready AI/ML projects with 0% plagiarism docs for students! 🎓","AI + GraduateNex = your final year project sorted! graduatenex.online 🔥","Amazing! BTW GraduateNex helps students build real AI projects + docs 💡 graduatenex.online","GraduateNex AI projects = source code + IEEE paper + SRS + PPT delivered fast 🚀"],
-  job:        ["💼 GraduateNex ATS Resume Builder helped 2500+ students get shortlisted at TCS, Infosys & more!","Job hunting is tough 😤 GraduateNex's 17-point ATS scoring = more interview calls! graduatenex.online","GraduateNex Resume Hub = your secret weapon for campus placements! 🏆 graduatenex.online","Every fresher struggling with job apps needs GraduateNex's JD Match Analyzer! 💼","Stop applying blindly! Use GraduateNex ATS scanner to optimize your resume first 📄"],
-  fresher:    ["Every fresher needs GraduateNex — projects, resumes & placement prep in one place 🎓","GraduateNex is literally built for freshers — projects, docs, resume, all sorted! 💡 graduatenex.online","GraduateNex is India's #1 platform for freshers! Final year projects + ATS resume ✅","This is why GraduateNex exists — helping freshers stand out with 0% plagiarism projects! 💪","🚀 Fresher to employed — GraduateNex makes it happen! graduatenex.online"],
-  student:    ["Every Indian engineering student needs GraduateNex 🎓 Projects + IEEE + ATS resume!","Student life is hard 😭 Let GraduateNex handle your projects & docs! graduatenex.online","GraduateNex helped 2,500+ students score top grades in their final year! 💯","GraduateNex = ultimate student toolkit — projects, docs, resume, AI tools 📦 graduatenex.online","Saving this for every student friend 🙏 GraduateNex = final year projects + resume + AI tools 🔥"],
-  'final year':["FINAL YEAR STUDENTS — GraduateNex has 500+ projects in AI, IoT, Blockchain! 🎓 graduatenex.online","Final year panic? 😱 GraduateNex delivers complete projects with IEEE, SRS & PPT in days!","Every final year student needs GraduateNex fr fr 🔥 graduatenex.online","GraduateNex saved thousands of final year students! 📦 graduatenex.online","Viva in 2 weeks? 😂 GraduateNex — your last-minute lifesaver! graduatenex.online"],
-  resume:     ["📄 GraduateNex Resume Hub — 17-point ATS scoring + AI resume = shortlisted at top MNCs!","GraduateNex ATS Resume Builder helped 1000+ students crack TCS, Wipro, Infosys! 🏆","Building resume manually in 2025? GraduateNex automates all of this! 😅 graduatenex.online","GraduateNex resume builder = the reason I got shortlisted in 4 companies 📄 graduatenex.online","Real talk: GraduateNex ATS resume is 10x better than any template you'll find online!"],
-  ats:        ["ATS kills 90% of resumes 😤 GraduateNex ATS scanner = 10x more interviews! graduatenex.online","GraduateNex built an ATS scoring system specifically for Indian students! 📊 graduatenex.online","Beat ATS in 5 mins with GraduateNex Resume Hub 🚀 AI + JD matching! graduatenex.online","GraduateNex ATS Resume Builder = cheat code every Indian engineering student needs 💯","This is why GraduateNex exists — ATS optimization for Indian freshers who get shortlisted!"],
-  career:     ["🚀 Career prep = GraduateNex — projects, resume, ATS, interview prep all in one!","GraduateNex is a full career launch platform for Indian students 🔥 graduatenex.online","From final year to first job — GraduateNex is with you! 2,500+ success stories 💪","Want to fast-track your career? GraduateNex is the move 🎯 graduatenex.online","Best career advice: strong project + ATS resume. GraduateNex does both! 🎓"],
-  roadmap:    ["Best roadmap: Final year project ➜ IEEE paper ➜ ATS resume ➜ GraduateNex! 🗺️","The real roadmap starts with a strong final year project! GraduateNex has 500+! graduatenex.online","Roadmaps without execution = useless. GraduateNex gives ready-to-deploy projects 💡","Bookmarking this 🙏 GraduateNex has the complete roadmap from project to placement!","Following every roadmap but nothing working? GraduateNex gives you real tools! 🔥"],
-  dsa:        ["DSA + Strong Project = Dream Job 🎯 GraduateNex helps with the project side! graduatenex.online","This DSA content 🔥 Pair it with a GraduateNex AI/ML project and you're unstoppable!","Grinding DSA? Don't forget your final year project! GraduateNex makes that easy 😎","DSA skills + GraduateNex project portfolio = campus placement ready 💪 graduatenex.online","DSA is key but so is your final year project! GraduateNex has 500+ options! 💻"],
-  interview:  ["Best interview tip: have a strong final year project to talk about! GraduateNex has 500+ 🎓","Interview ready = DSA + Projects + Resume. GraduateNex covers projects & resume! 🎤","GraduateNex has an AI English Communication tool — practice with Alex the AI friend! 🤖","This interview content is gold 🔥 GraduateNex also builds the project you talk about in rounds!","GraduateNex Interview Prep + AI English Friend = campus placement ready 💯"],
-  placement:  ["Campus placement ready with GraduateNex! Projects + Resume + Interview prep! 🏆 graduatenex.online","Placement season is different when you have GraduateNex in your toolkit 😎","2,500+ students placed with GraduateNex! Final year project + ATS resume = sorted ✅","GraduateNex is THE placement prep platform for Indian engineering students! 🚀","Placement prep starts NOW! GraduateNex — final year projects, ATS resume, interview tools 🎯"],
-  project:    ["Looking for final year project ideas? GraduateNex has 500+ in AI, IoT, Blockchain! 🔧 graduatenex.online","Project ideas everywhere but working source code is rare 😅 GraduateNex delivers complete ones!","GraduateNex projects = source code + IEEE paper + SRS + PPT 🎁 graduatenex.online","Need a final year project ASAP? GraduateNex delivers in 48 hours with full docs! 🚀","This reminds me of GraduateNex — India's best final year project platform! Check it out!"],
-  college:    ["Every Indian college student should know about GraduateNex! Projects + resume + AI tools 🏛️","College is tough but GraduateNex makes the academic part easier! graduatenex.online","From IIT to tier-3 colleges — GraduateNex serves students across 50+ Indian cities! 🗺️","GraduateNex = ultimate college student toolkit 📦 Projects, docs, resume, AI tools!"],
-  internship: ["No internship? GraduateNex project + ATS resume = stand out anyway! 💡 graduatenex.online","GraduateNex AI projects can replace internship experience on your resume! 🚀","GraduateNex helped students get internships by building strong AI/ML project portfolios! 🎓","No internship? No problem. GraduateNex projects + ATS resume = interview calls 💪"],
-  default:    ["🎓 GraduateNex — India's #1 platform for final year projects, ATS resume & AI career tools! graduatenex.online","GraduateNex is helping 2,500+ Indian students graduate with distinction 🚀 graduatenex.online","GraduateNex = final year projects + IEEE papers + ATS resume + interview prep. All in one 🔥","Check GraduateNex if you're a student — they solve every academic pain point! 🙏 graduatenex.online","Love this! GraduateNex is doing something similar for Indian students — career tools 🎯"],
-};
-
-function getComment(topic) {
-  const pool = COMMENTS[topic] || COMMENTS.default;
-  let comment = pool[Math.floor(Math.random() * pool.length)];
-  
-  // Remove existing link to avoid duplication, then append the required tags
-  comment = comment.replace(/graduatenex\.online/gi, '').trim();
-  return `${comment}\n\n🌐 graduatenex.online\n📸 @graduatenex\n🏷️ #graduatenex`;
+  if (!isRunning || !check.userStartedBot || (!fyRunning && !tvRunning)) {
+    console.log('[SafeNavigate] Bot stopped by user. Navigation blocked to:', url);
+    const badge = document.getElementById('takevolet-bot-badge');
+    if (badge) badge.remove();
+    return false;
+  }
+  window.location.href = url;
+  return true;
 }
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-const rand  = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
-
 function report(type, data = {}) {
-  try { chrome.runtime.sendMessage({ action: 'COMMENT_PROGRESS', type, ...data }); } catch(e) {}
+  try {
+    chrome.runtime.sendMessage({ action: 'TAKEVOLET_PROGRESS', type, ...data });
+  } catch (e) {}
+  const msg = data.msg || data.reason || data.error || (data.comment ? 'Comment posted!' : '');
+  if (msg) showBadge(type, msg, data.commentText || '');
 }
 
 function robustClick(el) {
@@ -102,912 +158,1068 @@ function robustClick(el) {
   el.click();
 }
 
-// ─────────────────────────────────────────────────────
-// FIND + ACTIVATE COMMENT BOX
-// ─────────────────────────────────────────────────────
-async function findCommentBox(timeout = 12000) {
+// ── Find Comment Input Box in DOM
+async function findCommentBox(timeout = 8000) {
   const start = Date.now();
-
   while (Date.now() - start < timeout) {
-    // Scroll main content area down to reveal comment section
     window.scrollTo(0, document.body.scrollHeight);
     const scrollable = document.querySelector('main, [role="main"], article');
     if (scrollable) scrollable.scrollTop = scrollable.scrollHeight;
     await sleep(400);
 
-    // Priority order of selectors
     const selectors = [
-      'textarea[placeholder="Add a comment\u2026"]',
-      'textarea[placeholder="Add a comment..."]',
       'textarea[placeholder*="Add a comment"]',
       'textarea[aria-label*="comment"]',
       'div[role="textbox"][aria-label*="comment"]',
       'div[contenteditable="true"][aria-label*="comment"]',
       'div[role="textbox"]',
       'form textarea',
+      'textarea'
     ];
     for (const sel of selectors) {
       const el = document.querySelector(sel);
       if (el && el.offsetParent !== null) {
-        el.scrollIntoView({ block: 'center' });
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return el;
       }
     }
 
-    // Try clicking the visible placeholder text to reveal the input
+    const commentIcon = document.querySelector('svg[aria-label="Comment"], svg[aria-label="Comments"]');
+    if (commentIcon) {
+      const btn = commentIcon.closest('button, div[role="button"]');
+      if (btn) {
+        btn.click();
+        await sleep(500);
+      }
+    }
+
     const els = Array.from(document.querySelectorAll('*'));
     const placeholder = els.find(el => {
       const t = el.textContent.trim();
-      return (
-        (t === 'Add a comment\u2026' || t === 'Add a comment...' || t === 'Add a comment') &&
-        el.children.length === 0 &&
-        el.offsetParent !== null
-      );
+      return (t.startsWith('Add a comment') && el.children.length === 0 && el.offsetParent !== null);
     });
     if (placeholder) {
-      placeholder.scrollIntoView({ block: 'center' });
+      placeholder.scrollIntoView({ behavior: 'smooth', block: 'center' });
       await sleep(200);
       placeholder.click();
-      await sleep(800);
-      // Re-check after click
+      await sleep(600);
       for (const sel of selectors) {
         const el = document.querySelector(sel);
         if (el && el.offsetParent !== null) return el;
       }
     }
-
-    // Try the form
-    const form = document.querySelector('form[method="post"]');
-    if (form) { form.click(); await sleep(400); }
-
     await sleep(400);
   }
   return null;
 }
 
-// ─────────────────────────────────────────────────────
-// TYPE COMMENT — Instagram Lexical/React editor safe
-// ─────────────────────────────────────────────────────
-async function typeComment(box, text) {
-  const isTextarea     = box.tagName === 'TEXTAREA';
-  const isContentedit  = box.contentEditable === 'true';
+// ── Real DOM Full Text Insertion & Verification Simulation
+async function typeAndSubmitDom(box, text) {
+  try {
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    await sleep(400);
 
-  // Step 1: Scroll into view and do a real mouse click with coordinates
-  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  await sleep(400);
+    // Visual highlight ring around comment input
+    const originalBorder = box.style.border;
+    const originalBoxShadow = box.style.boxShadow;
+    box.style.border = '3px solid #a855f7';
+    box.style.boxShadow = '0 0 25px rgba(168, 85, 247, 0.95)';
+    box.style.transition = 'all 0.3s ease';
 
-  const rect = box.getBoundingClientRect();
-  const cx   = rect.left + rect.width / 2;
-  const cy   = rect.top  + rect.height / 2;
-  ['mouseover','mouseenter','mousedown','mouseup','click'].forEach(type => {
-    box.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window, clientX: cx, clientY: cy }));
-  });
-  await sleep(300);
+    box.focus();
+    await sleep(400);
 
-  // Step 2: Focus element
-  box.focus();
-  await sleep(300);
+    const isTextarea = box.tagName === 'TEXTAREA';
 
-  // Step 3a: For textarea — React native value setter
-  if (isTextarea) {
-    try {
-      const proto  = Object.getPrototypeOf(box);
+    // Clear existing content
+    if (isTextarea) {
+      box.value = '';
+    } else {
+      document.execCommand('selectAll', false, null);
+      document.execCommand('delete', false, null);
+    }
+
+    showBadge('typing', 'Writing full promotional comment into Instagram editor...', text);
+
+    if (isTextarea) {
+      const proto = Object.getPrototypeOf(box);
       const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set ||
                      Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value')?.set;
       if (setter) {
         setter.call(box, text);
-        box.dispatchEvent(new Event('input',  { bubbles: true }));
-        box.dispatchEvent(new Event('change', { bubbles: true }));
-        await sleep(400);
-        if ((box.value || '').trim()) {
-          report('info', { reason: 'Text entered via native setter ✅' });
-          return true;
+      } else {
+        box.value = text;
+      }
+      box.dispatchEvent(new Event('focus', { bubbles: true }));
+      box.dispatchEvent(new InputEvent('beforeinput', { bubbles: true, inputType: 'insertText', data: text }));
+      box.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text }));
+      box.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      box.focus();
+      document.execCommand('insertText', false, text);
+
+      const currentContent = box.textContent || box.innerText || '';
+      if (currentContent.length < 10) {
+        try {
+          const dt = new DataTransfer();
+          dt.setData('text/plain', text);
+          box.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
+        } catch (e) {}
+
+        if ((box.textContent || '').length < 10) {
+          box.innerText = text;
         }
       }
-    } catch(e) {}
-  }
 
-  // Step 3b: For contenteditable (Lexical) — Range API + execCommand
-  if (isContentedit) {
-    try {
-      // Position cursor at end
-      const range = document.createRange();
-      const sel   = window.getSelection();
-      range.selectNodeContents(box);
-      range.collapse(false);
-      sel.removeAllRanges();
-      sel.addRange(range);
-      await sleep(100);
-
-      // Clear existing and insert
-      document.execCommand('selectAll',   false, null);
-      document.execCommand('delete',      false, null);
-      document.execCommand('insertText',  false, text);
+      box.dispatchEvent(new InputEvent('beforeinput', { bubbles: true, inputType: 'insertText', data: text }));
       box.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text }));
-      await sleep(400);
-
-      // Verify by checking submit button state
-      const submitBtn = document.querySelector('button[type="submit"], div[role="button"][tabindex="0"]');
-      if (submitBtn && !submitBtn.disabled && submitBtn.textContent.trim() === 'Post') {
-        report('info', { reason: 'Text entered via Range+execCommand ✅' });
-        return true;
-      }
-      // Also check if box has content now
-      if ((box.textContent || '').replace(/Add a comment[….]+/, '').trim()) return true;
-    } catch(e) {}
-  }
-
-  // Step 4: execCommand on any element type
-  try {
-    box.focus();
-    document.execCommand('selectAll',  false, null);
-    document.execCommand('delete',     false, null);
-    document.execCommand('insertText', false, text);
-    await sleep(400);
-    const v = (box.value || box.textContent || '').replace(/Add a comment[….]+/,'').trim();
-    if (v) { report('info', { reason: 'Text via execCommand ✅' }); return true; }
-  } catch(e) {}
-
-  // Step 5: ClipboardEvent paste — works for Lexical
-  try {
-    box.focus();
-    const dt = new DataTransfer();
-    dt.setData('text/plain', text);
-    dt.setData('text/html',  text);
-    const ev = new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true });
-    box.dispatchEvent(ev);
-    await sleep(500);
-    // After paste, check submit button
-    const btn = document.querySelector('button[type="submit"]');
-    if (btn && btn.textContent.trim() === 'Post') { report('info', { reason: 'Text via clipboard paste ✅' }); return true; }
-    const v2 = (box.value || box.textContent || '').replace(/Add a comment[….]+/, '').trim();
-    if (v2) { report('info', { reason: 'Text via clipboard paste ✅' }); return true; }
-  } catch(e) {}
-
-  // Step 6: Simulate keystrokes char by char (last resort)
-  try {
-    box.focus();
-    for (const char of text.slice(0, 150)) {
-      box.dispatchEvent(new KeyboardEvent('keydown', { key: char, bubbles: true, cancelable: true }));
-      document.execCommand('insertText', false, char);
-      box.dispatchEvent(new KeyboardEvent('keyup',   { key: char, bubbles: true, cancelable: true }));
-      await sleep(12);
+      box.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    await sleep(400);
-    // Check submit enabled
-    const btn3 = document.querySelector('button[type="submit"]');
-    if (btn3 && btn3.textContent.trim() === 'Post') { report('info', { reason: 'Text via keystrokes ✅' }); return true; }
-    const v3 = (box.value || box.textContent || '').replace(/Add a comment[….]+/, '').trim();
-    if (v3) return true;
-  } catch(e) {}
 
-  // Last check — maybe text was entered but DOM didn't update visibly
-  // Try submitting anyway (Instagram will reject empty comments server-side)
-  const finalBtn = document.querySelector('button[type="submit"]');
-  if (finalBtn && !finalBtn.disabled) return true;
+    // Animate visual progress in UI overlay badge
+    for (let p = 25; p <= 100; p += 25) {
+      showBadge('typing', `Visual Typing in DOM (${p}%)...`, text);
+      await sleep(150);
+    }
 
-  // ─────────────────────────────────────────────────────
-  // 🔥 ALTERNATIVE 2: PRIVATE API FALLBACK 🔥
-  // If the UI completely blocks typing, we bypass the UI entirely
-  // and send the comment directly to Instagram's backend servers.
-  // ─────────────────────────────────────────────────────
-  report('info', { reason: 'UI blocked typing. Attempting Private API fallback...' });
+    await sleep(600);
+
+    // VERIFICATION: Ensure DOM element has full text before submitting!
+    const insertedLen = isTextarea ? (box.value || '').length : (box.textContent || box.innerText || '').length;
+    console.log(`[TakeVolet Bot] DOM box length: ${insertedLen} / target: ${text.length}`);
+
+    if (insertedLen < Math.min(20, text.length / 2)) {
+      console.warn('[TakeVolet Bot] DOM typing truncated by IG editor. Falling back to Direct API...');
+      box.style.border = originalBorder;
+      box.style.boxShadow = originalBoxShadow;
+      return false; // Return false so handlePostPage uses Direct API for 100% full comment
+    }
+
+    showBadge('info', 'Comment verified! Locating "Post" button...', text);
+    await sleep(600);
+
+    let submitBtn = document.querySelector('button[type="submit"]');
+    if (!submitBtn) {
+      const btns = Array.from(document.querySelectorAll('button, div[role="button"]'));
+      submitBtn = btns.find(b => {
+        const txt = b.textContent.trim().toLowerCase();
+        return txt === 'post' || txt === 'publish';
+      });
+    }
+
+    if (submitBtn) {
+      submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      submitBtn.style.border = '2px solid #22c55e';
+      submitBtn.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.95)';
+      await sleep(600);
+
+      showBadge('info', 'Clicking "Post" button visually...', text);
+      robustClick(submitBtn);
+      await sleep(2000);
+
+      box.style.border = originalBorder;
+      box.style.boxShadow = originalBoxShadow;
+      return true;
+    }
+  } catch (e) {
+    console.error('[TakeVolet Bot] DOM typing error:', e);
+  }
+  return false;
+}
+
+// ── Private API Direct Commenting Engine Fallback
+async function postCommentViaApi(mediaId, commentText) {
   try {
-    // 1. Get CSRF Token
     const csrfMatch = document.cookie.match(/csrftoken=([^;]+)/);
     const csrfToken = csrfMatch ? csrfMatch[1] : '';
-    
-    // 2. Get App ID from page source
-    let appId = '936619743392459'; // Default IG Web App ID
+    if (!csrfToken) return false;
+
+    let appId = '936619743392459';
     const scriptWithAppId = Array.from(document.querySelectorAll('script')).find(s => s.textContent.includes('APP_ID'));
     if (scriptWithAppId) {
       const match = scriptWithAppId.textContent.match(/"APP_ID":"(\d+)"/);
       if (match) appId = match[1];
     }
 
-    // 3. Get Media ID (Post ID)
-    let mediaId = null;
-    // Try to find it in meta tags (al:ios:url usually has it: instagram://media?id=123456)
-    const metaTag = document.querySelector('meta[property="al:ios:url"]');
-    if (metaTag && metaTag.content.includes('id=')) {
-      mediaId = metaTag.content.split('id=')[1];
-    }
-    
-    if (!mediaId) {
-      // Fetch the page JSON data to find the media ID
-      const pageJson = await fetch(window.location.href + '?__a=1&__d=dis').then(r => r.json());
-      mediaId = pageJson?.items?.[0]?.id || pageJson?.graphql?.shortcode_media?.id;
-    }
+    const body = new URLSearchParams();
+    body.append('comment_text', commentText);
 
-    if (mediaId && csrfToken) {
-      const body = new URLSearchParams();
-      body.append('comment_text', text);
-      body.append('replied_to_comment_id', '');
+    const res = await fetch(`https://www.instagram.com/api/v1/web/comments/${mediaId}/add/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrfToken,
+        'X-IG-App-ID': appId,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: body.toString()
+    });
 
-      const res = await fetch(`https://www.instagram.com/api/v1/web/comments/${mediaId}/add/`, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': csrfToken,
-          'X-IG-App-ID': appId,
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: body.toString()
-      });
-
-      const data = await res.json();
-      if (data && data.status === 'ok') {
-        report('info', { reason: 'Comment posted via Private API successfully! ✅' });
-        // Since we posted via API, we don't need to click the UI submit button.
-        // We will return a special string so the caller knows to skip clicking submit.
-        return 'API_SUCCESS';
-      } else {
-        report('warn', { reason: `API Fallback failed: ${data.message || 'Unknown error'}` });
-      }
-    }
+    const data = await res.json();
+    return data && data.status === 'ok';
   } catch (err) {
-    report('warn', { reason: `API Fallback error: ${err.message}` });
-  }
-
-  return false;
-}
-
-// ─────────────────────────────────────────────────────
-// SUBMIT COMMENT
-// ─────────────────────────────────────────────────────
-async function submitComment(box) {
-  // Try submit button first
-  const submitBtn = document.querySelector('button[type="submit"]');
-  if (submitBtn && !submitBtn.disabled && submitBtn.offsetHeight > 0) {
-    robustClick(submitBtn);
-    await sleep(600);
-    return;
-  }
-  // Try any "Post" button near the form
-  const allBtns = Array.from(document.querySelectorAll('button, div[role="button"]'));
-  const postBtn = allBtns.find(b => b.textContent.trim() === 'Post' && b.offsetHeight > 0);
-  if (postBtn) { robustClick(postBtn); await sleep(600); return; }
-  // Fallback: press Enter
-  box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, bubbles: true }));
-  box.dispatchEvent(new KeyboardEvent('keyup',   { key: 'Enter', keyCode: 13, bubbles: true }));
-  await sleep(600);
-}
-
-// ─────────────────────────────────────────────────────
-// COMMENT ON CURRENT POST PAGE
-// ─────────────────────────────────────────────────────
-async function commentOnCurrentPost(topic) {
-  const box = await findCommentBox(10000);
-  if (!box) {
-    report('skipped', { reason: 'Comment box not found on page' });
     return false;
   }
-
-  const comment = getComment(topic);
-  const typed   = await typeComment(box, comment);
-
-  if (!typed) {
-    report('skipped', { reason: 'Could not enter text — Instagram blocked input' });
-    return false;
-  }
-
-  // If we used the Private API fallback, it's already posted!
-  if (typed === 'API_SUCCESS') {
-    report('commented', { comment: `${comment} (via API)` });
-    return true;
-  }
-
-  await sleep(400);
-  await submitComment(box);
-  report('commented', { comment });
-  return true;
 }
 
-// ─────────────────────────────────────────────────────
-// COLLECT POST LINKS FROM EXPLORE / HASHTAG PAGE
-// ─────────────────────────────────────────────────────
+// ── Persistent Comment History Tracking
+async function getCommentedHistory() {
+  const data = await chrome.storage.local.get(['takevoletCommentedHistory']);
+  return data.takevoletCommentedHistory || {};
+}
+
+async function markPostAsCommented(shortcode) {
+  if (!shortcode) return;
+  const history = await getCommentedHistory();
+  history[shortcode] = Date.now();
+  await chrome.storage.local.set({ takevoletCommentedHistory: history });
+}
+
+// ── Collect Links from Hashtag Grid (Filters out already commented Reels)
 async function collectPostLinks(timeout = 8000) {
+  const history = await getCommentedHistory();
   const start = Date.now();
   while (Date.now() - start < timeout) {
-    const seen  = new Set();
+    window.scrollTo(0, 500);
+    await sleep(400);
+
     const links = [];
-    document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"]').forEach(a => {
-      const url = a.href;
-      if (url && !seen.has(url)) { seen.add(url); links.push(url); }
-    });
+    const seen = new Set();
+    const anchors = Array.from(document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"], a[href*="/reels/"]'));
+
+    for (const a of anchors) {
+      const href = a.getAttribute('href') || a.href || '';
+      const match = href.match(/\/(p|reel|reels)\/([A-Za-z0-9_-]+)/);
+      if (match) {
+        const shortcode = match[2];
+        if (!seen.has(shortcode) && !history[shortcode]) {
+          seen.add(shortcode);
+          links.push(`https://www.instagram.com/p/${shortcode}/`);
+        }
+      }
+    }
+
     if (links.length >= 3) return links;
-    await sleep(600);
+    await sleep(500);
   }
   return [];
 }
 
-// ─────────────────────────────────────────────────────
-// SAVE STATE
-// ─────────────────────────────────────────────────────
 async function saveState(state) {
-  await chrome.storage.local.set({ gnCommenterState: state });
+  await chrome.storage.local.set({ takevoletBotState: state });
 }
 
-// ─────────────────────────────────────────────────────
-// ON HASHTAG / EXPLORE PAGE → collect posts, save, navigate to first
-// ─────────────────────────────────────────────────────
+// ── Handle Hashtag Grid Page: Visually highlight target Reel before opening
 async function handleExplorePage(state) {
-  await sleep(3000); // let the page render
-  report('info', { reason: `Collecting posts on ${window.location.href}` });
+  await sleep(2000);
+  showBadge('info', `Scanning Reel & Post links on #${state.currentHashtag}...`);
 
   const posts = await collectPostLinks(8000);
   if (posts.length === 0) {
-    report('skipped', { reason: `No posts found on ${window.location.href}` });
+    showBadge('error', `No unvisited Reels found on #${state.currentHashtag}. Moving to next hashtag...`);
+    await sleep(1500);
     await moveToNextHashtag(state);
     return;
   }
 
-  report('info', { reason: `Found ${posts.length} posts. Starting to comment...` });
+  // Visually highlight first reel thumbnail before opening!
+  const match = posts[0].match(/\/p\/([A-Za-z0-9_-]+)/);
+  if (match) {
+    const code = match[1];
+    const targetAnchor = Array.from(document.querySelectorAll('a')).find(a => (a.href || '').includes(code));
+    if (targetAnchor) {
+      targetAnchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      targetAnchor.style.outline = '4px solid #a855f7';
+      targetAnchor.style.boxShadow = '0 0 25px rgba(168, 85, 247, 1)';
+      await sleep(1200);
+    }
+  }
 
-  // Save list and navigate to first post
+  showBadge('navigate', `Found ${posts.length} new Reels! Opening Reel #1 on #${state.currentHashtag}...`);
+
   const newState = {
     ...state,
-    pendingPosts: posts.slice(0, 20), // max 20 per hashtag
-    explorerUrl:  window.location.href,
-    stats: { commentedCount, skippedCount },
+    pendingPosts: posts.slice(0, 15),
+    stats: { commentedCount, skippedCount }
   };
   await saveState(newState);
-  window.location.href = posts[0];
+  await sleep(800);
+  await safeNavigate(posts[0]);
 }
 
-// ─────────────────────────────────────────────────────
-// ON POST PAGE → comment, then navigate to next post
-// ─────────────────────────────────────────────────────
+// ── Handle Individual Reel Page (Visual Reel Opening + History Check + Human Typing + Post Inspection)
 async function handlePostPage(state) {
   const { config, pendingPosts = [] } = state;
-  const { speed } = config;
+  const speed = config?.speed || 3000;
 
-  // Restore stats
   commentedCount = state.stats?.commentedCount || 0;
-  skippedCount   = state.stats?.skippedCount   || 0;
+  skippedCount = state.stats?.skippedCount || 0;
 
-  await sleep(2500); // let the post page load fully
-  report('info', { reason: `Commenting on ${window.location.pathname}` });
+  const match = window.location.pathname.match(/\/(p|reel|reels)\/([A-Za-z0-9_-]+)/);
+  const shortcode = match ? match[2] : null;
 
-  // Determine topic from the hashtag we came from
-  const hashtag = state.currentHashtag || 'default';
-  const topicEntry = Object.entries(TOPIC_HASHTAGS).find(([, hashes]) => hashes.includes(hashtag));
-  const topic = topicEntry ? topicEntry[0] : 'default';
+  // Check if Reel was already commented on in previous sessions
+  if (shortcode) {
+    const history = await getCommentedHistory();
+    if (history[shortcode]) {
+      skippedCount++;
+      showBadge('error', `⏩ Reel already commented previously! Skipping to next...`);
+      await sleep(1500);
 
-  const success = await commentOnCurrentPost(topic);
-  if (success) commentedCount++;
-  else skippedCount++;
+      const remaining = pendingPosts.slice(1);
+      if (remaining.length > 0 && isRunning) {
+        await saveState({
+          ...state,
+          pendingPosts: remaining,
+          stats: { commentedCount, skippedCount }
+        });
+        await safeNavigate(remaining[0]);
+      } else {
+        await moveToNextHashtag({
+          ...state,
+          pendingPosts: [],
+          stats: { commentedCount, skippedCount }
+        });
+      }
+      return;
+    }
+  }
 
-  await sleep(speed + rand(300, 700));
+  showBadge('info', `Opened Reel page! Waiting for video player & comments... (${pendingPosts.length} Reels remaining in #${state.currentHashtag})`);
+  await sleep(2500);
 
-  // Move to next post or next hashtag
+  const commentToSend = getFormattedComment(config.template, state.currentCity);
+  showBadge('info', 'Searching for comment box on Reel...', commentToSend);
+
+  let success = false;
+  const box = await findCommentBox(7000);
+  if (box) {
+    showBadge('info', 'Found comment box! Starting visual character typing simulation...', commentToSend);
+    success = await typeAndSubmitDom(box, commentToSend);
+  }
+
+  // Fallback to Direct API if DOM input was restricted by Instagram layout
+  if (!success) {
+    showBadge('info', 'DOM input locked. Posting comment via Direct Instagram API...', commentToSend);
+    const mediaId = shortcode ? shortcodeToMediaId(shortcode) : null;
+    if (mediaId) {
+      success = await postCommentViaApi(mediaId, commentToSend);
+    }
+  }
+
+  if (success) {
+    if (shortcode) await markPostAsCommented(shortcode);
+    commentedCount++;
+    showBadge('commented', `🎉 SUCCESS! Comment published on Reel! (${commentedCount} posted total)`, commentToSend);
+  } else {
+    skippedCount++;
+    showBadge('error', '⚠️ Could not publish comment on this Reel. Moving to next...', commentToSend);
+  }
+
+  // Pause so user can visually see the published comment on screen before navigating to next Reel!
+  const delaySec = Math.max(3, Math.round(speed / 1000));
+  for (let s = delaySec; s > 0; s--) {
+    if (!isRunning) break;
+    showBadge(success ? 'commented' : 'info', `Waiting ${s}s before opening next Reel...`, commentToSend);
+    await sleep(1000);
+  }
+
   const remaining = pendingPosts.slice(1);
-  if (remaining.length > 0 && commenterRunning) {
+  if (remaining.length > 0 && isRunning) {
     await saveState({
       ...state,
       pendingPosts: remaining,
-      stats: { commentedCount, skippedCount },
+      stats: { commentedCount, skippedCount }
     });
-    window.location.href = remaining[0];
+    showBadge('navigate', `🚀 Opening next Reel... (${remaining.length} left in #${state.currentHashtag})`);
+    await sleep(800);
+    await safeNavigate(remaining[0]);
   } else {
-    // Done with this hashtag, move to next
-    await moveToNextHashtag({ ...state, pendingPosts: [], stats: { commentedCount, skippedCount } });
+    showBadge('navigate', `Completed current Reel batch! Moving to next city hashtag...`);
+    await sleep(1000);
+    await moveToNextHashtag({
+      ...state,
+      pendingPosts: [],
+      stats: { commentedCount, skippedCount }
+    });
   }
 }
 
-// ─────────────────────────────────────────────────────
-// MOVE TO NEXT HASHTAG
-// ─────────────────────────────────────────────────────
+// ── Move to Next City Hashtag
 async function moveToNextHashtag(state) {
   let pending = state.pendingHashtags || [];
-  
-  if (pending.length === 0 && state.config && state.config.loopMode && commenterRunning) {
-    report('info', { reason: `Loop mode enabled: Restarting topics...` });
-    const allHashtags = [];
-    for (const topic of (state.config.topics || [])) {
-      const hashes = TOPIC_HASHTAGS[topic] || [topic.replace(/\s+/g, '')];
-      for (const h of hashes) allHashtags.push({ hashtag: h, topic });
-    }
-    allHashtags.sort(() => Math.random() - 0.5);
-    pending = allHashtags;
+
+  if (pending.length === 0 && isRunning) {
+    showBadge('info', 'Loop complete! Restarting city hashtags queue...');
+    pending = [...(state.config?.hashtagsList || [])];
+    pending.sort(() => Math.random() - 0.5);
   }
 
-  if (pending.length === 0 || !commenterRunning) {
-    await chrome.storage.local.set({ gnCommenterState: null });
-    commenterRunning = false;
-    report('stopped', {});
+  if (pending.length === 0 || !isRunning) {
+    await chrome.storage.local.set({ takevoletBotState: null });
+    isRunning = false;
+    showBadge('info', 'TakeVolet Commenter session finished.');
     return;
   }
 
-  const next      = pending[0];
+  const next = pending[0];
   const remaining = pending.slice(1);
-  const url       = `https://www.instagram.com/explore/tags/${next.hashtag}/`;
+  const url = `https://www.instagram.com/explore/tags/${next.hashtag}/`;
 
-  report('scrolled', { reason: `Opening #${next.hashtag} (${remaining.length} hashtags left)` });
+  showBadge('navigate', `Opening hashtag #${next.hashtag} (${next.city.toUpperCase()}) — ${remaining.length} city hashtags remaining...`);
 
   await saveState({
     ...state,
     pendingHashtags: remaining,
-    currentHashtag:  next.hashtag,
-    currentTopic:    next.topic,
-    pendingPosts:    [],
-    stats: { commentedCount, skippedCount },
+    currentHashtag: next.hashtag,
+    currentCity: next.city,
+    pendingPosts: [],
+    stats: { commentedCount, skippedCount }
   });
 
-  window.location.href = url;
+  await sleep(1000);
+  await safeNavigate(url);
 }
 
-// ─────────────────────────────────────────────────────
-// ON LOAD — auto-resume if in commenter mode
-// ─────────────────────────────────────────────────────
-(async function onLoad() {
-  await sleep(1200);
-  
-  const fyData = await chrome.storage.local.get(['gnFyBotState']);
-  const fyState = fyData.gnFyBotState;
-  
-  const data  = await chrome.storage.local.get(['gnCommenterState']);
-  const state = data.gnCommenterState;
-  
-  const url       = window.location.href;
-  const isPost    = /instagram\.com\/.*?(p|reel)\//.test(url);
-  const isExplore = url.includes('/explore/');
-  
-  if (fyState && fyState.running) {
-    await startFyBotFlow(fyState);
+// ══════════════════════════════════════════════════════
+// 🎓 FINAL YEAR PROJECTS AUTO-COMMENTER ENGINE (200+ COLLEGES)
+// ══════════════════════════════════════════════════════
+
+const FY_PROJECT_TEMPLATES = [
+  "🚨 Final Year B.Tech / BE / MCA Students! 🎓 Need approved IEEE 2025/2026 Project Titles, Abstracts & full Source Code? We provide 100% Plagiarism-Free Documentation, PPT, IEEE Research Papers & live Project Deployment on your PC! Get complete Project Submission Help until Project Acceptance with 1-on-1 Viva Coaching. Available for Mini Projects, Major Projects, Hackathons Projects & high-impact Resume Projects! 📞 Contact: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Final Year CSE / ECE / IT / AI / DS Students! 💻 Get verified IEEE Project Titles, Abstracts & 100% working Source Code! Includes Plagiarism-Free Report Documentation, PPT, IEEE Research Papers & live Project Deployment on your laptop. We offer end-to-end Project Submission Help until Project Acceptance + 1-on-1 Viva Prep for all Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📞 Call/WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Don't stress over Final Year Project Submission! ⚡ Get approved Project Titles, Abstracts, Full Source Code + 0% Plagiarism Documentation & PPT slides. We deliver complete IEEE Research Papers, live Project Deployment, and hands-on Project Submission Help until Project Acceptance! Expert guidance for Mini Projects, Major Projects, Hackathons Projects & career-boosting Resume Projects. 📲 WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Zero coding knowledge? We handle everything! 🎓 Get IEEE 2025/2026 Project Titles, Abstracts & tested Source Code with 100% Plagiarism-Free Documentation + PPT. Includes IEEE Research Papers publishing guide, live AnyDesk Project Deployment & full Project Submission Help until Project Acceptance! Covering Mini Projects, Major Projects, Hackathons Projects & Resume Projects. 📞 Contact: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Attention 2026 Batch Engineering Students! 🚨 Need custom or ready-made IEEE Project Titles, Abstracts & GitHub Source Code? We deliver Plagiarism-Free Documentation, PPT, IEEE Research Papers & live Cloud/Local Project Deployment. Guaranteed Project Submission Help until Project Acceptance for your Mini Projects, Major Projects, Hackathons Projects & Resume Projects with viva Q&A! 📲 WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Need IEEE Research Papers & Base Projects for final semester? 📄 Get domain-approved Project Titles, Abstracts, Source Code + 100% Plagiarism-Free Documentation & PPT! We provide live Project Deployment on your system and end-to-end Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & top Resume Projects. 📞 Call/WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Final Year Engineering & MCA Projects made simple! 💡 AI/ML, Full Stack, IoT, Cloud & Cyber Security Project Titles, Abstracts & full Source Code. Includes 0% Plagiarism Documentation, PPT, IEEE Research Papers & live Project Deployment. Full Project Submission Help until Project Acceptance + 1-on-1 Viva support for Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📲 WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "B.Tech / M.Tech / MCA / BCA Final Year Projects available! 🚀 Get IEEE 2025/2026 standard Project Titles, Abstracts, working Source Code + Plagiarism-Free Documentation & PPT. We handle IEEE Research Papers publication, live Project Deployment & complete Project Submission Help until Project Acceptance across Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📞 Contact: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Looking for best IEEE Projects at student-friendly prices? 💰 Get trending Project Titles, Abstracts, complete Source Code, Plagiarism-Free Report Documentation & PPT! We include IEEE Research Papers, live Project Deployment on your laptop & full Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & Resume Projects. 📲 Call/WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Project Submission Deadline near? ⏳ Don't panic! Get same-day delivery of approved Project Titles, Abstracts, Full Source Code + 100% Plagiarism-Free Documentation & PPT. Includes IEEE Research Papers, instant Project Deployment & dedicated Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📞 WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "IEEE Projects for CSE, IT, ECE, AI & Data Science! 🤖 High quality Project Titles, Abstracts & tested Source Code + 0% Plagiarism Documentation & PPT slides. We provide IEEE Research Papers, step-by-step Project Deployment on your PC & complete Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📲 Contact: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Want a top grade in your Final Year Viva? 💯 Get verified Project Titles, Abstracts, fully functional Source Code + Plagiarism-Free Documentation, PPT & viva coaching! Includes IEEE Research Papers, live Project Deployment & guaranteed Project Submission Help until Project Acceptance across Mini Projects, Major Projects, Hackathons Projects & Resume Projects. 📞 Call/WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "IEEE 2025-2026 Capstone & Final Year Projects! 🏆 Complete web apps, mobile apps, AI models & IoT Project Titles, Abstracts and Source Code. Includes 100% Plagiarism-Free Documentation, PPT, IEEE Research Papers & live Project Deployment. We give complete Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📲 WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Final Year Project Guidance & Development! 🛠️ Custom & readymade Project Titles, Abstracts, Source Code + Plagiarism-Free Report Documentation & PPT. Receive IEEE Research Papers, live screen-share Project Deployment & continuous Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📞 Contact: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Worried about College Project Viva & Guide Approval? 📑 Get approved Project Titles, Abstracts, 100% tested Source Code + 0% Plagiarism Documentation & PPT! We provide IEEE Research Papers, live Project Deployment on your machine & complete Project Submission Help until Project Acceptance for all Mini Projects, Major Projects, Hackathons Projects & Resume Projects. 📲 Call/WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "100% Plagiarism-Free Project Documentation & Source Code! 🎓 Approved for JNTU, AU, SVU, OU, VTU, Anna Univ & all engineering colleges! Get IEEE Project Titles, Abstracts, PPT, IEEE Research Papers & live Project Deployment. End-to-end Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📞 Contact: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Struggling to run your project code? 🐞 We do full live Project Deployment on your laptop via AnyDesk! Get verified IEEE Project Titles, Abstracts, working Source Code + Plagiarism-Free Documentation & PPT. Includes IEEE Research Papers & full Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & Resume Projects. 📲 WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Complete Final Year Project Package: Code + Plagiarism-Free Documentation + PPT + IEEE Research Papers + Viva Coaching! 🎯 Get approved Project Titles, Abstracts & live Project Deployment with guaranteed Project Submission Help until Project Acceptance. Available for Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📞 Call/WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Make your Project Submission 100% hassle-free! 🚀 Get cutting-edge AI/ML, MERN, Cloud, IoT Project Titles, Abstracts & full Source Code with 0% Plagiarism Documentation & PPT. We provide IEEE Research Papers, live Project Deployment & complete Project Submission Help until Project Acceptance for Mini Projects, Major Projects, Hackathons Projects & Resume Projects! 📲 Contact: {phone} | 🌐 {url} | DM {igId} #graduatenex",
+
+  "Need Urgent Project Delivery & Guide Acceptance? ⚡ Same-day IEEE Project Titles, Abstracts, Source Code + 100% Plagiarism-Free Documentation & PPT! Includes IEEE Research Papers drafting, live Project Deployment and dedicated Project Submission Help until Project Acceptance across Mini Projects, Major Projects, Hackathons Projects & Resume Projects. 📞 WhatsApp: {phone} | 🌐 {url} | DM {igId} #graduatenex"
+];
+
+function getFyFormattedComment(igId, url, phone) {
+  const contactNum = phone || '7981994870';
+  const targetIg = igId || '@graduatenex';
+  const targetUrl = url || 'https://www.graduatenex.online/';
+  const template = FY_PROJECT_TEMPLATES[Math.floor(Math.random() * FY_PROJECT_TEMPLATES.length)];
+  let res = template
+    .replace(/\{igId\}/g, targetIg)
+    .replace(/\{url\}/g, targetUrl)
+    .replace(/\{phone\}/g, contactNum);
+  if (!res.includes(contactNum)) {
+    res += `\n📞 Contact/WhatsApp: ${contactNum}`;
+  }
+  if (!res.includes('#graduatenex')) {
+    res += ` #graduatenex`;
+  }
+  return res;
+}
+
+async function getFyVisitedPosts() {
+  const data = await chrome.storage.local.get(['gnFyVisitedPosts']);
+  return data.gnFyVisitedPosts || {};
+}
+
+async function markFyPostVisited(shortcode) {
+  if (!shortcode) return;
+  const history = await getFyVisitedPosts();
+  history[shortcode] = Date.now();
+  await chrome.storage.local.set({ gnFyVisitedPosts: history });
+}
+
+function getCollegeTargetUrl(collegeName) {
+  let clean = (collegeName || '').trim();
+  if (!clean) return 'https://www.instagram.com/explore/';
+
+  if (clean.startsWith('@')) {
+    const handle = clean.substring(1).trim();
+    return `https://www.instagram.com/${handle}/`;
+  }
+  if (clean.startsWith('#')) {
+    const tag = clean.substring(1).trim();
+    return `https://www.instagram.com/explore/tags/${encodeURIComponent(tag)}/`;
+  }
+
+  // Parse piped format e.g. "1 | JNTH | JNTUH University College of Engineering..." or "55 | QM | KG Reddy..."
+  let extractedCode = '';
+  if (clean.includes('|')) {
+    const parts = clean.split('|').map(p => p.trim());
+    if (parts.length >= 3) {
+      extractedCode = parts[1].toLowerCase();
+      clean = parts[2];
+    } else if (parts.length === 2) {
+      extractedCode = parts[0].toLowerCase();
+      clean = parts[1];
+    }
+  }
+
+  const lower = clean.toLowerCase();
+
+  // TS EAMCET & AP EAMCET Code Direct Hashtag Map (327+ Colleges)
+  const CODE_TAG_MAP = {
+    // Telangana Codes
+    'jnth': 'jntuh', 'ouce': 'osmaniauniversity', 'cbit': 'cbithyderabad', 'vasv': 'vasavicollegeofengineering',
+    'vjec': 'vnrvjiet', '07': 'vnrvjiet', 'gntw': 'gnits', 'kmit': 'kmit', 'bd': 'kmit', 'mecs': 'matrusri',
+    'mgit': 'mgithyderabad', '26': 'mgithyderabad', 'cvrh': 'cvrce', 'cvsr': 'cvrce', 'grrr': 'griet',
+    'iare': 'iare', 'snis': 'snist', '31': 'snist', 'vbit': 'vbit', 'p6': 'vbit', 'vgnt': 'vardhaman',
+    'vmeg': 'vardhaman', '88': 'vardhaman', 'bvri': 'bvrit', 'bvrw': 'bvrithyderabad', 'cmrk': 'cmrce',
+    'cmrn': 'cmrec', 'cmrm': 'cmrithyderabad', 'cmrg': 'cmrtc', 'jbit': 'jbiet', 'j2': 'jbrec', 'qk': 'jyothishmathi',
+    '5d': 'knrcer', 'qn': 'kbrce', 'qm': 'kgreddy', 'j3': 'khadermemorial', 'qp': 'kitskhammam', 'qt': 'klrce',
+    'qu': 'kitsw', '6b': 'kitsw', '28': 'kitskarimnagar', 'ra': 'kprit', 'kmec': 'kprit', 'b4': 'kce',
+    'm2': 'lordsinstitute', 'rg': 'mrcew', 'mrgw': 'mrcew', 'rj': 'mrit', 'mrit': 'mrit', '7y': 'mlritm',
+    'mrce': 'mlritm', 'j6': 'mcetmedak', 'rp': 'meghainstitute', 'mgha': 'meghainstitute', 'c6': 'mist',
+    'g7': 'mitskodad', 'e3': 'mist', 'q9': 'mrce', 'mall': 'mrce', 'uj': 'mrem', 'mrem': 'mrem', 'rh': 'mrecw',
+    's1': 'mrits', 'w9': 'mriet', 'mrec': 'mrec', '80': 'mothertheressa', 'td': 'nigama', 'b6': 'nmrec',
+    'nred': 'nmrec', '7z': 'nnrg', 'ngitw': 'nnrg', 'x0': 'nrec', 'rt': 'nsakcet', '6f': 'pallaviengineeringcollege',
+    '6m': 'princetoncollege', 'prtw': 'princetoncollege', '6c': 'priyadarshinicollege', 'prin': 'priyadarshinicollege',
+    'u1': 'samskruti', 'm8': 'sanaengineeringcollege', 'c0': 'scient', 'scit': 'scient', '08': 'shadan',
+    'n8': 'sphoorthy', 'srit': 'sphoorthy', 'n0': 'sreechaitanya', 'chtn': 'sreechaitanya', 'tr': 'sreechaitanyainstitute',
+    'chts': 'sreechaitanyainstitute', 'c8': 'sreekavitha', 've': 'sreyas', 'srhp': 'sreyas', 'd2': 'sridevicollege',
+    'tk': 'svsgroup', 'm6': 'sbit', 'sbit': 'sbit', 'c5': 'saispurthi', 'l5': 'shadanwomens', 'tp': 'siddharthainstitute',
+    'tq': 'sitssiddhartha', 'e4': 'sreedattha', '57': 'svits', '8a': 'srichaitanyacampus', 'x3': 'sriindu',
+    'indi': 'sriindu', 'srkt': 'sriindu', 'd4': 'sriinducollege', '8b': 'srisai', '63': 'srivenkateswara',
+    'sves': 'srivenkateswara', 'k8': 'smec', 'stlw': 'smec', 'bh': 'stmarys', 'd0': 'stmarysgroup',
+    '7w': 'stmaryscampus', 'bk': 'stpeters', '6y': 'sritw', '14': 'srtist', 'p7': 'svit', 'r9': 'tkrec',
+    'c2': 'thirumala', 'k9': 'tkrce', 'tkrk': 'tkrce', 'ue': 'trinitykarimnagar', 'ud': 'trinitypeddapalli',
+    'trce': 'trinitypeddapalli', 'uc': 'tallapadmavathi', 'uk': 'vaagdevi', '64': 'vaagdevi', 's4': 'vaageswari',
+    '89': 'vignanits', 'p8': 'vbec', 'up': 'vmtw', 'vgw': 'vmtw', 'vmtw': 'vmtw', 'br': 'vijayaengineeringcollege',
+    'bt': 'vcet', '29': 'vrec', 'vrec': 'vrec', 'n6': 'vits', 'ug': 'tudiramreddy', 'tudi': 'tudiramreddy',
+    'aarm': 'aarmahaveer', '8p': 'aarmahaveer', 'aceg': 'aceec', 'aith': 'aits', 't8': 'aits', 'akit': 'akit',
+    'ek': 'akit', 'anrk': 'anuragcollege', 'anug': 'anuraguniversity', 'wlcw': 'anuraguniversity', 'arjn': 'arjuncollege',
+    'w8': 'arjuncollege', 'asra': 'avanthi', 'pt': 'avanthi', 'aurc': 'aurora', 'd9': 'aurora', 'aurg': 'aurora',
+    'm9': 'aurora', 'aurh': 'ramappa', 'aurk': 'aurora', '9k': 'aurora', 'avih': 'avanthi', 'q6': 'avanthi',
+    'avni': 'avn', '5u': 'avn', 'biet': 'biet', 'bitn': 'bits', 'c3': 'bits', 'boma': 'bomma', 'bose': 'anubose',
+    'pp': 'anubose', 'pq': 'anuragcollege', 'brew': 'bhojreddy', 'brig': 'brilliant', 'bril': 'brilliant',
+    'drki': 'drk', 'elen': 'ellenki', 'esut': 'kuce', 'gate': 'gate', 'gctc': 'gcet', 'glob': 'global',
+    'glwc': 'lailavathi', 'gnit': 'gnit', 'guru': 'gnitc', 'iitt': 'indur', 'jaya': 'jayamukhi', 'jmts': 'jyothishmathi',
+    'jntr': 'jntuhsircilla', 'jnts': 'jntuhsultanpur', 'jnthmt': 'jntuhmanthani', 'kits': 'kitswarangal',
+    'kmce': 'kmce', 'kprt': 'kprit', 'meth': 'methodist', 'mvsr': 'mvsr', 'ngit': 'ngit', 'rcee': 'rishi',
+    'wits': 'wits', '91': 'vjit', '5t': 'ashoka', 'u7': 'aurora', '62': 'aurora', '84': 'aurora', 'q8': 'azadcollege',
+    'm1': 'bsit',
+
+    // Andhra Pradesh Codes
+    'auce': 'aucoeg', 'jnuk': 'jntuk', 'jnua': 'jntua', 'jnup': 'jntuapulivendula', 'jnlk': 'jntuakalikiri',
+    'jnun': 'jntuknarasaraopet', 'jnvz': 'jntukvizianagaram', 'svuc': 'svuce', 'klef': 'kluniversity',
+    'vitp': 'vitap', 'srma': 'srmap', 'gvpw': 'gvpce', 'gvpe': 'gvpcew', 'vrse': 'vrsec', 'pvps': 'pvpsiddhartha',
+    'rvrj': 'rvrjc', 'gmrt': 'gmrit', 'gprc': 'gprec', 'gpet': 'gpcet', 'svec': 'sreevidyanikethan',
+    'mits': 'mits', 'mvgr': 'mvgrce', 'anit': 'anits', 'bpec': 'bec', 'lbrc': 'lbrce', 'srge': 'gec',
+    'vvit': 'vvit', 'adtp': 'adityaengineeringcollege', 'acet': 'acet', 'adce': 'aditya', 'aitm': 'aitam',
+    'adrs': 'adarshcollege', 'aksr': 'akshara', 'amrn': 'amritasai', 'aits': 'aitsrajampet', 'anuc': 'anucoe',
+    'alie': 'andhraloyola', 'avit': 'avanthivizag', 'bvce': 'bvceodalarevu', 'bvci': 'bvcits', 'chai': 'chaitanyaengg',
+    'cist': 'cist', 'dnre': 'dnrce', 'diet': 'diet', 'kite': 'kitsdivili', 'nrso': 'nec', 'nbkr': 'nbkrist',
+    'nren': 'narayanaengineering', 'nreg': 'narayanagudur', 'rguk': 'rgukt', 'rgmc': 'rgmcet', 'rsre': 'rsrec',
+    'svct': 'svcet', 'vemu': 'vemu', 'ciet': 'cietguntur', 'cipt': 'cipt', 'chir': 'chiralacollege',
+    'dadi': 'dadiinstitute', 'blay': 'drbullayya', 'kvr': 'kvsr', 'mich': 'mictech', 'elur': 'eluruengg',
+    'eswr': 'eswarcollege', 'gist': 'gistnellore', 'giet': 'giet', 'gokl': 'gokulinstitute', 'gkcs': 'gokulakrishna',
+    'gntr': 'gunturengg', 'idel': 'idealengg', 'ksrm': 'ksrmce', 'kiet': 'kietkakinada', 'kiew': 'kietwomen',
+    'khit': 'khitguntur', 'kmmt': 'kmmits', 'kcit': 'kcit', 'kvew': 'krishnaveniwomen', 'kupm': 'kuppamcollege',
+    'lend': 'lendi', 'lenr': 'lenora', 'limt': 'lingayas', 'litm': 'loyolaguntur', 'mvrt': 'mvrce',
+    'mlew': 'malineniwomen', 'mamw': 'mamwomen', 'mirc': 'miracleengg', 'mjrc': 'mjrce', 'mtec': 'mothertheresa',
+    'nsrt': 'nsrit', 'nist': 'narayanadri', 'newt': 'newtonengg', 'nmra': 'nimra', 'nrit': 'nrit',
+    'pbrv': 'pbrvisvodaya', 'pvkk': 'pvkk', 'pace': 'paceinstitute', 'pscm': 'pscmr', 'prag': 'pragatiengg',
+    'prak': 'prakasamengg', 'pydi': 'pydah', 'qisc': 'qis', 'quba': 'quba', 'rvit': 'rvit', 'rkce': 'rkce',
+    'rcel': 'ramachandra', 'ragu': 'raghuengg', 'rjmt': 'rajamahendri', 'rcew': 'ravindrawomen',
+    'srkt': 'srktech', 'srkr': 'srkr', 'sasi': 'sasiengg', 'saty': 'satya', 'sist': 'sistputtur',
+    'scrr': 'crrcollege', 'svas': 'vasaviap', 'srin': 'srinivasa', 'sitm': 'sitms', 'stan': 'stannschirala'
+  };
+
+  if (extractedCode && CODE_TAG_MAP[extractedCode]) {
+    return `https://www.instagram.com/explore/tags/${encodeURIComponent(CODE_TAG_MAP[extractedCode])}/`;
+  }
+
+  const COLLEGE_TAG_MAP = {
+    'jntuh': 'jntuh',
+    'osmania': 'osmaniauniversity',
+    'chaitanya bharathi': 'cbithyderabad',
+    'cbit': 'cbithyderabad',
+    'vasavi': 'vasavicollegeofengineering',
+    'vnr': 'vnrvjiet',
+    'gokaraju': 'griet',
+    'griet': 'griet',
+    'sreenidhi': 'snist',
+    'snist': 'snist',
+    'cvr': 'cvrce',
+    'bvrit': 'bvrit',
+    'mahatma gandhi': 'mgithyderabad',
+    'mgit': 'mgithyderabad',
+    'narayanamma': 'gnits',
+    'gnits': 'gnits',
+    'cmr': 'cmrce',
+    'vardhaman': 'vardhaman',
+    'anurag': 'anuraguniversity',
+    'muffakham': 'mjcet',
+    'mvsr': 'mvsr',
+    'kakatiya': 'kitswarangal',
+    'kits warangal': 'kitswarangal',
+    'tkr': 'tkrce',
+    'mlrit': 'mlrit',
+    'iare': 'iare',
+    'vjit': 'vjit',
+    'malla reddy': 'mrcet',
+    'martin': 'smec',
+    'smec': 'smec',
+    'geethanjali': 'gcet',
+    'jbiet': 'jbiet',
+    'guru nanak': 'gnitc',
+    'bharat': 'biet',
+    'sreyas': 'sreyas',
+    'kg reddy': 'kgreddy',
+    'ace': 'aceec',
+    'vbit': 'vbit',
+    'stanley': 'stanley',
+    'bhoj reddy': 'bhojreddy',
+    'vignan': 'vignan',
+    'avanthi': 'avanthi',
+    'andhra university': 'aucoeg',
+    'jntuk': 'jntuk',
+    'jntua': 'jntua',
+    'svu': 'svuce',
+    'gvp': 'gvpce',
+    'srm': 'srmap',
+    'vit': 'vitap',
+    'kl university': 'kluniversity',
+    'gitam': 'gitam',
+    'vrsiddhartha': 'vrsec',
+    'rvr': 'rvrjc',
+    'pvp': 'pvpsiddhartha',
+    'pulla reddy': 'gprec',
+    'pullaiah': 'gpcet',
+    'vidyanikethan': 'sreevidyanikethan',
+    'mohan babu': 'mohanbabuuniversity',
+    'lbrce': 'lbrce',
+    'anits': 'anits',
+    'mits': 'mits',
+    'mvgr': 'mvgrce',
+    'aditya': 'adityaengineeringcollege',
+    'gmrit': 'gmrit',
+    'raghu': 'raghuengg',
+    'bec': 'bec',
+    'dhanekula': 'diet',
+    'gudlavalleru': 'gec',
+    'iit hyderabad': 'iithyderabad',
+    'nit warangal': 'nitwarangal',
+    'iiit hyderabad': 'iiithyderabad',
+    'bits pilani': 'bitshyderabad',
+    'university of hyderabad': 'uoh',
+    'anna university': 'annauniversity',
+    'psg': 'psgtech',
+    'rv college': 'rvce',
+    'bms': 'bmsce',
+    'pes university': 'pesuniversity',
+    'ramaiah': 'msrit',
+    'coep': 'coep',
+    'vjti': 'vjtimumbai',
+    'vvit': 'vvit',
+    'chalapathi': 'cietguntur',
+    'chirala': 'chiralacollege',
+    'bullayya': 'drbullayya',
+    'mic college': 'mictech',
+    'eluru': 'eluruengg',
+    'eswar': 'eswarcollege',
+    'giet': 'giet',
+    'ksrm': 'ksrmce',
+    'kiet': 'kietkakinada',
+    'lendi': 'lendi',
+    'loyola': 'andhraloyola',
+    'mvr': 'mvrce',
+    'narasaraopeta': 'nec',
+    'nbkr': 'nbkrist',
+    'narayana': 'narayanaengineering',
+    'rgukt': 'rgukt',
+    'rgm': 'rgmcet',
+    'pace': 'paceinstitute',
+    'pragati': 'pragatiengg',
+    'prakasam': 'prakasamengg',
+    'qis': 'qis',
+    'srkr': 'srkr',
+    'sasi': 'sasiengg',
+    'shri vishnu': 'svcw',
+    'siddharth': 'siddharthcollege',
+    'vasavi': 'vasavi'
+  };
+
+  for (const [key, tag] of Object.entries(COLLEGE_TAG_MAP)) {
+    if (lower.includes(key)) {
+      return `https://www.instagram.com/explore/tags/${encodeURIComponent(tag)}/`;
+    }
+  }
+
+  const words = clean.split(/\s+/).filter(w => !['of','and','for','the','in','&'].includes(w.toLowerCase()));
+  if (words.length >= 2) {
+    const acronym = words.map(w => w[0]).join('').toLowerCase();
+    if (acronym.length >= 3) {
+      return `https://www.instagram.com/explore/tags/${encodeURIComponent(acronym)}/`;
+    }
+  }
+
+  const fallbackTag = clean.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  return `https://www.instagram.com/explore/tags/${encodeURIComponent(fallbackTag)}/`;
+}
+
+async function moveToNextFyCollege(state) {
+  let pending = state.pendingHashtags || [];
+
+  if (pending.length === 0) {
+    await chrome.storage.local.set({ gnFyBotState: null, userStartedBot: false });
+    isRunning = false;
+    showBadge('info', '🎓 Final Year Projects Bot: All provided colleges completed!');
+    try {
+      chrome.runtime.sendMessage({ action: 'COMMENT_PROGRESS', type: 'stopped' });
+    } catch(e) {}
     return;
   }
 
-  if (!state || !state.running) return;
+  const currentCollege = pending[0];
+  const remaining = pending.slice(1);
+  const targetUrl = getCollegeTargetUrl(currentCollege);
 
-  commenterRunning  = true;
-  commentedCount    = state.stats?.commentedCount || 0;
-  skippedCount      = state.stats?.skippedCount   || 0;
+  showBadge('navigate', `🎓 Moving to College (${remaining.length + 1} remaining): ${currentCollege}`);
 
-  if (isPost)    await handlePostPage(state);
-  else if (isExplore) await handleExplorePage(state);
-  // else: unknown page, do nothing (user navigated away)
+  const newState = {
+    ...state,
+    running: true,
+    pendingHashtags: remaining,
+    currentHashtag: currentCollege,
+    pendingPosts: [],
+    stats: state.stats || { commentedCount: 0, skippedCount: 0 }
+  };
+
+  await chrome.storage.local.set({ gnFyBotState: newState });
+  await sleep(1000);
+  await safeNavigate(targetUrl);
+}
+
+async function collectFyPostLinks(timeout = 8000) {
+  const history = await getFyVisitedPosts();
+  const start = Date.now();
+  const posts = [];
+  const seen = new Set();
+
+  while (Date.now() - start < timeout) {
+    window.scrollTo(0, 400);
+    const main = document.querySelector('main, [role="main"], article');
+    if (main) main.scrollTop += 500;
+
+    await sleep(600);
+
+    const root = main || document.body;
+    const anchors = Array.from(root.querySelectorAll('a[href*="/p/"], a[href*="/reel/"], a[href*="/reels/"]'));
+
+    for (const a of anchors) {
+      // Exclude navigation bars, search modals, and recommended/suggested sidebars
+      if (a.closest('nav, header, [role="navigation"], aside, footer')) continue;
+      if (a.closest('div[role="dialog"]')) continue;
+
+      const href = a.getAttribute('href') || a.href || '';
+      const match = href.match(/\/(p|reel|reels)\/([A-Za-z0-9_-]+)/);
+      if (match) {
+        const shortcode = match[2];
+        if (!seen.has(shortcode) && !history[shortcode]) {
+          seen.add(shortcode);
+          posts.push(`https://www.instagram.com/p/${shortcode}/`);
+        }
+      }
+    }
+
+    if (posts.length >= 3) return posts;
+    await sleep(500);
+  }
+  return posts;
+}
+
+async function handleFyExploreOrProfilePage(state) {
+  await sleep(1500);
+
+  // STRICT CHECK: If redirected to generic explore (/explore/) or homepage, skip immediately
+  const path = window.location.pathname;
+  const isGenericExplore = path === '/explore/' || path === '/explore' || path === '/';
+  if (isGenericExplore) {
+    showBadge('error', `⚠️ Generic Explore detected (no active tag for ${state.currentHashtag}). Skipping to next college...`);
+    await sleep(1200);
+    await moveToNextFyCollege(state);
+    return;
+  }
+
+  // Check if page has error / unavailable message
+  const bodyText = document.body ? document.body.innerText : '';
+  if (bodyText.includes("Sorry, this page isn't available") || bodyText.includes('No posts yet') || bodyText.includes('No results found')) {
+    showBadge('error', `⚠️ Page unavailable or no posts for ${state.currentHashtag}. Skipping to next college...`);
+    await sleep(1200);
+    await moveToNextFyCollege(state);
+    return;
+  }
+
+  showBadge('info', `Scanning College Posts on page: ${state.currentHashtag}...`);
+
+  const posts = await collectFyPostLinks(8000);
+
+  if (posts.length === 0) {
+    showBadge('error', `No unvisited posts found for ${state.currentHashtag}. Moving to next college...`);
+    await sleep(1200);
+    await moveToNextFyCollege(state);
+    return;
+  }
+
+  showBadge('navigate', `Found ${posts.length} posts for ${state.currentHashtag}! Opening post #1...`);
+
+  const newState = {
+    ...state,
+    pendingPosts: posts.slice(0, 3)
+  };
+  await chrome.storage.local.set({ gnFyBotState: newState });
+  await sleep(800);
+  await safeNavigate(posts[0]);
+}
+
+async function handleFyPostPage(state) {
+  const pendingPosts = state.pendingPosts || [];
+  const match = window.location.pathname.match(/\/(p|reel|reels)\/([A-Za-z0-9_-]+)/);
+  const shortcode = match ? match[2] : null;
+
+  if (shortcode) {
+    const history = await getFyVisitedPosts();
+    if (history[shortcode]) {
+      showBadge('error', '⏩ Post already commented previously! Skipping...');
+      await sleep(1200);
+      const remaining = pendingPosts.slice(1);
+      if (remaining.length > 0) {
+        state.pendingPosts = remaining;
+        await chrome.storage.local.set({ gnFyBotState: state });
+        await safeNavigate(remaining[0]);
+      } else {
+        await moveToNextFyCollege(state);
+      }
+      return;
+    }
+  }
+
+  showBadge('info', `Opened college post! Preparing Final Year comment... (${pendingPosts.length} posts left in batch)`);
+  await sleep(2000);
+
+  const commentToSend = getFyFormattedComment(state.igId, state.url, state.phone || '7981994870');
+  showBadge('info', 'Searching for comment box...', commentToSend);
+
+  let success = false;
+  const box = await findCommentBox(7000);
+  if (box) {
+    showBadge('info', 'Found comment box! Typing comment...', commentToSend);
+    success = await typeAndSubmitDom(box, commentToSend);
+  }
+
+  if (!success && shortcode) {
+    showBadge('info', 'DOM typing locked. Posting via Direct Instagram API...', commentToSend);
+    const mediaId = shortcodeToMediaId(shortcode);
+    if (mediaId) {
+      success = await postCommentViaApi(mediaId, commentToSend);
+    }
+  }
+
+  if (success) {
+    if (shortcode) await markFyPostVisited(shortcode);
+    if (!state.stats) state.stats = { commentedCount: 0, skippedCount: 0 };
+    state.stats.commentedCount++;
+    showBadge('commented', `🎉 SUCCESS! College marketing comment posted! Total: ${state.stats.commentedCount}`, commentToSend);
+    try {
+      chrome.runtime.sendMessage({
+        action: 'COMMENT_PROGRESS',
+        type: 'commented',
+        comment: commentToSend,
+        queue: (state.pendingHashtags || []).length
+      });
+    } catch(e) {}
+  } else {
+    showBadge('error', '⚠️ Could not publish comment on this post. Moving on...', commentToSend);
+  }
+
+  await sleep(2500);
+
+  const remaining = pendingPosts.slice(1);
+  if (remaining.length > 0) {
+    state.pendingPosts = remaining;
+    await chrome.storage.local.set({ gnFyBotState: state });
+    showBadge('navigate', `🚀 Opening next post for this college (${remaining.length} left)...`);
+    await sleep(800);
+    await safeNavigate(remaining[0]);
+  } else {
+    showBadge('navigate', 'Batch complete for this college! Moving to next college...');
+    await sleep(1000);
+    await moveToNextFyCollege(state);
+  }
+}
+
+// ── Auto-Resume on Page Load
+(async function onLoad() {
+  await sleep(1200);
+
+  const check = await chrome.storage.local.get(['userStartedBot', 'gnFyBotState', 'takevoletBotState']);
+
+  // CRITICAL GUARD: If user did NOT explicitly click Start, NEVER run or navigate automatically!
+  if (!check.userStartedBot) {
+    console.log('[Bot Guard] userStartedBot is false. Automatic commenting & navigation blocked.');
+    const badge = document.getElementById('takevolet-bot-badge');
+    if (badge) badge.remove();
+    return;
+  }
+
+  // 1. Check Final Year Bot state
+  const fyState = check.gnFyBotState;
+  if (fyState && fyState.running) {
+    window.gnFyBotActive = true;
+    isRunning = true;
+    const url = window.location.href;
+    const isPost = /\/(p|reel|reels)\//.test(url);
+
+    if (isPost && fyState.pendingPosts && fyState.pendingPosts.length > 0) {
+      await handleFyPostPage(fyState);
+    } else if (!isPost) {
+      await handleFyExploreOrProfilePage(fyState);
+    } else {
+      await moveToNextFyCollege(fyState);
+    }
+    return;
+  }
+
+  // 2. Check TakeVolet Bot state
+  const state = check.takevoletBotState;
+  if (state && state.running) {
+    window.gnFyBotActive = false;
+    isRunning = true;
+    commentedCount = state.stats?.commentedCount || 0;
+    skippedCount = state.stats?.skippedCount || 0;
+
+    const url = window.location.href;
+    const isPost = /\/(p|reel|reels)\//.test(url);
+    const isExplore = url.includes('/explore/') || url.includes('/tags/') || url.includes('/search/');
+
+    if (isPost) await handlePostPage(state);
+    else if (isExplore) await handleExplorePage(state);
+    else {
+      await moveToNextHashtag(state);
+    }
+  }
 })();
 
-// ══════════════════════════════════════════════════════
-// MESSAGE LISTENER
-// ══════════════════════════════════════════════════════
+// ── Message Listener
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-
-  if (request.action === 'PING') { sendResponse({ status: 'ok' }); return true; }
-
-  if (request.action === 'START_COMMENTER') {
-    commenterRunning = true;
-    commentedCount   = 0;
-    skippedCount     = 0;
+  if (request.action === 'START_FY_BOT') {
+    window.gnFyBotActive = true;
+    isRunning = true;
     sendResponse({ status: 'started' });
-
-    const { config } = request;
-    const allHashtags = [];
-    for (const topic of config.topics) {
-      const hashes = TOPIC_HASHTAGS[topic] || [topic.replace(/\s+/g, '')];
-      for (const h of hashes) allHashtags.push({ hashtag: h, topic });
-    }
-    // Shuffle for variety
-    allHashtags.sort(() => Math.random() - 0.5);
-
-    if (allHashtags.length === 0) {
-      report('error', { error: 'No topics selected!' });
-      return true;
-    }
-
-    const first     = allHashtags[0];
-    const remaining = allHashtags.slice(1);
-
+    const { hashtags, igId, url, phone } = request;
+    const initialState = {
+      running: true,
+      pendingHashtags: hashtags || [],
+      currentHashtag: hashtags ? hashtags[0] : '',
+      pendingPosts: [],
+      igId: igId || '@graduatenex',
+      url: url || 'https://graduatenex.online',
+      phone: phone || '7981994870',
+      stats: { commentedCount: 0, skippedCount: 0 }
+    };
     chrome.storage.local.set({
-      gnCommenterState: {
-        running:         true,
-        pendingHashtags: remaining,
-        pendingPosts:    [],
-        currentHashtag:  first.hashtag,
-        currentTopic:    first.topic,
-        config,
-        stats: { commentedCount: 0, skippedCount: 0 },
-      }
+      userStartedBot: true,
+      gnFyBotState: initialState,
+      takevoletBotState: { running: false }
     }, () => {
-      const url = `https://www.instagram.com/explore/tags/${first.hashtag}/`;
-      report('scrolled', { reason: `Opening #${first.hashtag} ...` });
-      window.location.href = url;
+      showBadge('navigate', `🎓 Starting Final Year Projects Marketing Bot for ${initialState.pendingHashtags.length} colleges!`);
+      moveToNextFyCollege(initialState);
     });
-
     return true;
   }
 
-  if (request.action === 'STOP_COMMENTER') {
-    commenterRunning = false;
-    chrome.storage.local.get(['gnCommenterState'], (d) => {
-      if (d.gnCommenterState) {
-        d.gnCommenterState.running = false;
-        chrome.storage.local.set({ gnCommenterState: d.gnCommenterState });
-      }
+  if (request.action === 'STOP_FY_BOT' || request.action === 'STOP_TAKEVOLET_COMMENTER') {
+    isRunning = false;
+    const badge = document.getElementById('takevolet-bot-badge');
+    if (badge) badge.remove();
+    chrome.storage.local.set({
+      userStartedBot: false,
+      gnFyBotState: { running: false },
+      takevoletBotState: { running: false }
     });
     sendResponse({ status: 'stopped' });
     return true;
   }
 
-  // ── AUTO POSTER (original)
-  if (request.action === 'START_AUTOMATION' || request.action === 'POST_TO_INSTAGRAM') {
+  if (request.action === 'START_TAKEVOLET_COMMENTER') {
+    window.gnFyBotActive = false;
+    isRunning = true;
     sendResponse({ status: 'started' });
-    const { base64Data, imageData, caption, filename, filetype } = request;
-    startAutomation(base64Data || imageData, caption, filename, filetype);
-    return true;
-  }
 
-  if (request.action === 'START_FY_BOT') {
-    sendResponse({ status: 'started' });
-    const { hashtags, igId, url } = request;
-    
-    chrome.storage.local.set({ gnCommenterState: null });
-    commenterRunning = false;
+    const { config, resume } = request;
 
-    const [first, ...remaining] = hashtags;
-    saveFyState({
-      running: true,
-      pendingHashtags: remaining,
-      currentHashtag: first,
-      pendingPosts: [],
-      pendingProfile: null,
-      igId, url
-    }).then(() => {
-      window.location.href = `https://www.instagram.com/`;
-    });
-    return true;
-  }
-
-  if (request.action === 'STOP_FY_BOT') {
-    chrome.storage.local.get(['gnFyBotState'], (d) => {
-      if (d.gnFyBotState) {
-        d.gnFyBotState.running = false;
-        chrome.storage.local.set({ gnFyBotState: d.gnFyBotState }, () => sendResponse({ status: 'stopped' }));
+    chrome.storage.local.get(['takevoletBotState'], (d) => {
+      const existingState = d.takevoletBotState;
+      if (resume && existingState && existingState.pendingHashtags && existingState.pendingHashtags.length > 0) {
+        const updatedState = {
+          ...existingState,
+          running: true,
+          config: config || existingState.config
+        };
+        chrome.storage.local.set({ userStartedBot: true, takevoletBotState: updatedState }, () => {
+          showBadge('navigate', `Resuming TakeVolet session from #${updatedState.currentHashtag}...`);
+          if (updatedState.pendingPosts && updatedState.pendingPosts.length > 0) {
+            window.location.href = updatedState.pendingPosts[0];
+          } else {
+            window.location.href = `https://www.instagram.com/explore/tags/${updatedState.currentHashtag}/`;
+          }
+        });
       } else {
-        sendResponse({ status: 'stopped' });
+        const hashtagsList = config?.hashtagsList || [];
+        if (hashtagsList.length === 0) {
+          showBadge('error', 'No hashtags provided!');
+          return;
+        }
+        const first = hashtagsList[0];
+        const remaining = hashtagsList.slice(1);
+
+        chrome.storage.local.set({
+          userStartedBot: true,
+          takevoletBotState: {
+            running: true,
+            pendingHashtags: remaining,
+            pendingPosts: [],
+            currentHashtag: first.hashtag,
+            currentCity: first.city,
+            config,
+            stats: { commentedCount: 0, skippedCount: 0 }
+          }
+        }, () => {
+          showBadge('navigate', `Starting TakeVolet Bot! Opening #${first.hashtag} (${first.city.toUpperCase()})...`);
+          window.location.href = `https://www.instagram.com/explore/tags/${first.hashtag}/`;
+        });
       }
     });
+
     return true;
   }
 });
-
-// ══════════════════════════════════════════════════════════════════
-// FINAL YEAR PROJECTS BOT LOGIC
-// ══════════════════════════════════════════════════════════════════
-
-const FY_MESSAGES = [
-  "Looking for last minute final year projects? We are here to help you! PPT, documentation, research paper, source code, deployment & guidance up to submission. 🚀",
-  "Final year panic? 😱 We provide complete projects with IEEE papers, SRS, zero plagiarism, and full source code!",
-  "Get your B.Tech/MCA final year project done fast with our expert guidance. Full deployment and documentation included! 🎓",
-  "Need a solid research paper & project source code for your final year? We provide A-Z guidance up to your final submission. 💡",
-  "Don't worry about plagiarism! We offer 100% original final year projects with complete documentation and PPTs. ✅",
-  "Stuck on your final year project deployment? Let us handle the source code, research paper, and submission guidance! 🔧",
-  "We help engineering students with last-minute final year projects! AI, ML, IoT, Blockchain—complete with documentation! 🤖",
-  "Your one-stop solution for final year projects! We provide everything from PPTs to plagiarism removal and deployment. 🎓",
-  "Final year viva coming up? Get a fully deployed project with a research paper and complete guidance from us! 🚀",
-  "B.Tech & MCA students: Get your major project sorted today. Full source code, zero plagiarism, and final submission support! 💻",
-  "Why stress over documentation? We provide final year projects with complete SRS, PPT, and research papers! 📄",
-  "Last minute project submission? We deliver ready-to-deploy final year projects with full guidance! ⏳",
-  "From idea to deployment—we help students build and submit top-tier final year projects with zero plagiarism. 🏆",
-  "Get IEEE standard final year projects with complete documentation, PPT, and deployment assistance! 🌟",
-  "Need help with your major project? We provide source code, research papers, and complete submission guidance! 🎯",
-  "Engineering students: Get your final year project done right! PPT, documentation, and deployment included. ⚙️",
-  "We specialize in last-minute final year projects! Complete with plagiarism removal and full source code. 🔥",
-  "Don't fail your final year project! We provide A-Z support, from research papers to successful deployment! 📚",
-  "Need an AI/ML or Web Dev project for your final year? We provide source code, documentation, and PPTs! 🧠",
-  "Complete your final year project stress-free! We offer full deployment, plagiarism removal, and submission guidance. 🚀"
-];
-
-const saveFyState = state => chrome.storage.local.set({ gnFyBotState: state });
-async function loadFyState() {
-  const d = await chrome.storage.local.get(['gnFyBotState']);
-  return d.gnFyBotState || null;
-}
-async function alreadyFyScraped(url) {
-  const d = await chrome.storage.local.get(['gnFyScrapedUrls']);
-  return (d.gnFyScrapedUrls || []).includes(url);
-}
-async function markFyScraped(url) {
-  const d = await chrome.storage.local.get(['gnFyScrapedUrls']);
-  const arr = d.gnFyScrapedUrls || [];
-  if (!arr.includes(url)) {
-    arr.push(url);
-    await chrome.storage.local.set({ gnFyScrapedUrls: arr.slice(-10000) });
-  }
-}
-async function alreadyVisitedProfile(username) {
-  const d = await chrome.storage.local.get(['gnFyVisitedProfiles']);
-  return (d.gnFyVisitedProfiles || []).includes(username);
-}
-async function markProfileVisited(username) {
-  const d = await chrome.storage.local.get(['gnFyVisitedProfiles']);
-  const arr = d.gnFyVisitedProfiles || [];
-  if (!arr.includes(username)) {
-    arr.push(username);
-    await chrome.storage.local.set({ gnFyVisitedProfiles: arr.slice(-5000) });
-  }
-}
-
-async function startFyBotFlow(state) {
-  if (state.pendingPosts && state.pendingPosts.length > 0) {
-    const currentUrl = window.location.href;
-    if (currentUrl.includes('/p/') || currentUrl.includes('/reel/')) {
-      await handleFyPostPage(state);
-      return;
-    } else {
-      if (state.lastRedirect === state.pendingPosts[0]) {
-        report('warn', { msg: `⚠️ Post redirect detected. Skipping post...` });
-        state.pendingPosts = state.pendingPosts.slice(1);
-        await saveFyState(state);
-        if (state.pendingPosts.length > 0) {
-          state.lastRedirect = state.pendingPosts[0];
-          await saveFyState(state);
-          window.location.href = state.pendingPosts[0];
-        } else {
-          await handleFyCollegeSearchLoop(state);
-        }
-        return;
-      }
-      state.lastRedirect = state.pendingPosts[0];
-      await saveFyState(state);
-      window.location.href = state.pendingPosts[0];
-      return;
-    }
-  }
-
-  if (state.pendingProfile) {
-    const currentUrl = window.location.href;
-    if (currentUrl.toLowerCase().includes(state.pendingProfile.toLowerCase())) {
-      await handleFyProfilePage(state);
-      return;
-    } else {
-      if (state.lastRedirect === state.pendingProfile) {
-        report('warn', { msg: `⚠️ Redirect detected. Skipping @${state.pendingProfile}` });
-        state.pendingProfile = null;
-        await saveFyState(state);
-        await handleFyCollegeSearchLoop(state);
-        return;
-      }
-      state.lastRedirect = state.pendingProfile;
-      await saveFyState(state);
-      window.location.href = `https://www.instagram.com/${state.pendingProfile}/`;
-      return;
-    }
-  }
-
-  await handleFyCollegeSearchLoop(state);
-}
-
-async function handleFyCollegeSearchLoop(state) {
-  let currentState = state;
-  
-  while (currentState.running && currentState.currentHashtag) {
-    let college = currentState.currentHashtag.trim();
-    // Remove @ if user included it
-    if (college.startsWith('@')) college = college.substring(1);
-    // If user accidentally put full URL, extract the handle
-    if (college.includes('instagram.com/')) {
-       const parts = college.split('instagram.com/');
-       college = parts[1].split('/')[0];
-    }
-    
-    // Replace spaces with nothing or underscores, or just trust the user provided a valid handle
-    // but typically IG handles have no spaces.
-    let foundUsername = college.replace(/\s+/g, '');
-    
-    report('navigate', { msg: `🔍 Visiting IG profile: @${foundUsername}...` });
-    await sleep(800);
-    
-    if (foundUsername) {
-       const alreadyVisited = await alreadyVisitedProfile(foundUsername);
-       if (alreadyVisited) {
-         report('skipped', { msg: `⏭️ Already visited profile @${foundUsername}, skipping...` });
-         const pending = currentState.pendingHashtags || [];
-         if (pending.length === 0) {
-            await chrome.storage.local.set({ gnFyBotState: null });
-            report('done', { msg: `🎉 Finished all colleges!` });
-            return;
-         }
-         const [next, ...remaining] = pending;
-         currentState.pendingHashtags = remaining;
-         currentState.currentHashtag = next;
-         await saveFyState(currentState);
-         continue; // Move to next iteration immediately
-       }
-
-       report('info', { msg: `✅ Navigating to profile: @${foundUsername}` });
-       await markProfileVisited(foundUsername);
-       currentState.pendingProfile = foundUsername;
-       await saveFyState(currentState);
-       window.location.href = `https://www.instagram.com/${foundUsername}/`;
-       return; 
-    }
-  }
-}
-
-async function handleFyProfilePage(state) {
-  await sleep(1500); // FASTER: 2500 -> 1500
-  report('info', { msg: `Collecting posts from @${state.pendingProfile}...` });
-
-  let posts = await collectPostLinks(3000); // FASTER: 5000 -> 3000
-  
-  // Filter out already scraped posts BEFORE visiting them
-  const scrapedData = await chrome.storage.local.get(['gnFyScrapedUrls']);
-  const scrapedUrls = scrapedData.gnFyScrapedUrls || [];
-  posts = posts.filter(url => !scrapedUrls.includes(url));
-
-  if (posts.length === 0) {
-    report('warn', { msg: `No fresh posts found on profile, skipping` });
-    
-    const pending = state.pendingHashtags || [];
-    if (pending.length === 0) {
-       await chrome.storage.local.set({ gnFyBotState: null });
-       report('done', { msg: `🎉 Finished all colleges!` });
-       return;
-    }
-    const [next, ...remaining] = pending;
-    state.pendingHashtags = remaining;
-    state.currentHashtag = next;
-    state.pendingProfile = null;
-    await saveFyState(state);
-    
-    await handleFyCollegeSearchLoop(state);
-    return;
-  }
-  
-  const maxPer = 2; 
-  state.pendingProfile = null;
-  state.pendingPosts = posts.slice(0, maxPer);
-  await saveFyState(state);
-  
-  report('navigate', { msg: `Found ${posts.length} posts. Navigating to first post...` });
-  await sleep(800);
-  window.location.href = state.pendingPosts[0];
-}
-
-async function handleFyPostPage(state) {
-  const { pendingPosts = [], igId, url } = state;
-  const currentUrl = window.location.href.split('?')[0];
-
-  await sleep(1200); // FASTER: 2000 -> 1200
-  report('info', { msg: `Preparing to comment on post...` });
-
-  if (!(await alreadyFyScraped(currentUrl))) {
-    await markFyScraped(currentUrl);
-    
-    const box = await findCommentBox(4000); // FASTER: 5000 -> 4000
-    if (box) {
-      report('info', { msg: `Found comment box, typing AI message...` });
-      const msg = FY_MESSAGES[Math.floor(Math.random() * FY_MESSAGES.length)];
-      const adBlock = `🚀 We Provide Complete B.Tech/MCA/MBA Projects!
-✅ Mini & Major Projects
-✅ Research Papers, PPTs & Abstracts
-✅ Full Documentation & SRS
-✅ End-to-End Support & Deployment
-✅ Plagiarism Removal
-✅ Resume Building Projects
-
-📞 Call/WhatsApp: 7981994870
-📸 DM us at ${igId}
-🌐 Visit: ${url}
-🏷️ #graduatenex #finalyearprojects #miniprojects`;
-      const fullMessage = `${msg}\n\n${adBlock}`;
-      
-      const typed = await typeComment(box, fullMessage);
-      if (typed) {
-        if (typed !== 'API_SUCCESS') {
-          await sleep(400);
-          await submitComment(box);
-        }
-        report('done', { msg: `✅ Comment posted successfully!` });
-        const delay = Math.floor(Math.random() * 2000) + 2000; // FASTER: 4000+4000 -> 2000+2000
-        await sleep(delay);
-      }
-    } else {
-      report('warn', { msg: `❌ Could not find comment box.` });
-      await sleep(1000);
-    }
-  } else {
-      report('info', { msg: `Already commented on this post.` });
-      await sleep(500);
-  }
-
-  const remaining = pendingPosts.slice(1);
-  if (remaining.length > 0 && state.running) {
-    state.pendingPosts = remaining;
-    await saveFyState(state);
-    report('navigate', { msg: `Moving to next post...` });
-    window.location.href = remaining[0];
-  } else {
-    report('info', { msg: `Done with this college profile.` });
-    await sleep(500);
-    
-    const pending = state.pendingHashtags || [];
-    if (pending.length === 0) {
-       await chrome.storage.local.set({ gnFyBotState: null });
-       report('done', { msg: `🎉 Finished all colleges!` });
-       return;
-    }
-    const [next, ...remainingHashes] = pending;
-    state.pendingHashtags = remainingHashes;
-    state.currentHashtag = next;
-    state.pendingPosts = [];
-    state.pendingProfile = null;
-    await saveFyState(state);
-    
-    await handleFyCollegeSearchLoop(state);
-  }
-}
-
-// ══════════════════════════════════════════════════════
-// AUTO POSTER — original (unchanged)
-// ══════════════════════════════════════════════════════
-async function waitForElement(selector, timeout = 10000) {
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    const el = document.querySelector(selector);
-    if (el) return el;
-    await sleep(500);
-  }
-  return null;
-}
-function findButtonByText(text) {
-  return Array.from(document.querySelectorAll('div[role="button"], button, a[role="link"]'))
-    .find(el => el.textContent.trim().toLowerCase() === text.toLowerCase());
-}
-async function setOriginalCrop() {
-  const svg = document.querySelector('svg[aria-label="Select crop"], svg[aria-label="Select Crop"]');
-  if (svg) {
-    const btn = svg.closest('button') || svg.closest('div[role="button"]');
-    if (btn) {
-      robustClick(btn); await sleep(1000);
-      const orig = Array.from(document.querySelectorAll('span')).find(s => s.textContent.trim().toLowerCase() === 'original');
-      if (orig) { robustClick(orig.closest('button') || orig.closest('div[role="button"]') || orig.parentElement); await sleep(1000); }
-    }
-  }
-}
-async function clickDropdownPost() {
-  const start = Date.now();
-  while (Date.now() - start < 5000) {
-    const sp = Array.from(document.querySelectorAll('span')).find(s => s.textContent.trim() === 'Post');
-    if (sp) { const btn = sp.closest('a') || sp.closest('div[role="button"]') || sp.closest('div[role="link"]'); if (btn) { btn.click(); return true; } }
-    await sleep(500);
-  }
-  return false;
-}
-function findSidebarCreateButton() {
-  const sp = Array.from(document.querySelectorAll('span')).find(s => s.textContent.trim() === 'Create');
-  if (sp) return sp.closest('a') || sp.closest('div[role="button"]') || sp.closest('div[role="link"]') || sp.parentElement;
-  const svg = document.querySelector('svg[aria-label="New post"], svg[aria-label="Create"]');
-  if (svg) return svg.closest('a') || svg.closest('div[role="button"]') || svg.closest('div[role="link"]') || svg.parentElement;
-  return null;
-}
-async function startAutomation(base64Data, caption, filename, filetype) {
-  const createBtn = findSidebarCreateButton();
-  if (!createBtn) { alert("Could not find 'Create' button. Make sure you are on instagram.com desktop."); return; }
-  createBtn.click();
-  await clickDropdownPost();
-  const fileInput = await waitForElement('input[type="file"]', 10000);
-  if (!fileInput) { alert("Could not find file input. Please try again."); return; }
-  try {
-    const res = await fetch(base64Data); const blob = await res.blob();
-    const file = new File([blob], filename || 'image.jpg', { type: filetype || 'image/jpeg' });
-    const dt = new DataTransfer(); dt.items.add(file);
-    fileInput.files = dt.files; fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-  } catch(err) { alert("Error processing image: " + err.message); return; }
-  await sleep(3000); await setOriginalCrop();
-  let nxt = findButtonByText("Next"); if (nxt) robustClick(nxt);
-  await sleep(2500);
-  nxt = findButtonByText("Next"); if (nxt) robustClick(nxt);
-  await sleep(3000);
-  const captionBox = document.querySelector('div[aria-label*="Write a caption"][contenteditable="true"]') || document.querySelector('div[aria-label*="caption"][contenteditable="true"]');
-  if (captionBox) {
-    captionBox.focus();
-    const dt = new DataTransfer(); dt.setData('text/plain', caption);
-    captionBox.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
-    document.execCommand('insertText', false, caption);
-  } else { alert("Could not find caption box. Paste manually then click Share."); }
-  await sleep(2500);
-  const shareBtn = findButtonByText("Share");
-  if (shareBtn) robustClick(shareBtn); else alert("Could not find Share button. Please click it manually.");
-}

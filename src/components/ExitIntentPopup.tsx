@@ -4,10 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Gift, ArrowRight, X, Tag, Clock } from "lucide-react";
 import Link from "next/link";
+import { useCountry } from "@/context/CountryContext";
 
 export default function ExitIntentPopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [hasShown, setHasShown] = useState(false);
+  const { isIndia } = useCountry();
+
+  const couponCode = isIndia ? "GRAD500" : "GRAD10";
+  const offerText = isIndia ? "₹500 Off" : "$10 Off";
+  const offerSubtext = isIndia ? "on your first project order" : "on any project or service";
 
   const handleMouseLeave = useCallback(
     (e: MouseEvent) => {
@@ -74,19 +80,20 @@ export default function ExitIntentPopup() {
               </p>
               <div className="bg-white dark:bg-zinc-900 border-2 border-emerald-200 dark:border-emerald-800 rounded-xl px-6 py-3 inline-flex items-center gap-3">
                 <span className="text-2xl font-black tracking-[0.2em] text-emerald-700 dark:text-emerald-400">
-                  STAY50
+                  {couponCode}
                 </span>
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText("STAY50");
-                    alert("Coupon code STAY50 copied!");
+                    navigator.clipboard.writeText(couponCode);
+                    alert(`Coupon code ${couponCode} copied!`);
                   }}
                   className="text-xs font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1.5 rounded-lg hover:bg-emerald-200 transition-colors"
                 >
                   Copy
                 </button>
               </div>
-              <div className="flex items-center justify-center gap-2 mt-3 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+              <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-2">{offerSubtext}</p>
+              <div className="flex items-center justify-center gap-2 mt-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
                 <Clock className="h-3.5 w-3.5" />
                 Valid for today only
               </div>
@@ -95,7 +102,7 @@ export default function ExitIntentPopup() {
 
           <Link href="/pricing">
             <Button className="w-full h-14 text-lg font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/25 rounded-xl">
-              Claim ₹50 Off Now <ArrowRight className="ml-2 h-5 w-5" />
+              Claim {offerText} Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
 

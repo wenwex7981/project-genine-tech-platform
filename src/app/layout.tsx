@@ -10,6 +10,7 @@ import { CountryProvider } from "@/context/CountryContext";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import MonetizationWidgets from "@/components/MonetizationWidgets";
 import MobileQuickExplore from "@/components/MobileQuickExplore";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -116,6 +117,7 @@ export default async function RootLayout({
           <Footer />
           <MobileBottomNav />
           <MobileQuickExplore />
+          <WhatsAppButton />
         </CartProvider>
         </CountryProvider>
 

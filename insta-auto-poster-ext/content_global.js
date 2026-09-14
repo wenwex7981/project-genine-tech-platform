@@ -432,7 +432,8 @@ async function handleGlobPostPage(state) {
 // ── Auto-resume
 (async function globBotOnLoad() {
   await _sleep(600); 
-  const d     = await chrome.storage.local.get(['gnGlobalBotState']);
+  const d     = await chrome.storage.local.get(['userStartedBot', 'gnGlobalBotState']);
+  if (!d.userStartedBot) return;
   const state = d.gnGlobalBotState;
   if (!state || !state.running) return;
 

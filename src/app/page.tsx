@@ -91,7 +91,7 @@ const CATEGORIES = [
   { icon: <Globe className="h-6 w-6" />, name: "Internet of Things (IoT)", count: "85+ Solutions", image: "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&q=80" },
   { icon: <Database className="h-6 w-6" />, name: "Blockchain & Web3", count: "60+ Solutions", image: "https://images.unsplash.com/photo-1644088379091-d574269d422f?w=600&q=80" },
   { icon: <Cloud className="h-6 w-6" />, name: "Cloud Computing", count: "45+ Solutions", image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80" },
-  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Solutions", image: "https://images.unsplash.com/photo-1515879218367-8466d910auj7?w=600&q=80" },
+  { icon: <Bot className="h-6 w-6" />, name: "Deep Learning & NLP", count: "95+ Solutions", image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" },
   { icon: <Layers className="h-6 w-6" />, name: "Full Stack Web & Mobile", count: "150+ Solutions", image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" },
   { icon: <Lock className="h-6 w-6" />, name: "Cybersecurity", count: "40+ Solutions", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=80" },
   { icon: <BarChart3 className="h-6 w-6" />, name: "Data Science & Analytics", count: "75+ Solutions", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" },
@@ -211,9 +211,9 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center w-full">
-              <Link href="/login" className="w-full sm:w-auto">
+              <Link href="/projects" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full h-14 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-orange-500 text-white shadow-xl shadow-primary/30 hover:shadow-primary/50 hover:scale-[1.02] transition-all">
-                  Start Free Today <ArrowRight className="ml-2 h-5 w-5" />
+                  Explore Free Projects <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="#services" className="w-full sm:w-auto">

@@ -239,31 +239,52 @@ export default function CartPage() {
               </div>
             </div>
 
-            <Button onClick={handleCheckout} size="lg" className="w-full h-16 text-xl font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-xl flex items-center justify-center gap-3 rounded-2xl transition-transform hover:scale-105">
-              <CreditCard className="h-6 w-6" /> Proceed to Pay
-            </Button>
-            
-            <div className="mt-6 flex flex-col items-center justify-center gap-2">
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider text-center">Secure Payments By</p>
-              <div className="bg-muted px-4 py-2 rounded-lg font-bold text-slate-800 dark:text-white tracking-widest border shadow-sm">
-                RAZORPAY
+            {country === 'IN' ? (
+              <div className="space-y-4 mt-6">
+                <Button onClick={handleCheckout} size="lg" className="w-full h-16 text-xl font-bold bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white text-white shadow-xl flex items-center justify-center gap-3 rounded-2xl transition-transform hover:scale-105">
+                  <CreditCard className="h-6 w-6" /> Checkout Securely
+                </Button>
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider text-center flex items-center gap-2">
+                    Secured by <span className="font-bold text-slate-800 dark:text-white tracking-widest bg-muted px-2 py-1 rounded">RAZORPAY</span>
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="mt-6 space-y-6">
+                <div className="relative flex items-center py-2">
+                  <div className="flex-grow border-t border-zinc-200 dark:border-zinc-800" />
+                  <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs font-bold uppercase tracking-widest">
+                    Select Payment Method
+                  </span>
+                  <div className="flex-grow border-t border-zinc-200 dark:border-zinc-800" />
+                </div>
 
-            {country !== 'IN' && (
-              <div className="mt-6 border-t pt-6">
-                <p className="text-sm text-center text-muted-foreground mb-4">Or pay with PayPal</p>
-                <PayPalCheckoutButton 
-                  amount={totalPrice}
-                  currency={razorpayCurrency}
-                  items={cart}
-                  country={country}
-                  onSuccess={(paymentId) => {
-                    setPaymentSuccess(paymentId);
-                    clearCart();
-                  }}
-                  onError={(err) => alert("PayPal payment failed.")}
-                />
+                <div className="space-y-4">
+                  <PayPalCheckoutButton 
+                    amount={totalPrice}
+                    currency={razorpayCurrency}
+                    items={cart}
+                    country={country}
+                    onSuccess={(paymentId) => {
+                      setPaymentSuccess(paymentId);
+                      clearCart();
+                    }}
+                    onError={(err) => alert("PayPal payment failed.")}
+                  />
+
+                  <div className="relative flex items-center py-2">
+                    <div className="flex-grow border-t border-zinc-200 dark:border-zinc-800" />
+                    <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs font-medium lowercase">
+                      or
+                    </span>
+                    <div className="flex-grow border-t border-zinc-200 dark:border-zinc-800" />
+                  </div>
+
+                  <Button onClick={handleCheckout} size="lg" variant="outline" className="w-full h-14 text-base font-bold flex items-center justify-center gap-2 rounded-xl border-2 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+                    <CreditCard className="h-5 w-5" /> Pay with Credit / Debit Card
+                  </Button>
+                </div>
               </div>
             )}
           </div>

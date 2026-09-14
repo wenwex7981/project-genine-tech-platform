@@ -39,12 +39,8 @@ export default function Navbar() {
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "7981@Nithin") {
-      setUser({ email: 'projectgenie16@gmail.com' });
-      setShowLoginModal(false);
-    } else {
-      setLoginError("Incorrect password. Please try again.");
-    }
+    // Admin authentication is handled via Supabase — use the main login page
+    setLoginError("Please use the Sign In page for secure authentication.");
   };
 
   const handleSignOut = async () => {
@@ -54,7 +50,6 @@ export default function Navbar() {
   };
 
   const isAdmin = 
-    user?.email === 'proejctgenie16@gmail.com' || 
     user?.email === 'projectgenie16@gmail.com' ||
     user?.email === 'nithinpatel2025@gmail.com';
 

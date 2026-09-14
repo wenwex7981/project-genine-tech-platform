@@ -351,7 +351,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 // AUTO-RESUME ON PAGE LOAD
 // ══════════════════════════════════════════════
 window.addEventListener('load', () => {
-  chrome.storage.local.get(['gnRedditBotState'], (d) => {
+  chrome.storage.local.get(['userStartedBot', 'gnRedditBotState'], (d) => {
+    if (!d.userStartedBot) return;
     const s = d.gnRedditBotState;
     if (s && s.running) {
       redditBotRunning = true;
