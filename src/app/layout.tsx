@@ -25,10 +25,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.graduatenex.online'),
   title: {
-    default: "Academic Projects, AI Resume Builder & Thesis Help for Students Worldwide [2026] — GraduateNex",
+    default: "GraduateNex — Final Year Projects, AI Resume & Thesis Help [2026]",
     template: "%s | GraduateNex",
   },
-  description: "GraduateNex is the world's premier academic success platform — production-ready capstone projects, AI-powered ATS resume builders, thesis & dissertation help, and career tools for students in the US, UK, Canada, Australia, India, and 50+ countries.",
+  description: "Production-ready capstone projects, AI-powered ATS resume builder, thesis help & career tools for students in 50+ countries. Plagiarism-free. Instant delivery.",
   robots: {
     index: true,
     follow: true,
