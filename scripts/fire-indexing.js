@@ -104,7 +104,7 @@ function rawRequest(urlStr, method, headers, body) {
 
 // ── 1. IndexNow ──────────────────────────────────────────────────────────────
 async function fireIndexNow() {
-  const key = 'graduatenex2026indexnow';
+  const key = 'bc65958d392d4cd99a3480b0ac545dad';
   const host = 'www.graduatenex.online';
   const keyLocation = `https://${host}/${key}.txt`;
   const payload = JSON.stringify({ host, key, keyLocation, urlList: ALL_URLS });
@@ -195,11 +195,15 @@ async function fireGoogle() {
   console.log(`   ✅ Authenticated as: ${creds.client_email}`);
   console.log(`   📦 Batching ${ALL_URLS.length} URLs (100/batch, 200 limit/day)...`);
 
+  const SKIP_FIRST = 200; // Already indexed yesterday — skip these
+  const urlsToSubmit = ALL_URLS.slice(SKIP_FIRST);
+  console.log(`   Skipping first ${SKIP_FIRST} (already indexed). Submitting ${urlsToSubmit.length} remaining...`);
+
   const CHUNK = 100;
   let totalOk = 0, totalFail = 0;
 
-  for (let i = 0; i < Math.min(ALL_URLS.length, 200); i += CHUNK) {
-    const chunk = ALL_URLS.slice(i, i + CHUNK);
+  for (let i = 0; i < urlsToSubmit.length; i += CHUNK) {
+    const chunk = urlsToSubmit.slice(i, i + CHUNK);
     const boundary = `gnx_batch_${i}`;
 
     // Build multipart body as Buffer (NOT JSON.stringify)
