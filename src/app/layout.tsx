@@ -11,6 +11,8 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import MonetizationWidgets from "@/components/MonetizationWidgets";
 import MobileQuickExplore from "@/components/MobileQuickExplore";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import SignupBanner from "@/components/SignupBanner";
+import SignupNudge from "@/components/SignupNudge";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -109,6 +111,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground pb-28 md:pb-0 pt-10">
         <CountryProvider defaultCountry={defaultCountry}>
         <CartProvider>
+          <SignupBanner />
           <MonetizationWidgets />
           <Navbar />
           <main className="flex-1">
@@ -118,6 +121,7 @@ export default async function RootLayout({
           <MobileBottomNav />
           <MobileQuickExplore />
           <WhatsAppButton />
+          <SignupNudge />
         </CartProvider>
         </CountryProvider>
 

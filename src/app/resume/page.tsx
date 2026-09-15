@@ -17,6 +17,7 @@ import ResumeEditor from "@/components/ResumeEditor";
 import { PayPalCheckoutButton } from "@/components/PayPalCheckoutButton";
 import { ModelSelector, AIModel } from "@/components/ModelSelector";
 import { motion, AnimatePresence } from "framer-motion";
+import SignupNudge from "@/components/SignupNudge";
 
 const LIVE_NOTIFICATIONS = [
   "Rahul from Hyderabad just tailored a TCS resume 🚀",
@@ -56,6 +57,7 @@ export default function ResumeHub() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<any | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showSignupNudge, setShowSignupNudge] = useState(false);
 
   // --- COMMUNITY STATE ---
   const [resumes, setResumes] = useState<any[]>([]);
@@ -244,6 +246,9 @@ export default function ResumeHub() {
       }
       const data = await response.json();
       setResult(data);
+      // Show signup nudge after result — highest-converting moment
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) setShowSignupNudge(true);
     } catch (error: any) {
       console.error(error);
       alert(error.message);
@@ -316,6 +321,14 @@ export default function ResumeHub() {
 
   return (
     <div className="w-full min-h-screen bg-muted/10 pb-20">
+      {/* Post-ATS Signup Nudge — fires immediately after scan for non-logged-in users */}
+      {showSignupNudge && (
+        <SignupNudge
+          immediate
+          headline="Save your ATS report — free account"
+          subtext="Create a free account to save this score, track improvements, and re-scan unlimited times."
+        />
+      )}
       {/* Premium Glassmorphic Hero Banner */}
       <div className="relative min-h-[500px] flex items-center text-white py-20 px-4 md:px-8 border-b border-zinc-800/50 mb-12 overflow-hidden">
         {/* Dynamic Background */}
