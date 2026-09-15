@@ -13,6 +13,8 @@ import MobileQuickExplore from "@/components/MobileQuickExplore";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import SignupBanner from "@/components/SignupBanner";
 import SignupNudge from "@/components/SignupNudge";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -124,6 +126,32 @@ export default async function RootLayout({
           <SignupNudge />
         </CartProvider>
         </CountryProvider>
+
+        {/* Vercel Analytics — Core Web Vitals + page views */}
+        <Analytics />
+        {/* Vercel Speed Insights — LCP, FID, CLS per page */}
+        <SpeedInsights />
+
+        {/* Yandex Metrica — free heatmaps + session recordings */}
+        {process.env.NEXT_PUBLIC_YANDEX_METRICA_ID && (
+          <Script id="yandex-metrica" strategy="afterInteractive">
+            {`(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],
+            k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+            (window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
+            ym(${process.env.NEXT_PUBLIC_YANDEX_METRICA_ID},"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true,ecommerce:"dataLayer"});`}
+          </Script>
+        )}
+
+        {/* Microsoft Clarity — session recordings + heatmaps */}
+        {process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID && (
+          <Script id="ms-clarity" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window,document,"clarity","script","${process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID}");`}
+          </Script>
+        )}
 
         {/* Global Organization JSON-LD Schema */}
         <script
